@@ -6,8 +6,12 @@ class TRP_Settings{
     protected $version;
 
     public function __construct( $version ) {
-        $this->set_options();
         $this->version = $version;
+        $this->set_options();
+    }
+
+    public function getSettings(){
+        return $this->settings;
     }
 
     public function register_menu_page(){
@@ -26,6 +30,18 @@ class TRP_Settings{
     }
 
     public function sanitize_settings( $settings ){
+
+        if ( !isset ( $settings['default-language'] ) ) {
+            $settings['default-language'] = 'en';
+        }
+        if ( !isset ( $settings['translation-languages'] ) ){
+            $settings['translation_languages'] = array();
+        }
+
+        foreach ( $settings['translation-languages'] as $language_code ){
+            $this->check_table( $settings['default-language'], $language_code );
+        }
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -55,5 +71,26 @@ class TRP_Settings{
             $this->version,
             FALSE
         );
+    }
+
+    private function check_table( $default, $translated ){
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'trp_dictionary_' . $default . '_' . $translated;
+        if ( $wpdb->get_var( "SHOW TABLES LIKE ' $table_name '" ) != $table_name ) {
+            // table not in database. Create new table
+            $charset_collate = $wpdb->get_charset_collate();
+
+            // todo different charset collation for each language?
+            $sql = "CREATE TABLE `" . $table_name . "`(
+                                    id bigint(20) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                                    original  varchar(32) NOT NULL,
+                                    translated  varchar(32),
+                                    human int(20),
+                                    UNIQUE KEY id (id) )
+                                     $charset_collate;";
+            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+            dbDelta( $sql );
+        }
+
     }
 }
