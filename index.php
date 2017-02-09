@@ -24,10 +24,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-translate-press.php';
 
 function trp_run_translate_press() {
-    $trp = new TRP_Translate_Press();
+    require_once plugin_dir_path(__FILE__) . 'includes/class-translate-press.php';
+
+    if ( file_exists ( plugin_dir_path(__FILE__) . 'pro/class-translate-press-pro.php' ) ) {
+        require_once plugin_dir_path(__FILE__) . 'pro/class-translate-press-pro.php';
+        if ( class_exists( 'TRP_Translate_Press_Pro' ) ) {
+            $trp = new TRP_Translate_Press_Pro();
+        }
+    }else {
+        $trp = new TRP_Translate_Press();
+    }
     $trp->run();
 }
 trp_run_translate_press();

@@ -42,6 +42,7 @@ class TRP_Settings{
             $this->check_table( $settings['default-language'], $language_code );
         }
 
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
