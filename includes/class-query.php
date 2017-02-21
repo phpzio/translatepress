@@ -79,6 +79,7 @@ class TRP_Query{
         //error_log('newstrings' . json_encode($new_strings));
         $new_strings = array_unique( $new_strings );
         foreach ( $new_strings as $string ) {
+            //error_log( '[new]' . $string );
             array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED );
             $place_holders[] = "( '%d', '%s', '%s', '%d')";
 
@@ -102,7 +103,7 @@ class TRP_Query{
 
         /*$query .= rtrim( $place_holders, ',' );
         $query .= ' ' . rtrim( $values, ',' );*/
-        error_log($query);
+
         $this->db->query( $this->db->prepare("$query ", $values) );//, rtrim( $values, ',' ) ));
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.

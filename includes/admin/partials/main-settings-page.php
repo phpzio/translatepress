@@ -7,7 +7,7 @@
             <tr>
                 <th scope="row"><?php _e( 'Default Language', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
-                    <select id="trp-default-language" name="trp_settings[default-language]">
+                    <select id="trp-default-language" name="trp_settings[default-language]" class="trp-select2">
                         <?php
                         foreach( $languages as $language_code => $language_name ){ ?>
                             <option value="<?php echo $language_code; ?>" <?php echo ( $this->settings['default-language'] == $language_code ? 'selected' : '' ); ?> >
@@ -21,21 +21,7 @@
                 </td>
             </tr>
 
-            <tr>
-                <th scope="row"> <?php _e( 'Translation Languages', TRP_PLUGIN_SLUG ) ?> </th>
-                <td>
-                    <select multiple id="trp-translation-languages" name="trp_settings[translation-languages][]">
-                        <?php foreach( $languages as $language_code => $language_name ){ ?>
-                            <option value="<?php echo $language_code; ?>" <?php echo ( isset($this->settings['translation-languages'] ) && in_array( $language_code, $this->settings['translation-languages'] ) ? 'selected' : '' ); ?>>
-                                <?php echo $language_name; ?>
-                            </option>
-                        <?php }?>
-                    </select>
-                    <p class="description">
-                        <?php _e( 'Select the languages you wish to make your website available in.', TRP_PLUGIN_SLUG ); ?>
-                    </p>
-                </td>
-            </tr>
+            <?php $this->languages_selector( $languages ); ?>
 
             <?php do_action ( 'trp_extra_settings', $this->settings ); ?>
         </table>

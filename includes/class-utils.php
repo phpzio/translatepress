@@ -1,7 +1,7 @@
 <?php
 class TRP_Utils{
 
-    private static $languages = array(
+    protected static $languages = array(
         'af'     => 'Afrikaans',
 		'sq'     => 'Albanian',
 		'am'     => 'Amharic',
@@ -109,6 +109,6 @@ class TRP_Utils{
     );
 
     public static function get_languages(){
-        return self::$languages;
+        return apply_filters( 'trp_languages', self::$languages );
     }
 }
