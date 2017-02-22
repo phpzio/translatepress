@@ -1,0 +1,69 @@
+
+/*
+ *  Language Selector
+ */
+.trp-language{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+input.trp-translation-published{
+    margin-left: 50px;
+    margin-top: 1px;
+}
+
+#trp-languages-header{
+    padding-left: 29px;
+}
+#trp-published-header{
+    padding-left: 182px;
+}
+
+.trp-sortable-handle{
+    background: url('../images/sorting-icon-dots.png') no-repeat center center;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 7px;
+    cursor: move;
+    margin-top: -1px;
+}
+
+#trp-add-language{
+    margin-left: 45px;
+}
+
+#trp-new-language{
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 26px;
+}
+
+
+span.select2-container{
+    clear: none;
+    width: 200px !important;
+}
+
+
+
+/*
+//todo  make it responsive la width mic
+@media screen and (max-width: 400px){
+    span.select2-container{
+        clear: none;
+        width: 100% !important;
+    }
+}
+*/
+
+.trp-remove-language{
+    color: #a00;
+    cursor: pointer;
+    padding-left: 100px;
+}
+
+.trp-remove-language:hover{
+    color: red;
+}

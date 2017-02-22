@@ -38,8 +38,9 @@ class TRP_Settings{
             $settings['default-language'] = 'en';
         }
         if ( !isset ( $settings['translation-languages'] ) ){
-            $settings['translation_languages'] = array();
+            $settings['translation-languages'] = array();
         }
+        $settings['translation-languages'] = array_filter( array_unique( $settings['translation-languages'] ) );
 
         foreach ( $settings['translation-languages'] as $language_code ){
             $this->trp_query->check_table( $language_code );
@@ -57,10 +58,11 @@ class TRP_Settings{
 
         if ( 'not_set' == $settings ){
             // initialize default settings
+            //todo set default language based on get_locale(). https://wpcentral.io/internationalization/ for a full list
+            $default = 'en';
             $settings = array(
-                //todo set default language based on get_locale(). https://wpcentral.io/internationalization/ for a full list
-                'default-language'      => 'en',
-                'translation-languages' => array()
+                'default-language'      => $default,
+                'translation-languages' => array( $default )
             );
             update_option ( 'trp_settings', $settings );
         }
@@ -69,7 +71,6 @@ class TRP_Settings{
     }
 
     public function enqueue_scripts_and_styles( $hook ) {
-        error_log($hook);
         if ( $hook == 'settings_page_translate-press' ) {
             wp_enqueue_style(
                 'trp-settings-style',
@@ -83,8 +84,6 @@ class TRP_Settings{
             wp_enqueue_script( 'wppb_sl2_lib_js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ) );
             wp_enqueue_style( 'wppb_sl2_lib_css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css');
         }
-
-
     }
 
     protected function languages_selector( $languages ){
