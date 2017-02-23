@@ -13,7 +13,8 @@ class TRP_Translation_Render{
     }
 
     public function start_object_cache(){
-        if( is_admin() )
+        global $TRP_LANGUAGE;
+        if( is_admin() || $TRP_LANGUAGE == $this->settings['default-language'] )
             return;
 
         if ( $this->start_output_buffering() ) {
@@ -249,7 +250,7 @@ class TRP_Translation_Render{
 
 
 
-    public function ttranslate_page( $output ){
+ /*   public function ttranslate_page( $output ){
         $language_code = $this->get_language();
         if ( $language_code === false ){
             return $output;
@@ -305,7 +306,7 @@ class TRP_Translation_Render{
 </body>
 </html>
 ";
-    }
+    }*/
 
     protected function start_output_buffering(){
         $post_type = get_post_type();

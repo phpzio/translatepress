@@ -9,6 +9,7 @@ class TRP_Translate_Press{
     protected $machine_translator;
     protected $trp_query;
     protected $language_switcher;
+    protected $translation_manager;
 
     public function __construct() {
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( dirname( __FILE__ ) ) );
@@ -24,6 +25,7 @@ class TRP_Translate_Press{
     protected function load_dependencies() {
         // todo if file exists on everything
         require_once TRP_PLUGIN_DIR . 'includes/admin/class-settings.php';
+        require_once TRP_PLUGIN_DIR . 'includes/admin/class-translation-manager.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-hooks-loader.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-utils.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-render.php';
@@ -43,7 +45,7 @@ class TRP_Translate_Press{
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings(), $this->trp_query );
         $this->translation_render = new TRP_Translation_Render( $this->settings->get_settings(), $this->machine_translator, $this->trp_query );
         $this->language_switcher = new TRP_Language_Switcher( $this->settings->get_settings() );
-
+        $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
     }
 
     protected function define_admin_hooks() {
@@ -55,9 +57,9 @@ class TRP_Translate_Press{
 
     protected function define_frontend_hooks(){
         $this->loader->add_action( 'wp', $this->translation_render, 'start_object_cache' );
+        $this->loader->add_action( 'init', $this->translation_render, 'start_object_cache' );
 
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
-        // todo add shortcode
     }
 
     public function run() {

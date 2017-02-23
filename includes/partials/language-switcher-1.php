@@ -1,8 +1,8 @@
 <div id="trp-language-switcher">
     <form id="trp-language-switcher-form" action="" method="GET">
         <select id="trp-language-switcher-select" name="lang" onchange='this.form.submit()'>
-            <?php foreach ( $languages as $code => $name ){ ?>
-            <option value="<?php echo $code ?>" <?php echo ( TRP_LANGUAGE == $code ) ? 'selected' : '' ?> >
+            <?php foreach ( $published_languages as $code => $name ){ ?>
+            <option value="<?php echo $code ?>" <?php echo ( $current_language == $code ) ? 'selected' : '' ?> >
                 <?php echo $name ?>
             </option>
             <?php } ?>

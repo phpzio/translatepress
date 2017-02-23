@@ -52,6 +52,8 @@ function TRP_Sortable_Languages() {
         jQuery( '#trp-add-language' ).click( _this.add_language );
         jQuery( '.trp-remove-language' ).click( _this.remove_language );
         jQuery( '#trp-default-language' ).on( 'change', _this.update_default_language );
+
+        //todo remove already selected languages from selects
     };
 
     this.initialize();

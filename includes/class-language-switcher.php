@@ -7,18 +7,16 @@ class TRP_Language_Switcher{
     public function __construct( $settings ){
         $this->settings = $settings;
         $language = $this->get_current_language();
-        define( 'TRP_LANGUAGE', $language );
+        global $TRP_LANGUAGE;
+        $TRP_LANGUAGE = $language;
     }
 
     public function language_switcher(){
         ob_start();
-        //todo dummy. get published languages
-        $languages = array(
-            'en'     => 'English',
-            'et'     => 'Estonian',
-            'fr'     => 'French',
-            'de'     => 'German',
-            'el'     => 'Greek' );
+        global $TRP_LANGUAGE;
+        $current_language = $TRP_LANGUAGE;
+        $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
+        //todo switch between templates based on settings
         require_once TRP_PLUGIN_DIR . 'includes/partials/language-switcher-1.php';
         return ob_get_clean();
     }

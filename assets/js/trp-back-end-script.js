@@ -2,10 +2,11 @@
 
 function TRP_Settings() {
 
+    var _this = this;
     /**
      * Function that initializes select2 on fields
      */
-    this.initializeSelect2 = function () {
+    this.initialize_select2 = function () {
         jQuery('.trp-select2').each(function () {
             var selectElement = jQuery(this);
             //var arguments = selectElement.attr('data-trp-select2-arguments');
@@ -14,7 +15,19 @@ function TRP_Settings() {
         });
     };
 
-    this.initializeSelect2();
+    this.update_translation_language = function(){
+        var selected_language = jQuery( '#trp-translation-language' ).val();
+        var checkbox = jQuery( 'input.trp-translation-published' );
+        checkbox.val( selected_language );
+    };
+
+    this.initialize = function(){
+        _this.initialize_select2();
+        jQuery( '#trp-translation-language' ).on( 'change', _this.update_translation_language );
+    };
+
+    this.initialize();
+
 }
 
 var trpSettings;

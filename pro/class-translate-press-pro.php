@@ -16,6 +16,7 @@ class TRP_Translate_Press_Pro extends TRP_Translate_Press{
         $this->settings->set_trp_query( $this->trp_query );
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings(), $this->trp_query );
         $this->translation_render = new TRP_Translation_Render_Pro( $this->settings->get_settings(), $this->machine_translator, $this->trp_query );
+        $this->language_switcher = new TRP_Translation_Manager( $this->settings->get_settings() );
 
         $this->loader->add_action( 'admin_enqueue_scripts', $this->settings, 'enqueue_sortable_language_script' );
     }

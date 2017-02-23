@@ -44,8 +44,6 @@ class TRP_Settings{
             $settings['publish-languages'] = array();
         }
 
-        ;
-
         $settings['translation-languages'] = array_filter( array_unique( $settings['translation-languages'] ) );
         $settings['publish-languages'] = array_filter( array_unique( $settings['publish-languages'] ) );
 
@@ -58,11 +56,11 @@ class TRP_Settings{
         if ( ! in_array( $settings['default-language'], $settings['translation-languages'] ) ){
             array_unshift( $settings['translation-languages'], $settings['default-language'] );
         }
-
-        if ( ! in_array( $settings['default-language'], $settings['translation-languages'] ) ){
-            array_unshift( $settings['translation-languages'], $settings['default-language'] );
+        if ( ! in_array( $settings['default-language'], $settings['publish-languages'] ) ){
+            array_unshift( $settings['publish-languages'], $settings['default-language'] );
         }
         error_log( json_encode( $settings ));
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -109,15 +107,16 @@ class TRP_Settings{
         <tr>
             <th scope="row"> <?php _e( 'Translation Language', TRP_PLUGIN_SLUG ) ?> </th>
             <td>
-                <select id="trp-translation-languages" name="trp_settings[translation-languages][]" class="trp-select2">
+                <select id="trp-translation-language" name="trp_settings[translation-languages][]" class="trp-select2">
+                    <option value=""><?php _e( 'Choose...', TRP_PLUGIN_SLUG );?></option>
                     <?php foreach( $languages as $language_code => $language_name ){ ?>
-                    <option value="<?php echo $language_code; ?>" <?php echo ( isset($this->settings['translation-languages'] ) && in_array( $language_code, $this->settings['translation-languages'] ) ? 'selected' : '' ); ?>>
+                    <option value="<?php echo $language_code; ?>" <?php echo ( in_array( $language_code, $this->settings['translation-languages'] ) && $language_code != $this->settings['default-language'] ) ? 'selected' : '' ; ?>>
                         <?php echo $language_name; ?>
                     </option>
                 <?php }?>
                 </select>
                 <label>
-                    <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" <?php /*echo ( $default_language ) ? 'checked' : ''*/ ?>>
+                    <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" value="<?php $language_code = array_values(array_slice($this->settings['translation-languages'], -1))[0]; /*last element*/ echo $language_code; ?>" <?php echo ( in_array( $language_code, $this->settings['publish-languages'] ) && ( $language_code != $this->settings['default-language'] ) ) ? 'checked' : ''; ?>>
                     <span id="trp-published-language"><b><?php _e( 'Publish', TRP_PLUGIN_SLUG ); ?></b></span>
                 </label>
                 <p class="description">

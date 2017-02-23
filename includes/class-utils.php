@@ -111,4 +111,13 @@ class TRP_Utils{
     public static function get_languages(){
         return apply_filters( 'trp_languages', self::$languages );
     }
+
+	public static function get_language_names( $language_codes ){
+		$return = array();
+		foreach ( $language_codes as $language_code ){
+			$return[$language_code] = self::$languages[$language_code];
+		}
+
+		return $return;
+	}
 }
