@@ -15,9 +15,10 @@
                         </option>
                         <?php }?>
                     </select>
-                    <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" <?php echo ( $default_language ) ? 'disabled checked' : '' ?>>
+                    <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" <?php echo ( in_array( $selected_language_code, $this->settings['publish-languages'] ) ) ? 'checked ' : ''; echo ( $default_language ) ? 'disabled ' : ''; ?> />
                     <?php if ( $default_language ) { ?>
-                            <input type="hidden" id="trp-hidden-default-language" name="trp_settings[translation-languages][]" value="<?php echo $selected_language_code;?>" />
+                            <input type="hidden" class="trp-hidden-default-language" name="trp_settings[translation-languages][]" value="<?php echo $selected_language_code;?>" />
+                            <input type="hidden" class="trp-hidden-default-language" name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code;?>" />
                         <?php } ?>
                     <a class="trp-remove-language" style=" <?php echo ( $default_language ) ? 'display:none' : '' ?>" data-confirm-message="<?php _e( 'Are you sure you want to remove this language?', TRP_PLUGIN_SLUG ); ?>"><?php _e( 'Remove', TRP_PLUGIN_SLUG ); ?></a>
 
