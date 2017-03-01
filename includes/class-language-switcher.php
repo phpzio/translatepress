@@ -30,6 +30,6 @@ class TRP_Language_Switcher{
                 return $language_code;
             }
         }
-        return false;
+        return $this->settings['default-language'];
     }
 }

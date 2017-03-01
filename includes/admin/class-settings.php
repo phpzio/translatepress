@@ -97,8 +97,8 @@ class TRP_Settings{
                 TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js'
             );
 
-            wp_enqueue_script( 'wppb_sl2_lib_js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ) );
-            wp_enqueue_style( 'wppb_sl2_lib_css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css');
+            wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ) );
+            wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css');
         }
     }
 

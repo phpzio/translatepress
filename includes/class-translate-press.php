@@ -1,8 +1,6 @@
 <?php
 
 class TRP_Translate_Press{
-    protected $version;
-
     protected $loader;
     protected $settings;
     protected $translation_render;
@@ -53,11 +51,15 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'admin_init', $this->settings, 'register_setting' );
         $this->loader->add_action( 'admin_notices', $this->settings, 'admin_notices' );
         $this->loader->add_action( 'admin_enqueue_scripts', $this->settings, 'enqueue_scripts_and_styles' );
+
     }
 
     protected function define_frontend_hooks(){
         $this->loader->add_action( 'wp', $this->translation_render, 'start_object_cache' );
-        $this->loader->add_action( 'init', $this->translation_render, 'start_object_cache' );
+
+        $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
+        $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
+        $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
 
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
     }
@@ -66,7 +68,4 @@ class TRP_Translate_Press{
         $this->loader->run();
     }
 
-    public function get_version() {
-        return $this->version;
-    }
 }
