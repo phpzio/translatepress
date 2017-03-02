@@ -42,6 +42,8 @@ class TRP_Translation_Manager{
 
     public function enqueue_preview_scripts_and_styles(){
         if ( $this->conditions_met( 'preview' ) ) {
+
+            /* twentyfifteen theme scrolls header uncontrolled on page load because of this  */
             show_admin_bar( false );
         }
     }

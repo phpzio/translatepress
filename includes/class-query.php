@@ -109,6 +109,12 @@ class TRP_Query{
         // but by using prepare you cannot insert NULL values.
     }
 
+    public function get_translation_ids( $translated_strings, $language_code ){
+        $dictionary = $this->db->get_results("SELECT translated, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE translated IN ('".implode( "','", $translated_strings )."')", OBJECT_K );
+
+        return $dictionary;
+    }
+
 
     protected function format_value( $id, $original, $translated, $status ){
         return '(' . $id . ',' . $original . ',' . $translated . ',' . $status . '),';

@@ -14,7 +14,7 @@ class TRP_Translation_Render{
 
     public function start_object_cache(){
         global $TRP_LANGUAGE;
-        if( is_admin() || $TRP_LANGUAGE == $this->settings['default-language'] )
+        if( is_admin() || $TRP_LANGUAGE == $this->settings['default-language'] || ( isset( $_GET['trp-edit-translation']) && esc_attr( $_GET['trp-edit-translation'] == 'true' ) ) )
             return;
 
         if ( $this->start_output_buffering() ) {
@@ -113,12 +113,16 @@ class TRP_Translation_Render{
         }
 
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
+        $translated_string_ids = $this->get_translated_string_ids( $translated_strings, $language_code );
 
         foreach ( $nodes as $i => $node ) {
             if ( !isset( $translated_strings[$i] ) ){
                     continue;
             }
-
+            if ( $translated_string_ids ) {
+                //todo test for all node types maybe don't use parent. for text works.
+                $nodes[$i]['node']->parent->setAttribute('data-trp-translate-id', $translated_string_ids[ $translated_strings[$i] ]->id);
+            }
             if($nodes[$i]['type']=='text') {
                 $nodes[$i]['node']->outertext = $translated_strings[$i];
             }
@@ -129,16 +133,16 @@ class TRP_Translation_Render{
                 $nodes[$i]['node']->setAttribute('placeholder',$translated_strings[$i]);
             }
             if($nodes[$i]['type']=='meta_desc') {
-                $nodes[$i]['node']->content =  $translated_strings[$i];
+                $nodes[$i]['node']->content = $translated_strings[$i];
             }
             if($nodes[$i]['type']=='iframe_src') {
-                $nodes[$i]['node']->src =  $translated_strings[$i];
+                $nodes[$i]['node']->src = $translated_strings[$i];
             }
             if($nodes[$i]['type']=='image_alt') {
-                $nodes[$i]['node']->alt =  $translated_strings[$i];
+                $nodes[$i]['node']->alt = $translated_strings[$i];
             }
             if($nodes[$i]['type']=='image_src') {
-                $nodes[$i]['node']->src =  $translated_strings[$i];
+                $nodes[$i]['node']->src = $translated_strings[$i];
                 if($nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i]!=$translateable_strings[$i]) {
                     $nodes[$i]['node']->srcset = "";
                 }
@@ -149,10 +153,18 @@ class TRP_Translation_Render{
         }
 
 
-        return (microtime(true) - $start)  . $html->save();
+        return /*(microtime(true) - $start)  . */ $html->save();
         //return '<html><body><h1>OK</h1></body></html>';
 
 
+    }
+
+    protected function get_translated_string_ids( $translated_strings, $language_code ){
+        if ( isset( $_GET['trp-edit-translations'] ) && esc_attr( $_GET['trp-edit-translations'] ) == 'preview' ) {
+            return false;
+        }
+        $translated_strings_ids = $this->trp_query->get_translation_ids( $translated_strings, $language_code );
+        return $translated_strings_ids;
     }
 
 

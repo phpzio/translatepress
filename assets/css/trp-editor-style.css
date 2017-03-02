@@ -1,3 +1,9 @@
+
+
+body{
+    margin: 0px;
+}
+
 .trp-editor{
     margin-left: 300px;
     position: fixed;
@@ -15,6 +21,10 @@
     background: #eee;
 }
 
+.trp-controls-container{
+    padding:12px;
+}
+
 .trp-preview{
     position: absolute;
     left: 0;
@@ -22,13 +32,11 @@
     height: 100%;
 }
 
-body{
-    margin: 0px;
-}
-
-iframe.trp-preview-iframe {
+iframe#trp-preview-iframe {
     position: absolute;
     height: 100%;
     width: 100%;
     border-width: 0px;
 }
+
+
