@@ -40,3 +40,21 @@ iframe#trp-preview-iframe {
 }
 
 
+/*
+    Editor Tabs
+ */
+
+.trp-section{
+    display:none;
+    transition: max-height 0.5s, overflow 0.5s 0.5s;
+}
+.trp-section.trp-current{
+    display:inherit;
+}
+#trp-tabs{
+    list-style: none;
+}
+#trp-tabs{
+    cursor:pointer;
+}
+
