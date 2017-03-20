@@ -47,4 +47,22 @@ class TRP_Translation_Manager{
             show_admin_bar( false );
         }
     }
+
+    public function get_translations() {
+        if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && ! empty( $_POST['strings'] ) ) {
+            $strings = json_decode( stripslashes ( $_POST['strings'] ) );
+            if ( is_array( $strings ) ) {
+                $ids = array();
+                $originals = array();
+                foreach ($strings as $string) {
+                    if (isset($string->id) && is_numeric($string->id)) {
+                        $id_array[] = (int)$string->id;
+                    }else if ( isset( $string->original ) ) {
+                        $originals[] = sanitize_text_field( $string->original );
+                    }
+                }
+            }
+        }
+
+    }
 }

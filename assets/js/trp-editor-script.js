@@ -9,6 +9,7 @@ function TRP_Editor(){
         jQuery.ajax({
             url: trp_ajax_url,
             type: 'post',
+            dataType: 'jsonp',
             data: {
                 action: 'trp_get_translations',
                 strings: JSON.stringify( strings_to_query )
@@ -51,10 +52,9 @@ function TRP_String( raw_string ){
     var jquery_object = jQuery( raw_string ).parent();
 
     this.get_details = function(){
-        var details = [];
-        details[ 'id' ] = id;
+        var details = {};
+        details['id'] = id;
         details[ 'original' ] = original;
-        details[ 'translated' ] = translated;
         return details;
     };
 
