@@ -168,9 +168,10 @@ class TRP_Translation_Render{
     }
 
 
-    protected function process_strings( $translateable_strings, $language_code ){
+    public function process_strings( $translateable_strings, $language_code ){
         $translated_strings = array();
-        $dictionary = $this->trp_query->get_existing_translations( $translateable_strings, $language_code );
+
+        $dictionary = $this->trp_query->get_existing_translations( array_values($translateable_strings), $language_code );
 
         $new_strings = array();
         foreach( $translateable_strings as $i => $string ){
@@ -181,7 +182,6 @@ class TRP_Translation_Render{
                 $new_strings[$i] = $translateable_strings[$i];
             }
         }
-
 
         if ( $this->machine_translator->is_available() ) {
             //todo translate page title too

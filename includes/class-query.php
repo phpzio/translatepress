@@ -130,4 +130,9 @@ class TRP_Query{
         return $this->db->prefix . 'trp_dictionary_' . $language_code;
     }
 
+    public function get_string_rows( $id_array, $original_array, $language_code ){
+        $dictionary = $this->db->get_results("SELECT id, original, translated, status FROM `" . $this->get_table_name( $language_code ) . "` WHERE id IN ('".implode( "','", $id_array )."') OR original IN ('".implode( "','", $original_array )."')", OBJECT_K );
+        return $dictionary;
+    }
+
 }

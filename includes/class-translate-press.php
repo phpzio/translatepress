@@ -43,7 +43,7 @@ class TRP_Translate_Press{
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings(), $this->trp_query );
         $this->translation_render = new TRP_Translation_Render( $this->settings->get_settings(), $this->machine_translator, $this->trp_query );
         $this->language_switcher = new TRP_Language_Switcher( $this->settings->get_settings() );
-        $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
+        $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings(), $this->translation_render, $this->trp_query );
     }
 
     protected function define_admin_hooks() {
@@ -62,6 +62,7 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
+
 
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
     }

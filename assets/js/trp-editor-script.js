@@ -6,23 +6,31 @@ function TRP_Editor(){
 
 
     this.ajax_request = function( strings_to_query ){
+
         jQuery.ajax({
             url: trp_ajax_url,
             type: 'post',
-            dataType: 'jsonp',
+            dataType: 'json',
             data: {
                 action: 'trp_get_translations',
+                language: TRP_LANGUAGE,
                 strings: JSON.stringify( strings_to_query )
             },
             success: function (response) {
-
+                console.log( response );
+            },
+            error: function(errorThrown){
+                console.log( 'Translate Press AJAX Request Error' );
             }
+
         });
     };
 
 
     this.initialize = function(){
+
         preview_iframe = jQuery( '#trp-preview-iframe').contents();
+
         var all_strings = preview_iframe.find( 'body *' ).contents().filter(function(){
             if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
                 return this
@@ -37,12 +45,8 @@ function TRP_Editor(){
             strings_to_query.push( string.get_details());
         }
 
-
-
         _this.ajax_request( strings_to_query );
-
     };
-
 
 
 
@@ -73,7 +77,7 @@ function TRP_String( raw_string ){
         }
     };
 
-    this.initialize();
+    _this.initialize();
 }
 
 
@@ -99,9 +103,9 @@ function TRP_Tabs(){
 
 
 var trpEditor;
-
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {
+
     trpEditor = new TRP_Editor();
     //todo move this in trp_editor constructor
     var trpTabs = new TRP_Tabs();
