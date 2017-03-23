@@ -33,8 +33,11 @@ class TRP_Translation_Manager{
 
     public function enqueue_scripts_and_styles(){
 
+
         wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js' );
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css' );
+        wp_localize_script( 'trp-scripts-for-editor', 'some_variable', array( 'customajax' => TRP_PLUGIN_URL . '/includes/trp-ajax.php' , __FILE__ ) );
+        //error_log(TRP_PLUGIN_URL . '/includes/trp-ajax.php' );
 
         $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'trp-translation-manager-script' ) );
         //todo maybe more styles here
@@ -70,42 +73,42 @@ class TRP_Translation_Manager{
                 if ( is_array( $strings ) ) {
                     $id_array = array();
                     $original_array = array();
+                    $dictionaries = array();
                     foreach ($strings as $key => $string) {
                         if ( isset( $string->id ) && is_numeric( $string->id ) ) {
                             $id_array[$key] = (int)$string->id;
                         } else if ( isset( $string->original ) ) {
-                            /*if ( $string->original == 'new word' )
-                                error_log('new word');*/
                             $original_array[$key] = sanitize_text_field( $string->original );
                         }
                     }
                     // todo make sure the language exists in the settings
                     $current_language = esc_attr( $_POST['language'] );
-                    //todo if language code is default, get all languages.
+
+                    // necessary in order to obtain all the original strings
                     if ( $this->settings['default-language'] != $current_language ) {
                         $this->translation_render->process_strings($original_array, $current_language);
-                        $strings[$current_language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
+                        $dictionaries[$current_language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
                     }
 
-
-
                     foreach( $this->settings['translation-languages'] as $language ) {
-                        if ( $language == $current_language || $language == $this->settings['default-language'] ){
+                        if ( $language == $this->settings['default-language'] ){
+                            $dictionaries[$language]['default-language'] = true;
+                            continue;
+                        }
+                        if ( $language == $current_language ){
                             continue;
                         }
                         if ( empty( $original_strings ) ){
-                            $original_strings = extract_original_strings( $strings[$current_language], $original_array, $id_array );
+                            $original_strings = $this->extract_original_strings( $dictionaries[$current_language], $original_array, $id_array );
                         }
                         $this->translation_render->process_strings($original_strings, $language);
-                        $strings[$language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
-
-                        //TODO NOT TESTED . make sure the current language is not redundant.
+                        $dictionaries[$language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
                     }
 
+                    //error_log(json_encode($dictionaries));
 
-                    error_log( json_encode( $strings ) );
 
-                    echo json_encode('asfasfda');
+                    echo json_encode( $dictionaries );
                 }
 
             }

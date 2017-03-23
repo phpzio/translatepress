@@ -3,12 +3,13 @@ function TRP_Editor(){
     var _this = this;
     var preview_iframe;
     var strings = [];
+    var dictionaries = [];
 
 
     this.ajax_request = function( strings_to_query ){
 
         jQuery.ajax({
-            url: trp_ajax_url,
+            url: "http://local.profile-builder.dev/wp-content/plugins/translate-press/includes/trp-ajax1.php", //trp_ajax_url
             type: 'post',
             dataType: 'json',
             data: {
@@ -17,7 +18,7 @@ function TRP_Editor(){
                 strings: JSON.stringify( strings_to_query )
             },
             success: function (response) {
-                console.log( response );
+                _this.populate_strings( response );
             },
             error: function(errorThrown){
                 console.log( 'Translate Press AJAX Request Error' );
@@ -45,9 +46,52 @@ function TRP_Editor(){
             strings_to_query.push( string.get_details());
         }
 
+        dictionaries[TRP_LANGUAGE] = new TRP_Dictionary( TRP_LANGUAGE );
+        dictionaries[TRP_LANGUAGE].set_on_screen_strings( strings );
+
         _this.ajax_request( strings_to_query );
     };
 
+    this.populate_strings = function( response ){
+        for ( var key in response ) {
+            if ( response.hasOwnProperty( key ) ) {
+                if ( dictionaries[key] == undefined ){
+                    dictionaries[key] = new TRP_Dictionary( key );
+                }
+
+                dictionaries[key].set_strings( response[key] );
+                //TRP_LANGUAGE
+
+                //console.log(key + " -> " + dictionaries[key]);
+            }
+        }
+
+
+
+        //for ( var i = 0; i < strings.length; i++) {
+            //strings_to_query.push( string.get_details());
+        //}
+    }
+}
+
+
+function TRP_Dictionary( language_code, strings ){
+
+    var strings = []; // TRP_String
+    this.language = language_code;
+    var default_language = false;
+
+    this.set_strings = function( strings_object ){
+        if ( TRP_LANGUAGE == this.language ){
+            // make sure to map existing
+        }else{
+            // store them properly without jquery object to point at.
+        }
+    };
+
+    this.set_on_screen_strings = function( new_strings ){
+        strings = strings.concat( new_strings );
+    };
 
 
 }

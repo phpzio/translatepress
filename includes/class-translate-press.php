@@ -52,8 +52,8 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'admin_notices', $this->settings, 'admin_notices' );
         $this->loader->add_action( 'admin_enqueue_scripts', $this->settings, 'enqueue_scripts_and_styles' );
 
-        $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations', $this->translation_manager, 'get_translations' );
-        $this->loader->add_action( 'wp_ajax_trp_get_translations', $this->translation_manager, 'get_translations' );
+        $this->loader->add_action( 'SOMETEXT_nopriv_trp_get_translations', $this->translation_manager, 'get_translations' );
+        $this->loader->add_action( 'SOMETEXT_trp_get_translations', $this->translation_manager, 'get_translations' );
     }
 
     protected function define_frontend_hooks(){
@@ -62,6 +62,8 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
+
+
 
 
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );

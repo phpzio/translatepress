@@ -1,86 +1,65 @@
 <?php
-// This is a combination of the ajax approach by raz ohad
-// (see https://coderwall.com/p/of7y2q)
-// and the wp-settings.php file after 'if ( SHORTINIT ) return false;'
+/**
+ * WordPress AJAX Process Execution.
+ *
+ * @package WordPress
+ * @subpackage Administration
+ *
+ * @link https://codex.wordpress.org/AJAX_in_Plugins
+ */
 
-// I'm excluding specific plugins from loading when we loop
-// through the plugin array returned by wp_get_active_and_valid_plugins().
+/**
+ * Executing AJAX process.
+ *
+ * @since 2.1.0
+ */
+define( 'DOING_AJAX', true );
+define( 'SHORTINIT', true );
 
-//mimic the actuall admin-ajax
-define('DOING_AJAX', true);
-
-if (!isset( $_REQUEST['action']))
-    die('-1');
-
-ini_set('html_errors', 0);
-
-//make sure we skip most of the loading which we might not need
-//http://core.trac.wordpress.org/browser/branches/3.4/wp-settings.php#L99
-define('SHORTINIT', true);
-
-//make sure you update this line
-//to the relative location of the wp-load.php
-require_once('../../../../wp-load.php');
-
-//Typical headers
-header('Content-Type: text/html');
-send_nosniff_header();
-//Disable caching
-header('Cache-Control: no-cache');
-header('Pragma: no-cache');
-
-// from wp-settings.php after SHORTINIT
+/** Load WordPress Bootstrap */
+require_once( dirname( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) ) . '/wp-load.php' );
 
 // Load the L10n library.
 require_once( ABSPATH . WPINC . '/l10n.php' );
 
-// Run the installer if WordPress is not installed.
-wp_not_installed();
-
 // Load most of WordPress.
 require( ABSPATH . WPINC . '/class-wp-walker.php' );
-require( ABSPATH . WPINC . '/class-wp-ajax-response.php' );
 require( ABSPATH . WPINC . '/formatting.php' );
 require( ABSPATH . WPINC . '/capabilities.php' );
+require( ABSPATH . WPINC . '/class-wp-roles.php' );
+require( ABSPATH . WPINC . '/class-wp-role.php' );
+require( ABSPATH . WPINC . '/class-wp-user.php' );
 require( ABSPATH . WPINC . '/query.php' );
 require( ABSPATH . WPINC . '/date.php' );
 require( ABSPATH . WPINC . '/theme.php' );
 require( ABSPATH . WPINC . '/class-wp-theme.php' );
 require( ABSPATH . WPINC . '/template.php' );
 require( ABSPATH . WPINC . '/user.php' );
+require( ABSPATH . WPINC . '/class-wp-user-query.php' );
 require( ABSPATH . WPINC . '/meta.php' );
+require( ABSPATH . WPINC . '/class-wp-meta-query.php' );
 require( ABSPATH . WPINC . '/general-template.php' );
 require( ABSPATH . WPINC . '/link-template.php' );
 require( ABSPATH . WPINC . '/author-template.php' );
 require( ABSPATH . WPINC . '/post.php' );
+require( ABSPATH . WPINC . '/class-walker-page.php' );
+require( ABSPATH . WPINC . '/class-walker-page-dropdown.php' );
+require( ABSPATH . WPINC . '/class-wp-post.php' );
 require( ABSPATH . WPINC . '/post-template.php' );
 require( ABSPATH . WPINC . '/revision.php' );
-require( ABSPATH . WPINC . '/post-formats.php' );
 require( ABSPATH . WPINC . '/post-thumbnail-template.php' );
-require( ABSPATH . WPINC . '/category.php' );
-require( ABSPATH . WPINC . '/category-template.php' );
-require( ABSPATH . WPINC . '/comment.php' );
-require( ABSPATH . WPINC . '/comment-template.php' );
-require( ABSPATH . WPINC . '/rewrite.php' );
-require( ABSPATH . WPINC . '/feed.php' );
-require( ABSPATH . WPINC . '/bookmark.php' );
-require( ABSPATH . WPINC . '/bookmark-template.php' );
-require( ABSPATH . WPINC . '/kses.php' );
-require( ABSPATH . WPINC . '/cron.php' );
 require( ABSPATH . WPINC . '/deprecated.php' );
 require( ABSPATH . WPINC . '/script-loader.php' );
 require( ABSPATH . WPINC . '/taxonomy.php' );
-require( ABSPATH . WPINC . '/update.php' );
-require( ABSPATH . WPINC . '/canonical.php' );
+require( ABSPATH . WPINC . '/class-wp-term.php' );
+require( ABSPATH . WPINC . '/class-wp-tax-query.php' );
 require( ABSPATH . WPINC . '/shortcodes.php' );
-require( ABSPATH . WPINC . '/class-wp-embed.php' );
 require( ABSPATH . WPINC . '/media.php' );
-require( ABSPATH . WPINC . '/http.php' );
-require( ABSPATH . WPINC . '/class-http.php' );
 require( ABSPATH . WPINC . '/widgets.php' );
+require( ABSPATH . WPINC . '/class-wp-widget.php' );
+require( ABSPATH . WPINC . '/class-wp-widget-factory.php' );
 require( ABSPATH . WPINC . '/nav-menu.php' );
-require( ABSPATH . WPINC . '/nav-menu-template.php' );
-require( ABSPATH . WPINC . '/admin-bar.php' );
+
 
 // Load multisite-specific files.
 if ( is_multisite() ) {
@@ -89,249 +68,50 @@ if ( is_multisite() ) {
     require( ABSPATH . WPINC . '/ms-deprecated.php' );
 }
 
-// Define constants that rely on the API to obtain the default value.
-// Define must-use plugin directory constants, which may be overridden in the sunrise.php drop-in.
 wp_plugin_directory_constants();
-
-// Load must-use plugins.
-foreach ( wp_get_mu_plugins() as $mu_plugin ) {
-    include_once( $mu_plugin );
-}
-unset( $mu_plugin );
-
-// Load network activated plugins.
-if ( is_multisite() ) {
-    foreach( wp_get_active_network_plugins() as $network_plugin ) {
-        include_once( $network_plugin );
-    }
-    unset( $network_plugin );
-}
-
-/**
- * Fires once all must-use and network-activated plugins have loaded.
- *
- * @since 2.8.0
- */
-do_action( 'muplugins_loaded' );
-
-if ( is_multisite() )
-    ms_cookie_constants(  );
-
-// Define constants after multisite is loaded. Cookie-related constants may be overridden in ms_network_cookies().
-wp_cookie_constants();
-
-// Define and enforce our SSL constants
-wp_ssl_constants();
-
-// Create common globals.
-require( ABSPATH . WPINC . '/vars.php' );
-
-// Make taxonomies and posts available to plugins and themes.
-// @plugin authors: warning: these get registered again on the init hook.
-create_initial_taxonomies();
-create_initial_post_types();
-
-// Register the default theme directory root
-register_theme_directory( get_theme_root() );
-
-// Load active plugins...
-//      well we don't need to load all our plugins for ajax calls
-// as you can abstract from the loop, wp_get_active_and_valid_plugins() is the
-// server side path to the plugin file, so just evaluate against that...eg:
-//
-//  [8] => /wp-content/plugins/facebook-awd/AWD_facebook.php
-//
-
-$ldd_plugins = array();
-foreach ( wp_get_active_and_valid_plugins() as $plugin ) {
-    if(strpos($plugin, 'ewww-image-optimizer') !== false)           continue;
-    if(strpos($plugin, 'facebook-awd') !== false)                   continue;
-    if(strpos($plugin, 'instagrabber') !== false)                   continue;
-    if(strpos($plugin, 'w3-total-cache') !== false)                 continue;
-    if(strpos($plugin, 'wp-pagenavi') !== false)                    continue;
-
-    include_once( $plugin );
-    $ldd_plugins[] = $plugin;
-}
-//print_r($ldd_plugins);
-unset($ldd_plugins);
-unset( $plugin );
-
-// Load pluggable functions.
-require( ABSPATH . WPINC . '/pluggable.php' );
-require( ABSPATH . WPINC . '/pluggable-deprecated.php' );
-
-// Set internal encoding.
-wp_set_internal_encoding();
-
-// Run wp_cache_postload() if object cache is enabled and the function exists.
-if ( WP_CACHE && function_exists( 'wp_cache_postload' ) )
-    wp_cache_postload();
-
-/**
- * Fires once activated plugins have loaded.
- *
- * Pluggable functions are also available at this point in the loading order.
- *
- * @since 1.5.0
- */
-do_action( 'plugins_loaded' );
-
-// Define constants which affect functionality if not already defined.
-wp_functionality_constants();
-
-// Add magic quotes and set up $_REQUEST ( $_GET + $_POST )
-wp_magic_quotes();
-
-/**
- * Fires when comment cookies are sanitized.
- *
- * @since 2.0.11
- */
-do_action( 'sanitize_comment_cookies' );
-
-/**
- * WordPress Query object
- * @global object $wp_the_query
- * @since 2.0.0
- */
-$wp_the_query = new WP_Query();
-
-/**
- * Holds the reference to @see $wp_the_query
- * Use this global for WordPress queries
- * @global object $wp_query
- * @since 1.5.0
- */
-$wp_query = $wp_the_query;
-
-/**
- * Holds the WordPress Rewrite object for creating pretty URLs
- * @global object $wp_rewrite
- * @since 1.5.0
- */
-$GLOBALS['wp_rewrite'] = new WP_Rewrite();
-
-/**
- * WordPress Object
- * @global object $wp
- * @since 2.0.0
- */
-$wp = new WP();
-
-/**
- * WordPress Widget Factory Object
- * @global object $wp_widget_factory
- * @since 2.8.0
- */
-$GLOBALS['wp_widget_factory'] = new WP_Widget_Factory();
-
-/**
- * WordPress User Roles
- * @global object $wp_roles
- * @since 2.0.0
- */
-$GLOBALS['wp_roles'] = new WP_Roles();
-
-/**
- * Fires before the theme is loaded.
- *
- * @since 2.6.0
- */
-do_action( 'setup_theme' );
-
-// Define the template related constants.
 wp_templating_constants(  );
 
-// Load the default text localization domain.
-load_default_textdomain();
-
-$locale = get_locale();
-$locale_file = WP_LANG_DIR . "/$locale.php";
-if ( ( 0 === validate_file( $locale ) ) && is_readable( $locale_file ) )
-    require( $locale_file );
-unset( $locale_file );
-
-// Pull in locale data after loading text domain.
-require_once( ABSPATH . WPINC . '/locale.php' );
-
-/**
- * WordPress Locale object for loading locale domain date and various strings.
- * @global object $wp_locale
- * @since 2.1.0
- */
-$GLOBALS['wp_locale'] = new WP_Locale();
-
-// Load the functions for the active theme, for both parent and child theme if applicable.
-if ( ! defined( 'WP_INSTALLING' ) || 'wp-activate.php' === $pagenow ) {
-    if ( TEMPLATEPATH !== STYLESHEETPATH && file_exists( STYLESHEETPATH . '/functions.php' ) )
-        include( STYLESHEETPATH . '/functions.php' );
-    if ( file_exists( TEMPLATEPATH . '/functions.php' ) )
-        include( TEMPLATEPATH . '/functions.php' );
-}
-
-/**
- * Fires after the theme is loaded.
- *
- * @since 3.0.0
- */
-do_action( 'after_setup_theme' );
-
-// Set up current user.
-$wp->init();
-
-/**
- * Fires after WordPress has finished loading but before any headers are sent.
- *
- * Most of WP is loaded at this stage, and the user is authenticated. WP continues
- * to load on the init hook that follows (e.g. widgets), and many plugins instantiate
- * themselves on it for all sorts of reasons (e.g. they need a user, a taxonomy, etc.).
- *
- * If you wish to plug an action once WP is loaded, use the wp_loaded hook below.
- *
- * @since 1.5.0
- */
-do_action( 'init' );
-
-// Check site status
-if ( is_multisite() ) {
-    if ( true !== ( $file = ms_site_check() ) ) {
-        require( $file );
-        die();
-    }
-    unset($file);
-}
-
-/**
- * This hook is fired once WP, all plugins, and the theme are fully loaded and instantiated.
- *
- * AJAX requests should use wp-admin/admin-ajax.php. admin-ajax.php can handle requests for
- * users not logged in.
- *
- * @link http://codex.wordpress.org/AJAX_in_Plugins
- *
- * @since 3.0.0
- */
-do_action( 'wp_loaded' );
+//include( dirname( __FILE__ ) . '/functions.php' );
+//do_action( 'after_setup_theme' );
 
 
-$action = esc_attr(trim($_POST['action']));
+
+// Require an action parameter
+if ( empty( $_REQUEST['action'] ) )
+    die( '0' );
+
+@header( 'Content-Type: text/html; charset=' . get_option( 'blog_charset' ) );
+@header( 'X-Robots-Tag: noindex' );
+
+send_nosniff_header();
+nocache_headers();
+
+//$action = esc_attr(trim($_POST['action']));
+$action = trim($_POST['action'] );
 
 //A bit of security
 $allowed_actions = array(
-    'my_allow_action_1',
-    'my_allow_action_2',
-    'my_allow_action_3',
-    'my_allow_action_4',
-    'my_allow_action_5'
+    'trp_get_translations',
+    'custom_action2'
 );
 
-if(in_array($action, $allowed_actions)){
-    if(is_user_logged_in())
-        do_action('MY_AJAX_HANDLER_'.$action);
-    else
-        do_action('MY_AJAX_HANDLER_nopriv_'.$action);
-}
-else{
+
+
+
+//For logged in users
+/*add_action('SOMETEXT_trp_get_translations', 'handler_fun1');
+add_action('SOMETEXT_custom_action2', 'handler_fun1');
+
+//For guests
+add_action('SOMETEXT_nopriv_custom_action2', 'handler_fun2');
+add_action('SOMETEXT_nopriv_custom_action1', 'handler_fun1');
+*/
+if(in_array($action, $allowed_actions)) {
+    //if(current_user_can('manage_options'))
+        do_action('SOMETEXT_'.$action);
+   // else
+        do_action('SOMETEXT_nopriv_'.$action);
+} else {
     die('-1');
 }
+

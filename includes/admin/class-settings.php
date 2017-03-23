@@ -59,7 +59,7 @@ class TRP_Settings{
         if ( ! in_array( $settings['default-language'], $settings['publish-languages'] ) ){
             array_unshift( $settings['publish-languages'], $settings['default-language'] );
         }
-        error_log( json_encode( $settings ));
+        //error_log( json_encode( $settings ));
 
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
