@@ -101,8 +101,8 @@ class TRP_Translation_Manager{
                         if ( empty( $original_strings ) ){
                             $original_strings = $this->extract_original_strings( $dictionaries[$current_language], $original_array, $id_array );
                         }
-                        $this->translation_render->process_strings($original_strings, $language);
-                        $dictionaries[$language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
+                        $this->translation_render->process_strings( $original_strings, $language );
+                        $dictionaries[$language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
                     }
 
                     //error_log(json_encode($dictionaries));
