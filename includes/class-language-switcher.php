@@ -12,6 +12,7 @@ class TRP_Language_Switcher{
     }
 
     public function language_switcher(){
+
         ob_start();
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;

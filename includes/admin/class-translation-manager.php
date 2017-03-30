@@ -27,8 +27,10 @@ class TRP_Translation_Manager{
 
         global $trp_settings;
         $trp_settings = $this->settings;
+
+
         //todo no outside urls
-        return TRP_PLUGIN_DIR . 'includes/partials/translation-manager.php' ;
+        return TRP_PLUGIN_DIR . 'includes/admin/partials/translation-manager.php' ;
     }
 
     public function enqueue_scripts_and_styles(){
@@ -53,8 +55,7 @@ class TRP_Translation_Manager{
             show_admin_bar( false );
         }
         wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery') );
-
-
+        wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css' );
     }
 
     protected function extract_original_strings( $strings, $original_array, $id_array ){
@@ -102,13 +103,68 @@ class TRP_Translation_Manager{
                             $original_strings = $this->extract_original_strings( $dictionaries[$current_language], $original_array, $id_array );
                         }
                         $this->translation_render->process_strings( $original_strings, $language );
-                        $dictionaries[$language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
+                        $dictionaries[$language] = $this->trp_query->get_string_rows( array(), $original_strings, $language );
+
+                        //error_log(json_encode( $dictionaries[$language]));
                     }
 
                     //error_log(json_encode($dictionaries));
 
 
                     echo json_encode( $dictionaries );
+                }
+
+            }
+        }
+
+        die();
+    }
+
+/*
+ * $update_strings = array();
+        foreach( $new_strings as $i => $string ){
+            if ( isset( $untranslated_list[$string] ) ){
+                //string exists as not translated, thus need to be updated if we have translation
+                if ( isset( $machine_strings[$i] ) ) {
+                    // we have a translation
+                    array_push ( $update_strings, array(
+                        'id' => $untranslated_list[$string]->id,
+                        'original' => $untranslated_list[$string]->original,
+                        'translated' => $machine_strings[$i],
+                        'status' => $this->trp_query->get_constant_machine_translated ) );
+                    $translated_strings[$i] = $machine_strings[$i];
+                }
+                unset( $new_strings[$i] );
+            }
+        }
+ */
+    public function save_translations(){
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
+                $strings = json_decode(stripslashes($_POST['strings']));
+                if ( is_array( $strings ) ) {
+                    $update_strings = array();
+                    foreach ( $strings as $string ) {
+                        if ( isset( $string->id ) && is_numeric( $string->id ) && isset( $string->language ) && in_array( $string->language, $this->settings['translation-languages'] ) && $string->language != $this->settings['default-language'] ) {
+                            $update_strings[$string->language] = array();
+                            array_push( $update_strings[$string->language], array(
+                                'id'            => (int)$string->id,
+                                'original'      => '',
+                                'translated'    => sanitize_text_field( $string->translated ),
+                                'status'        => (int)$string->status
+                            ) );
+
+                        }
+                    }
+
+                    foreach( $update_strings as $language => $update_string_array ) {
+                        //todo create an UPDATE function and check if the insert_query also works with UPDATE
+                        $this->trp_query->insert_strings( array( array( 'id' => '', 'original'=>'dummy')), $update_string_array, $language );
+                    }
+
+
+                    //todo maybe nothing
+                    echo 'succes';
                 }
 
             }

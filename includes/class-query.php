@@ -89,7 +89,7 @@ class TRP_Query{
         }
         foreach ( $update_strings as $string ) {
            // $values .= $this->format_value( $string['id'], $string['original'], $string['traslated'], $string['status'] );
-            array_push( $values, $string['id'], $string['original'], $string['traslated'], $string['status'] );
+            array_push( $values, $string['id'], $string['original'], $string['translated'], $string['status'] );
             $place_holders[] = "( '%d', '%s', '%s', '%d')";
         }
 
@@ -108,6 +108,7 @@ class TRP_Query{
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.
     }
+
 
     public function get_translation_ids( $translated_strings, $language_code ){
         $dictionary = $this->db->get_results("SELECT translated, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE translated IN ('".implode( "','", $translated_strings )."')", OBJECT_K );
