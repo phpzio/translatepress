@@ -12,7 +12,7 @@ require_once('../../../../wp-load.php');
 require_once ABSPATH . WPINC . '/user.php';
 require_once ABSPATH . WPINC . '/capabilities.php';
 global $wpdb;
-error_log( 'this is wpdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  bbbbbbbbbbbbbbbbb');// . json_encode($wpdb));
+//error_log( 'this is wpdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  bbbbbbbbbbbbbbbbb');// . json_encode($wpdb));
 //Typical headers
 header('Content-Type: text/html');
 send_nosniff_header();

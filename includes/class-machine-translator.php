@@ -16,10 +16,9 @@ class TRP_Machine_Translator{
 
     public function translate_array( $new_strings, $language_code ){
         //TODO API CALL
-
         //$this->trp_query->insert_strings( $new_strings,$language_code );
         // todo store all the strings in db, regardless of whether translations are available
-        return false;
+        //return false;
         //dummy
         $translated_strings = $new_strings;
         foreach ( $translated_strings as $key => $string ){

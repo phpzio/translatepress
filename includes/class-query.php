@@ -17,11 +17,18 @@ class TRP_Query{
         $this->settings =$settings;
     }
 
+    //todo maybe move to UTILS to avoid duplicate
+    protected function full_trim( $word ) {
+        return trim( $word," \t\n\r\0\x0B\xA0�" );
+    }
+
     public function get_existing_translations( $strings_array, $language_code ){
 
-        //todo what happens if a string has quotes in it. it might break.
-        $dictionary = $this->db->get_results("SELECT original,translated FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','", $strings_array )."') AND status != " . self::NOT_TRANSLATED, OBJECT_K );
 
+//        error_log(json_encode($strings_array));
+        //todo what happens if a string has quotes in it. it might break.
+        $dictionary = $this->db->get_results("SELECT original,translated FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','", array_map( array( $this, 'full_trim' ), $strings_array ) )."') AND status != " . self::NOT_TRANSLATED, OBJECT_K );
+//        error_log(json_encode($dictionary));
         return $dictionary;
     }
 
@@ -80,7 +87,7 @@ class TRP_Query{
         $new_strings = array_unique( $new_strings );
         foreach ( $new_strings as $string ) {
             //error_log( '[new]' . $string );
-            array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED );
+            array_push( $values, NULL, $this->full_trim( $string ), NULL, self::NOT_TRANSLATED );
             $place_holders[] = "( '%d', '%s', '%s', '%d')";
 
             /*
@@ -94,24 +101,24 @@ class TRP_Query{
         }
 
         // rtrim? virgula
-        $on_duplicate = ' ON DUPLICATE KEY UPDATE original=VALUES(original),translated=VALUES(translated)';
+        $on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status)';
         //error_log($values);
 
         /*INSERT into `wp_trp_dictionary_el` (id,original,translated) VALUES (1,1,1),(null,2,3),(null,9,3),(4,10,12) ON DUPLICATE KEY UPDATE original=VALUES(original),translated=VALUES(translated)*/
 
         $query .= implode(', ', $place_holders);
+        $query .= $on_duplicate;
 
         /*$query .= rtrim( $place_holders, ',' );
         $query .= ' ' . rtrim( $values, ',' );*/
-
         $this->db->query( $this->db->prepare("$query ", $values) );//, rtrim( $values, ',' ) ));
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.
     }
 
 
-    public function get_translation_ids( $translated_strings, $language_code ){
-        $dictionary = $this->db->get_results("SELECT translated, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE translated IN ('".implode( "','", $translated_strings )."')", OBJECT_K );
+    public function get_string_ids( $original_strings, $language_code ){
+        $dictionary = $this->db->get_results("SELECT original, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','", $original_strings )."')", OBJECT_K );
 
         return $dictionary;
     }

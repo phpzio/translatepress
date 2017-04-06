@@ -21,6 +21,7 @@ function TRP_Editor(){
                 strings: JSON.stringify( strings_to_query )
             },
             success: function (response) {
+                console.log(response);
                 _this.populate_strings( response );
             },
             error: function(errorThrown){
@@ -31,6 +32,7 @@ function TRP_Editor(){
     };
 
     this.ajax_save_strings = function ( strings_to_save ){
+        console.log(strings_to_save);
         jQuery.ajax({
             url: trp_ajax_url,
             type: 'post',
@@ -44,6 +46,7 @@ function TRP_Editor(){
             },
             error: function(errorThrown){
                 console.log( 'Translate Press AJAX Request Error' );
+                console.log(errorThrown);
             }
         });
     };
@@ -58,29 +61,36 @@ function TRP_Editor(){
         var original = _this.original_textarea.val();
         for( var key in translated_textareas ){
             var translated = translated_textareas[key].val();
+            console.log(translated);
             if ( dictionaries[key].get_string_by_original( original ).translated != translated ){
                 var id = translated_textareas[key].attr( TRP_TRANSLATION_ID );
-                strings_to_save.push( { language: key, id: id, translated: translated, status: 2 } );
+                var status = 2;
+                if ( translated.trim() == '' ){
+                    status = 0;
+                }
+                strings_to_save.push( { language: key, id: id, original: original, translated: translated, status: status } );
             }
         }
+
         if ( strings_to_save.length > 0 ){
             _this.ajax_save_strings( strings_to_save );
         }
     };
 
-
     this.initialize = function(){
 
         this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
-
+/*
         var all_strings = this.preview_iframe.find( 'body *' ).contents().filter(function(){
             if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
                 return this
             }
-        }).wrap("<translate-press></translate-press>")/*.*/;
+        }).wrap("<translate-press></translate-press>");*/
 
         //all_strings.parent().attr('trp-translate', 'trp-translate');
 
+        var all_strings = this.preview_iframe.contents().find( 'translate-press' );
+        //console.log(all_strings);
 
         var strings_to_query = [];
 
@@ -121,10 +131,16 @@ function TRP_Editor(){
         preview_iframe.on( 'click', 'translate', _this.select_string );*/
     }
 
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
 
     this.edit_strings = function ( trp_string ){
 
-        _this.original_textarea.val( trp_string.original );
+        _this.original_textarea.val( decodeHtml( trp_string.original ) );
         for ( var key in translated_textareas ){
             var translated = '';
             var id = '';
@@ -159,8 +175,9 @@ function TRP_Editor(){
                 dictionaries[key].set_strings( response[key] );
                 translated_textareas[key] = jQuery( '#trp-translated-' + key );
 
-                }
             }
+        }
+        console.log(dictionaries);
 
         //dictionaries[TRP_LANGUAGE].prepare_edit_buttons();
     };
@@ -286,11 +303,11 @@ function TRP_String( language ){
     };
 
     this.set_raw_string = function( raw_string ){
-        jquery_object = jQuery( raw_string ).parent();
-        var translation_id_attribute = jquery_object.parent().attr( TRP_TRANSLATION_ID );
+        //jquery_object = jQuery( raw_string ).parent();
+        jquery_object = jQuery( raw_string );
+        var translation_id_attribute = jquery_object.attr( TRP_TRANSLATION_ID );
         if ( translation_id_attribute ){
             this.id = translation_id_attribute;
-            this.translated = jquery_object.text();
         }else{
             this.original = jquery_object.text();
         }
@@ -310,7 +327,6 @@ function TRP_Tabs(){
 
         jQuery("#"+tab_id).addClass('trp-current');
     };
-
 
     this.add_event_handlers = function(){
         jQuery( '#trp-tabs li' ).on( 'click', _this.change_tab );

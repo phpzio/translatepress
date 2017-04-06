@@ -59,7 +59,7 @@ class TRP_Translation_Manager{
     }
 
     protected function extract_original_strings( $strings, $original_array, $id_array ){
-        if ( !empty( $strings ) ) {
+        if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {
                 $original_array[] = $strings[$id]->original;
             }
@@ -89,6 +89,8 @@ class TRP_Translation_Manager{
                     if ( $this->settings['default-language'] != $current_language ) {
                         $this->translation_render->process_strings($original_array, $current_language);
                         $dictionaries[$current_language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
+                    }else{
+                        $dictionaries[$current_language] = array();
                     }
 
                     foreach( $this->settings['translation-languages'] as $language ) {
@@ -149,22 +151,23 @@ class TRP_Translation_Manager{
                             $update_strings[$string->language] = array();
                             array_push( $update_strings[$string->language], array(
                                 'id'            => (int)$string->id,
-                                'original'      => '',
-                                'translated'    => sanitize_text_field( $string->translated ),
+                                'original'      => sanitize_text_field( $string->original ),
+                                // todo whitespace is removed when using sanitize_text_field, which may be a problem when rendering.
+                                'translated'    => sanitize_text_field($string->translated),
                                 'status'        => (int)$string->status
                             ) );
 
                         }
                     }
-
+                    //error_log( json_encode($update_strings));
                     foreach( $update_strings as $language => $update_string_array ) {
                         //todo create an UPDATE function and check if the insert_query also works with UPDATE
-                        $this->trp_query->insert_strings( array( array( 'id' => '', 'original'=>'dummy')), $update_string_array, $language );
+                        $this->trp_query->insert_strings( array(), $update_string_array, $language );
                     }
 
 
                     //todo maybe nothing
-                    echo 'succes';
+                    echo json_encode('succes');
                 }
 
             }

@@ -18,6 +18,7 @@ class TRP_Translation_Render{
             return;
 
         if ( $this->start_output_buffering() ) {
+            mb_http_output("UTF-8");
             ob_start(array($this, 'translate_page'));
         }
     }
@@ -54,13 +55,14 @@ class TRP_Translation_Render{
 
         $translateable_strings = array();
         $nodes = array();
+        //$output = utf8_encode ($output);
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         foreach ( $html->find('text') as $k => $row ){
             if($this->full_trim($row->outertext)!="" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric($this->full_trim($row->outertext)) && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
                 && !$this->hasAncestorAttribute( $row, $no_translate_attribute )){
                 if(strpos($row->outertext,'[vc_') === false) {
-                    array_push( $translateable_strings, $row->outertext );
+                    array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     array_push($nodes, array('node'=>$row,'type'=>'text') );
                 }
             }
@@ -113,18 +115,35 @@ class TRP_Translation_Render{
         }
 
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
-        $translated_string_ids = $this->get_translated_string_ids( $translated_strings, $language_code );
+
+        $preview_mode = isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview';
+        if ( $preview_mode ) {
+            $translated_string_ids = $this->trp_query->get_string_ids($translateable_strings, $language_code);
+        }
+        //error_log(json_encode($translated_strings));
 
         foreach ( $nodes as $i => $node ) {
-            if ( !isset( $translated_strings[$i] ) ){
+            $translation_available = isset( $translated_strings[$i] );
+            if ( ! ( $translation_available || $preview_mode ) ){
                     continue;
             }
-            if ( $translated_string_ids ) {
+
+            /*if ( $translated_string_ids ) {
                 //todo test for all node types maybe don't use parent. for text works.
                 $nodes[$i]['node']->parent->setAttribute('data-trp-translate-id', $translated_string_ids[ $translated_strings[$i] ]->id);
-            }
+            }*/
             if($nodes[$i]['type']=='text') {
-                $nodes[$i]['node']->outertext = $translated_strings[$i];
+                if ($translation_available ) {
+                    // keeps whitespaces of the original string.
+                    $translated_strings[$i] = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->outertext);
+                    if ( $preview_mode ) {
+                        $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $translated_strings[$i] . '</translate-press>';
+                    }else{
+                        $nodes[$i]['node']->outertext = $translated_strings[$i];
+                    }
+                }else{
+                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
+                }
             }
             if($nodes[$i]['type']=='submit') {
                 $nodes[$i]['node']->setAttribute('value',$translated_strings[$i]);
@@ -160,10 +179,7 @@ class TRP_Translation_Render{
     }
 
     protected function get_translated_string_ids( $translated_strings, $language_code ){
-        if ( isset( $_GET['trp-edit-translations'] ) && esc_attr( $_GET['trp-edit-translations'] ) == 'preview' ) {
-            return false;
-        }
-        $translated_strings_ids = $this->trp_query->get_translation_ids( $translated_strings, $language_code );
+
         return $translated_strings_ids;
     }
 
@@ -176,8 +192,8 @@ class TRP_Translation_Render{
         $new_strings = array();
         foreach( $translateable_strings as $i => $string ){
             //strings existing in database,
-            if ( isset( $dictionary[$string]->translated ) ){
-                $translated_strings[$i] = $dictionary[$string]->translated;
+            if ( isset( $dictionary[$this->full_trim($string)]->translated ) ){
+                $translated_strings[$i] = $dictionary[$this->full_trim($string)]->translated;
             }else{
                 $new_strings[$i] = $translateable_strings[$i];
             }
@@ -200,9 +216,9 @@ class TRP_Translation_Render{
                     // we have a translation
                     array_push ( $update_strings, array(
                         'id' => $untranslated_list[$string]->id,
-                        'original' => $untranslated_list[$string]->original,
-                        'translated' => $machine_strings[$i],
-                        'status' => $this->trp_query->get_constant_machine_translated ) );
+                        'original' => sanitize_text_field($untranslated_list[$string]->original),
+                        'translated' => sanitize_text_field($machine_strings[$i]),
+                        'status' => $this->trp_query->get_constant_machine_translated() ) );
                     $translated_strings[$i] = $machine_strings[$i];
                 }
                 unset( $new_strings[$i] );
