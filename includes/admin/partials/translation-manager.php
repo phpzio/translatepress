@@ -37,8 +37,14 @@
                             <li data-tab="trp-meta-information">Meta information</li>
                             <li data-tab="trp-string-list">String List</li>
                         </ul>
-                        <p><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></p>
-                        <textarea id="trp-original" disabled></textarea>
+                        <div id="trp-next-previous">
+                            <span id="trp-previous" class="trp-next-previous-buttons">&#171; <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></span>
+                            <span id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> &#187;</span>
+                        </div>
+                        <div id="<?php echo $trp_settings['default-language'];?>" class="trp-default-language">
+                            <p><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></p>
+                            <textarea id="trp-original" disabled></textarea>
+                        </div>
                         <?php
                         // move the current language to the beginning of the array
                         $translation_languages = $trp_settings['translation-languages'];
@@ -51,11 +57,17 @@
                         unset( $translation_languages[$default_language_key] );
                         $translation_languages = array_values( $translation_languages );
 
-                        foreach( $translation_languages as $language ){ ?>
-                            <div id="<?php echo $language; //todo display status as human readable?> ">
+                        foreach( $translation_languages as $language ){?>
+                            <div id="trp-language-<?php echo $language;//todo display status as human readable?>" class="<?php echo ( $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
                                 <p><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $language ]; ?></p>
                                 <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id=""></textarea>
                             </div>
+                            <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
+                                $other_languages = __( 'Other languages', TRP_PLUGIN_SLUG );
+                                ?>
+                                    <div id="trp-show-all-languages" class="trp-toggle-languages">&#11208; <span><?php echo $other_languages ?></span></div>
+                                    <div id="trp-hide-all-languages" class="trp-toggle-languages">&#11206; <span><?php echo $other_languages ?></span></div>
+                                <?php } ?>
                         <?php }?>
                         <div>
                             <button id="trp-save" type="submit" class="button-primary"><?php _e( 'Save', TRP_PLUGIN_SLUG ); ?></button>

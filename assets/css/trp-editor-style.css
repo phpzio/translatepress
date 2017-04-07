@@ -46,6 +46,9 @@ iframe#trp-preview-iframe {
     Editor Tabs
  */
 
+#trp-controls-accordion{
+    padding-left: 0px;
+}
 .trp-section{
     display:none;
     transition: max-height 0.5s, overflow 0.5s 0.5s;
@@ -61,3 +64,29 @@ iframe#trp-preview-iframe {
 }
 
 
+/*
+ Translation Editors
+ */
+
+#trp-previous{
+    float: left;
+}
+#trp-next{
+    float: right;
+}
+.trp-toggle-languages, .trp-next-previous-buttons{
+    color: darkblue;
+    cursor: pointer;
+}
+
+.trp-default-language{
+    margin-top: 30px;
+}
+
+
+.trp-toggle-languages span{
+    user-select: none;
+}
+#trp-hide-all-languages, .trp-other-language{
+    display: none;
+}
