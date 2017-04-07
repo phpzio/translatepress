@@ -106,12 +106,7 @@ class TRP_Translation_Manager{
                         }
                         $this->translation_render->process_strings( $original_strings, $language );
                         $dictionaries[$language] = $this->trp_query->get_string_rows( array(), $original_strings, $language );
-
-                        //error_log(json_encode( $dictionaries[$language]));
                     }
-
-                    //error_log(json_encode($dictionaries));
-
 
                     echo json_encode( $dictionaries );
                 }
@@ -141,35 +136,31 @@ class TRP_Translation_Manager{
         }
  */
     public function save_translations(){
+
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
-                if ( is_array( $strings ) ) {
-                    $update_strings = array();
-                    foreach ( $strings as $string ) {
-                        if ( isset( $string->id ) && is_numeric( $string->id ) && isset( $string->language ) && in_array( $string->language, $this->settings['translation-languages'] ) && $string->language != $this->settings['default-language'] ) {
-                            $update_strings[$string->language] = array();
-                            array_push( $update_strings[$string->language], array(
-                                'id'            => (int)$string->id,
-                                'original'      => sanitize_text_field( $string->original ),
-                                // todo whitespace is removed when using sanitize_text_field, which may be a problem when rendering.
-                                'translated'    => sanitize_text_field($string->translated),
-                                'status'        => (int)$string->status
-                            ) );
+                $update_strings = array();
+                foreach ( $strings as $language => $language_strings ) {
+                    if ( in_array( $language, $this->settings['translation-languages'] ) && $language != $this->settings['default-language'] ) {
+                        foreach( $language_strings as $string ) {
+                            if ( isset( $string->id ) && is_numeric( $string->id ) ) {
+                                $update_strings[ $language ] = array();
+                                array_push($update_strings[ $language ], array(
+                                    'id' => (int)$string->id,
+                                    'original' => sanitize_text_field($string->original),
+                                    'translated' => sanitize_text_field($string->translated),
+                                    'status' => (int)$string->status
+                                ));
 
+                            }
                         }
                     }
-                    //error_log( json_encode($update_strings));
-                    foreach( $update_strings as $language => $update_string_array ) {
-                        //todo create an UPDATE function and check if the insert_query also works with UPDATE
-                        $this->trp_query->insert_strings( array(), $update_string_array, $language );
-                    }
-
-
-                    //todo maybe nothing
-                    echo json_encode('succes');
                 }
-
+                foreach( $update_strings as $language => $update_string_array ) {
+                    //todo create an UPDATE function and check if the insert_query also works with UPDATE
+                    $this->trp_query->insert_strings( array(), $update_string_array, $language );
+                }
             }
         }
 
