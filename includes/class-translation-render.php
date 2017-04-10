@@ -14,8 +14,11 @@ class TRP_Translation_Render{
 
     public function start_object_cache(){
         global $TRP_LANGUAGE;
-        if( is_admin() || $TRP_LANGUAGE == $this->settings['default-language'] || ( isset( $_GET['trp-edit-translation']) && esc_attr( $_GET['trp-edit-translation'] == 'true' ) ) )
+        if( is_admin() ||
+        ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
+        ( isset( $_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'true' ) ) {
             return;
+        }
 
         if ( $this->start_output_buffering() ) {
             mb_http_output("UTF-8");
@@ -24,12 +27,19 @@ class TRP_Translation_Render{
     }
 
     protected function get_language(){
-
-        //todo add all possible ways of determining language: cookies, global define etc.
-        if ( ! empty ( $_GET['lang'] ) ){
-            $language_code = esc_attr( $_GET['lang'] );
-            if ( in_array( $language_code, $this->settings['translation-languages'] ) ) {
-                return $language_code;
+        global $TRP_LANGUAGE;
+        if ( in_array( $TRP_LANGUAGE, $this->settings['translation-languages'] ) ) {
+            if ( $TRP_LANGUAGE == $this->settings['default-language']  ){
+                if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' )  {
+                    foreach ($this->settings['translation-languages'] as $language) {
+                        if ($language != $TRP_LANGUAGE) {
+                            // return the first language not default. only used for preview mode
+                            return $language;
+                        }
+                    }
+                }
+            }else {
+                return $TRP_LANGUAGE;
             }
         }
         return false;
@@ -45,6 +55,7 @@ class TRP_Translation_Render{
     }
 
     public function translate_page( $output ){
+        global $TRP_LANGUAGE;
         $start = microtime(true);
         $language_code = $this->get_language();
         if ($language_code === false) {
@@ -133,7 +144,7 @@ class TRP_Translation_Render{
                 $nodes[$i]['node']->parent->setAttribute('data-trp-translate-id', $translated_string_ids[ $translated_strings[$i] ]->id);
             }*/
             if($nodes[$i]['type']=='text') {
-                if ($translation_available ) {
+                if ( $translation_available && ! ( $preview_mode && ( $this->settings['default-language'] == $TRP_LANGUAGE ) ) ) {
                     // keeps whitespaces of the original string.
                     $translated_strings[$i] = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->outertext);
                     if ( $preview_mode ) {
@@ -145,7 +156,8 @@ class TRP_Translation_Render{
                     $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
                 }
             }
-            if($nodes[$i]['type']=='submit') {
+            //todo uncomment and fix this
+            /*if($nodes[$i]['type']=='submit') {
                 $nodes[$i]['node']->setAttribute('value',$translated_strings[$i]);
             }
             if($nodes[$i]['type']=='placeholder') {
@@ -168,7 +180,7 @@ class TRP_Translation_Render{
             }
             if($nodes[$i]['type']=='a_pdf') {
                 $nodes[$i]['node']->href =  $translated_strings[$i];
-            }
+            }*/
         }
 
 

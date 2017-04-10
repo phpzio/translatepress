@@ -18,7 +18,7 @@ function TRP_Editor(){
             dataType: 'json',
             data: {
                 action: 'trp_get_translations',
-                language: TRP_LANGUAGE,
+                language: trp_on_screen_language,
                 strings: JSON.stringify( strings_to_query )
             },
             success: function (response) {
@@ -99,14 +99,14 @@ function TRP_Editor(){
         var strings_to_query = [];
 
         for ( var i = 0; i < all_strings.length; i++ ) {
-            var string = new TRP_String( TRP_LANGUAGE );
+            var string = new TRP_String( trp_on_screen_language, i );
             string.set_raw_string( all_strings[i] );
             strings.push( string );
             strings_to_query.push( string.get_details());
         }
 
-        dictionaries[TRP_LANGUAGE] = new TRP_Dictionary( TRP_LANGUAGE );
-        dictionaries[TRP_LANGUAGE].set_on_screen_strings( strings );
+        dictionaries[trp_on_screen_language] = new TRP_Dictionary( trp_on_screen_language );
+        dictionaries[trp_on_screen_language].set_on_screen_strings( strings );
 
         _this.ajax_get_strings( strings_to_query );
 
@@ -126,21 +126,22 @@ function TRP_Editor(){
     };
 
     this.previous_string = function(){
-
+        dictionaries[trp_on_screen_language].set_previous_string();
     };
 
     this.next_string = function(){
-
+        dictionaries[trp_on_screen_language].set_next_string();
     };
 
-    this.edit_strings = function ( trp_string ){
+    this.edit_strings = function ( trp_string, index ){
         _this.original_textarea.val( trp_string.original );
         for ( var key in translated_textareas ){
             var translated = '';
             var id = '';
-            if ( key == TRP_LANGUAGE ) {
+            if ( key == trp_on_screen_language ) {
                 translated = trp_string.translated;
                 id = trp_string.id;
+                dictionaries[key].set_current_index( index );
             }else {
                 var string = dictionaries[key].get_string_by_original( trp_string.original );
                 if ( string ) {
@@ -181,6 +182,11 @@ function TRP_Dictionary( language_code ){
     var _this = this;
     this.strings = []; // TRP_String
     this.language = language_code;
+    var current_index = 0;
+
+    this.set_current_index = function ( index ){
+        current_index = index;
+    };
 
     this.set_strings = function( strings_object ){
         for ( var s in _this.strings ){
@@ -196,9 +202,9 @@ function TRP_Dictionary( language_code ){
             if ( strings_object[i].hasOwnProperty( 'set' ) && strings_object[i] == true ){
                 continue;
             }
-            var string = new TRP_String( _this.language );
-            string.set_string(strings_object[i]);
-            this.strings.push(string);
+            var string = new TRP_String( _this.language, _this.strings.length );
+            string.set_string( strings_object[i] );
+            _this.strings.push(string);
         }
 
     };
@@ -216,9 +222,19 @@ function TRP_Dictionary( language_code ){
         return {};
     };
 
+    this.set_previous_string = function(){
+        var index = ( current_index - 1 < 0 ) ? _this.strings.length - 1 : current_index - 1;
+        _this.strings[index].edit_string();
+    };
+
+    this.set_next_string = function(){
+        var index = ( current_index + 1 > _this.strings.length - 1 ) ? 0 : current_index + 1;
+        _this.strings[index].edit_string();
+    };
+
 }
 
-function TRP_String( language ){
+function TRP_String( language, array_index ){
     var _this = this;
     var TRP_TRANSLATION_ID = 'data-trp-translate-id';
     this.id = null;
@@ -227,6 +243,7 @@ function TRP_String( language ){
     this.status = null;
     var jquery_object = null;
     this.language = language;
+    var index = array_index;
 
     this.get_details = function(){
         var details = {};
@@ -247,18 +264,20 @@ function TRP_String( language ){
         _this.original = decode_html( _this.original );
 
         if ( jquery_object ){
-            var text_to_set = null;
-            if( new_settings.hasOwnProperty( 'translated' ) && new_settings.translated != _this.translated ) {
-                text_to_set = new_settings.translated;
-            }
-            if( new_settings.hasOwnProperty( 'status' ) && new_settings.status == 0 ) {
-                text_to_set = _this.original;
-            }
+            if ( trp_on_screen_language == trp_language ) {
+                var text_to_set = null;
+                if (new_settings.hasOwnProperty('translated') && new_settings.translated != _this.translated) {
+                    text_to_set = new_settings.translated;
+                }
+                if (new_settings.hasOwnProperty('status') && new_settings.status == 0) {
+                    text_to_set = _this.original;
+                }
 
-            if ( text_to_set ) {
-                var initial_value = jquery_object.text();
-                text_to_set = initial_value.replace( initial_value.trim(), text_to_set );
-                jquery_object.text( text_to_set );
+                if (text_to_set) {
+                    var initial_value = jquery_object.text();
+                    text_to_set = initial_value.replace(initial_value.trim(), text_to_set);
+                    jquery_object.text(text_to_set);
+                }
             }
 
             jquery_object.on( 'mouseenter', '', _this.highlight );
@@ -290,7 +309,7 @@ function TRP_String( language ){
     };
 
     this.edit_string = function(){
-        trpEditor.edit_strings( _this );
+        trpEditor.edit_strings( _this, index );
         return false; // cancel navigating to another link
     };
 

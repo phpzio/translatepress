@@ -84,7 +84,7 @@ iframe#trp-preview-iframe {
 }
 
 
-.trp-toggle-languages span{
+.trp-toggle-languages span, .trp-next-previous-buttons{
     user-select: none;
 }
 #trp-hide-all-languages, .trp-other-language{

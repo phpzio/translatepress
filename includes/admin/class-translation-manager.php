@@ -20,14 +20,13 @@ class TRP_Translation_Manager{
     }
 
     public function translation_editor( $page_template ){
-
+        // todo redirect to login if not logged in
         if ( ! $this->conditions_met() ){
             return $page_template;
         }
 
         global $trp_settings;
         $trp_settings = $this->settings;
-
 
         //todo no outside urls
         return TRP_PLUGIN_DIR . 'includes/admin/partials/translation-manager.php' ;

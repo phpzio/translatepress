@@ -6,11 +6,23 @@
     global $TRP_LANGUAGE, $trp_settings;
     $available_languages = TRP_Utils::get_language_names( $trp_settings['translation-languages'] );
 
+    // move the current language to the beginning of the array
+    $translation_languages = $trp_settings['translation-languages'];
+    if ( $TRP_LANGUAGE != $trp_settings['default-language'] ) {
+        $current_language_key = array_search( $TRP_LANGUAGE, $trp_settings['translation-languages'] );
+        unset( $translation_languages[$current_language_key] );
+        $translation_languages = array_merge( array( $TRP_LANGUAGE ), array_values( $translation_languages ) );
+    }
+    $default_language_key = array_search( $trp_settings['default-language'], $translation_languages );
+    unset( $translation_languages[$default_language_key] );
+    $translation_languages = array_values( $translation_languages );
+
     do_action( 'trp_head' );
-    // TODO add attribute the ID from DB to translated strings when in another language to know if they have been translated. query inversely. translated->original ?>
+    ?>
 
     <script type="application/javascript">
-        var TRP_LANGUAGE = '<?php echo $TRP_LANGUAGE; ?>';
+        var trp_language = '<?php echo $TRP_LANGUAGE; ?>';
+        var trp_on_screen_language = '<?php echo $translation_languages[0]; ?>';
         var trp_ajax_url = '<?php echo apply_filters( 'trp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>';
     </script>
 </head>
@@ -46,19 +58,10 @@
                             <textarea id="trp-original" disabled></textarea>
                         </div>
                         <?php
-                        // move the current language to the beginning of the array
-                        $translation_languages = $trp_settings['translation-languages'];
-                        if ( $TRP_LANGUAGE != $trp_settings['default-language'] ) {
-                            $current_language_key = array_search( $TRP_LANGUAGE, $trp_settings['translation-languages'] );
-                            unset( $translation_languages[$current_language_key] );
-                            $translation_languages = array_merge( array( $TRP_LANGUAGE ), array_values( $translation_languages ) );
-                        }
-                        $default_language_key = array_search( $trp_settings['default-language'], $translation_languages );
-                        unset( $translation_languages[$default_language_key] );
-                        $translation_languages = array_values( $translation_languages );
+
 
                         foreach( $translation_languages as $language ){?>
-                            <div id="trp-language-<?php echo $language;//todo display status as human readable?>" class="<?php echo ( $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
+                            <div id="trp-language-<?php echo $language;//todo display status as human readable?>" class="<?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
                                 <p><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $language ]; ?></p>
                                 <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id=""></textarea>
                             </div>
