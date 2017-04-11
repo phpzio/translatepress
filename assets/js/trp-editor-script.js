@@ -199,7 +199,7 @@ function TRP_Dictionary( language_code ){
             }
         }
         for ( var i in strings_object ) {
-            if ( strings_object[i].hasOwnProperty( 'set' ) && strings_object[i] == true ){
+            if ( strings_object[i].hasOwnProperty( 'set' ) && strings_object[i].set == true ){
                 continue;
             }
             var string = new TRP_String( _this.language, _this.strings.length );

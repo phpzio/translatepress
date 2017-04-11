@@ -132,6 +132,40 @@ class TRP_Translation_Render{
             $translated_string_ids = $this->trp_query->get_string_ids($translateable_strings, $language_code);
         }
         //error_log(json_encode($translated_strings));
+        $node_accessor = apply_filters( 'trp_node_accessors', array(
+            'text' => array(
+                'accessor' => 'outertext',
+                'attribute' => false
+            ),
+            'meta_desc' => array(
+                'accessor' => 'content',
+                'attribute' => false
+            ),
+            'iframe_src' => array(
+                'accessor' => 'src',
+                'attribute' => false
+            ),
+            'image_alt' => array(
+                'accessor' => 'alt',
+                'attribute' => false
+            ),
+            'image_src' => array(
+                'accessor' => 'src',
+                'attribute' => false
+            ),
+            'a_pdf' => array(
+                'accessor' => 'href',
+                'attribute' => false
+            ),
+            'submit' => array(
+                'accessor' => 'value',
+                'attribute' => true
+            ),
+            'placeholder' => array(
+                'accessor' => 'placeholder',
+                'attribute' => true
+            )
+        ));
 
         foreach ( $nodes as $i => $node ) {
             $translation_available = isset( $translated_strings[$i] );
@@ -139,11 +173,57 @@ class TRP_Translation_Render{
                     continue;
             }
 
-            /*if ( $translated_string_ids ) {
-                //todo test for all node types maybe don't use parent. for text works.
-                $nodes[$i]['node']->parent->setAttribute('data-trp-translate-id', $translated_string_ids[ $translated_strings[$i] ]->id);
-            }*/
-            if($nodes[$i]['type']=='text') {
+            if ( $translation_available && isset( $node_accessor[ $nodes[$i]['type'] ] ) && ! ( $preview_mode && ( $this->settings['default-language'] == $TRP_LANGUAGE ) ) ) {
+                if ( $node_accessor[ $nodes[$i]['type'] ][ 'attribute' ] ){
+                    $nodes[$i]['node']->setAttribute( $node_accessor[ $nodes[$i]['type'] ][ 'accessor' ], str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->getAttribute( $node_accessor[ $nodes[$i]['type'] ][ 'accessor' ] ) ) );
+                }else{
+                    $nodes[$i]['node']->$node_accessor[ $nodes[$i]['type'] ][ 'accessor' ] = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->$node_accessor[ $nodes[$i]['type'] ][ 'accessor' ] );
+                }
+
+                if ( $nodes[$i]['type'] == 'image_src' && $nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i] != $translateable_strings[$i]) {
+                    $nodes[$i]['node']->srcset = "";
+                }
+/*
+                switch ( $nodes[$i]['type'] ){
+                    case 'text':
+                        $nodes[$i]['node']->outertext = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->outertext);
+                        break;
+                    case 'meta_desc':
+                        $nodes[$i]['node']->content = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->content );
+                        break;
+                    case 'iframe_src':
+                        $nodes[$i]['node']->src = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->src );
+                        break;
+                    case 'image_alt':
+                        $nodes[$i]['node']->alt = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->alt );
+                        break;
+                    case 'a_pdf':
+                        $nodes[$i]['node']->href = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->href );
+                        break;
+                    case 'image_src':
+                        $nodes[$i]['node']->src = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->src );
+                        if($nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i]!=$translateable_strings[$i]) {
+                            $nodes[$i]['node']->srcset = "";
+                        }
+                        break;
+                    case 'submit':
+                        $nodes[$i]['node']->setAttribute( 'value', str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->getAttribute('value') ) );
+                        break;
+                    case 'placeholder':
+                        $nodes[$i]['node']->setAttribute( 'placeholder', str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->getAttribute('placeholder') ) );
+                        break;
+                }*/
+            }
+
+            if ( $preview_mode ) {
+                if ($nodes[$i]['type'] == 'text') {
+                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
+                } else {
+                    $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[$translateable_strings[$i]]->id);
+                }
+            }
+
+            /*if ( $nodes[$i]['type'] == 'text' ) {
                 if ( $translation_available && ! ( $preview_mode && ( $this->settings['default-language'] == $TRP_LANGUAGE ) ) ) {
                     // keeps whitespaces of the original string.
                     $translated_strings[$i] = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->outertext);
@@ -156,8 +236,8 @@ class TRP_Translation_Render{
                     $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
                 }
             }
-            //todo uncomment and fix this
-            /*if($nodes[$i]['type']=='submit') {
+
+            if ( $nodes[$i]['type']=='submit' ) {
                 $nodes[$i]['node']->setAttribute('value',$translated_strings[$i]);
             }
             if($nodes[$i]['type']=='placeholder') {
@@ -181,6 +261,7 @@ class TRP_Translation_Render{
             if($nodes[$i]['type']=='a_pdf') {
                 $nodes[$i]['node']->href =  $translated_strings[$i];
             }*/
+
         }
 
 
