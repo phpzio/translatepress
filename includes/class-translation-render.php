@@ -217,9 +217,10 @@ class TRP_Translation_Render{
 
             if ( $preview_mode ) {
                 if ($nodes[$i]['type'] == 'text') {
-                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
+                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-type="' . $nodes[$i]['type'] . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
                 } else {
-                    $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[$translateable_strings[$i]]->id);
+                    $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
+                    $nodes[$i]['node']->setAttribute('data-trp-node-type', $nodes[$i]['type'] );
                 }
             }
 

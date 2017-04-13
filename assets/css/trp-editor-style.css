@@ -2,6 +2,7 @@
 
 body{
     margin: 0px;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 }
 
 .trp-editor{
@@ -43,8 +44,130 @@ iframe#trp-preview-iframe {
 
 
 /*
-    Editor Tabs
+    String list
  */
+
+.trp-strings {
+    max-height: 200px;
+    overflow: scroll;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #ccc;
+    display: none;
+}
+
+.trp-strings li {
+    padding: 3px 7px;
+    list-style: none;
+    border-bottom: 1px solid #ccc;
+
+}
+
+.trp-strings li:last-child {
+    border-bottom: none;
+}
+
+.trp-strings li:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.trp-strings li:nth-child(odd) {
+    background: #efeeee;
+}
+
+.trp-strings li:nth-child(even):hover, .trp-strings li:nth-child(odd):hover  {
+    background: rgba(43, 245, 255, 0.29);
+}
+
+.trp-strings.trp-current-category{
+    display: block;
+}
+
+
+
+
+/* String list normal horizontal accordion
+<div id="trp-toggle-string-list">
+    <div id="trp-string-toggle-tab" class="trp-tab"><?php _e( 'Current page string list', TRP_PLUGIN_SLUG ); ?></div>
+    <ul id="trp-string-accordion">
+        <div class="trp-tab trp-category-tab">Meta</div>
+        <ul class="trp-category-strings-list">
+            <li>String1</li>
+            <li>String1</li>
+            <li>String1</li>
+        </ul>
+        <div class="trp-tab trp-category-tab">URLs</div>
+        <ul class="trp-category-strings-list">
+            <li>String1</li>
+            <li>String1</li>
+            <li>String1</li>
+        </ul>
+        <div class="trp-tab trp-category-tab">Others</div>
+        <ul class="trp-category-strings-list">
+            <li>String1</li>
+            <li>String1</li>
+            <li>String1</li>
+        </ul>
+    </ul>
+</div>
+
+#trp-toggle-string-list{
+    cursor: pointer
+}
+
+#trp-string-accordion {
+    display: none;
+    padding: 0;
+    margin: 0;
+}
+
+.trp-tab:focus {
+    outline: none;
+}
+
+#trp-string-toggle-tab{
+    background-color: #dadada;
+    border: 1px solid #a9a9a9;
+    padding: 5px;
+}
+
+.trp-category-tab{
+    background-color: #f5f5f5;
+    border: 1px solid #bbbaba;
+    padding: 3px;
+}
+
+#trp-string-accordion{
+    border: 1px solid #a9a9a9;
+    border-top: 0;
+
+}
+
+.trp-category-strings-list{
+    background-color: #FFFFFF;
+    padding: 1px;
+}
+
+.trp-category-strings-list li{
+    list-style: none;
+}
+.trp-category-strings-list li:hover{
+    background-color: rgba(0, 0, 139, 0.12);
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+/*
 
 #trp-controls-accordion{
     padding-left: 0px;
@@ -63,6 +186,7 @@ iframe#trp-preview-iframe {
     cursor:pointer;
 }
 
+*/
 
 /*
  Translation Editors
@@ -80,9 +204,8 @@ iframe#trp-preview-iframe {
 }
 
 .trp-default-language{
-    margin-top: 30px;
+    margin-top: 50px;
 }
-
 
 .trp-toggle-languages span, .trp-next-previous-buttons{
     user-select: none;
@@ -90,3 +213,4 @@ iframe#trp-preview-iframe {
 #trp-hide-all-languages, .trp-other-language{
     display: none;
 }
+

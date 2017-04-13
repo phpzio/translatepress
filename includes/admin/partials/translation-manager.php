@@ -41,37 +41,15 @@
                     <span > <?php echo $trp_settings['translation-languages'][0]; ?></span>
                 <?php }?>
 
-                <button type="submit"> <?php _e( 'Publish', TRP_PLUGIN_SLUG ); ?></button>
+                <button type="submit"><?php _e( 'Publish', TRP_PLUGIN_SLUG ); ?></button>
                 <h1>Translate Press</h1>
-                <ul id="trp-controls-accordion">
-                    <li id="trp-main-section" class="trp-section trp-current">
-                        <ul id="trp-tabs">
-                            <li data-tab="trp-meta-information">Meta information</li>
-                            <li data-tab="trp-string-list">String List</li>
-                        </ul>
-                    </li>
-                    <li id="trp-meta-information" class="trp-section">
-                        <h3>Meta information</h3>
-                        <p><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></p>
-                        <textarea id="trp-original-meta"></textarea>
-                        <p><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $TRP_LANGUAGE ];  ?></p>
-                        <textarea id="trp-translated-meta"></textarea>
-                        <div>
-                            <button id="trp-save-meta" type="submit" class="button-primary"><?php _e( 'Save', TRP_PLUGIN_SLUG ); ?></button>
-                        </div>
-                    </li>
+                <div id="trp-string-list">
+                    <select id="trp-string-categories">
+                        <option><?php _e( 'Choose text category', TRP_PLUGIN_SLUG ); ?></option>
+                    </select>
+                    <div id="trp-lists"> </div>
+                </div>
 
-                    <li id="trp-string-list" class="trp-section">
-                        <h3>String List</h3>
-                        <p><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></p>
-                        <textarea id="trp-original-list"></textarea>
-                        <p><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $TRP_LANGUAGE ];  ?></p>
-                        <textarea id="trp-translated-list"></textarea>
-                        <div>
-                            <button id="trp-save-list" type="submit" class="button-primary"><?php _e( 'Save', TRP_PLUGIN_SLUG ); ?></button>
-                        </div>
-                    </li>
-                </ul>
                 <div id="trp-next-previous">
                     <span id="trp-previous" class="trp-next-previous-buttons">&#171; <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></span>
                     <span id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> &#187;</span>
