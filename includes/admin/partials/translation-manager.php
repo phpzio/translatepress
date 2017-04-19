@@ -17,6 +17,8 @@
     unset( $translation_languages[$default_language_key] );
     $translation_languages = array_values( $translation_languages );
 
+    $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
+
     do_action( 'trp_head' );
     ?>
 
@@ -32,16 +34,19 @@
             <div class="trp-controls-container">
                 <?php
                 if ( count( $trp_settings['translation-languages'] ) > 1 ){ ?>
-                <select class="trp-select2">
-                    <?php foreach ( $available_languages as $code => $language ) { ?>
-                        <option value="<?php echo $language; ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo $language; ?> </option>
-                    <?php } ?>
-                </select>
+                    <form id="trp-language-switch-form" action="" method="GET">
+                        <select id="trp-language-select" name="lang" onchange='this.form.submit()'>
+                            <?php foreach ( $available_languages as $code => $language ) { ?>
+                                <option value="<?php echo $code; ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo $language; ?> </option>
+                            <?php } ?>
+                        </select>
+                        <input type="hidden" name="trp-edit-translation" value="true">
+                    </form>
                 <?php }else{ ?>
                     <span > <?php echo $trp_settings['translation-languages'][0]; ?></span>
-                <?php }?>
-
-                <button type="submit"><?php _e( 'Publish', TRP_PLUGIN_SLUG ); ?></button>
+                <?php } ?>
+                <button type="button" id="trp-publish-language" class="trp-publish-language button-primary" <?php echo ( $current_language_published || ( $TRP_LANGUAGE == $trp_settings['default-language'] ) ) ? 'style="display:none;"' : '' ?> ><?php  _e( 'Go live', TRP_PLUGIN_SLUG ); ?></button>
+                <button type="button" id="trp-unpublish-language" class="trp-publish-language button-primary" <?php echo ( !$current_language_published || ( $TRP_LANGUAGE == $trp_settings['default-language'] ) ) ? 'style="display:none;"' : '' ?> ><?php  _e( 'Set as draft', TRP_PLUGIN_SLUG ); ?></button>
                 <h1>Translate Press</h1>
                 <div id="trp-string-list">
                     <select id="trp-string-categories">
@@ -54,13 +59,13 @@
                     <span id="trp-previous" class="trp-next-previous-buttons">&#171; <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></span>
                     <span id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> &#187;</span>
                 </div>
-                <div id="<?php echo $trp_settings['default-language'];?>" class="trp-default-language">
+                <div id="<?php echo $trp_settings['default-language'];?>" class="trp-language-text trp-default-language">
                     <p><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></p>
                     <textarea id="trp-original" disabled></textarea>
                 </div>
                 <?php
                 foreach( $translation_languages as $language ){?>
-                    <div id="trp-language-<?php echo $language;//todo display status as human readable?>" class="<?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
+                    <div id="trp-language-<?php echo $language;//todo display status as human readable?>" class="trp-language-text <?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
                         <p><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $language ]; ?></p>
                         <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id=""></textarea>
                     </div>

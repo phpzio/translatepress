@@ -66,6 +66,7 @@ class TRP_Translation_Manager{
         return array_values( $original_array );
     }
 
+    // todo "current user can" check
     public function get_translations() {
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
@@ -116,26 +117,10 @@ class TRP_Translation_Manager{
         die();
     }
 
-/*
- * $update_strings = array();
-        foreach( $new_strings as $i => $string ){
-            if ( isset( $untranslated_list[$string] ) ){
-                //string exists as not translated, thus need to be updated if we have translation
-                if ( isset( $machine_strings[$i] ) ) {
-                    // we have a translation
-                    array_push ( $update_strings, array(
-                        'id' => $untranslated_list[$string]->id,
-                        'original' => $untranslated_list[$string]->original,
-                        'translated' => $machine_strings[$i],
-                        'status' => $this->trp_query->get_constant_machine_translated ) );
-                    $translated_strings[$i] = $machine_strings[$i];
-                }
-                unset( $new_strings[$i] );
-            }
-        }
- */
+
     public function save_translations(){
 
+        // todo "current user can" check
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
@@ -163,6 +148,36 @@ class TRP_Translation_Manager{
             }
         }
 
+        die();
+    }
+
+    public function publish_language(){
+
+        // todo "current user can" check
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_publish_language' && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) && ! empty( $_POST['publish' ] ) ) {
+                if ( $_POST['publish' ] == 'publish' ) {
+
+                    // keep language order
+                    foreach ($this->settings['translation-languages'] as $language) {
+                        if ($language == $_POST['language'] || in_array($language, $this->settings['publish-languages'])) {
+                            $publish_languages[] = $language;
+                        }
+                    }
+
+                    $this->settings['publish-languages'] = $publish_languages;
+                    update_option( 'trp_settings', $this->settings );
+                }else if ( $_POST['publish'] == 'unpublish' ) {
+                    $language_key = array_search ( $_POST['language'], $this->settings['publish-languages'] );
+                    if ( $language_key !== false ){
+                        unset( $this->settings['publish-languages'][ $language_key ] );
+                        $this->settings['publish-languages'] = array_values( $this->settings['publish-languages'] );
+                        update_option( 'trp_settings', $this->settings );
+                    }
+                }
+
+            }
+        }
         die();
     }
 
