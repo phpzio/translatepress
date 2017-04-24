@@ -34,4 +34,19 @@ class TRP_Language_Switcher{
 
         return $this->settings['default-language'];
     }
+
+    public function add_rewrite_rules(){
+//        add_rewrite_rule('^ro/', '^ro/$matches[1]?lang=ro', 'top');
+        add_rewrite_tag('%lang%', '([^&]+)');
+        //add_rewrite_rule('^ro/*', 'index.php?lang=ro', 'top');
+
+        add_rewrite_rule('^ro/(.*)', '?lang=ro', 'top');
+        //only when changing languages
+        flush_rewrite_rules();
+
+
+        //die('ffffffuuuuu');
+
+
+    }
 }

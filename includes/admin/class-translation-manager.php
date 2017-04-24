@@ -175,7 +175,6 @@ class TRP_Translation_Manager{
                         update_option( 'trp_settings', $this->settings );
                     }
                 }
-
             }
         }
         die();

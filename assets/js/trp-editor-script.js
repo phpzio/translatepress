@@ -7,6 +7,9 @@ function TRP_Editor(){
     var default_language;
     var TRP_TRANSLATION_ID = 'data-trp-translate-id';
     this.original_textarea = jQuery( '#trp-original' );
+    var loading_animation = jQuery( '#trp-string-saved-ajax-loader' );
+    var translation_saved = jQuery( '#trp-translation-saved' );
+    var save_button = jQuery( '#trp-save' );
     var translated_textareas = [];
     this.edit_translation_button = null;
     var categories;
@@ -117,23 +120,26 @@ function TRP_Editor(){
         var strings_to_save = {};
         var modified = false;
         var original = _this.original_textarea.val();
-        for( var key in translated_textareas ){
-            var translated = translated_textareas[key].val();
-            if ( dictionaries[key].get_string_by_original( original ).translated != translated ){
-                modified = true;
-                if ( strings_to_save[key] == undefined ){
-                    strings_to_save[key] = [];
+        if ( original != "" ) {
+            for (var key in translated_textareas) {
+                var translated = translated_textareas[key].val();
+                if (dictionaries[key].get_string_by_original(original).translated != translated) {
+                    modified = true;
+                    if (strings_to_save[key] == undefined) {
+                        strings_to_save[key] = [];
+                    }
+                    var id = translated_textareas[key].attr(TRP_TRANSLATION_ID);
+                    var status = 2;
+                    if (translated.trim() == '') {
+                        status = 0;
+                    }
+                    strings_to_save[key].push({id: id, original: original, translated: translated, status: status});
                 }
-                var id = translated_textareas[key].attr( TRP_TRANSLATION_ID );
-                var status = 2;
-                if ( translated.trim() == '' ){
-                    status = 0;
-                }
-                strings_to_save[key].push( { id: id, original: original, translated: translated, status: status } );
             }
         }
 
         if ( modified ){
+            _this.saving_translation_ui();
             _this.ajax_save_strings( strings_to_save );
         }
     };
@@ -148,20 +154,28 @@ function TRP_Editor(){
                 strings: JSON.stringify( strings_to_save )
             },
             success: function (response) {
-                _this.strings_saved( strings_to_save );
-                _this.populate_strings( strings_to_save )
+                _this.populate_strings( strings_to_save );
+                _this.saved_translation_ui();
+
             },
             error: function(errorThrown){
+                loading_animation.toggle();
                 console.log( 'Translate Press AJAX Request Error' );
             }
             //returns 0 ajax-ul daca e eroare
         });
     };
 
-    this.strings_saved = function ( strings_saved ){
-        //TODO nice popup.
-        console.log('Saved!');
+    this.saving_translation_ui = function(){
+        loading_animation.toggle();
+        save_button.attr( 'disabled', 'disabled' );
+    };
 
+    this.saved_translation_ui = function(){
+        save_button.removeAttr( 'disabled' );
+        loading_animation.toggle();
+        translation_saved.css("display","inline");
+        translation_saved.delay(3000).fadeOut(400);
     };
 
     this.toggle_languages = function (){
@@ -178,7 +192,7 @@ function TRP_Editor(){
     };
 
     function add_event_handlers(){
-        jQuery( '#trp-save' ).on( 'click', _this.save_string );
+        save_button.on( 'click', _this.save_string );
         jQuery( '.trp-toggle-languages' ).on( 'click', _this.toggle_languages );
         jQuery( '#trp-previous' ).on( 'click', _this.previous_string );
         jQuery( '#trp-next' ).on( 'click', _this.next_string );
@@ -387,7 +401,10 @@ function TRP_Lister( current_dictionary ) {
             jquery_strings[category] = jquery_lists.find( '#trp-strings-' + category );
             for ( var i in category_array[category] ) {
                 //todo limit the original string length
-                jquery_strings[category].append( jQuery('<li class="trp-string"></li>').attr( TRP_STRING_ID, category_array[category][i].index ).text( category_array[category][i].original ) );
+                var original = category_array[category][i].original;
+                if ( original ) {
+                    jquery_strings[category].append(jQuery('<li class="trp-string"></li>').attr(TRP_STRING_ID, category_array[category][i].index).text(original.substring(0, 90)));
+                }
             }
         }
         jQuery( '.trp-string').off().on( 'click', _this.select_string );

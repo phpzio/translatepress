@@ -248,3 +248,53 @@ iframe#trp-preview-iframe {
     display: none;
 }
 
+
+
+#trp-translation-saved {
+    padding-left: 20px;
+    color: #008000;
+    font-size: 14px;
+    display:none;
+}
+
+/*
+ * Loading animation
+ */
+.trp-ajax-loader {
+    margin-left:20px;
+    display: inline-block;
+    z-index: 50;
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1, StartColorStr='#E57EB149', EndColorStr='#E57EB149')";
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1, StartColorStr='#E57EB149', EndColorStr='#E57EB149');
+    zoom: 1!important;
+}
+
+.trp-ajax-loader .trp-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #a1b9e6;
+    border-radius: 50%;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+
+}
+
+@-webkit-keyframes
+spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes
+spin {
+    100% {
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
