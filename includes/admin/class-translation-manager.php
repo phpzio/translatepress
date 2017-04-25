@@ -40,7 +40,7 @@ class TRP_Translation_Manager{
         wp_localize_script( 'trp-scripts-for-editor', 'some_variable', array( 'customajax' => TRP_PLUGIN_URL . '/includes/trp-ajax.php' , __FILE__ ) );
         //error_log(TRP_PLUGIN_URL . '/includes/trp-ajax.php' );
 
-        $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-accordion', 'trp-translation-manager-script' ) );
+        $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-core', 'jquery-ui-resizable', 'trp-translation-manager-script' ) );
         //todo maybe more styles here
         $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'trp-translation-manager-style' /*'wp-admin', 'dashicons', 'common', 'site-icon', 'buttons'*/ ) );
 

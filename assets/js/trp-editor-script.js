@@ -9,16 +9,17 @@ function TRP_Editor(){
     this.original_textarea = jQuery( '#trp-original' );
     var loading_animation = jQuery( '#trp-string-saved-ajax-loader' );
     var translation_saved = jQuery( '#trp-translation-saved' );
+    var preview_container = jQuery( '#trp-preview' );
+    var controls = jQuery( '#trp-controls' );
     var save_button = jQuery( '#trp-save' );
     var translated_textareas = [];
     this.edit_translation_button = null;
     var categories;
     var trp_lister = null;
 
-
     this.initialize = function(){
 
-        this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
+        _this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
         /*
          var all_strings = this.preview_iframe.find( 'body *' ).contents().filter(function(){
          if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
@@ -28,7 +29,7 @@ function TRP_Editor(){
 
         //all_strings.parent().attr('trp-translate', 'trp-translate');
 
-        var all_strings = this.preview_iframe.contents().find( '[data-trp-translate-id]' );
+        var all_strings = _this.preview_iframe.contents().find( '[data-trp-translate-id]' );
         //var attribute_based_strings = this.preview_iframe.contents().find( '[data-trp-translate-id]:not(translate-press)' );
         //console.log(attribute_based_strings);
         //console.log(all_strings);
@@ -64,6 +65,7 @@ function TRP_Editor(){
             },
             success: function (response) {
                 _this.populate_strings( response );
+                trp_lister.reload_list();
             },
             error: function(errorThrown){
                 console.log( 'Translate Press AJAX Request Error' );
@@ -91,8 +93,6 @@ function TRP_Editor(){
             }
         }
         console.log(dictionaries);
-        trp_lister.reload_list();
-
     };
 
     this.edit_strings = function ( trp_string, index ){
@@ -191,11 +191,38 @@ function TRP_Editor(){
         dictionaries[trp_on_screen_language].set_next_string();
     };
 
+    function resize_iframe (event, ui) {
+        var total_width = jQuery(window).width();
+        var width = controls.width();
+
+        if(width > total_width) {
+            width = total_width;
+            controls.css('width', width);
+        }
+
+        preview_container.css('right', width );
+        preview_container.css('left', ( width - 298 ) );
+        preview_container.css('width', (total_width - width));
+    }
+
     function add_event_handlers(){
         save_button.on( 'click', _this.save_string );
         jQuery( '.trp-toggle-languages' ).on( 'click', _this.toggle_languages );
         jQuery( '#trp-previous' ).on( 'click', _this.previous_string );
         jQuery( '#trp-next' ).on( 'click', _this.next_string );
+
+        controls.resizable({
+            start: function( ) { preview_container.toggle(); },
+            stop: function( ) { preview_container.toggle(); },
+            handles: 'e',
+            minWidth: 190,
+            alsoResize: '.trp-language-text textarea',
+
+        }).bind( "resize", resize_iframe );
+
+        jQuery( window ).resize(function () {
+            resize_iframe();
+        });
     }
 }
 
@@ -427,6 +454,7 @@ function TRP_Language_Publisher(){
 
     this.ajax_request = function( publish ){
         var language = jQuery( '#trp-language-select' ).val();
+        jQuery( '.trp-publish-language' ).attr( 'disabled', 'disabled' );
         jQuery.ajax({
             url: trp_ajax_url,
             type: 'post',
@@ -456,6 +484,7 @@ function TRP_Language_Publisher(){
     };
 
     this.toggle_publish = function () {
+        jQuery( '.trp-publish-language' ).removeAttr( 'disabled' );
         jQuery( '.trp-publish-language' ).toggle();
     };
 

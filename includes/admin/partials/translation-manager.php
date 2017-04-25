@@ -29,8 +29,8 @@
     </script>
 </head>
 <body>
-    <div class="trp-editor">
-        <div class="trp-controls">
+    <div id="trp-editor">
+        <div id="trp-controls">
             <div class="trp-controls-container">
                 <?php
                 if ( count( $trp_settings['translation-languages'] ) > 1 ){ ?>
@@ -85,7 +85,7 @@
                 </div>
             </div>
         </div>
-        <div class="trp-preview">
+        <div id="trp-preview">
                 <iframe id="trp-preview-iframe" onload="trpEditor.initialize();" src="<?php echo add_query_arg( 'trp-edit-translation', 'preview', TRP_Utils::get_current_page_url() );?>" width="100%" height="100%"></iframe>
         </div>
     </div>

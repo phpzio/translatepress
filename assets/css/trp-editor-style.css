@@ -5,28 +5,54 @@ body{
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 }
 
-.trp-editor{
+#trp-editor{
     margin-left: 300px;
     position: fixed;
     width: 100%;
     height: 100%;
 }
 
-.trp-controls{
-    width: 299px;
+#trp-controls{
+    width: 298px;
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
-    border-right: 1px solid #ddd;
+    border-right: 2px solid #ddd;
     background: #eee;
 }
 
 .trp-controls-container{
+    height: 100%;
+    overflow-x: auto;
     padding:12px;
 }
 
-.trp-preview{
+.ui-resizable-handle {
+    position: absolute;
+    font-size: 1px;
+    display: block;
+    z-index: 50;
+}
+
+.ui-resizable-handle:active {
+    background-color: #676767;
+}
+
+.ui-resizable-disabled .ui-resizable-handle,
+.ui-resizable-autohide .ui-resizable-handle {
+    display: none;
+}
+.ui-resizable-e {
+    cursor: e-resize;
+    width: 7px;
+    right: -2px;
+    top: 0;
+    height: 100%;
+}
+/** end **/
+
+#trp-preview{
     position: absolute;
     left: 0;
     right: 300px;
@@ -45,7 +71,7 @@ iframe#trp-preview-iframe {
 }
 
 #trp-language-select{
-    width: 180px;
+    width: 160px;
     margin-bottom: 10px;
     font-size: 14px;
     padding: 3px;
@@ -110,110 +136,6 @@ iframe#trp-preview-iframe {
 }
 
 
-
-
-/* String list normal horizontal accordion
-<div id="trp-toggle-string-list">
-    <div id="trp-string-toggle-tab" class="trp-tab"><?php _e( 'Current page string list', TRP_PLUGIN_SLUG ); ?></div>
-    <ul id="trp-string-accordion">
-        <div class="trp-tab trp-category-tab">Meta</div>
-        <ul class="trp-category-strings-list">
-            <li>String1</li>
-            <li>String1</li>
-            <li>String1</li>
-        </ul>
-        <div class="trp-tab trp-category-tab">URLs</div>
-        <ul class="trp-category-strings-list">
-            <li>String1</li>
-            <li>String1</li>
-            <li>String1</li>
-        </ul>
-        <div class="trp-tab trp-category-tab">Others</div>
-        <ul class="trp-category-strings-list">
-            <li>String1</li>
-            <li>String1</li>
-            <li>String1</li>
-        </ul>
-    </ul>
-</div>
-
-#trp-toggle-string-list{
-    cursor: pointer
-}
-
-#trp-string-accordion {
-    display: none;
-    padding: 0;
-    margin: 0;
-}
-
-.trp-tab:focus {
-    outline: none;
-}
-
-#trp-string-toggle-tab{
-    background-color: #dadada;
-    border: 1px solid #a9a9a9;
-    padding: 5px;
-}
-
-.trp-category-tab{
-    background-color: #f5f5f5;
-    border: 1px solid #bbbaba;
-    padding: 3px;
-}
-
-#trp-string-accordion{
-    border: 1px solid #a9a9a9;
-    border-top: 0;
-
-}
-
-.trp-category-strings-list{
-    background-color: #FFFFFF;
-    padding: 1px;
-}
-
-.trp-category-strings-list li{
-    list-style: none;
-}
-.trp-category-strings-list li:hover{
-    background-color: rgba(0, 0, 139, 0.12);
-}
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-#trp-controls-accordion{
-    padding-left: 0px;
-}
-.trp-section{
-    display:none;
-    transition: max-height 0.5s, overflow 0.5s 0.5s;
-}
-.trp-section.trp-current{
-    display:inherit;
-}
-#trp-tabs{
-    list-style: none;
-}
-#trp-tabs{
-    cursor:pointer;
-}
-
-*/
-
 /*
  Translation Editors
  */
@@ -228,12 +150,18 @@ iframe#trp-preview-iframe {
     color: darkblue;
     cursor: pointer;
 }
+.trp-language-text{
+    padding-right: 9px;
+}
 
 .trp-language-text textarea{
-    width: 100%;
     height: 65px;
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
     font-size: 14px;
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+
 }
 
 .trp-default-language{
