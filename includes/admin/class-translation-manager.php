@@ -13,7 +13,7 @@ class TRP_Translation_Manager{
 
     // mode == true, mode == preview
     protected function conditions_met( $mode = 'true' ){
-        if ( current_user_can( 'manage_options' ) &&/* ! is_admin() &&*/ isset( $_GET['trp-edit-translation'] ) && esc_attr( $_GET['trp-edit-translation'] ) == $mode ) {
+        if ( current_user_can( 'manage_options' ) && ! is_admin() && isset( $_GET['trp-edit-translation'] ) && esc_attr( $_GET['trp-edit-translation'] ) == $mode ) {
             return true;
         }
         return false;
@@ -25,6 +25,7 @@ class TRP_Translation_Manager{
             return $page_template;
         }
 
+
         global $trp_settings;
         $trp_settings = $this->settings;
 
@@ -33,7 +34,6 @@ class TRP_Translation_Manager{
     }
 
     public function enqueue_scripts_and_styles(){
-
 
         wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js' );
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css' );

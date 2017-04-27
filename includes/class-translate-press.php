@@ -30,6 +30,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-language-switcher.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-machine-translator.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-query.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-url-converter.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
 
         $this->loader = new TRP_Hooks_Loader();
@@ -62,11 +63,13 @@ class TRP_Translate_Press{
     protected function define_frontend_hooks(){
         $this->loader->add_action( 'wp', $this->translation_render, 'start_object_cache' );
 
+        //$this->loader->add_action( 'init', $this->language_switcher, 'add_rewrite_rules' );
+        $this->loader->add_filter( 'home_url', $this->language_switcher, 'add_language_to_home_url', 1, 4 );
+
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
 
-        $this->loader->add_action( 'init', $this->language_switcher, 'add_rewrite_rules' );
 
 
         // TODO Shortcodes do not work in widgets. Create widget.
@@ -78,3 +81,10 @@ class TRP_Translate_Press{
     }
 
 }
+/*
+add_filter( 'home_url', 'ccc' );
+function ccc( $home_url ){
+    error_log('da');
+    return $home_url . '/' . $this->get_current_language() . '/';
+}
+error_log( get_home_url() );*/

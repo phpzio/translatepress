@@ -2,8 +2,8 @@
 function TRP_Editor(){
     var _this = this;
     this.preview_iframe = null;
-    var strings = [];
-    var dictionaries = [];
+    var strings;
+    var dictionaries;
     var default_language;
     var TRP_TRANSLATION_ID = 'data-trp-translate-id';
     this.original_textarea = jQuery( '#trp-original' );
@@ -13,13 +13,16 @@ function TRP_Editor(){
     var controls = jQuery( '#trp-controls' );
     var save_button = jQuery( '#trp-save' );
     var translated_textareas = [];
-    this.edit_translation_button = null;
+    this.edit_translation_button;
     var categories;
     var trp_lister = null;
 
     this.initialize = function(){
 
         _this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
+        strings = [];
+        dictionaries = [];
+        _this.edit_translation_button = null;
         /*
          var all_strings = this.preview_iframe.find( 'body *' ).contents().filter(function(){
          if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
