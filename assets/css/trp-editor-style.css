@@ -176,7 +176,9 @@ iframe#trp-preview-iframe {
     display: none;
 }
 
-
+#trp-save{
+    margin-bottom: 50px;
+}
 
 #trp-translation-saved {
     padding-left: 20px;

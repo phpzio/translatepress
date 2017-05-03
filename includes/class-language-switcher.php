@@ -64,6 +64,7 @@ class TRP_Language_Switcher{
     }
 
     public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
+        //return $url;
 //        error_log('url   ' . $url);
 //        error_log('path   ' .  $path);
         global $TRP_LANGUAGE;
@@ -79,15 +80,12 @@ class TRP_Language_Switcher{
             $path = '/' . $path;
         }
 
-        if( $new_stripped_path_url != 'http://local.profile-builder.dev' ) {
-            //error_log( 'spa   ' . $stripped_path_url );
-        }
-
         $return_url = $new_stripped_path_url . '/' . $TRP_LANGUAGE . $path;
 
-        if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ){
-            add_query_arg( 'trp-edit-translation', 'preview', $return_url );
-        }
+      /*  if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ){
+            error_log( 'adadadad' );
+            $return_url = add_query_arg( 'trp-edit-translation', 'preview', $return_url );
+        }*/
 
         return $return_url;
     }

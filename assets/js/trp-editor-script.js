@@ -18,7 +18,7 @@ function TRP_Editor(){
     var trp_lister = null;
 
     this.initialize = function(){
-
+        window.history.pushState("string", "Title",  document.getElementById("trp-preview-iframe").contentWindow.location.href );
         _this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
         strings = [];
         dictionaries = [];

@@ -89,9 +89,7 @@ class TRP_Url_Converter {
         $lang_get_parts = explode( '?', $lang );
         $lang           = $lang_get_parts[ 0 ];
 
-        error_log( $lang );
-        return $lang && in_array ( $lang, $this->settings['publish-languages'] )
-            ? $lang : $this->settings['default-language'] ;
+        return $lang && in_array ( $lang, $this->settings['publish-languages'] ) ? $lang : $this->settings['default-language'] ;
     }
 
     protected function cur_page_url() {

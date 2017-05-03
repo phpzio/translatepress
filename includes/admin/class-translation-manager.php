@@ -52,9 +52,10 @@ class TRP_Translation_Manager{
         if ( $this->conditions_met( 'preview' ) ) {
             /* twentyfifteen theme scrolls header uncontrolled on page load because of this  */
             show_admin_bar( false );
+
+            wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery') );
+            wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css' );
         }
-        wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery') );
-        wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css' );
     }
 
     protected function extract_original_strings( $strings, $original_array, $id_array ){
