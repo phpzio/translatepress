@@ -432,4 +432,8 @@ class TRP_Translation_Render{
         }
         return false;
     }
+
+    public function enqueue_dynamic_translation(){
+        wp_enqueue_script( 'trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array( 'jquery' ) );
+    }
 }
