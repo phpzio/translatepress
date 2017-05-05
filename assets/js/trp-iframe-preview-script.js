@@ -1,30 +1,21 @@
 
+function TRP_Iframe_Preview(){
+    var _this = this;
+    this.initialize = function() {
+        jQuery('a').each(function () { 
+            if (this.action != '') {
+                this.href = update_query_string('trp-edit-translation', 'preview', this.href);
+            }
+        });
 
-jQuery(function(){
-    //TODO remove this when finished
-    jQuery( ".site-branding" ).append("<h1>new word</h1>");
+        jQuery('form').each(function () {
+            // todo form
+            jQuery( this ).append( jQuery('<input></input>').attr({ type: 'hidden', value: 'preview', name: 'trp-edit-translation' }) );
+            //this.action = update_query_string('trp-edit-translation', 'preview', this.action);
+        });
+    };
 
-
-    jQuery( 'a' ).each( function() { /*this.addEventListener('click', function(event) {
-     // Stop the link from redirecting
-     event.preventDefault();
-
-     // Redirect instead with JavaScript
-     window.location.href = UpdateQueryString(this.href);
-     }, false) }*/
-        if ( this.action != '' ) {
-            this.href = UpdateQueryString( 'trp-edit-translation', 'preview', this.href );
-        }
-
-    });
-
-    jQuery( 'form' ).each( function(){
-        if ( this.action != '' ) {
-            this.action = UpdateQueryString( 'trp-edit-translation', 'preview', this.action );
-        }
-    });
-
-    function UpdateQueryString(key, value, url) {
+    function update_query_string(key, value, url) {
         if (!url) url = window.location.href;
         var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
             hash;
@@ -41,7 +32,7 @@ jQuery(function(){
             }
         }
         else {
-            if (typeof value !== 'undefined' && value !== null) {
+            if (typeof value !== 'undefined' && value !== null ) {
                 var separator = url.indexOf('?') !== -1 ? '&' : '?';
                 hash = url.split('#');
                 url = hash[0] + separator + key + '=' + value;
@@ -53,4 +44,15 @@ jQuery(function(){
                 return url;
         }
     }
+
+    _this.initialize();
+}
+
+var trp_preview_iframe;
+jQuery( function(){
+    //TODO remove this when finished
+    jQuery( ".site-branding" ).append("<h1>new word</h1>");
+
+
+    trp_preview_iframe = new TRP_Iframe_Preview();
 });

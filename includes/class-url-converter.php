@@ -13,7 +13,7 @@ class TRP_Url_Converter {
     /**
      * Returns the unfiltered home_url by directly retrieving it from wp_options.
      */
-    protected function get_abs_home() {
+    public function get_abs_home() {
         global $wpdb;
 
         $this->absolute_home = $this->absolute_home

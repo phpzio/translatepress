@@ -13,16 +13,36 @@ function TRP_Editor(){
     var controls = jQuery( '#trp-controls' );
     var save_button = jQuery( '#trp-save' );
     var translated_textareas = [];
-    this.edit_translation_button;
+    this.edit_translation_button = null;
     var categories;
     var trp_lister = null;
+    var jquery_string_selector = jQuery( '#trp-string-categories' );
 
     this.initialize = function(){
-        window.history.pushState("string", "Title",  document.getElementById("trp-preview-iframe").contentWindow.location.href );
+        _this.edit_translation_button = null;
+
+        _this.update_parent_url();
+
+        _this.iframe_strings_lookup();
+
+        if ( trp_lister != null ) {
+            jquery_string_selector.off( 'change', trp_lister.select_string );
+        }
+        trp_lister = new TRP_Lister( dictionaries[trp_on_screen_language] );
+
+    };
+
+    this.update_parent_url = function(){
+        var location = document.getElementById("trp-preview-iframe").contentWindow.location.href;
+        location = location.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' );
+        window.history.pushState( null, null, location );
+    };
+
+    this.iframe_strings_lookup = function(){
         _this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
         strings = [];
         dictionaries = [];
-        _this.edit_translation_button = null;
+
         /*
          var all_strings = this.preview_iframe.find( 'body *' ).contents().filter(function(){
          if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
@@ -30,13 +50,7 @@ function TRP_Editor(){
          }
          }).wrap("<translate-press></translate-press>");*/
 
-        //all_strings.parent().attr('trp-translate', 'trp-translate');
-
         var all_strings = _this.preview_iframe.contents().find( '[data-trp-translate-id]' );
-        //var attribute_based_strings = this.preview_iframe.contents().find( '[data-trp-translate-id]:not(translate-press)' );
-        //console.log(attribute_based_strings);
-        //console.log(all_strings);
-
         var strings_to_query = [];
 
         for ( var i = 0; i < all_strings.length; i++ ) {
@@ -48,11 +62,8 @@ function TRP_Editor(){
 
         dictionaries[trp_on_screen_language] = new TRP_Dictionary( trp_on_screen_language );
         dictionaries[trp_on_screen_language].set_on_screen_strings( strings );
-        trp_lister = new TRP_Lister( dictionaries[trp_on_screen_language] );
 
         _this.ajax_get_strings( strings_to_query );
-
-        add_event_handlers();
     };
 
     this.ajax_get_strings = function( strings_to_query ){
@@ -116,6 +127,7 @@ function TRP_Editor(){
             }
             translated_textareas[key].val( translated );
             translated_textareas[key].attr( TRP_TRANSLATION_ID, id );
+            trp_lister.update_selected_string( index );
         }
     };
 
@@ -219,14 +231,23 @@ function TRP_Editor(){
             stop: function( ) { preview_container.toggle(); },
             handles: 'e',
             minWidth: 190,
-            alsoResize: '.trp-language-text textarea',
+            alsoResize: '.trp-language-text textarea, span.select2-container, #trp-string-categories',
 
         }).bind( "resize", resize_iframe );
 
         jQuery( window ).resize(function () {
             resize_iframe();
         });
+
+        var placeholder_text = jquery_string_selector.attr('data-trp-placeholder');
+        if (placeholder_text != '') {
+            placeholder_text = 'Select string to translate...';
+        }
+        jquery_string_selector.select2({ placeholder: placeholder_text });
+        jQuery( '#trp-language-select' ).select2();
     }
+
+    add_event_handlers();
 }
 
 
@@ -292,7 +313,7 @@ function TRP_Dictionary( language_code ){
     this.get_categories = function (){
         var categorized = [];
         for ( var i in _this.strings ){
-            if ( categorized[ _this.strings[i].node_type ] == undefined ){
+            if ( categorized[ _this.strings[i].node_type ] == undefined ) {
                 categorized[ _this.strings[i].node_type ] = [];
             }
             categorized[ _this.strings[i].node_type ].push( _this.strings[i] );
@@ -400,45 +421,36 @@ function TRP_String( language, array_index ){
 
 function TRP_Lister( current_dictionary ) {
     var _this = this;
-    var TRP_STRING_ID = 'data-trp-string-id';
-    var jquery_categories = jQuery( '#trp-string-categories' );
-    var jquery_lists = jQuery( '#trp-lists' );
+    var jquery_string_selector = jQuery( '#trp-string-categories' );
     var dictionary = current_dictionary;
     var category_array;
-    var jquery_strings = [];
-
-    this.show_category = function( ){
-        if ( this.value ){
-            for ( var i in jquery_strings ){
-                jquery_strings[i].removeClass( 'trp-current-category' );
-            }
-            jquery_strings[this.value].addClass('trp-current-category');
-        }
-    };
 
     this.select_string = function(){
-        dictionary.edit_string_index( jQuery( this ).attr( TRP_STRING_ID ) );
+        dictionary.edit_string_index( jquery_string_selector.val() );
     };
 
     this.reload_list = function (){
         category_array = dictionary.get_categories();
-        jquery_categories.find( 'option:gt(0)').remove();
-        jquery_lists.empty();
+        jquery_string_selector.find( 'option').remove();
+        jquery_string_selector.find( 'optgroup').remove();
+        jquery_string_selector.append(jQuery('<option></option>'));
         for ( var category in category_array ){
             // todo add number of strings in category Text(6) Meta (3)
-            jquery_categories.append( jQuery( '<option></option>' ).attr( 'value', category ).text( _this.format_category_name( category ) ) );
-            jquery_lists.append( jQuery( '<ul></ul>' ).attr( 'id', 'trp-strings-' + category ).attr( 'class', 'trp-strings' ) );
-            jquery_strings[category] = jquery_lists.find( '#trp-strings-' + category );
+            jquery_string_selector.append( jQuery( '<optgroup></optgroup>' ).attr( 'label', _this.format_category_name( category ) ) );
             for ( var i in category_array[category] ) {
                 //todo limit the original string length
                 var original = category_array[category][i].original;
+                var suspension_dots = '...';
                 if ( original ) {
-                    jquery_strings[category].append(jQuery('<li class="trp-string"></li>').attr(TRP_STRING_ID, category_array[category][i].index).text(original.substring(0, 90)));
+                    if ( original.length <= 90){
+                        suspension_dots = '';
+                    }
+                    jquery_string_selector.append(jQuery('<option></option>').attr( 'value', category_array[category][i].index).text(original.substring(0, 90) + suspension_dots));
                 }
             }
         }
-        jQuery( '.trp-string').off().on( 'click', _this.select_string );
-        jquery_categories.off().on( 'change', _this.show_category );
+
+        jquery_string_selector.on( 'change', _this.select_string );
     };
 
     this.format_category_name = function( name ){
@@ -448,68 +460,31 @@ function TRP_Lister( current_dictionary ) {
         return name;
     };
 
-    _this.reload_list();
-
-}
-
-function TRP_Language_Publisher(){
-    var _this = this;
-
-    this.ajax_request = function( publish ){
-        var language = jQuery( '#trp-language-select' ).val();
-        jQuery( '.trp-publish-language' ).attr( 'disabled', 'disabled' );
-        jQuery.ajax({
-            url: trp_ajax_url,
-            type: 'post',
-            dataType: 'json',
-            data: {
-                action: 'trp_publish_language',
-                publish: publish,
-                language: language
-            },
-            success: function ( ) {
-                _this.toggle_publish();
-            },
-            error: function(errorThrown){
-                console.log( 'Translate Press AJAX Request Error' );
+    this.update_selected_string = function( id ){
+        jquery_string_selector.off( 'change', _this.select_string );
+        jquery_string_selector.val( id ).change();
+        jquery_string_selector.on( 'change', _this.select_string );
+/*        for( var category in category_array ){
+            for( var s in category_array[category] ){
+                if ( category_array[category][s].id == id ){
+                    jquery_string_selector.val( s).change();
+                    break;
+                }
             }
-
-        });
+        }*/
 
     };
 
-    this.publish_language = function() {
-        _this.ajax_request( 'publish' );
-    };
+    //_this.reload_list();
 
-    this.unpublish_language = function() {
-        _this.ajax_request( 'unpublish' );
-    };
-
-    this.toggle_publish = function () {
-        jQuery( '.trp-publish-language' ).removeAttr( 'disabled' );
-        jQuery( '.trp-publish-language' ).toggle();
-    };
-
-    function add_event_handlers(){
-        jQuery( '#trp-publish-language' ).on ( 'click', _this.publish_language ) ;
-        jQuery( '#trp-unpublish-language' ).on ( 'click', _this.unpublish_language ) ;
-    }
-
-    add_event_handlers();
 }
-
-
 
 var trpEditor;
-var trpLanguagePublisher;
+
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {
 
     trpEditor = new TRP_Editor();
-    //todo move this in trp_editor constructor
-    trpLanguagePublisher = new TRP_Language_Publisher();
-
 
 });
 

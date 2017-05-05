@@ -70,8 +70,6 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
 
-
-
         // TODO Shortcodes do not work in widgets. Create widget.
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
     }

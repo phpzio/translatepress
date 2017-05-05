@@ -49,6 +49,21 @@ class TRP_Translation_Render{
         return trim( $word," \t\n\r\0\x0B\xA0�" );
     }
 
+    protected function get_node_type_category( $current_node_type ){
+        $node_type_categories = apply_filters( 'trp_node_type_categories', array(
+            __( 'Meta Information', TRP_PLUGIN_SLUG ) => array( 'meta_desc' ),
+        ));
+
+        foreach( $node_type_categories as $category_name => $node_types ){
+            if ( in_array( $current_node_type, $node_types ) ){
+                return $category_name;
+            }
+        }
+
+        return __( 'String List', TRP_PLUGIN_SLUG );
+
+    }
+
     public function shutdown(){
         $output = ob_get_clean();
         $this->translate_page($output);
@@ -217,10 +232,10 @@ class TRP_Translation_Render{
 
             if ( $preview_mode ) {
                 if ($nodes[$i]['type'] == 'text') {
-                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-type="' . $nodes[$i]['type'] . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
+                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-type="' . $this->get_node_type_category( $nodes[$i]['type'] ) . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
                 } else {
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
-                    $nodes[$i]['node']->setAttribute('data-trp-node-type', $nodes[$i]['type'] );
+                    $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
                 }
             }
 
@@ -349,27 +364,6 @@ class TRP_Translation_Render{
         }
         return false;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
  /*   public function ttranslate_page( $output ){

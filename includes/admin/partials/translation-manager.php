@@ -19,9 +19,12 @@
 
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
 
+    // todo maybe move hook (or create another one in footer) to load scripts lower
     do_action( 'trp_head' );
+    //todo title?
     ?>
 
+    <title>Translate Press</title>
     <script type="application/javascript">
         var trp_language = '<?php echo $TRP_LANGUAGE; ?>';
         var trp_on_screen_language = '<?php echo $translation_languages[0]; ?>';
@@ -45,14 +48,9 @@
                 <?php }else{ ?>
                     <span > <?php echo $trp_settings['translation-languages'][0]; ?></span>
                 <?php } ?>
-                <button type="button" id="trp-publish-language" class="trp-publish-language button-primary" <?php echo ( $current_language_published || ( $TRP_LANGUAGE == $trp_settings['default-language'] ) ) ? 'style="display:none;"' : '' ?> ><?php  _e( 'Go live', TRP_PLUGIN_SLUG ); ?></button>
-                <button type="button" id="trp-unpublish-language" class="trp-publish-language button-primary" <?php echo ( !$current_language_published || ( $TRP_LANGUAGE == $trp_settings['default-language'] ) ) ? 'style="display:none;"' : '' ?> ><?php  _e( 'Set as draft', TRP_PLUGIN_SLUG ); ?></button>
-                <h1>Translate Press</h1>
+
                 <div id="trp-string-list">
-                    <select id="trp-string-categories">
-                        <option><?php _e( 'Choose text category', TRP_PLUGIN_SLUG ); ?></option>
-                    </select>
-                    <div id="trp-lists"> </div>
+                    <select id="trp-string-categories" data-trp-placeholder="<?php _e( 'Select string to translate...', TRP_PLUGIN_SLUG ); ?>"></select>
                 </div>
 
                 <div id="trp-next-previous">

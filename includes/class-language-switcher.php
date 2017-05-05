@@ -19,6 +19,9 @@ class TRP_Language_Switcher{
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;
         $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
+
+        //todo action link needs to be converted using JS. Right now it redirect to homepage.
+        $action_link = $this->url_converter->get_abs_home();
         //todo switch between templates based on settings
         require_once TRP_PLUGIN_DIR . 'includes/partials/language-switcher-1.php';
         return ob_get_clean();
@@ -28,8 +31,8 @@ class TRP_Language_Switcher{
         /*return 'en';*/
 
         //todo add all possible ways of determining language: cookies, global define etc.
-        if ( isset( $_GET['lang'] ) ){
-            $language_code = esc_attr( $_GET['lang'] );
+        if ( isset( $_REQUEST['lang'] ) ){
+            $language_code = esc_attr( $_REQUEST['lang'] );
             if ( in_array( $language_code, $this->settings['translation-languages'] ) ) {
                 return $language_code;
             }
