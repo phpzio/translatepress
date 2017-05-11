@@ -434,6 +434,17 @@ class TRP_Translation_Render{
     }
 
     public function enqueue_dynamic_translation(){
-        wp_enqueue_script( 'trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array( 'jquery' ) );
+        global $TRP_LANGUAGE;
+
+        if ( $TRP_LANGUAGE != $this->settings['default-language'] ) {
+            wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'));
+
+            $trp_data = array(
+                'trp_ajax_url' => apply_filters('trp_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
+                'trp_wp_ajax_url' => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
+                'trp_language' => $TRP_LANGUAGE
+            );
+            wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
+        }
     }
 }

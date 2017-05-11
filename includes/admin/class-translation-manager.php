@@ -70,6 +70,7 @@ class TRP_Translation_Manager{
 
     // todo "current user can" check
     public function get_translations() {
+        //error_log('get_translations');
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
@@ -77,7 +78,7 @@ class TRP_Translation_Manager{
                     $id_array = array();
                     $original_array = array();
                     $dictionaries = array();
-                    foreach ($strings as $key => $string) {
+                    foreach ( $strings as $key => $string ) {
                         if ( isset( $string->id ) && is_numeric( $string->id ) ) {
                             $id_array[$key] = (int)$string->id;
                         } else if ( isset( $string->original ) ) {
@@ -89,25 +90,33 @@ class TRP_Translation_Manager{
 
                     // necessary in order to obtain all the original strings
                     if ( $this->settings['default-language'] != $current_language ) {
-                        $this->translation_render->process_strings($original_array, $current_language);
+                        //todo current user can
+                        if ( current_user_can ( 'manage_options' ) ) {
+                            $this->translation_render->process_strings($original_array, $current_language);
+                        }
                         $dictionaries[$current_language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
                     }else{
                         $dictionaries[$current_language] = array();
                     }
 
-                    foreach( $this->settings['translation-languages'] as $language ) {
-                        if ( $language == $this->settings['default-language'] ){
-                            $dictionaries[$language]['default-language'] = true;
-                            continue;
+                    if ( isset( $_POST['all_languages'] ) && $_POST['all_languages'] === 'true' ) {
+                        foreach ($this->settings['translation-languages'] as $language) {
+                            if ($language == $this->settings['default-language']) {
+                                $dictionaries[$language]['default-language'] = true;
+                                continue;
+                            }
+                            if ($language == $current_language) {
+                                continue;
+                            }
+                            if (empty($original_strings)) {
+                                $original_strings = $this->extract_original_strings($dictionaries[$current_language], $original_array, $id_array);
+                            }
+                            //todo current user can
+                            if (current_user_can('manage_options')) {
+                                $this->translation_render->process_strings($original_strings, $language);
+                            }
+                            $dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
                         }
-                        if ( $language == $current_language ){
-                            continue;
-                        }
-                        if ( empty( $original_strings ) ){
-                            $original_strings = $this->extract_original_strings( $dictionaries[$current_language], $original_array, $id_array );
-                        }
-                        $this->translation_render->process_strings( $original_strings, $language );
-                        $dictionaries[$language] = $this->trp_query->get_string_rows( array(), $original_strings, $language );
                     }
 
                     echo json_encode( $dictionaries );
@@ -153,7 +162,7 @@ class TRP_Translation_Manager{
         die();
     }
 
-    public function publish_language(){
+  /*  public function publish_language(){
 
         // todo "current user can" check
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
@@ -180,6 +189,6 @@ class TRP_Translation_Manager{
             }
         }
         die();
-    }
+    }*/
 
 }

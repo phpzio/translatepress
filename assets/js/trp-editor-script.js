@@ -60,6 +60,8 @@ function TRP_Editor(){
             strings_to_query.push( string.get_details());
         }
 
+
+
         dictionaries[trp_on_screen_language] = new TRP_Dictionary( trp_on_screen_language );
         dictionaries[trp_on_screen_language].set_on_screen_strings( strings );
 
@@ -75,7 +77,8 @@ function TRP_Editor(){
             data: {
                 action: 'trp_get_translations',
                 language: trp_on_screen_language,
-                strings: JSON.stringify( strings_to_query )
+                strings: JSON.stringify( strings_to_query ),
+                all_languages: 'true'
             },
             success: function (response) {
                 _this.populate_strings( response );
@@ -103,7 +106,6 @@ function TRP_Editor(){
                 if ( translated_textareas[key] == undefined ) {
                     translated_textareas[key] = jQuery( '#trp-translated-' + key );
                 }
-
             }
         }
         console.log(dictionaries);
