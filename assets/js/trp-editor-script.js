@@ -355,6 +355,7 @@ function TRP_String( language, array_index ){
         _this.id = ( new_settings.hasOwnProperty ( 'id' ) ) ? new_settings.id : _this.id;
         _this.original = ( new_settings.hasOwnProperty ( 'original' ) ) ? new_settings.original : _this.original;
         _this.original = decode_html( _this.original );
+        jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : jquery_object;
 
         if ( jquery_object ){
             if ( trp_on_screen_language == trp_language ) {

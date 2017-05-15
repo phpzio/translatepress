@@ -70,6 +70,8 @@ class TRP_Language_Switcher{
         //return $url;
 //        error_log('url   ' . $url);
 //        error_log('path   ' .  $path);
+
+        //todo this is not very reliable. use get_abs_home() + language + $path to construct the url rather than manipulating $url
         global $TRP_LANGUAGE;
         if( $path != '' ) {
             $stripped_path_url = $this->str_lreplace($path, '', $url);

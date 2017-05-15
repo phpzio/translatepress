@@ -444,6 +444,9 @@ class TRP_Translation_Render{
                 'trp_wp_ajax_url' => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
                 'trp_language' => $TRP_LANGUAGE
             );
+            if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
+                $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
+            }
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }
