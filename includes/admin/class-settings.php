@@ -116,7 +116,7 @@ class TRP_Settings{
                 <?php }?>
                 </select>
                 <label>
-                    <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" value="<?php $language_code = array_values(array_slice($this->settings['translation-languages'], -1))[0]; /*last element*/ echo $language_code; ?>" <?php echo ( in_array( $language_code, $this->settings['publish-languages'] ) && ( $language_code != $this->settings['default-language'] ) ) ? 'checked' : ''; ?>>
+                    <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" value="<?php $language_code = array_values(array_slice($this->settings['translation-languages'], -1)); /*last element*/ echo $language_code[0]; ?>" <?php echo ( in_array( $language_code, $this->settings['publish-languages'] ) && ( $language_code != $this->settings['default-language'] ) ) ? 'checked' : ''; ?>>
                     <span id="trp-published-language"><b><?php _e( 'Publish', TRP_PLUGIN_SLUG ); ?></b></span>
                 </label>
                 <p class="description">
