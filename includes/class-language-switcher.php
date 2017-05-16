@@ -5,9 +5,9 @@ class TRP_Language_Switcher{
     protected $settings;
     protected $url_converter;
 
-    public function __construct( $settings ){
+    public function __construct( $settings, $url_converter ){
         $this->settings = $settings;
-        $this->url_converter = new TRP_Url_Converter( $settings );
+        $this->url_converter = $url_converter;
         $language = $this->get_current_language();
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
