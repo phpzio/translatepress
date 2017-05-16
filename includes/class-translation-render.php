@@ -51,7 +51,8 @@ class TRP_Translation_Render{
 
     protected function get_node_type_category( $current_node_type ){
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-            __( 'Meta Information', TRP_PLUGIN_SLUG ) => array( 'meta_desc' ),
+            //__( 'Page Slug', TRP_PLUGIN_SLUG ) => array( 'post_slug' ),
+            __( 'Meta Information', TRP_PLUGIN_SLUG ) => array( 'meta_desc', 'post_slug' ),
         ));
 
         foreach( $node_type_categories as $category_name => $node_types ){
@@ -89,6 +90,9 @@ class TRP_Translation_Render{
                 && !$this->hasAncestorAttribute( $row, $no_translate_attribute )){
                 if(strpos($row->outertext,'[vc_') === false) {
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
+                    if ( $row->parent()->tag == 'title' ){
+                        //todo mark string as title
+                    }
                     array_push($nodes, array('node'=>$row,'type'=>'text') );
                 }
             }
@@ -112,6 +116,12 @@ class TRP_Translation_Render{
                 && !$this->hasAncestorAttribute( $row, $no_translate_attribute )){
                 array_push( $translateable_strings, $row->content );
                 array_push( $nodes, array('node'=>$row,'type'=>'meta_desc') );
+            }
+        }
+        foreach ($html->find('meta[name="trp-slug"]' ) as $k => $row ){
+            if ( $this->full_trim($row->content)!="" && !is_numeric($this->full_trim($row->content)) && !preg_match('/^\d+%$/',$this->full_trim($row->content ) ) ) {
+                array_push( $translateable_strings, $row->content );
+                array_push( $nodes, array('node'=>$row,'type'=>'post_slug') );
             }
         }
         foreach ( $html->find('iframe') as $k => $row ) {
@@ -153,6 +163,10 @@ class TRP_Translation_Render{
                 'attribute' => false
             ),
             'meta_desc' => array(
+                'accessor' => 'content',
+                'attribute' => false
+            ),
+            'post_slug' => array(
                 'accessor' => 'content',
                 'attribute' => false
             ),

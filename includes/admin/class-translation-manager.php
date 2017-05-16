@@ -59,6 +59,15 @@ class TRP_Translation_Manager{
         }
     }
 
+    public function add_slug_as_meta_tag() {
+        global $post;
+        if ( is_single() && $this->conditions_met( 'preview' ) ) {
+            error_log('<meta name="trp-slug">' . $post->post_name . '</meta>');
+            echo '<meta name="trp-slug" content="' . $post->post_name . '"/>' . "\n";
+        }
+    }
+
+
     protected function extract_original_strings( $strings, $original_array, $id_array ){
         if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {

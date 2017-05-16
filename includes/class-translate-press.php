@@ -62,11 +62,13 @@ class TRP_Translate_Press{
 
 
         $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations', $this->translation_manager, 'get_translations' );
+        $this->loader->add_action( 'wp_head', $this->translation_manager, 'add_slug_as_meta_tag', 2 );
 
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations', $this->translation_manager, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->translation_manager, 'save_translations' );
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
+
 
     }
 
