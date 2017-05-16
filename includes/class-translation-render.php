@@ -65,6 +65,24 @@ class TRP_Translation_Render{
 
     }
 
+    protected function get_node_subtype_description( $current_node ){
+        //todo provide descriptions based on current node for meta title, meta description etc.
+        $current_node_type = $current_node['type'];
+        $node_type_categories = apply_filters( 'trp_node_subtype_descriptions', array(
+            __( 'Page Slug', TRP_PLUGIN_SLUG ) => array( 'post_slug' ),
+        ));
+
+        foreach( $node_type_categories as $category_name => $node_types ){
+            if ( in_array( $current_node_type, $node_types ) ){
+                return $category_name;
+            }
+        }
+
+        return '';
+
+    }
+
+
     public function shutdown(){
         $output = ob_get_clean();
         $this->translate_page($output);
@@ -250,6 +268,7 @@ class TRP_Translation_Render{
                 } else {
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
+                    $nodes[$i]['node']->setAttribute('data-trp-node-subtype', $this->get_node_subtype_description( $nodes[$i] ) );
                 }
             }
 

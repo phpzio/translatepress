@@ -32,6 +32,7 @@ function TRP_Translator(){
                 if ( url == ajax_url ){
                     _this.ajax_get_translation( strings_to_query, wp_ajax_url );
                 }else{
+                    _this.update_strings( null, strings_to_query );
                     console.log( 'Translate Press AJAX Request Error' );
                 }
             }
@@ -48,7 +49,7 @@ function TRP_Translator(){
                 for( var i in response[language] ) {
                     var response_string = response[language][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
-                        response[language][i].jquery_object = queried_string.node;
+                        response[language][i].jquery_object = jQuery( queried_string.node );
                         if (response_string.translated != '') {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
@@ -64,13 +65,17 @@ function TRP_Translator(){
                     queried_string.node.innerText = initial_value;
                 }
 
-                if ( typeof trpEditor !== 'undefined' ) {
-                    trpEditor.populate_strings( response );
+                if ( typeof parent.trpEditor !== 'undefined' ) {
+                    parent.trpEditor.populate_strings( response );
                     console.log("SUccess");
                 }else{
                     console.log('TRP EDITOR IS NOT DEFINED')
                 }
 
+            }
+        }else{
+            for ( var j in strings_to_query ) {
+                strings_to_query[j].node.innerText = strings_to_query[j].original;
             }
         }
     };

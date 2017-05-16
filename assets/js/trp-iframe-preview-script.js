@@ -51,7 +51,7 @@ function TRP_Iframe_Preview(){
 var trp_preview_iframe;
 jQuery( function(){
     //TODO remove this when finished
-    jQuery( ".site-branding" ).append("<h1>new word</h1>");
+    //jQuery( ".site-branding" ).append("<h1>new word</h1>");
 
 
     trp_preview_iframe = new TRP_Iframe_Preview();
