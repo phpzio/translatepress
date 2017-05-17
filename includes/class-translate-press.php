@@ -85,6 +85,11 @@ class TRP_Translate_Press{
 
         // TODO Shortcodes do not work in widgets. Create widget.
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
+
+        /* manage slug translation hooks */
+        $this->loader->add_filter( 'request', $this->slug_manager, 'change_slug_var_in_request' );
+        $this->loader->add_filter( 'post_link', $this->slug_manager, 'translate_slug_for_posts', 10, 3 );
+        $this->loader->add_filter( 'get_page_uri', $this->slug_manager, 'translate_slugs_for_pages', 10, 2 );
     }
 
     public function run() {
