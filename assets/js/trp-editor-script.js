@@ -21,7 +21,7 @@ function TRP_Editor(){
     this.initialize = function(){
         _this.edit_translation_button = null;
 
-        _this.update_parent_url();
+        //_this.update_parent_url();
 
         _this.iframe_strings_lookup();
 
