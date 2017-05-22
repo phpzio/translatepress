@@ -245,8 +245,18 @@ function TRP_Editor(){
         if (placeholder_text != '') {
             placeholder_text = 'Select string to translate...';
         }
-        jquery_string_selector.select2({ placeholder: placeholder_text });
+        jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option });
         jQuery( '#trp-language-select' ).select2();
+    }
+
+    function format_option(option){
+        //todo options that don't have title get (undefined). fix this.
+      //  if ( option.title ) {
+            option = jQuery(
+                '<div>' + option.text + '</div><div class="string-selector-description">' + option.title + '</div>'
+            );
+       // }
+        return option;
     }
 
     add_event_handlers();
@@ -329,11 +339,13 @@ function TRP_String( language, array_index ){
     var _this = this;
     var TRP_TRANSLATION_ID = 'data-trp-translate-id';
     var TRP_NODE_TYPE = 'data-trp-node-type';
+    var TRP_NODE_DESCRIPTION = 'data-trp-node-description';
     this.id = null;
     this.original = null;
     this.translated = null;
     this.status = null;
     this.node_type = 'text';
+    this.node_type = 'node_description';
     var jquery_object = null;
     this.language = language;
     this.index = array_index;
@@ -414,6 +426,7 @@ function TRP_String( language, array_index ){
         if ( translation_id_attribute ){
             this.id = translation_id_attribute;
             this.node_type = jquery_object.attr( TRP_NODE_TYPE );
+            this.node_description = jquery_object.attr( TRP_NODE_DESCRIPTION );
         }else{
             this.original = jquery_object.text();
         }
@@ -443,17 +456,26 @@ function TRP_Lister( current_dictionary ) {
             for ( var i in category_array[category] ) {
                 //todo limit the original string length
                 var original = category_array[category][i].original;
-                var suspension_dots = '...';
+                var description = '';
+                if ( category_array[category][i].node_description != "" ){
+                    description = '(' + category_array[category][i].node_description + ') ';
+                }
                 if ( original ) {
-                    if ( original.length <= 90){
-                        suspension_dots = '';
-                    }
-                    jquery_string_selector.append(jQuery('<option></option>').attr( 'value', category_array[category][i].index).text(original.substring(0, 90) + suspension_dots));
+                    jquery_string_selector.append(jQuery('<option></option>').attr( 'value', category_array[category][i].index).text( _this.format_text( original, category_array[category][i] )).attr( 'title', description ) );//category_array[category][i].index).text(original.substring(0, 90) + suspension_dots));
                 }
             }
         }
 
         jquery_string_selector.on( 'change', _this.select_string );
+    };
+
+    this.format_text = function ( original, string ){
+        var suspension_dots = '...';
+        if ( original.length <= 90){
+            suspension_dots = '';
+        }
+
+        return original.substring(0, 90) + suspension_dots ;
     };
 
     this.format_category_name = function( name ){

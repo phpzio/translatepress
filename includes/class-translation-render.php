@@ -65,16 +65,64 @@ class TRP_Translation_Render{
 
     }
 
-    protected function get_node_subtype_description( $current_node ){
+    protected function get_node_description( $current_node ){
         //todo provide descriptions based on current node for meta title, meta description etc.
-        $current_node_type = $current_node['type'];
-        $node_type_categories = apply_filters( 'trp_node_subtype_descriptions', array(
-            __( 'Page Slug', TRP_PLUGIN_SLUG ) => array( 'post_slug' ),
-        ));
+        //( $html->find('meta[name="description"],meta[property="og:title"],meta[property="og:description"],meta[property="og:site_name"],meta[name="twitter:title"],meta[name="twitter:description"]') as $k => $row ){
+        $node_type_descriptions = apply_filters( 'trp_node_type_descriptions',
+            array(
+                array(
+                    'type'          => 'meta_desc',
+                    'attribute'     => 'name',
+                    'value'         => 'description',
+                    'description'   => __( 'Description', TRP_PLUGIN_SLUG )
+                ),
+                array(
+                    'type'          => 'meta_desc',
+                    'attribute'     => 'property',
+                    'value'         => 'og:title',
+                    'description'   => __( 'OG Title', TRP_PLUGIN_SLUG )
+                ),
+                array(
+                    'type'          => 'meta_desc',
+                    'attribute'     => 'property',
+                    'value'         => 'og:site_name',
+                    'description'   => __( 'OG Site Name', TRP_PLUGIN_SLUG )
+                ),
+                array(
+                    'type'          => 'meta_desc',
+                    'attribute'     => 'property',
+                    'value'         => 'og:description',
+                    'description'   => __( 'OG Description', TRP_PLUGIN_SLUG )
+                ),
+                array(
+                    'type'          => 'meta_desc',
+                    'attribute'     => 'name',
+                    'value'         => 'twitter:title',
+                    'description'   => __( 'Twitter Title', TRP_PLUGIN_SLUG )
+                ),
+                array(
+                    'type'          => 'meta_desc',
+                    'attribute'     => 'name',
+                    'value'         => 'twitter:description',
+                    'description'   => __( 'Twitter Description', TRP_PLUGIN_SLUG )
+                ),
+                array(
+                    'type'          => 'post_slug',
+                    'attribute'     => 'name',
+                    'value'         => 'trp-slug',
+                    'description'   => __( 'Post Slug', TRP_PLUGIN_SLUG )
+                ),
+            ));
 
-        foreach( $node_type_categories as $category_name => $node_types ){
-            if ( in_array( $current_node_type, $node_types ) ){
-                return $category_name;
+        foreach( $node_type_descriptions as $node_type_description ){
+            error_log(($current_node['node']->$node_type_description['value']));
+
+            if ( $current_node['type'] == $node_type_description['type'] &&
+                isset( $current_node['node']->$node_type_description['attribute'] ) &&
+                $current_node['node']->$node_type_description['attribute'] == $node_type_description['value'] ) {
+
+                return $node_type_description['description'];
+
             }
         }
 
@@ -268,7 +316,9 @@ class TRP_Translation_Render{
                 } else {
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
-                    $nodes[$i]['node']->setAttribute('data-trp-node-subtype', $this->get_node_subtype_description( $nodes[$i] ) );
+                    if ( $this->get_node_description( $nodes[$i] ) ) {
+                        $nodes[$i]['node']->setAttribute('data-trp-node-description', $this->get_node_description($nodes[$i]));
+                    }
                 }
             }
 

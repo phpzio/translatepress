@@ -61,8 +61,8 @@ class TRP_Translation_Manager{
 
     public function add_slug_as_meta_tag() {
         global $post;
-        if ( is_single() && $this->conditions_met( 'preview' ) ) {
-            error_log('<meta name="trp-slug">' . $post->post_name . '</meta>');
+        if ( isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) ) {
+            error_log( '<meta name="trp-slug">' . $post->post_name . '</meta>' );
             echo '<meta name="trp-slug" content="' . $post->post_name . '"/>' . "\n";
         }
     }
