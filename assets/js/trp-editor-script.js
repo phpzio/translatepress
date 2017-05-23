@@ -51,16 +51,15 @@ function TRP_Editor(){
          }).wrap("<translate-press></translate-press>");*/
 
         var all_strings = _this.preview_iframe.contents().find( '[data-trp-translate-id]' );
+        // add iframe title
+        all_strings.push ( jQuery( document.getElementById("trp-preview-iframe").contentDocument.title )[0] );
         var strings_to_query = [];
-
         for ( var i = 0; i < all_strings.length; i++ ) {
             var string = new TRP_String( trp_on_screen_language, i );
             string.set_raw_string( all_strings[i] );
             strings.push( string );
             strings_to_query.push( string.get_details());
         }
-
-
 
         dictionaries[trp_on_screen_language] = new TRP_Dictionary( trp_on_screen_language );
         dictionaries[trp_on_screen_language].set_on_screen_strings( strings );
@@ -108,7 +107,6 @@ function TRP_Editor(){
                 }
             }
         }
-        console.log(dictionaries);
     };
 
     this.edit_strings = function ( trp_string, index ){
@@ -140,12 +138,12 @@ function TRP_Editor(){
         if ( original != "" ) {
             for (var key in translated_textareas) {
                 var translated = translated_textareas[key].val();
-                if (dictionaries[key].get_string_by_original(original).translated != translated) {
+                if ( dictionaries[key].get_string_by_original(original).translated != translated ) {
                     modified = true;
                     if (strings_to_save[key] == undefined) {
                         strings_to_save[key] = [];
                     }
-                    var id = translated_textareas[key].attr(TRP_TRANSLATION_ID);
+                    var id = translated_textareas[key].attr( TRP_TRANSLATION_ID );
                     var status = 2;
                     if (translated.trim() == '') {
                         status = 0;
@@ -330,6 +328,7 @@ function TRP_Dictionary( language_code ){
             }
             categorized[ _this.strings[i].node_type ].push( _this.strings[i] );
         }
+
         return categorized;
     };
 
@@ -344,8 +343,8 @@ function TRP_String( language, array_index ){
     this.original = null;
     this.translated = null;
     this.status = null;
-    this.node_type = 'text';
-    this.node_type = 'node_description';
+    this.node_type = 'Dynamic Added Strings';
+    this.node_description = '';
     var jquery_object = null;
     this.language = language;
     this.index = array_index;
@@ -427,12 +426,11 @@ function TRP_String( language, array_index ){
             this.id = translation_id_attribute;
             this.node_type = jquery_object.attr( TRP_NODE_TYPE );
             this.node_description = jquery_object.attr( TRP_NODE_DESCRIPTION );
+
         }else{
             this.original = jquery_object.text();
         }
     };
-
-    //_this.initialize();
 }
 
 function TRP_Lister( current_dictionary ) {
@@ -499,8 +497,6 @@ function TRP_Lister( current_dictionary ) {
         }*/
 
     };
-
-    //_this.reload_list();
 
 }
 

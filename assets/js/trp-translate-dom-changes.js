@@ -40,7 +40,6 @@ function TRP_Translator(){
     };
 
     this.update_strings = function( response, strings_to_query ) {
-        console.log( response );
         if ( response != null && response[language] != null ){
             for ( var j in strings_to_query ) {
                 var queried_string = strings_to_query[j];
@@ -67,11 +66,7 @@ function TRP_Translator(){
 
                 if ( typeof parent.trpEditor !== 'undefined' ) {
                     parent.trpEditor.populate_strings( response );
-                    console.log("SUccess");
-                }else{
-                    console.log('TRP EDITOR IS NOT DEFINED')
                 }
-
             }
         }else{
             for ( var j in strings_to_query ) {
@@ -86,7 +81,6 @@ function TRP_Translator(){
             mutations.forEach( function (mutation) {
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     if ( mutation.addedNodes[i].innerText && mutation.addedNodes[i].innerText.trim() != '' ) {
-                        console.log(mutation.addedNodes[i].innerText);
                         strings.push({node: mutation.addedNodes[i], original: mutation.addedNodes[i].innerText});
                     }
                     mutation.addedNodes[i].innerText = '';
@@ -137,8 +131,8 @@ var language;
 jQuery( function() {
     // todo script should execute before any others
     trpTranslator = new TRP_Translator();
-    jQuery( ".site-branding" ).append("<h1>new word</h1>");
-    jQuery( ".site-branding" ).append("<h1>other new word</h1>");
-    jQuery( ".site-branding" ).append("<h1>no translation</h1>");
+   /* jQuery( ".site-branding" ).append("<h1>new word2</h1>");
+    jQuery( ".site-branding" ).append("<h1>other new word2</h1>");
+    jQuery( ".site-branding" ).append("<h1>no translation2</h1>");*/
 });
 

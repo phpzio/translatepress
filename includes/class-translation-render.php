@@ -51,8 +51,7 @@ class TRP_Translation_Render{
 
     protected function get_node_type_category( $current_node_type ){
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-            //__( 'Page Slug', TRP_PLUGIN_SLUG ) => array( 'post_slug' ),
-            __( 'Meta Information', TRP_PLUGIN_SLUG ) => array( 'meta_desc', 'post_slug' ),
+            __( 'Meta Information', TRP_PLUGIN_SLUG ) => array( 'meta_desc', 'post_slug', 'page_title' ),
         ));
 
         foreach( $node_type_categories as $category_name => $node_types ){
@@ -112,17 +111,21 @@ class TRP_Translation_Render{
                     'value'         => 'trp-slug',
                     'description'   => __( 'Post Slug', TRP_PLUGIN_SLUG )
                 ),
+                array(
+                    'type'          => 'page_title',
+                    'description'   => __( 'Page Title', TRP_PLUGIN_SLUG )
+                ),
+
             ));
 
         foreach( $node_type_descriptions as $node_type_description ){
-            error_log(($current_node['node']->$node_type_description['value']));
-
             if ( $current_node['type'] == $node_type_description['type'] &&
-                isset( $current_node['node']->$node_type_description['attribute'] ) &&
-                $current_node['node']->$node_type_description['attribute'] == $node_type_description['value'] ) {
-
+                (
+                    ( isset( $node_type_description['attribute'] ) && isset( $current_node['node']->$node_type_description['attribute'] ) && $current_node['node']->$node_type_description['attribute'] == $node_type_description['value'] ) ||
+                    ( ! isset( $node_type_description['attribute'] ) )
+                )
+            ) {
                 return $node_type_description['description'];
-
             }
         }
 
@@ -156,10 +159,12 @@ class TRP_Translation_Render{
                 && !$this->hasAncestorAttribute( $row, $no_translate_attribute )){
                 if(strpos($row->outertext,'[vc_') === false) {
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
-                    if ( $row->parent()->tag == 'title' ){
+                    if ( $row->parent()->tag == 'title' ) {
                         //todo mark string as title
+                        array_push($nodes, array('node' => $row, 'type' => 'page_title'));
+                    }else {
+                        array_push($nodes, array('node' => $row, 'type' => 'text'));
                     }
-                    array_push($nodes, array('node'=>$row,'type'=>'text') );
                 }
             }
         }
@@ -228,6 +233,10 @@ class TRP_Translation_Render{
                 'accessor' => 'outertext',
                 'attribute' => false
             ),
+            'page_title' => array(
+                'accessor' => 'outertext',
+                'attribute' => false
+            ),
             'meta_desc' => array(
                 'accessor' => 'content',
                 'attribute' => false
@@ -278,41 +287,16 @@ class TRP_Translation_Render{
                 if ( $nodes[$i]['type'] == 'image_src' && $nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i] != $translateable_strings[$i]) {
                     $nodes[$i]['node']->srcset = "";
                 }
-/*
-                switch ( $nodes[$i]['type'] ){
-                    case 'text':
-                        $nodes[$i]['node']->outertext = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->outertext);
-                        break;
-                    case 'meta_desc':
-                        $nodes[$i]['node']->content = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->content );
-                        break;
-                    case 'iframe_src':
-                        $nodes[$i]['node']->src = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->src );
-                        break;
-                    case 'image_alt':
-                        $nodes[$i]['node']->alt = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->alt );
-                        break;
-                    case 'a_pdf':
-                        $nodes[$i]['node']->href = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->href );
-                        break;
-                    case 'image_src':
-                        $nodes[$i]['node']->src = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->src );
-                        if($nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i]!=$translateable_strings[$i]) {
-                            $nodes[$i]['node']->srcset = "";
-                        }
-                        break;
-                    case 'submit':
-                        $nodes[$i]['node']->setAttribute( 'value', str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->getAttribute('value') ) );
-                        break;
-                    case 'placeholder':
-                        $nodes[$i]['node']->setAttribute( 'placeholder', str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->getAttribute('placeholder') ) );
-                        break;
-                }*/
             }
 
             if ( $preview_mode ) {
-                if ($nodes[$i]['type'] == 'text') {
-                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-type="' . $this->get_node_type_category( $nodes[$i]['type'] ) . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
+                if ( $node_accessor [ $nodes[$i]['type'] ]['accessor'] == 'outertext' ) {
+                    $outertext_details = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-type="' . $this->get_node_type_category( $nodes[$i]['type'] ) . '"';
+                    if ( $this->get_node_description( $nodes[$i] ) ) {
+                        $outertext_details .= ' data-trp-node-description="' . $this->get_node_description($nodes[$i] ) . '"';
+                    }
+                    $outertext_details .= '>' . $nodes[$i]['node']->outertext . '</translate-press>';
+                    $nodes[$i]['node']->outertext = $outertext_details;
                 } else {
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
@@ -322,52 +306,10 @@ class TRP_Translation_Render{
                 }
             }
 
-            /*if ( $nodes[$i]['type'] == 'text' ) {
-                if ( $translation_available && ! ( $preview_mode && ( $this->settings['default-language'] == $TRP_LANGUAGE ) ) ) {
-                    // keeps whitespaces of the original string.
-                    $translated_strings[$i] = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->outertext);
-                    if ( $preview_mode ) {
-                        $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $translated_strings[$i] . '</translate-press>';
-                    }else{
-                        $nodes[$i]['node']->outertext = $translated_strings[$i];
-                    }
-                }else{
-                    $nodes[$i]['node']->outertext = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '">' . $nodes[$i]['node']->outertext . '</translate-press>';
-                }
-            }
-
-            if ( $nodes[$i]['type']=='submit' ) {
-                $nodes[$i]['node']->setAttribute('value',$translated_strings[$i]);
-            }
-            if($nodes[$i]['type']=='placeholder') {
-                $nodes[$i]['node']->setAttribute('placeholder',$translated_strings[$i]);
-            }
-            if($nodes[$i]['type']=='meta_desc') {
-                $nodes[$i]['node']->content = $translated_strings[$i];
-            }
-            if($nodes[$i]['type']=='iframe_src') {
-                $nodes[$i]['node']->src = $translated_strings[$i];
-            }
-            if($nodes[$i]['type']=='image_alt') {
-                $nodes[$i]['node']->alt = $translated_strings[$i];
-            }
-            if($nodes[$i]['type']=='image_src') {
-                $nodes[$i]['node']->src = $translated_strings[$i];
-                if($nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i]!=$translateable_strings[$i]) {
-                    $nodes[$i]['node']->srcset = "";
-                }
-            }
-            if($nodes[$i]['type']=='a_pdf') {
-                $nodes[$i]['node']->href =  $translated_strings[$i];
-            }*/
-
         }
 
 
         return /*(microtime(true) - $start)  . */ $html->save();
-        //return '<html><body><h1>OK</h1></body></html>';
-
-
     }
 
     protected function get_translated_string_ids( $translated_strings, $language_code ){
@@ -471,7 +413,6 @@ class TRP_Translation_Render{
         $start = microtime(true);
 
         $table_name = $wpdb->prefix . 'trp_dictionary_' . $this->settings['default-language'] . '_' . $language_code;
-
 
         //todo what happens if a string has quotes in it. it might break.
         $dictionary = $wpdb->get_results("SELECT original,translated FROM `" . $table_name . "` WHERE original IN ('".implode( "','", $translatable_strings )."')");
