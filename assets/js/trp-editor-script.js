@@ -140,6 +140,10 @@ function TRP_Editor(){
             for (var key in translated_textareas) {
                 var translated = translated_textareas[key].val();
                 var string = dictionaries[key].get_string_by_original(original);
+                if ( string.slug == true ){
+                    console.log('slug');
+                    action = 'trp_save_slug_translation';
+                }
                 if ( string.translated != translated ) {
                     modified = true;
                     if (strings_to_save[key] == undefined) {
@@ -151,9 +155,6 @@ function TRP_Editor(){
                         status = 0;
                     }
                     strings_to_save[key].push({id: id, original: original, translated: translated, status: status});
-                    if ( string.slug == true ){
-                        action = 'trp_save_slug_translations';
-                    }
                 }
             }
         }
