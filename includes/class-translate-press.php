@@ -89,10 +89,6 @@ class TRP_Translate_Press{
 
     public function run() {
         $this->loader->run();
-        $sql = "CREATE UNIQUE INDEX index_name ON wp_trp_dictionary_fr (original(20));";
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        dbDelta( $sql );
-
     }
 
 }

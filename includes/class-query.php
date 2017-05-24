@@ -58,6 +58,12 @@ class TRP_Query{
                                      $charset_collate;";
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
+
+
+            // create index
+            //$sql_index = 'ALTER TABLE `wp_trp_dictionary_fr` ADD INDEX(`status`);';
+            $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
+            $this->db->query( $sql_index );
         }
 
     }
