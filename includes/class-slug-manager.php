@@ -22,13 +22,25 @@ class TRP_Slug_Manager {
         if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ){
             if (!empty($query_vars['name'])) {
                 if (!empty($query_vars['post_type'])) {
-                    $query_vars['name'] = TRP_Slug_Manager::get_original_slug($query_vars['name']);
-                    $query_vars[$query_vars['post_type']] = TRP_Slug_Manager::get_original_slug($query_vars['name']);
+                    /* we can have an hierarchical structure for post types */
+                    $postnames = explode( '/', $query_vars['name'] );
+                    $translated_postnames = array();
+                    foreach( $postnames as $postname ){
+                        $translated_postnames[] = $this->get_original_slug( $postname );
+                    }
+                    $query_vars['name'] = implode( '/', $translated_postnames );
+                    $query_vars[$query_vars['post_type']] = implode( '/', $translated_postnames );
                 } else {
-                    $query_vars['name'] = TRP_Slug_Manager::get_original_slug($query_vars['name']);
+                    $query_vars['name'] = $this->get_original_slug($query_vars['name']);
                 }
             } else if (!empty($query_vars['pagename'])) {
-                $query_vars['pagename'] = TRP_Slug_Manager::get_original_slug($query_vars['pagename']);
+                /* we can have an hierarchical structure for pages */
+                $translated_pagenames = array();
+                $pagenames = explode( '/', $query_vars['pagename'] );
+                foreach ( $pagenames as $pagename ){
+                    $translated_pagenames[] = $this->get_original_slug( $pagename );
+                }
+                $query_vars['pagename'] = implode( '/', $translated_pagenames );
             }
         }
         return $query_vars;
@@ -36,9 +48,23 @@ class TRP_Slug_Manager {
 
     /* change the slug in permalinks for posts and post types */
     public function translate_slug_for_posts( $permalink, $post, $leavename ){
-        $translated_slug = TRP_Slug_Manager::get_translated_slug( $post );
-        if( !empty( $translated_slug ) ){
-            $permalink = str_replace('/'.$post->post_name.'/', '/'.$translated_slug.'/', $permalink );
+        if( $post->post_parent == 0 ){
+            $translated_slug = $this->get_translated_slug( $post );
+            if( !empty( $translated_slug ) ){
+                $permalink = str_replace('/'.$post->post_name.'/', '/'.$translated_slug.'/', $permalink );
+            }
+        }
+        else{
+            $posts_hierarchy = get_post_ancestors( $post->ID );
+            $posts_hierarchy[] = $post->ID;
+            foreach( $posts_hierarchy as $post_id ){
+                $translated_slug = $this->get_translated_slug( $post_id );
+                if( !empty( $translated_slug ) ){
+                    $post_object = get_post( $post_id );
+                    $permalink = str_replace('/'.$post_object->post_name.'/', '/'.$translated_slug.'/', $permalink );
+                }
+            }
+
         }
 
         return $permalink;
@@ -46,15 +72,37 @@ class TRP_Slug_Manager {
 
     /* change the slug for pages in permalinks */
     public function translate_slugs_for_pages( $uri, $page ){
-        $translated_slug = TRP_Slug_Manager::get_translated_slug( $page );
-        if( !empty( $translated_slug ) )
-            $uri = $translated_slug;
+        if( strpos( $uri, '/' ) === false ){//means we do not have any page ancestors in the link so proceed
+            $uri = $this->get_translated_slug( $page );
+        }
+        else{
+            $uri_parts = explode( '/', $uri );
+            $page_ancestors = array_reverse( get_post_ancestors( $page->ID ) );//this returns an array of ancestors the first element in the array is the closest ancestor so we need it reversed
+            $translated_uri_parts = array();
+            if( !empty( $uri_parts ) && !empty( $page_ancestors ) ) {
+                foreach ($uri_parts as $key => $uri_part) {
+                    if( !empty( $page_ancestors[$key] ) )
+                        $translated_slug = $this->get_translated_slug($page_ancestors[$key]);
+                    else
+                        $translated_slug = $this->get_translated_slug($page);
+
+                    if (!empty($translated_slug))
+                        $translated_uri_parts[] = $translated_slug;
+                    else
+                        $translated_uri_parts[] = $uri_part;
+                }
+
+                if (!empty($translated_uri_parts))
+                    $uri = implode('/', $translated_uri_parts);
+            }
+        }
+
 
         return $uri;
     }
 
     /**
-     * @param $post the post object
+     * @param $post the post object or post id
      * @param string $language optional parameter for language. if it's not present it will grab it from the $TRP_LANGUAGE global
      * @return mixed|string an empty string or the translated slug
      */
@@ -65,7 +113,10 @@ class TRP_Slug_Manager {
                 $language = $TRP_LANGUAGE;
         }
 
-        $translated_slug = get_post_meta( $post->ID, $this->translated_slug_meta.$language, true );
+        if( is_object( $post ) )
+            $post = $post->ID;
+
+        $translated_slug = get_post_meta( $post, $this->translated_slug_meta.$language, true );
         if( !empty( $translated_slug ) )
             return $translated_slug;
         else
@@ -104,35 +155,47 @@ class TRP_Slug_Manager {
     /**
      * Function on ajax hook to save the slug translation. 
      */
-    protected function save_translated_slug(){
+    public function save_translated_slug(){
         // todo "current user can" check
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_slug_translation' ) {
+            if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_slug_translation' && !empty( $_POST['strings'] ) ) {
 
-                /* get our posted parameters here and sanitize them */
-                if( !empty( $_POST['original_slug'] ) )
-                    $original_slug = sanitize_text_field( $_POST['original_slug'] );
-                if( !empty( $_POST['translated_slug'] ) )
-                    $translated_slug = sanitize_text_field( $_POST['translated_slug'] );
-                if( !empty( $_POST['language'] ) )
-                    $language = sanitize_text_field( $_POST['language'] );
+                $slugs = json_decode(stripslashes($_POST['strings']));
+                $update_slugs = array();
+                foreach ( $slugs as $language => $language_slugs ) {
+                    if ( in_array( $language, $this->settings['translation-languages'] ) && $language != $this->settings['default-language'] ) {
+                        foreach( $language_slugs as $slug ) {
+                            if ( isset( $slug->id ) && is_numeric( $slug->id ) ) {
+                                $update_slugs[ $language ] = array();
+                                array_push($update_slugs[ $language ], array(
+                                    'id' => (int)$slug->id,
+                                    'original' => sanitize_text_field($slug->original),
+                                    'translated' => sanitize_text_field($slug->translated),
+                                    'status' => (int)$slug->status
+                                ));
+                            }
+                        }
+                    }
+                }
 
-                if( !empty( $original_slug ) && !empty( $translated_slug ) && !empty( $language )  ){
-                    global $wpdb;
-                    $post_id = $wpdb->get_results( $wpdb->prepare(
-                        "
+                global $wpdb;
+                $post_id = '';
+                foreach( $update_slugs as $language => $update_slugs_array ) {
+                    if (empty($post_id)) {
+                        $post_id = $wpdb->get_results($wpdb->prepare(
+                            "
                     SELECT ID 
                     FROM $wpdb->posts
                     WHERE post_name = '%s'                        
-                    ", $original_slug ) );
-
-                    if( !empty( $post_id ) ){
-                        $post_id = $post_id[0]->ID;
-                        if( is_numeric( $post_id ) ){
-                            update_post_meta( $post_id, $this->translated_slug_meta.$language, $translated_slug );
-                        }
+                    ", $update_slugs_array['original']));
                     }
 
+                    if( !empty( $post_id ) ){
+                        $postid = $post_id[0]->ID;
+                        if( is_numeric( $postid ) ){
+                            update_post_meta( $postid, $this->translated_slug_meta.$language, $update_slugs_array['translated'] );
+                        }
+                    }
                 }
             }
         }
