@@ -135,10 +135,12 @@ function TRP_Editor(){
         var strings_to_save = {};
         var modified = false;
         var original = _this.original_textarea.val();
+        var action = 'trp_save_translations';
         if ( original != "" ) {
             for (var key in translated_textareas) {
                 var translated = translated_textareas[key].val();
-                if ( dictionaries[key].get_string_by_original(original).translated != translated ) {
+                var string = dictionaries[key].get_string_by_original(original);
+                if ( string.translated != translated ) {
                     modified = true;
                     if (strings_to_save[key] == undefined) {
                         strings_to_save[key] = [];
@@ -149,23 +151,27 @@ function TRP_Editor(){
                         status = 0;
                     }
                     strings_to_save[key].push({id: id, original: original, translated: translated, status: status});
+                    if ( string.slug == true ){
+                        action = 'trp_save_slug_translations';
+                    }
                 }
             }
         }
 
         if ( modified ){
             _this.saving_translation_ui();
-            _this.ajax_save_strings( strings_to_save );
+            _this.ajax_save_strings( strings_to_save, action );
         }
     };
 
-    this.ajax_save_strings = function ( strings_to_save ){
+    this.ajax_save_strings = function ( strings_to_save, action ){
+        console.log(action ) ;
         jQuery.ajax({
             url: trp_ajax_url,
             type: 'post',
             dataType: 'json',
             data: {
-                action: 'trp_save_translations',
+                action: action,
                 strings: JSON.stringify( strings_to_save )
             },
             success: function (response) {
@@ -343,11 +349,13 @@ function TRP_String( language, array_index ){
     this.original = null;
     this.translated = null;
     this.status = null;
+    //todo translate this
     this.node_type = 'Dynamic Added Strings';
     this.node_description = '';
     var jquery_object = null;
     this.language = language;
     this.index = array_index;
+    this.slug = false;
 
     this.get_details = function(){
         var details = {};
@@ -423,12 +431,14 @@ function TRP_String( language, array_index ){
         jquery_object = jQuery( raw_string );
         var translation_id_attribute = jquery_object.attr( TRP_TRANSLATION_ID );
         if ( translation_id_attribute ){
-            this.id = translation_id_attribute;
-            this.node_type = jquery_object.attr( TRP_NODE_TYPE );
-            this.node_description = jquery_object.attr( TRP_NODE_DESCRIPTION );
-
+            _this.id = translation_id_attribute;
+            _this.node_type = jquery_object.attr( TRP_NODE_TYPE );
+            _this.node_description = jquery_object.attr( TRP_NODE_DESCRIPTION );
+            if ( jquery_object.attr( 'name' ) == 'trp-slug' ){
+                _this.slug = true;
+            }
         }else{
-            this.original = jquery_object.text();
+            _this.original = jquery_object.text();
         }
     };
 }

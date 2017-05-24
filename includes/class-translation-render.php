@@ -13,6 +13,8 @@ class TRP_Translation_Render{
     }
 
     public function start_object_cache(){
+
+
         global $TRP_LANGUAGE;
         if( is_admin() ||
         ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
@@ -303,6 +305,7 @@ class TRP_Translation_Render{
                     if ( $this->get_node_description( $nodes[$i] ) ) {
                         $nodes[$i]['node']->setAttribute('data-trp-node-description', $this->get_node_description($nodes[$i]));
                     }
+
                 }
             }
 
@@ -390,63 +393,6 @@ class TRP_Translation_Render{
         return false;
     }
 
-
- /*   public function ttranslate_page( $output ){
-        $language_code = $this->get_language();
-        if ( $language_code === false ){
-            return $output;
-        }
-
-        $translatable_strings = array();
-
-        //$output = $this->get_dummy_html();
-
-        $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
-
-        foreach ($html->find('text') as $k => $row){
-            $trimmed_text = $this->full_trim($row->outertext);
-            if( $trimmed_text != "" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric( $trimmed_text ) && !preg_match('/^\d+%$/', $trimmed_text ) )
-                $translatable_strings[] = $row->outertext;
-        }
-
-        global $wpdb;
-        $start = microtime(true);
-
-        $table_name = $wpdb->prefix . 'trp_dictionary_' . $this->settings['default-language'] . '_' . $language_code;
-
-        //todo what happens if a string has quotes in it. it might break.
-        $dictionary = $wpdb->get_results("SELECT original,translated FROM `" . $table_name . "` WHERE original IN ('".implode( "','", $translatable_strings )."')");
-
-        $existing_strings = array();
-        foreach( $dictionary as $string ){
-            $existing_strings[] = $string->original;
-            $output = str_replace( $string->original, $string->translated, $output );
-        }
-
-        $new_strings = array_diff( $translatable_strings, $existing_strings );
-
-        $translated_strings = $this->machine_translator->translate_array( $new_strings );
-
-        foreach ( $translated_strings as $key => $translated_string ){
-            $output = str_replace( $new_strings[$key], $translated_string, $output );
-        }
-
-        return (microtime(true) - $start)  . '<!-- ' . json_encode($translatable_strings) . ' -->' . $output;
-    }
-
-    public function get_dummy_html(){
-        return "<!DOCTYPE html>
-<html>
-<body>
-
-<h1>My First Heading</h1>
-
-<p>My first paragraph.</p>
-
-</body>
-</html>
-";
-    }*/
 
     protected function start_output_buffering(){
         $post_type = get_post_type();
