@@ -11,11 +11,22 @@ class TRP_Machine_Translator{
     }
 
     public function is_available(){
-        return false;
+        return true;
     }
 
     public function translate_array( $new_strings, $language_code ){
+
+        // strings are saved in the database encoded as the HTML DOM parser outputs them. e.g. While the band&#8217;s playin&#8217;
+        // maybe run a decode function before sending them for translation.
+        $strings = array();
+        foreach( $new_strings as $new_string ){
+            $strings[] = html_entity_decode( $new_string,  ENT_QUOTES );
+        }
+
+
+        
         //TODO API CALL
+
         //dummy
         $translated_strings = $new_strings;
         foreach ( $translated_strings as $key => $string ){

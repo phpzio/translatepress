@@ -72,6 +72,7 @@ class TRP_Slug_Manager {
 
     /* change the slug for pages in permalinks */
     public function translate_slugs_for_pages( $uri, $page ){
+        $old_uri = $uri;
         if( strpos( $uri, '/' ) === false ){//means we do not have any page ancestors in the link so proceed
             $uri = $this->get_translated_slug( $page );
         }
@@ -96,7 +97,9 @@ class TRP_Slug_Manager {
                     $uri = implode('/', $translated_uri_parts);
             }
         }
-
+        if ( empty ( $uri ) ){
+            $uri = $old_uri;
+        }
 
         return $uri;
     }
