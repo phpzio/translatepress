@@ -15,7 +15,7 @@ class TRP_Machine_Translator{
     }
 
     public function translate_array( $new_strings, $language_code ){
-
+        error_log(json_encode($new_strings));
         // strings are saved in the database encoded as the HTML DOM parser outputs them. e.g. While the band&#8217;s playin&#8217;
         // maybe run a decode function before sending them for translation.
         $strings = array();
@@ -24,23 +24,16 @@ class TRP_Machine_Translator{
         }
 
 
-        
+
         //TODO API CALL
 
         //dummy
-        $translated_strings = $new_strings;
-        foreach ( $translated_strings as $key => $string ){
-
+        $translated_strings = array();
+        foreach ( $new_strings as $key => $string ){
+            $translated_strings[$key] = 'something';
             if ( $string == 'Dolly'){
+                error_log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
                 $translated_strings[$key] = 'Molly';
-            }
-
-            if ( $string == "\nI can tell, Dolly"){
-                $translated_strings[$key] = 'Imi dau seama Dolly!!!';
-            }
-
-            if ( $string == "\nWhile the band&#8217;s playin&#8217;" ){
-                $translated_strings[$key] = 'Cand canta&#8217; lautarii';
             }
 
         }
