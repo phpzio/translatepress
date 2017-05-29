@@ -12,16 +12,22 @@ class TRP_Machine_Translator{
     }
 
     public function is_available(){
-        return true;
+        if( !empty( $this->settings['g-translate'] ) && $this->settings['g-translate'] == 'yes' )
+            return true;
+        else
+            return false;
     }
 
     public function translate_array( $new_strings=null, $language_code=null ){
+
+        if( empty( $this->settings['g-translate-key'] ) )
+            return $new_strings;
 
         if( empty($new_strings) )
             $new_strings = array('Hello Dolly', 'I am a happy little camper');
 
         $translation_url = "https://www.googleapis.com/language/translate/v2";
-        $translation_url = add_query_arg( array( 'key' => "AIzaSyC5DhD1RBi38MiE5Bn_fu4pyVBpJ8q3o-U" ), $translation_url );
+        $translation_url = add_query_arg( array( 'key' => $this->settings['g-translate-key'] ), $translation_url );
         $translation_url = add_query_arg( array( 'source' => "en" ), $translation_url );
         $translation_url = add_query_arg( array( 'target' => "fr" ), $translation_url );
         foreach( $new_strings as $new_string ){
@@ -32,35 +38,34 @@ class TRP_Machine_Translator{
 
         if ( is_array( $response ) && ! is_wp_error( $response ) ) {
             $translation_response = json_decode( $response['body'] );
-            $translations = $translation_response->data->translations;
-            foreach( $translations as $translation ){
-                var_dump( $translation->translatedText );
+            if( !empty( $translation_response->error ) ){
+                return $new_strings;
+            }
+            else{
+                $translations = $translation_response->data->translations;
+                foreach( $translations as $key => $translation ){
+                    $new_strings[$key] = $translation->translatedText;
+                }
             }
         }
 
+        /*$translated_strings = $new_strings;
+                    foreach ( $translated_strings as $key => $string ){
+                        if ( $string == 'Archives'){
+                            $translated_strings[$key] = 'aaaaaaaa';
+                        }
 
+                        if ( $string == "\nI can tell, Dolly"){
+                            $translated_strings[$key] = 'Imi dau seama Dolly!!!';
+                        }
 
-        //TODO API CALL
-        //dummy
+                        if ( $string == "\nWhile the band&#8217;s playin&#8217;" ){
+                            $translated_strings[$key] = 'Cand canta&#8217; lautarii';
+                        }
 
-        $translated_strings = $new_strings;
-        foreach ( $translated_strings as $key => $string ){
-
-            if ( $string == 'Archives'){
-                $translated_strings[$key] = 'aaaaaaaa';
-            }
-
-            if ( $string == "\nI can tell, Dolly"){
-                $translated_strings[$key] = 'Imi dau seama Dolly!!!';
-            }
-
-            if ( $string == "\nWhile the band&#8217;s playin&#8217;" ){
-                $translated_strings[$key] = 'Cand canta&#8217; lautarii';
-            }
-
-        }
+                    }*/
 
         // will have the same indexes as $new_string
-        return $translated_strings;
+        return $new_strings;
     }
 }

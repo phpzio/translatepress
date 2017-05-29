@@ -61,6 +61,14 @@ class TRP_Settings{
         }
         //error_log( json_encode( $settings ));
 
+        if( !empty( $settings['g-translate'] ) )
+            $settings['g-translate'] = sanitize_text_field( $settings['g-translate']  );
+        else
+            $settings['g-translate'] = 'no';
+        
+        if( !empty( $settings['g-translate-key'] ) )
+            $settings['g-translate-key'] = sanitize_text_field( $settings['g-translate-key']  );
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -78,7 +86,8 @@ class TRP_Settings{
             $settings = array(
                 'default-language'      => $default,
                 'translation-languages' => array( $default ),
-                'publish-languages'     => array( $default )
+                'publish-languages'     => array( $default ),
+                'g-translate'           => 'no'
             );
             update_option ( 'trp_settings', $settings );
         }

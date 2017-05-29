@@ -8,6 +8,14 @@ span.select2-container{
     width: 200px !important;
 }
 
+#trp-options .trp-text-input{
+    width:40%;
+}
+
+#trp-options .trp-select{
+    min-width:200px;
+}
+
 /*
 //todo  make it responsive la width mic
 @media screen and (max-width: 400px){
