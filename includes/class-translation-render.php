@@ -338,7 +338,7 @@ class TRP_Translation_Render{
 
         if ( $this->machine_translator->is_available() ) {
             //todo translate page title too
-            $machine_strings = $this->machine_translator->translate_array( $new_strings, $language_code );
+            $machine_strings = $this->machine_translator->translate_array( $new_strings, $language_code );error_log(json_encode( $machine_strings));
         }else{
             $machine_strings = false;
         }
