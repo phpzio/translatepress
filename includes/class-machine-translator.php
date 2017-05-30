@@ -11,11 +11,11 @@ class TRP_Machine_Translator{
     }
 
     public function is_available(){
-        return true;
+        return false;
     }
 
     public function translate_array( $new_strings, $language_code ){
-        error_log(json_encode($new_strings));
+        //error_log(json_encode($new_strings));
         // strings are saved in the database encoded as the HTML DOM parser outputs them. e.g. While the band&#8217;s playin&#8217;
         // maybe run a decode function before sending them for translation.
         $strings = array();

@@ -357,11 +357,16 @@ function TRP_String( language, array_index ){
     this.language = language;
     this.index = array_index;
     this.slug = false;
+    this.slug_post_id = false;
 
     this.get_details = function(){
         var details = {};
-        details['id'] = this.id;
-        details['original'] = this.original;
+        if ( _this.slug ){
+            details['slug'] = _this.slug;
+            details['slug_post_id'] = _this.slug_post_id;
+        }
+        details['id'] = _this.id;
+        details['original'] = _this.original;
         return details;
     };
 
@@ -398,8 +403,12 @@ function TRP_String( language, array_index ){
             jquery_object.on( 'mouseleave', '', _this.unhighlight );
         }
 
+
         _this.status = ( new_settings.hasOwnProperty( 'status' ) ) ? new_settings.status : _this.status;
         _this.translated = ( new_settings.hasOwnProperty( 'translated' ) ) ? new_settings.translated : _this.translated;
+        if ( _this.translated == "dolly-ro"){
+            console.log('works');
+        }
 
     };
 
@@ -437,6 +446,8 @@ function TRP_String( language, array_index ){
             _this.node_description = jquery_object.attr( TRP_NODE_DESCRIPTION );
             if ( jquery_object.attr( 'name' ) == 'trp-slug' ){
                 _this.slug = true;
+                _this.slug_post_id = jquery_object.attr( 'post-id' );
+                _this.original = jquery_object.attr( 'content' );
             }
         }else{
             _this.original = jquery_object.text();
