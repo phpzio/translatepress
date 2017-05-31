@@ -406,10 +406,6 @@ function TRP_String( language, array_index ){
 
         _this.status = ( new_settings.hasOwnProperty( 'status' ) ) ? new_settings.status : _this.status;
         _this.translated = ( new_settings.hasOwnProperty( 'translated' ) ) ? new_settings.translated : _this.translated;
-        if ( _this.translated == "dolly-ro"){
-            console.log('works');
-        }
-
     };
 
     this.highlight = function (){

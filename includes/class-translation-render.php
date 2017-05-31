@@ -311,8 +311,41 @@ class TRP_Translation_Render{
 
         }
 
+        if ( $preview_mode ){
+            foreach( $html->find('a[href!="#"]') as $a_href)  {
+                $url = $a_href->href;
+                if( $this->is_external_link( $url )) {
+                    $a_href->setAttribute( 'class', 'trp-unpreviewable' );
+                }
+            }
+        }
+
 
         return /*(microtime(true) - $start)  . */ $html->save();
+    }
+
+    protected function is_external_link( $url ){
+        // Abort if parameter URL is empty
+        if( empty($url) ) {
+            return false;
+        }
+        if ( strpos( $url, '#' ) === 0 ){
+            return false;
+        }
+
+        // Parse home URL and parameter URL
+        $link_url = parse_url( $url );
+        $home_url = parse_url( home_url() );  // Works for WordPress
+
+        // Decide on target
+        if( $link_url['host'] == $home_url['host'] ) {
+            // Is an internal link
+            return false;
+
+        } else {
+            // Is an external link
+            return true;
+        }
     }
 
     protected function get_translated_string_ids( $translated_strings, $language_code ){
