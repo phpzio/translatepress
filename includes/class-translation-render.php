@@ -335,7 +335,7 @@ class TRP_Translation_Render{
 
         // Parse home URL and parameter URL
         $link_url = parse_url( $url );
-        $home_url = parse_url( home_url() );  // Works for WordPress
+        $home_url = parse_url( home_url() );
 
         // Decide on target
         if( $link_url['host'] == $home_url['host'] ) {
@@ -458,4 +458,6 @@ class TRP_Translation_Render{
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }
+
+
 }
