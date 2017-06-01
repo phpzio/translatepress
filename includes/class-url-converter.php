@@ -12,25 +12,35 @@ class TRP_Url_Converter {
 
     public function add_hreflang_to_head(){
         foreach ( $this->settings['publish-languages'] as $language ) {
-            echo '<link rel="alternate" hreflang="' . $language .'" href="' . $this->get_url_for_language( '', $language ) . '" />';
+            echo '<link rel="alternate" hreflang="' . $language .'" href="' . $this->get_url_for_language( $language ) . '" />';
         }
     }
 
-    public function get_url_for_language ( $url, $language ){
-        global $TRP_LANGUAGE;
-        if ( empty ( $url ) ) {
-            $url = $this->cur_page_url();
-        }
-        $abs_home = $this->get_abs_home();
-
+    public function get_url_for_language ( $language = null, $url = null ) {
+        global $post, $TRP_LANGUAGE;
+        $trp_language_copy = $TRP_LANGUAGE;
         $new_url = '';
-        $prefixes = apply_filters( 'trp_prefix_abs_home', array( $abs_home . '/' . $TRP_LANGUAGE . '/', $abs_home ) );
-        foreach( $prefixes as $prefix ){
-            if ( substr( $url, 0, strlen( $prefix ) ) == $prefix ) {
-                $path = substr($url, strlen($prefix));
-                $path = ltrim($path, '/');
-                $new_url = $abs_home . '/' . $language . '/' . $path;
-                break;
+        if ( empty( $language ) ) {
+            $language = $TRP_LANGUAGE;
+        }
+        if ( empty( $url ) && is_object( $post ) ) {
+            $TRP_LANGUAGE = $language;
+            $new_url = get_permalink( $post->ID );
+            $TRP_LANGUAGE = $trp_language_copy;
+        }else{
+            if ( empty( $url ) ) {
+                $url = $this->cur_page_url();
+            }
+            $abs_home = $this->get_abs_home();
+            $new_url = '';
+            $prefixes = apply_filters( 'trp_prefix_abs_home', array( $abs_home . '/' . $TRP_LANGUAGE . '/', $abs_home ) );
+            foreach( $prefixes as $prefix ){
+                if ( substr( $url, 0, strlen( $prefix ) ) == $prefix ) {
+                    $path = substr($url, strlen($prefix));
+                    $path = ltrim($path, '/');
+                    $new_url = $abs_home . '/' . $language . '/' . $path;
+                    break;
+                }
             }
         }
 
@@ -38,9 +48,7 @@ class TRP_Url_Converter {
             $new_url = $url;
         }
 
-        //todo replace slugs with slug_manager->translate_slug_for_posts.
         return $new_url;
-
     }
 
     /**

@@ -46,6 +46,10 @@ class TRP_Slug_Manager {
         return $query_vars;
     }
 
+    public function translate_slug_for_posts_in_language( $permalink, $post, $language = null ){
+
+    }
+
     /* change the slug in permalinks for posts and post types */
     public function translate_slug_for_posts( $permalink, $post, $leavename ){
         if( $post->post_parent == 0 ){
@@ -64,7 +68,6 @@ class TRP_Slug_Manager {
                     $permalink = str_replace('/'.$post_object->post_name.'/', '/'.$translated_slug.'/', $permalink );
                 }
             }
-
         }
 
         return $permalink;

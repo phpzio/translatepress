@@ -329,7 +329,7 @@ class TRP_Translation_Render{
         if( empty($url) ) {
             return false;
         }
-        if ( strpos( $url, '#' ) === 0 ){
+        if ( strpos( $url, '#' ) === 0 || strpos( $url, '/' ) === 0){
             return false;
         }
 
