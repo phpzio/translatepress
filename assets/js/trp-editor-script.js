@@ -17,6 +17,7 @@ function TRP_Editor(){
     var categories;
     var trp_lister = null;
     var jquery_string_selector = jQuery( '#trp-string-categories' );
+    var change_tracker = new TRP_Change_Tracker();
 
     this.initialize = function(){
         _this.edit_translation_button = null;
@@ -110,6 +111,9 @@ function TRP_Editor(){
     };
 
     this.edit_strings = function ( trp_string, index ){
+        if ( change_tracker.check_unsaved_changes() ) {
+            return;
+        }
         _this.original_textarea.val( trp_string.original );
         for ( var key in translated_textareas ){
             var translated = '';
@@ -141,7 +145,6 @@ function TRP_Editor(){
                 var translated = translated_textareas[key].val();
                 var string = dictionaries[key].get_string_by_original(original);
                 if ( string.slug == true ){
-                    console.log('slug');
                     action = 'trp_save_slug_translation';
                 }
                 if ( string.translated != translated ) {
@@ -162,6 +165,8 @@ function TRP_Editor(){
         if ( modified ){
             _this.saving_translation_ui();
             _this.ajax_save_strings( strings_to_save, action );
+        }else{
+            _this.saved_translation_ui();
         }
     };
 
@@ -194,8 +199,9 @@ function TRP_Editor(){
     };
 
     this.saved_translation_ui = function(){
+        change_tracker.mark_changes_saved();
         save_button.removeAttr( 'disabled' );
-        loading_animation.toggle();
+        loading_animation.css('display', 'none');
         translation_saved.css("display","inline");
         translation_saved.delay(3000).fadeOut(400);
     };
@@ -517,6 +523,32 @@ function TRP_Lister( current_dictionary ) {
     };
 
 }
+
+function TRP_Change_Tracker(){
+    var _this = this;
+    var changes_saved = true;
+
+    this.check_unsaved_changes = function(){
+        if ( !changes_saved ){
+            alert('Unsaved changes');
+        }
+        return !changes_saved;
+    };
+
+    this.mark_changes_saved = function(){
+        changes_saved = true;
+    };
+
+    this.initialize = function(){
+        jQuery('.trp-language-text:not(.trp-default-text)').on('input propertychange paste', function() {
+            changes_saved = false;
+        });
+    };
+
+    _this.initialize();
+}
+
+
 
 var trpEditor;
 
