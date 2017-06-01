@@ -10,6 +10,9 @@ class TRP_Machine_Translator{
         // and probably other variable initialized to facilitate API call
     }
 
+    /**
+     * @return bool function that determines if the automatic translation is enabled
+     */
     public function is_available(){
         if( !empty( $this->settings['g-translate'] ) && $this->settings['g-translate'] == 'yes' )
             return true;
@@ -17,38 +20,62 @@ class TRP_Machine_Translator{
             return false;
     }
 
+    /**
+     * @param $new_strings array with the strings that need translation. The keys are the node number in the DOM so we need to preserve the m
+     * @param $language_code string language code of the language that we will be translating to
+     * @return array array with the translation strings and the preserved keys or an empty array if something went wrong
+     */
     public function translate_array( $new_strings, $language_code ){
-
-        if( empty( $this->settings['g-translate-key'] ) )
+        if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['default-language'] ) || empty( $language_code ) )
             return array();
 
         $translated_strings = array();
 
-        $translation_url = "https://www.googleapis.com/language/translate/v2";
-        $translation_url = add_query_arg( array( 'key' => $this->settings['g-translate-key'] ), $translation_url );
-        $translation_url = add_query_arg( array( 'source' => $this->settings['default-language'] ), $translation_url );
-        $translation_url = add_query_arg( array( 'target' => $language_code ), $translation_url );
+        if( !empty( $new_strings ) ){
 
-        foreach( $new_strings as $new_string ){
-            $translation_url .= '&q='.rawurlencode(html_entity_decode( $new_string, ENT_QUOTES ));
-        }
-
-        $response = wp_remote_get( $translation_url );
-
-        if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-            $translation_response = json_decode( $response['body'] );
-            if( !empty( $translation_response->error ) ){
-                return array();
-            }
-            else{
-                $translations = $translation_response->data->translations;
-                foreach( $translations as $key => $translation ){
-                    $translated_strings[$key] = $translation->translatedText;
+            /* split our strings that need translation in chunks of maximum 128 strings because Google Translate has a limit of 128 strings */
+            $new_strings_chunks = array_chunk( $new_strings, 128, true );
+            /* if there are more than 128 strings we make multiple requests */
+            foreach( $new_strings_chunks as $new_strings_chunk ){
+                /* build our translation request */
+                $translation_request = 'key='.$this->settings['g-translate-key'];
+                $translation_request .= '&source='.$this->settings['default-language'];
+                $translation_request .= '&target='.$language_code;
+                foreach( $new_strings_chunk as $new_string ){
+                    $translation_request .= '&q='.rawurlencode(html_entity_decode( $new_string, ENT_QUOTES ));
                 }
+
+                /* Due to url length restrictions we need so send a POST request faked as a GET request and send the strings in the body of the request and not in the URL */
+                $response = wp_remote_post( "https://www.googleapis.com/language/translate/v2", array(
+                        'headers' => array( 'X-HTTP-Method-Override' => 'GET' ),//this fakes a GET request
+                        'body' => $translation_request,
+                    )
+                );
+
+                /* analyze the response */
+                if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+                    /* decode it */
+                    $translation_response = json_decode( $response['body'] );
+                    if( !empty( $translation_response->error ) ){
+                        return array(); // return an empty array if we encountered an error. This means we don't store any translation in the DB
+                    }
+                    else{
+                        /* if we have strings build the translation strings array and make sure we keep the original keys from $new_string */
+                        $translations = $translation_response->data->translations;
+                        $i = 0;
+                        foreach( $new_strings_chunk as $key => $old_string ){
+                            if( !empty( $translations[$i]->translatedText ) ) {
+                                $translated_strings[$key] = $translations[$i]->translatedText;
+                            }
+                            $i++;
+                        }
+                    }
+                }
+
             }
         }
 
-        // will have the same indexes as $new_string
+        // will have the same indexes as $new_string or it will be an empty array if something went wrong
         return $translated_strings;
     }
 }
