@@ -10,6 +10,39 @@ class TRP_Url_Converter {
         $this->settings = $settings;
     }
 
+    public function add_hreflang_to_head(){
+        foreach ( $this->settings['publish-languages'] as $language ) {
+            echo '<link rel="alternate" hreflang="' . $language .'" href="' . $this->get_url_for_language( '', $language ) . '" />';
+        }
+    }
+
+    public function get_url_for_language ( $url, $language ){
+        global $TRP_LANGUAGE;
+        if ( empty ( $url ) ) {
+            $url = $this->cur_page_url();
+        }
+        $abs_home = $this->get_abs_home();
+
+        $new_url = '';
+        $prefixes = apply_filters( 'trp_prefix_abs_home', array( $abs_home . '/' . $TRP_LANGUAGE . '/', $abs_home ) );
+        foreach( $prefixes as $prefix ){
+            if ( substr( $url, 0, strlen( $prefix ) ) == $prefix ) {
+                $path = substr($url, strlen($prefix));
+                $path = ltrim($path, '/');
+                $new_url = $abs_home . '/' . $language . '/' . $path;
+                break;
+            }
+        }
+
+        if ( empty( $new_url ) ) {
+            $new_url = $url;
+        }
+
+        //todo replace slugs with slug_manager->translate_slug_for_posts.
+        return $new_url;
+
+    }
+
     /**
      * Returns the unfiltered home_url by directly retrieving it from wp_options.
      */

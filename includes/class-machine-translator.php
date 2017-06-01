@@ -26,13 +26,13 @@ class TRP_Machine_Translator{
      * @return array array with the translation strings and the preserved keys or an empty array if something went wrong
      */
     public function translate_array( $new_strings, $language_code ){
+        /* we need these settings to go on */
         if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['default-language'] ) || empty( $language_code ) )
             return array();
 
         $translated_strings = array();
 
         if( !empty( $new_strings ) ){
-
             /* split our strings that need translation in chunks of maximum 128 strings because Google Translate has a limit of 128 strings */
             $new_strings_chunks = array_chunk( $new_strings, 128, true );
             /* if there are more than 128 strings we make multiple requests */

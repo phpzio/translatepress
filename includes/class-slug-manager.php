@@ -109,7 +109,7 @@ class TRP_Slug_Manager {
      * @param string $language optional parameter for language. if it's not present it will grab it from the $TRP_LANGUAGE global
      * @return mixed|string an empty string or the translated slug
      */
-    protected function get_translated_slug( $post, $language = null ){
+    public function get_translated_slug( $post, $language = null ){
         if( $language == null ){
             global $TRP_LANGUAGE;
             if( !empty( $TRP_LANGUAGE ) )
@@ -162,25 +162,23 @@ class TRP_Slug_Manager {
         // todo "current user can" check
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_slug_translation' && !empty( $_POST['strings'] ) ) {
-
                 $slugs = json_decode(stripslashes($_POST['strings']));
                 $update_slugs = array();
                 foreach ( $slugs as $language => $language_slugs ) {
                     if ( in_array( $language, $this->settings['translation-languages'] ) && $language != $this->settings['default-language'] ) {
                         foreach( $language_slugs as $slug ) {
                             if ( isset( $slug->id ) && is_numeric( $slug->id ) ) {
-                                $update_slugs[ $language ] = array();
-                                array_push($update_slugs[ $language ], array(
+                                $update_slugs[ $language ] = array(
                                     'id' => (int)$slug->id,
                                     'original' => sanitize_text_field($slug->original),
                                     'translated' => sanitize_text_field($slug->translated),
                                     'status' => (int)$slug->status
-                                ));
+                                );
+
                             }
                         }
                     }
                 }
-
                 global $wpdb;
                 $post_id = '';
                 foreach( $update_slugs as $language => $update_slugs_array ) {
@@ -192,7 +190,6 @@ class TRP_Slug_Manager {
                     WHERE post_name = '%s'                        
                     ", $update_slugs_array['original']));
                     }
-
                     if( !empty( $post_id ) ){
                         $postid = $post_id[0]->ID;
                         if( is_numeric( $postid ) ){

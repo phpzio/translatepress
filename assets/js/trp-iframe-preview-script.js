@@ -4,7 +4,15 @@ function TRP_Iframe_Preview(){
     this.initialize = function() {
         jQuery('a').each(function () { 
             if (this.action != '') {
-                this.href = update_query_string('trp-edit-translation', 'preview', this.href);
+                if ( isLinkPreviewable ( this ) ) {
+                    this.href = update_query_string('trp-edit-translation', 'preview', this.href);
+                }else {
+                    jQuery( this ).on( 'click',
+                        function(event) {
+                            event.preventDefault();
+                        }
+                    );
+                }
             }
         });
 
@@ -45,6 +53,12 @@ function TRP_Iframe_Preview(){
         }
     }
 
+    function isLinkPreviewable( element ) {
+        if ( ! jQuery( element ).hasClass( 'trp-unpreviewable' ) ){
+            return true;
+        }
+    }
+
     _this.initialize();
 }
 
@@ -52,7 +66,6 @@ var trp_preview_iframe;
 jQuery( function(){
     //TODO remove this when finished
     //jQuery( ".site-branding" ).append("<h1>new word</h1>");
-
 
     trp_preview_iframe = new TRP_Iframe_Preview();
 });

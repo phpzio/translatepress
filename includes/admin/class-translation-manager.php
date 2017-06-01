@@ -4,17 +4,27 @@ class TRP_Translation_Manager{
     protected $settings;
     protected $translation_render;
     protected $trp_query;
+    protected $slug_manager;
 
-    public function __construct( $settings, $translation_render, $trp_query ){
+    public function __construct( $settings, $translation_render, $trp_query, $slug_manager ){
         $this->settings = $settings;
         $this->translation_render = $translation_render;
         $this->trp_query = $trp_query;
+        $this->slug_manager = $slug_manager;
     }
 
     // mode == true, mode == preview
     protected function conditions_met( $mode = 'true' ){
-        if ( current_user_can( 'manage_options' ) && ! is_admin() && isset( $_GET['trp-edit-translation'] ) && esc_attr( $_GET['trp-edit-translation'] ) == $mode ) {
-            return true;
+        if ( isset( $_GET['trp-edit-translation'] ) && esc_attr( $_GET['trp-edit-translation'] ) == $mode ) {
+            if ( current_user_can( 'manage_options' ) && ! is_admin() ) {
+                return true;
+            }else{
+                wp_die(
+                    '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                    '<p>' . __( 'Sorry, you are not allowed to access this page.' ) . '</p>',
+                    403
+                );
+            }
         }
         return false;
     }
@@ -61,8 +71,8 @@ class TRP_Translation_Manager{
 
     public function add_slug_as_meta_tag() {
         global $post;
-        if ( isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) ) {
-            echo '<meta name="trp-slug" content="' . $post->post_name . '"/>' . "\n";
+        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) ) {
+            echo '<meta name="trp-slug" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
         }
     }
 
@@ -86,7 +96,15 @@ class TRP_Translation_Manager{
                     $id_array = array();
                     $original_array = array();
                     $dictionaries = array();
+                    $slug_info = false;
                     foreach ( $strings as $key => $string ) {
+                        if ( isset( $string->slug ) && $string->slug === true ){
+                            $slug_info = array(
+                                'post_id'   => $string->slug_post_id,
+                                'id'        => $string->id,
+                                'original'  => $string->original );
+                            continue;
+                        }
                         if ( isset( $string->id ) && is_numeric( $string->id ) ) {
                             $id_array[$key] = (int)$string->id;
                         } else if ( isset( $string->original ) ) {
@@ -102,7 +120,15 @@ class TRP_Translation_Manager{
                         if ( current_user_can ( 'manage_options' ) ) {
                             $this->translation_render->process_strings($original_array, $current_language);
                         }
-                        $dictionaries[$current_language] = $this->trp_query->get_string_rows($id_array, $original_array, $current_language);
+                        $dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
+                        if ( $slug_info !== false ) {
+                            $dictionaries[$current_language][$slug_info['id']] = array(
+                                'id'         => $slug_info['id'],
+                                'original'   => $slug_info['original'],
+                                'translated' => $this->slug_manager->get_translated_slug( $slug_info['post_id'], $current_language ),
+                            );
+                        }
+
                     }else{
                         $dictionaries[$current_language] = array();
                     }
@@ -113,6 +139,7 @@ class TRP_Translation_Manager{
                                 $dictionaries[$language]['default-language'] = true;
                                 continue;
                             }
+
                             if ($language == $current_language) {
                                 continue;
                             }
@@ -124,6 +151,13 @@ class TRP_Translation_Manager{
                                 $this->translation_render->process_strings($original_strings, $language);
                             }
                             $dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
+                            if ( $slug_info !== false ) {
+                                $dictionaries[$language][0] = array(
+                                    'id'         => 0,
+                                    'original'   => $slug_info['original'],
+                                    'translated' => $this->slug_manager->get_translated_slug( $slug_info['post_id'], $language )
+                                );
+                            }
                         }
                     }
 

@@ -311,8 +311,41 @@ class TRP_Translation_Render{
 
         }
 
+        if ( $preview_mode ){
+            foreach( $html->find('a[href!="#"]') as $a_href)  {
+                $url = $a_href->href;
+                if( $this->is_external_link( $url )) {
+                    $a_href->setAttribute( 'class', 'trp-unpreviewable' );
+                }
+            }
+        }
+
 
         return /*(microtime(true) - $start)  . */ $html->save();
+    }
+
+    protected function is_external_link( $url ){
+        // Abort if parameter URL is empty
+        if( empty($url) ) {
+            return false;
+        }
+        if ( strpos( $url, '#' ) === 0 ){
+            return false;
+        }
+
+        // Parse home URL and parameter URL
+        $link_url = parse_url( $url );
+        $home_url = parse_url( home_url() );
+
+        // Decide on target
+        if( $link_url['host'] == $home_url['host'] ) {
+            // Is an internal link
+            return false;
+
+        } else {
+            // Is an external link
+            return true;
+        }
     }
 
     protected function get_translated_string_ids( $translated_strings, $language_code ){
@@ -324,11 +357,12 @@ class TRP_Translation_Render{
     public function process_strings( $translateable_strings, $language_code ){
         $translated_strings = array();
 
+        // get existing translations
         $dictionary = $this->trp_query->get_existing_translations( array_values($translateable_strings), $language_code );
-
         $new_strings = array();
         foreach( $translateable_strings as $i => $string ){
             //strings existing in database,
+
             if ( isset( $dictionary[$this->full_trim($string)]->translated ) ){
                 $translated_strings[$i] = $dictionary[$this->full_trim($string)]->translated;
             }else{
@@ -336,6 +370,7 @@ class TRP_Translation_Render{
             }
         }
 
+        // machine translate new strings
         if ( $this->machine_translator->is_available() ) {
             //todo translate page title too
             $machine_strings = $this->machine_translator->translate_array( $new_strings, $language_code );error_log(json_encode( $machine_strings));
@@ -343,8 +378,8 @@ class TRP_Translation_Render{
             $machine_strings = false;
         }
 
+        // update existing strings without translation if we have one now. also, do not insert duplicates for existing untranslated strings in db
         $untranslated_list = $this->trp_query->get_untranslated_strings( $new_strings, $language_code );
-
         $update_strings = array();
         foreach( $new_strings as $i => $string ){
             if ( isset( $untranslated_list[$string] ) ){
@@ -362,19 +397,22 @@ class TRP_Translation_Render{
             }
         }
 
-        /*
-         *
-         get all NOT TRANSLATED.
-         new strings (if new string == $not_translated){
-                            if ( we have translation, update ){
-                                create a new array for updating
-                            }
-                            else {  skip insert adica remove from new_strings   }
-
-        insert new strings
-        */
-
-        // maybe start a new thread for this
+        // insert remaining machine translations into db
+        if ( $machine_strings !== false ) {
+            foreach ($machine_strings as $i => $string) {
+                if ( isset( $translated_strings[$i] ) ){
+                    continue;
+                }else {
+                    $translated_strings[$i] = $machine_strings[$i];
+                    array_push ( $update_strings, array(
+                        'id' => NULL,
+                        'original' => $new_strings[$i],
+                        'translated' => sanitize_text_field($machine_strings[$i]),
+                        'status' => $this->trp_query->get_constant_machine_translated() ) );
+                    unset($new_strings[$i]);
+                }
+            }
+        }
 
         $this->trp_query->insert_strings( $new_strings, $update_strings, $language_code );
 
@@ -420,4 +458,6 @@ class TRP_Translation_Render{
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }
+
+
 }
