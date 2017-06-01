@@ -71,6 +71,9 @@ class TRP_Language_Switcher{
 //        error_log('url   ' . $url);
 //        error_log('path   ' .  $path);
 
+        if( is_customize_preview() || is_admin() )
+            return $url;
+
         //todo this is not very reliable. use get_abs_home() + language + $path to construct the url rather than manipulating $url
         global $TRP_LANGUAGE;
         if( $path != '' ) {

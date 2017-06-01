@@ -30,6 +30,30 @@
 
             <?php $this->languages_selector( $languages ); ?>
 
+            <tr>
+                <th scope="row"><?php _e( 'Google Translate', TRP_PLUGIN_SLUG ); ?> </th>
+                <td>
+                    <select id="trp-g-translate" name="trp_settings[g-translate]" class="trp-select">
+                            <option value="no" <?php selected( $this->settings['g-translate'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
+                            <option value="yes" <?php selected( $this->settings['g-translate'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                    </select>
+                    <p class="description">
+                        <?php _e( 'Enable or disable the automatic translation of the site with Google Translate. ', TRP_PLUGIN_SLUG ); ?>
+                    </p>
+                </td>
+            </tr>
+
+            <tr>
+                <th scope="row"><?php _e( 'Google Translate API Key', TRP_PLUGIN_SLUG ); ?> </th>
+                <td>
+                    <input type="text" id="trp-g-translate-key" class="trp-text-input" name="trp_settings[g-translate-key]" value="<?php if( !empty( $this->settings['g-translate-key'] ) ) echo esc_attr( $this->settings['g-translate-key']);?>"/>
+                    <p class="description">
+                        <?php _e( 'Visit this <a href="https://support.google.com/cloud/answer/6158862" target="_blank">link</a> to see how you can set up an API key. ', TRP_PLUGIN_SLUG ); ?>
+                    </p>
+                </td>
+
+            </tr>
+
             <?php do_action ( 'trp_extra_settings', $this->settings ); ?>
         </table>
 
