@@ -66,6 +66,7 @@
                     <div id="trp-language-<?php echo $language;//todo display status as human readable?>" class="trp-language-text <?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
                         <p><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $language ]; ?></p>
                         <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id=""></textarea>
+                        <div class="trp-discard-changes"><?php _e( 'Discard changes', TRP_PLUGIN_SLUG );?></div>
                     </div>
                     <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
                         $other_languages = __( 'Other languages', TRP_PLUGIN_SLUG );

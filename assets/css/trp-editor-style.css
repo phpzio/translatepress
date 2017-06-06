@@ -136,6 +136,18 @@ span.select2-container{
 
 }
 
+.trp-discard-changes{
+    display: none;
+}
+
+.trp-unsaved-changes .trp-discard-changes{
+    display: block;
+    cursor: pointer;
+    color: darkblue;
+    font-size: 11px;
+    float: right;
+}
+
 .trp-default-language{
     margin-top: 50px;
 }

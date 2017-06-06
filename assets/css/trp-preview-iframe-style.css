@@ -8,10 +8,11 @@ span.trp-edit-translation{
     display: inline-block;
     position: absolute;
     margin-left: -30px;
+    cursor: pointer;
 
     /*text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;*/
 }
 
 .trp-unpreviewable {
-    cursor: not-allowed !important;
+    cursor: not-allowed /*!important*/;
 }
