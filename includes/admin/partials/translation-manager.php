@@ -76,7 +76,7 @@
                     <?php } ?>
                 <?php }?>
                 <div>
-                    <button id="trp-save" type="submit" class="button-primary"><?php _e( 'Save', TRP_PLUGIN_SLUG ); ?></button>
+                    <button id="trp-save" type="submit" class="button-primary"><?php _e( 'Save translation', TRP_PLUGIN_SLUG ); ?></button>
                     <span id="trp-translation-saved" style="display: none"><?php _e( 'Saved!', TRP_PLUGIN_SLUG ); ?></span>
                     <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
                         <div class="trp-spinner"></div>

@@ -194,7 +194,6 @@ function TRP_Editor(){
     }
 
     this.ajax_save_strings = function ( strings_to_save, action ){
-        console.log(action ) ;
         jQuery.ajax({
             url: trp_ajax_url,
             type: 'post',
@@ -555,8 +554,14 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
     this.check_unsaved_changes = function(){
 
         if ( !changes_saved ){
-            // todo flash textarea border
-            alert("unsaved changes");
+            //open other languages if unsaved changes below
+            if ( jQuery ( '.trp-unsaved-changes.trp-other-language').last().css( 'display' ) == 'none'  ){
+                trpEditor.toggle_languages();
+            }
+
+            jQuery ( '.trp-unsaved-changes textarea').css ( 'backgroundColor', 'red' ).animate({
+                backgroundColor: "#eee"
+            }, 1000 );
         }
         return !changes_saved;
     };
@@ -601,9 +606,9 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
     this.initialize = function(){
 
         for ( var key in translated_textareas ) {
-            translated_textareas[key].removeClass('trp-unsaved-changes');
+            translated_textareas[key].parent().removeClass('trp-unsaved-changes');
         }
-        jQuery('.trp-language-text:not(.trp-default-text) textarea').on('input propertychange paste', _this.change_detected );
+        jQuery('.trp-language-text:not(.trp-default-text) textarea').off().on('input propertychange paste', _this.change_detected );
     };
 
     this.discard_changes = function( ){
@@ -613,11 +618,11 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
         var string = dictionaries[language].get_string_by_original(original);
         translated_textareas[language].val( string.translated ).change();
         translated_textareas[language].on('input propertychange paste', _this.change_detected );
-        translated_textareas[language].removeClass('trp-unsaved-changes');
-        changes_saved = false;
+        translated_textareas[language].parent().removeClass('trp-unsaved-changes');
+        changes_saved = true;
         for ( var key in translated_textareas ){
-            if ( translated_textareas[key].hasClass( 'trp-unsaved-changes' ) ){
-                changes_saved = true;
+            if ( translated_textareas[key].parent().hasClass( 'trp-unsaved-changes' ) ){
+                changes_saved = false;
             }
         }
     };
