@@ -19,41 +19,22 @@ function TRP_Editor(){
     var jquery_string_selector = jQuery( '#trp-string-categories' );
     var change_tracker;
 
-    var QueryString = function () {
-        // This function is anonymous, is executed immediately and
-        // the return value is assigned to QueryString!
-        var query_string = {};
 
-        var query = document.getElementById("trp-preview-iframe").contentWindow.location.search.substring(1);
-
-        //console.log(window.location);
-        //console.log(document.getElementById("trp-preview-iframe").contentWindow.location.href );
-
-        var vars = query.split("&");
-        for (var i=0;i<vars.length;i++) {
-            var pair = vars[i].split("=");
-            // If first entry with this name
-            if (typeof query_string[pair[0]] === "undefined") {
-                query_string[pair[0]] = decodeURIComponent(pair[1]);
-                // If second entry with this name
-            } else if (typeof query_string[pair[0]] === "string") {
-                var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
-                query_string[pair[0]] = arr;
-                // If third or later entry with this name
-            } else {
-                query_string[pair[0]].push(decodeURIComponent(pair[1]));
-            }
-        }
-        return query_string;
-    }();
+    this.change_language = function( select ){
+        var language = select.value;
+        var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language + ']').first().attr('href');
+        var form = document.getElementById( 'trp-language-switch-form' );
+        var select_language = document.getElementById( 'trp-language-select' );
+        select_language.value = language;
+        form.action = link;
+        form.submit();
+    };
 
     this.initialize = function(){
 
         _this.edit_translation_button = null;
 
         _this.update_parent_url();
-
-
 
         _this.iframe_strings_lookup();
 

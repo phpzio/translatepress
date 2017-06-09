@@ -38,7 +38,7 @@
                 <?php
                 if ( count( $trp_settings['translation-languages'] ) > 1 ){ ?>
                     <form id="trp-language-switch-form" action="" method="GET">
-                        <select id="trp-language-select" name="lang" onchange='this.form.submit()'>
+                        <select id="trp-language-select" name="lang" onchange='trpEditor.change_language( this )'>
                             <?php foreach ( $available_languages as $code => $language ) { ?>
                                 <option value="<?php echo $code; ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo $language; ?> </option>
                             <?php } ?>

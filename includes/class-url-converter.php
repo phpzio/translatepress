@@ -23,7 +23,7 @@ class TRP_Url_Converter {
         if ( empty( $language ) ) {
             $language = $TRP_LANGUAGE;
         }
-        if ( empty( $url ) && is_object( $post ) ) {
+        if ( empty( $url ) && is_object( $post ) && ( !is_home() ) ) {
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post->ID );
             $TRP_LANGUAGE = $trp_language_copy;
