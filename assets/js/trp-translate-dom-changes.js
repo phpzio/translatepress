@@ -127,10 +127,16 @@ function TRP_Translator(){
 var trpTranslator;
 var language;
 
+function change_language( select ) {
+    select.form.action = document.querySelector('link[hreflang="' + select.value + '"]').href;
+    select.form.submit();
+}
+
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {
     // todo script should execute before any others
     trpTranslator = new TRP_Translator();
+
    /* jQuery( ".site-branding" ).append("<h1>new word2</h1>");
     jQuery( ".site-branding" ).append("<h1>other new word2</h1>");
     jQuery( ".site-branding" ).append("<h1>no translation2</h1>");*/

@@ -32,7 +32,6 @@ class TRP_Url_Converter {
                 $url = $this->cur_page_url();
             }
             $abs_home = $this->get_abs_home();
-            $new_url = '';
             $prefixes = apply_filters( 'trp_prefix_abs_home', array( $abs_home . '/' . $TRP_LANGUAGE . '/', $abs_home ) );
             foreach( $prefixes as $prefix ){
                 if ( substr( $url, 0, strlen( $prefix ) ) == $prefix ) {

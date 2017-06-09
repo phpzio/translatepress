@@ -116,20 +116,20 @@ class TRP_Ajax{
     protected function output_translations( $strings, $language ){
         //$language = 'ff';
         $sql = 'SELECT original, translated FROM ' . $this->table_prefix . 'trp_dictionary_' . $language . ' WHERE original IN (\'' . implode( "','", array_map( array( $this, 'full_trim' ), $strings ) ).'\') AND status != 0';
-        error_log($sql);
+        //error_log($sql);
         $result = mysqli_query( $this->connection, $sql );
         if ( $result === false ){
             $this->return_error();
         }else {
-            error_log(json_encode($result));
-            error_log(phpversion());
+            //error_log(json_encode($result));
+            //error_log(phpversion());
             $dictionaries[$language] = array();
             while ($row = mysqli_fetch_assoc($result)) {
                 //$result_object = mysqli_fetch_all( $result, MYSQLI_ASSOC );
                 $dictionaries[$language][] = $row;
             }
 
-            error_log(json_encode($dictionaries));
+            //error_log(json_encode($dictionaries));
             echo json_encode($dictionaries);
         }
 

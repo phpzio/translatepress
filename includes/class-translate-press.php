@@ -11,6 +11,10 @@ class TRP_Translate_Press{
     protected $slug_manager;
     protected $url_converter;
 
+    public static function get_trp_instance(){
+
+    }
+
     public function __construct() {
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( dirname( __FILE__ ) ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( dirname (__FILE__) ) );
@@ -48,8 +52,8 @@ class TRP_Translate_Press{
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings(), $this->trp_query );
         $this->translation_render = new TRP_Translation_Render( $this->settings->get_settings(), $this->machine_translator, $this->trp_query );
         $this->language_switcher = new TRP_Language_Switcher( $this->settings->get_settings(), $this->url_converter );
-        $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings(), $this->translation_render, $this->trp_query );
         $this->slug_manager = new TRP_Slug_Manager( $this->settings->get_settings(), $this->url_converter, $this->trp_query );
+        $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings(), $this->translation_render, $this->trp_query, $this->slug_manager );
 
 
     }
@@ -69,7 +73,6 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->translation_manager, 'save_translations' );
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
 
-
     }
 
     protected function define_frontend_hooks(){
@@ -82,7 +85,7 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
 
-        // TODO Shortcodes do not work in widgets. Create widget.
+        // TODO Create widget.
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
         /* manage slug translation hooks */
@@ -92,6 +95,9 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp_ajax_trp_save_slug_translation', $this->slug_manager, 'save_translated_slug' );
 
         $this->loader->add_action( 'wp_head', $this->url_converter, 'add_hreflang_to_head' );
+
+        $this->loader->add_filter( 'widget_text', null, 'do_shortcode', 11 );
+        $this->loader->add_filter( 'widget_text', null, 'shortcode_unautop', 11 );
     }
 
     public function run() {
@@ -99,10 +105,3 @@ class TRP_Translate_Press{
     }
 
 }
-/*
-add_filter( 'home_url', 'ccc' );
-function ccc( $home_url ){
-    error_log('da');
-    return $home_url . '/' . $this->get_current_language() . '/';
-}
-error_log( get_home_url() );*/

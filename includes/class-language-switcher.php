@@ -14,22 +14,16 @@ class TRP_Language_Switcher{
     }
 
     public function language_switcher(){
-        get_home_url();
         ob_start();
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;
         $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
-
-        //todo action link needs to be converted using JS. Right now it redirect to homepage.
-        $action_link = $this->url_converter->get_abs_home();
         //todo switch between templates based on settings
-        require_once TRP_PLUGIN_DIR . 'includes/partials/language-switcher-1.php';
+        require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-1.php';
         return ob_get_clean();
     }
 
     public function get_current_language(){
-        /*return 'en';*/
-
         //todo add all possible ways of determining language: cookies, global define etc.
         if ( isset( $_REQUEST['lang'] ) ){
             $language_code = esc_attr( $_REQUEST['lang'] );
@@ -43,20 +37,6 @@ class TRP_Language_Switcher{
         return $this->settings['default-language'];
     }
 
-    public function add_rewrite_rules(){
-//        add_rewrite_rule('^ro/', '^ro/$matches[1]?lang=ro', 'top');
-        //add_rewrite_tag('%lang%', '([^&]+)');
-        //add_rewrite_rule('^ro/*', 'index.php?lang=ro', 'top');
-
-        //add_rewrite_rule('^ro/(.*)', '?lang=ro', 'top');
-        //only when changing languages
-        //flush_rewrite_rules();
-
-
-        //die('ffffffuuuuu');
-
-
-    }
 
     protected function str_lreplace( $search, $replace, $subject ) {
         $pos = strrpos($subject, $search);

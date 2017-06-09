@@ -18,7 +18,10 @@ class TRP_Slug_Manager {
      */
     public function change_slug_var_in_request( $query_vars ){
         global $TRP_LANGUAGE;
-
+        if ( $query_vars == null ){
+            return $query_vars;
+        }
+        error_log(json_encode($query_vars));
         if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ){
             if (!empty($query_vars['name'])) {
                 if (!empty($query_vars['post_type'])) {
@@ -43,11 +46,8 @@ class TRP_Slug_Manager {
                 $query_vars['pagename'] = implode( '/', $translated_pagenames );
             }
         }
+        error_log(json_encode($query_vars));
         return $query_vars;
-    }
-
-    public function translate_slug_for_posts_in_language( $permalink, $post, $language = null ){
-
     }
 
     /* change the slug in permalinks for posts and post types */

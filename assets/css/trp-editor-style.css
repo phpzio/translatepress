@@ -118,6 +118,10 @@ span.select2-container{
 #trp-next{
     float: right;
 }
+.trp-toggle-languages {
+    margin-top: 10px;
+}
+
 .trp-toggle-languages, .trp-next-previous-buttons{
     color: darkblue;
     cursor: pointer;

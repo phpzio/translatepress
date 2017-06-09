@@ -68,7 +68,6 @@ class TRP_Translation_Render{
 
     protected function get_node_description( $current_node ){
         //todo provide descriptions based on current node for meta title, meta description etc.
-        //( $html->find('meta[name="description"],meta[property="og:title"],meta[property="og:description"],meta[property="og:site_name"],meta[name="twitter:title"],meta[name="twitter:description"]') as $k => $row ){
         $node_type_descriptions = apply_filters( 'trp_node_type_descriptions',
             array(
                 array(
@@ -136,12 +135,10 @@ class TRP_Translation_Render{
     }
 
 
-    public function shutdown(){
-        $output = ob_get_clean();
-        $this->translate_page($output);
-    }
-
     public function translate_page( $output ){
+        if ( strlen( $output ) < 1 ){
+            return $output;
+        }
         global $TRP_LANGUAGE;
         $start = microtime(true);
         $language_code = $this->get_language();
@@ -154,6 +151,7 @@ class TRP_Translation_Render{
         $translateable_strings = array();
         $nodes = array();
         //$output = utf8_encode ($output);
+
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         foreach ( $html->find('text') as $k => $row ){
@@ -444,7 +442,8 @@ class TRP_Translation_Render{
     public function enqueue_dynamic_translation(){
         global $TRP_LANGUAGE;
 
-        if ( $TRP_LANGUAGE != $this->settings['default-language'] ) {
+        //todo uncomment this
+        //if ( $TRP_LANGUAGE != $this->settings['default-language'] ) {
             wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'));
 
             $trp_data = array(
@@ -456,7 +455,7 @@ class TRP_Translation_Render{
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
             }
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
-        }
+        //}
     }
 
 
