@@ -53,6 +53,7 @@
                 </td>
 
             </tr>
+            
 
             <?php do_action ( 'trp_extra_settings', $this->settings ); ?>
         </table>

@@ -442,8 +442,7 @@ class TRP_Translation_Render{
     public function enqueue_dynamic_translation(){
         global $TRP_LANGUAGE;
 
-        //todo uncomment this
-        //if ( $TRP_LANGUAGE != $this->settings['default-language'] ) {
+        if ( $TRP_LANGUAGE != $this->settings['default-language'] ) {
             wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'));
 
             $trp_data = array(
@@ -455,7 +454,7 @@ class TRP_Translation_Render{
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
             }
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
-        //}
+        }
     }
 
 

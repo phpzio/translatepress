@@ -46,35 +46,31 @@ class TRP_Language_Switcher{
         return $subject;
     }
 
-    public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
-        //return $url;
-//        error_log('url   ' . $url);
-//        error_log('path   ' .  $path);
 
+    protected function ends_with($haystack, $needle){
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
+    public function enqueue_language_switcher_scripts( ){
+        wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-language-switcher.js', array('jquery'));
+    }
+
+    public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
         if( is_customize_preview() || is_admin() )
             return $url;
 
-        //todo this is not very reliable. use get_abs_home() + language + $path to construct the url rather than manipulating $url
         global $TRP_LANGUAGE;
-        if( $path != '' ) {
-            $stripped_path_url = $this->str_lreplace($path, '', $url);
-        }else{
-            $stripped_path_url = $url;
-            $path = '/';
+        $abs_home = $this->url_converter->get_abs_home();
+        $new_url = $abs_home . '/' . $TRP_LANGUAGE;
+        if ( ! empty( $path ) ){
+            $new_url .= '/' . ltrim( $path, '/' );
         }
 
-        $new_stripped_path_url = rtrim( $stripped_path_url, '/' );
-        if ( $stripped_path_url != $new_stripped_path_url ){
-            $path = '/' . $path;
-        }
-
-        $return_url = $new_stripped_path_url . '/' . $TRP_LANGUAGE . $path;
-
-      /*  if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ){
-            error_log( 'adadadad' );
-            $return_url = add_query_arg( 'trp-edit-translation', 'preview', $return_url );
-        }*/
-
-        return $return_url;
+        return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
     }
 }

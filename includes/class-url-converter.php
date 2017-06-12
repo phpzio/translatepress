@@ -103,7 +103,7 @@ class TRP_Url_Converter {
     }
 
 
-// wpml_strip_subdir_from_url
+
     public function get_lang_from_url_string( $url = null ) {
         if ( ! $url ){
             $url = $this->cur_page_url();

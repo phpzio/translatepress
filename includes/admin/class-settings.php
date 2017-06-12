@@ -18,8 +18,6 @@ class TRP_Settings{
     }
 
     public function register_menu_page(){
-
-        // TODO add icon url, and menu position in menu page.
         add_options_page( 'Translate Press', 'Translate Press', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
     }
 

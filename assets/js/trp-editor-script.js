@@ -509,7 +509,6 @@ function TRP_Lister( current_dictionary ) {
             // todo add number of strings in category Text(6) Meta (3)
             jquery_string_selector.append( jQuery( '<optgroup></optgroup>' ).attr( 'label', _this.format_category_name( category ) ) );
             for ( var i in category_array[category] ) {
-                //todo limit the original string length
                 var original = category_array[category][i].original;
                 var description = '';
                 if ( category_array[category][i].node_description != "" ){

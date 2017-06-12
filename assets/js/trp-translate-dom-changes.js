@@ -17,7 +17,6 @@ function TRP_Translator(){
             data: {
                 action: 'trp_get_translations',
                 async: false,
-                //todo output trp_language
                 language: language,
                 strings: JSON.stringify( strings_to_query )
             },
@@ -126,18 +125,16 @@ function TRP_Translator(){
 
 var trpTranslator;
 var language;
-
+/*
 //todo move this to another script
 function change_language( select ) {
     select.form.action = document.querySelector('link[hreflang="' + select.value + '"]').href;
-
     if ( typeof parent.trpEditor !== 'undefined' ) {
         parent.trpEditor.change_language( select );
     }else{
         select.form.submit();
     }
-
-}
+}*/
 
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {

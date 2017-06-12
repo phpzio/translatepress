@@ -30,16 +30,13 @@ class TRP_Translation_Manager{
     }
 
     public function translation_editor( $page_template ){
-        // todo redirect to login if not logged in
         if ( ! $this->conditions_met() ){
             return $page_template;
         }
 
-
         global $trp_settings;
         $trp_settings = $this->settings;
 
-        //todo no outside urls
         return TRP_PLUGIN_DIR . 'includes/admin/partials/translation-manager.php' ;
     }
 
@@ -53,7 +50,6 @@ class TRP_Translation_Manager{
         //error_log(TRP_PLUGIN_URL . '/includes/trp-ajax.php' );
 
         $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-core', 'jquery-effects-core', 'jquery-ui-resizable', 'trp-translation-manager-script', 'trp-select2-lib-js' ) );
-        //todo maybe more styles here
         $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'trp-translation-manager-style', 'trp-select2-lib-css' /*'wp-admin', 'dashicons', 'common', 'site-icon', 'buttons'*/ ) );
         wp_print_scripts( $scripts_to_print );
         wp_print_styles( $styles_to_print );
@@ -195,7 +191,6 @@ class TRP_Translation_Manager{
                     }
                 }
                 foreach( $update_strings as $language => $update_string_array ) {
-                    //todo create an UPDATE function and check if the insert_query also works with UPDATE
                     $this->trp_query->insert_strings( array(), $update_string_array, $language );
                 }
             }
