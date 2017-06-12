@@ -75,3 +75,11 @@ input.trp-translation-published{
 .trp-remove-language:hover{
     color: red;
 }
+
+.trp-ls-customize{
+    margin-left: 30px;
+}
+
+.trp-ls-type{
+    margin-bottom: 20px;
+}
