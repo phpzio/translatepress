@@ -57,7 +57,7 @@ class TRP_Settings{
         if ( ! in_array( $settings['default-language'], $settings['publish-languages'] ) ){
             array_unshift( $settings['publish-languages'], $settings['default-language'] );
         }
-        //error_log( json_encode( $settings ));
+        error_log( json_encode( $settings ));
 
         if( !empty( $settings['g-translate'] ) )
             $settings['g-translate'] = sanitize_text_field( $settings['g-translate']  );
