@@ -77,16 +77,16 @@ class TRP_Translate_Press{
 
     protected function define_frontend_hooks(){
         $this->loader->add_action( 'wp', $this->translation_render, 'start_object_cache' );
-        $this->loader->add_action ( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation' );
+        $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation' );
 
         $this->loader->add_filter( 'home_url', $this->language_switcher, 'add_language_to_home_url', 1, 4 );
         $this->loader->add_filter( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
+        $this->loader->add_filter( 'wp_nav_menu_items', $this->language_switcher, 'add_ls_to_menu', 10, 2 );
+        add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
-
-        add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
         /* manage slug translation hooks */
         $this->loader->add_filter( 'request', $this->slug_manager, 'change_slug_var_in_request' );
@@ -98,6 +98,8 @@ class TRP_Translate_Press{
 
         $this->loader->add_filter( 'widget_text', null, 'do_shortcode', 11 );
         $this->loader->add_filter( 'widget_text', null, 'shortcode_unautop', 11 );
+
+
     }
 
     public function run() {

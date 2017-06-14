@@ -18,7 +18,6 @@ class TRP_Language_Switcher{
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;
         $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
-        //todo switch between templates based on settings
         require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-1.php';
         return ob_get_clean();
     }
@@ -72,5 +71,21 @@ class TRP_Language_Switcher{
         }
 
         return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
+    }
+
+    public function add_ls_to_menu( $items, $args ){
+        if ( isset ( $this->settings['trp-ls-menu'] ) && $this->settings['trp-ls-menu'] == 'yes' && !empty ( $this->settings['trp-ls-menu-select'] ) ) {
+            // todo this
+            if ( isset( $args->menu->term_id ) && $args->menu->term_id == $this->settings['trp-ls-menu-select'] ) {
+                ob_start();
+                global $TRP_LANGUAGE;
+                $current_language = $TRP_LANGUAGE;
+                $published_languages = TRP_Utils::get_language_names($this->settings['publish-languages']);
+                require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-menu.php';
+                $ls_html = ob_get_clean();
+                $items .= $ls_html;
+            }
+        }
+        return $items;
     }
 }

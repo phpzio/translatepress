@@ -68,7 +68,21 @@
                         </div>
                     </div>
                     <div class="trp-ls-type">
-                        <label><input type="checkbox" id="trp-ls-menu" name="trp_settings[trp-ls-menu]" value="yes" <?php if ( isset($this->settings['trp-ls-menu']) && ( $this->settings['trp-ls-menu'] == 'yes' ) ){ echo 'checked'; }  ?>><b><?php _e( 'Menu item', TRP_PLUGIN_SLUG ); ?></b></label>
+                        <label><input type="checkbox" id="trp-ls-menu" name="trp_settings[trp-ls-menu]" value="yes" onchange="trpSettings.toggle_menu_select();"<?php if ( isset($this->settings['trp-ls-menu']) && ( $this->settings['trp-ls-menu'] == 'yes' ) ){ echo 'checked'; }  ?>><b><?php _e( 'Menu item', TRP_PLUGIN_SLUG ); ?></b></label>
+                        <span id="trp-ls-menus-list" <?php if ( !isset($this->settings['trp-ls-menu'] ) || ( $this->settings['trp-ls-menu'] != 'yes' ) ):?> style="display: none;"<?php endif;?>>
+                                    <?php $nav_menus = wp_get_nav_menus( array('orderby' => 'name') ); ?>
+                            <?php ?>
+                            <select id="menu_for_ls" name="trp_settings[trp-ls-menu-select]">
+                                <?php if(empty($nav_menus)): ?>
+                                    <option value="">--<?php _e('No menus defined', TRP_PLUGIN_SLUG )?>--</option>
+                                <?php else: ?>
+                                    <option value="">--<?php _e('Choose...', TRP_PLUGIN_SLUG )?>--</option>
+                                <?php endif; ?>
+                                <?php foreach($nav_menus as $nav_menu):?>
+                                    <option value="<?php echo $nav_menu->term_id ?>"<?php if ( isset( $this->settings['trp-ls-menu-select'] ) && $this->settings['trp-ls-menu-select'] == $nav_menu->term_id ) :  ?> selected="selected"<?php endif;?>><?php echo $nav_menu->name ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                                </span>
                         <p class="description">
                             <?php _e( 'Automatically include language switcher in menu.', TRP_PLUGIN_SLUG ); ?>
                         </p>

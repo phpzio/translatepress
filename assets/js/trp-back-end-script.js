@@ -26,6 +26,10 @@ function TRP_Settings() {
         jQuery( '#trp-translation-language' ).on( 'change', _this.update_translation_language );
     };
 
+    this.toggle_menu_select = function(){
+        jQuery( '#trp-ls-menus-list' ).toggle();
+    };
+
     this.initialize();
 
 }
