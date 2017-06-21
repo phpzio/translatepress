@@ -1,0 +1,82 @@
+#trp-floater-ls {
+    position: fixed;
+    z-index: 99;
+    bottom: 0;
+    left: 80%;
+    background-color: #212121;
+    border-radius: 5px 5px 0 0;
+    display: block;
+    overflow: hidden;
+}
+
+#trp-floater-ls.trp-floater-ls-code {
+    width: 70px;
+}
+
+#trp-floater-ls.trp-floater-ls-name {
+    width: 120px;
+}
+
+#trp-floater-ls-language-list {
+    display: none;
+}
+
+#trp-floater-ls:focus #trp-floater-ls-current-language,
+#trp-floater-ls:hover #trp-floater-ls-current-language {
+    display: none;
+}
+
+#trp-floater-ls:focus #trp-floater-ls-language-list,
+#trp-floater-ls:hover #trp-floater-ls-language-list {
+    display: block;
+}
+
+#trp-floater-ls:hover {
+    box-shadow: 0 0 10px #212121;
+}
+
+#trp-floater-ls-current-language a,
+#trp-floater-ls-language-list a {
+    display: block;
+    /*padding-bottom: 5px;
+    padding-top: 10px;*/
+    padding: 10px 10px 5px 10px;
+    font-size: 90%;
+}
+
+#trp-floater-ls-current-language,
+#trp-floater-ls-language-list {
+    text-align: center;
+    /*margin-top: 15px;*/
+}
+
+#trp-floater-ls-current-language {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#trp-floater-ls-current-language a,
+#trp-floater-ls-language-list a {
+    color: #BDBDBD;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#trp-floater-ls-language-list a:hover {
+    color: #FAFAFA;
+    background-color: #424242;
+
+}
+
+#trp-floater-ls .trp-floater-ls-disabled-language {
+    pointer-events: none;
+    cursor: default;
+}
+
+@media only screen and ( max-width: 800px ) {
+    #trp-floater-ls {
+        left: 5%;
+    }
+}
