@@ -58,48 +58,31 @@
                 <th scope="row"><?php _e( 'Language Switcher', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
                     <div class="trp-ls-type">
-                        <input type="checkbox" disabled checked id="trp-ls-shortcode" ><b><?php _e( 'Shortcode ', TRP_PLUGIN_SLUG ); ?>[language-switcher]</b>
+                        <input type="checkbox" disabled checked id="trp-ls-shortcode" ><b><?php _e( 'Shortcode ', TRP_PLUGIN_SLUG ); ?>[language-switcher] </b>
+                        <div>
+                            <?php $this->output_language_switcher_select( 'shortcode-options', $this->settings['shortcode-options'] ); ?>
+                        </div>
                         <p class="description">
                             <?php _e( 'Use shortcode on any page or widget.', TRP_PLUGIN_SLUG ); ?>
                         </p>
-                        <div class="trp-ls-customize">
-                            <label><input type="checkbox" id="trp-ls-shortcode-flags" name="trp_settings[trp-ls-shortcode-flags]" value="yes"  <?php if ( isset($this->settings['trp-ls-shortcode-flags']) && ( $this->settings['trp-ls-shortcode-flags'] == 'yes' ) ){ echo 'checked'; }  ?>><?php _e( 'Use flags.', TRP_PLUGIN_SLUG ); ?></label><br>
-                            <label><input type="checkbox" id="trp-ls-shortcode-names" name="trp_settings[trp-ls-shortcode-names]" value="yes"  <?php if ( isset($this->settings['trp-ls-shortcode-names']) && ( $this->settings['trp-ls-shortcode-names'] == 'yes' ) ){ echo 'checked'; }  ?>><?php _e( 'Use full names of languages.', TRP_PLUGIN_SLUG ); ?></label>
-                        </div>
                     </div>
                     <div class="trp-ls-type">
-                        <label><input type="checkbox" id="trp-ls-menu" name="trp_settings[trp-ls-menu]" value="yes" onchange="trpSettings.toggle_menu_select();"<?php if ( isset($this->settings['trp-ls-menu']) && ( $this->settings['trp-ls-menu'] == 'yes' ) ){ echo 'checked'; }  ?>><b><?php _e( 'Menu item', TRP_PLUGIN_SLUG ); ?></b></label>
-                        <span id="trp-ls-menus-list" <?php if ( !isset($this->settings['trp-ls-menu'] ) || ( $this->settings['trp-ls-menu'] != 'yes' ) ):?> style="display: none;"<?php endif;?>>
-                                    <?php $nav_menus = wp_get_nav_menus( array('orderby' => 'name') ); ?>
-                            <?php ?>
-                            <select id="menu_for_ls" name="trp_settings[trp-ls-menu-select]">
-                                <?php if(empty($nav_menus)): ?>
-                                    <option value="">--<?php _e('No menus defined', TRP_PLUGIN_SLUG )?>--</option>
-                                <?php else: ?>
-                                    <option value="">--<?php _e('Choose...', TRP_PLUGIN_SLUG )?>--</option>
-                                <?php endif; ?>
-                                <?php foreach($nav_menus as $nav_menu):?>
-                                    <option value="<?php echo $nav_menu->term_id ?>"<?php if ( isset( $this->settings['trp-ls-menu-select'] ) && $this->settings['trp-ls-menu-select'] == $nav_menu->term_id ) :  ?> selected="selected"<?php endif;?>><?php echo $nav_menu->name ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                                </span>
-                        <p class="description">
-                            <?php _e( 'Automatically include language switcher in menu.', TRP_PLUGIN_SLUG ); ?>
-                        </p>
-                        <div class="trp-ls-customize">
-                            <label><input type="checkbox" id="trp-ls-menu-flags" name="trp_settings[trp-ls-menu-flags]" value="yes"  <?php if ( isset($this->settings['trp-ls-menu-flags']) && ( $this->settings['trp-ls-menu-flags'] == 'yes' ) ){ echo 'checked'; }  ?>><?php _e( 'Use flags.', TRP_PLUGIN_SLUG ); ?></label><br>
-                            <label><input type="checkbox" id="trp-ls-menu-names" name="trp_settings[trp-ls-menu-names]" value="yes"  <?php if ( isset($this->settings['trp-ls-menu-names']) && ( $this->settings['trp-ls-menu-names'] == 'yes' ) ){ echo 'checked'; }  ?>><?php _e( 'Use full names of languages.', TRP_PLUGIN_SLUG ); ?></label>
+                        <label><input type="checkbox" id="trp-ls-menu" disabled checked ><b><?php _e( 'Menu item', TRP_PLUGIN_SLUG ); ?></b></label>
+                        <div>
+                            <?php $this->output_language_switcher_select( 'menu-options', $this->settings['menu-options'] ); ?>
                         </div>
+                        <p class="description">
+                            <?php _e( 'Go to Appearance -> Menus to add Language Switcher Languages in any menu.', TRP_PLUGIN_SLUG ); ?>
+                        </p>
                     </div>
                     <div class="trp-ls-type">
                         <label><input type="checkbox" id="trp-ls-floater" name="trp_settings[trp-ls-floater]"  value="yes"  <?php if ( isset($this->settings['trp-ls-floater']) && ( $this->settings['trp-ls-floater'] == 'yes' ) ){ echo 'checked'; }  ?>><b><?php _e( 'Floating language selection', TRP_PLUGIN_SLUG ); ?></b></label>
+                        <div>
+                            <?php $this->output_language_switcher_select( 'floater-options', $this->settings['floater-options'] ); ?>
+                        </div>
                         <p class="description">
                             <?php _e( 'Have a floating dropdown following the user on every page.', TRP_PLUGIN_SLUG ); ?>
                         </p>
-                        <div class="trp-ls-customize">
-                            <label><input type="checkbox" id="trp-ls-floater-flags" name="trp_settings[trp-ls-floater-flags]" value="yes"  <?php if ( isset($this->settings['trp-ls-floater-flags']) && ( $this->settings['trp-ls-floater-flags'] == 'yes' ) ){ echo 'checked'; }  ?>><?php _e( 'Use flags.', TRP_PLUGIN_SLUG ); ?></label><br>
-                            <label><input type="checkbox" id="trp-ls-floater-names" name="trp_settings[trp-ls-floater-names]" value="yes"  <?php if ( isset($this->settings['trp-ls-floater-flags']) && ( $this->settings['trp-ls-floater-flags'] == 'yes' ) ){ echo 'checked'; }  ?>><?php _e( 'Use full names of languages.', TRP_PLUGIN_SLUG ); ?></label>
-                        </div>
                     </div>
                 </td>
             </tr>

@@ -36,7 +36,6 @@ class TRP_Language_Switcher{
         return $this->settings['default-language'];
     }
 
-
     protected function str_lreplace( $search, $replace, $subject ) {
         $pos = strrpos($subject, $search);
         if ( $pos !== false ) {
@@ -44,7 +43,6 @@ class TRP_Language_Switcher{
         }
         return $subject;
     }
-
 
     protected function ends_with($haystack, $needle){
         $length = strlen($needle);
@@ -86,22 +84,6 @@ class TRP_Language_Switcher{
             'label'                 => 'Language Switcher'
         );
         register_post_type( 'language-switcher', $args );
-
-
-
-        //todo  move this to settings, add check if exists before insert post
-        $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
-
-        foreach ( $published_languages as $language_code => $language_name ) {
-
-            $ls = array(
-                'post_title'    => $language_name,
-                'post_content'  => $language_code,
-                'post_status'   => 'publish',
-                'post_type'     => 'language-switcher'
-            );
-            //error_log(json_encode(wp_insert_post( $ls )));
-        }
     }
 
     public function ls_menu_permalinks( $items, $menu, $args ){
@@ -111,31 +93,13 @@ class TRP_Language_Switcher{
             if ( $item->object == 'language-switcher' ){
                 $ls_id = get_post_meta( $item->ID, '_menu_item_object_id', true );
                 $ls_post = get_post( $ls_id );
-                $items[$key]->url = $this->url_converter->get_url_for_language( $ls_post->post_content );
+                if ( $ls_post ) {
+                    $items[$key]->url = $this->url_converter->get_url_for_language($ls_post->post_content);
+                }
             }
         }
 
         return $items;
-
-
-
-       /* $args = array(
-            'menu-item-url' => 'URRRRLLL',
-             'menu-item-title' => 'DIFFFERENT',
-        );
-        //wp_update_nav_menu_item(7,480,$args);
-        /*ls_menu_permalinks
-        if ( $post->post_type !== 'language-switcher' ){
-            /*
-            //error_log('it\'s LS');
-            //return 'http://www.googgle.com/';
-            return $permalink;
-        }
-
-        error_log('ls');
-        //error_log( $post->ID );
-        return $permalink . "/something-new/";*/
-
     }
 
 
