@@ -94,7 +94,6 @@ class TRP_Language_Switcher{
         $other_languages = array();
         foreach( $published_languages as $code => $name ) {
             if( $code == $TRP_LANGUAGE ) {
-                // $current_language = ( $trp_floater_ls_names == 'name' ? ucfirst( $name ) : strtoupper( $code ) );
                 $current_language['code'] = strtoupper( $code );
                 $current_language['name'] = ucfirst( $name );
             } else {
@@ -104,11 +103,11 @@ class TRP_Language_Switcher{
 
         ?>
         <div id="trp-floater-ls" class="<?php echo $trp_floater_ls_class ?>">
-            <!-- class="trp-with-flags" ----- should be added only when we display flags -->
+            <!-- TODO: class="trp-with-flags" ----- should be added only when we display flags -->
             <div id="trp-floater-ls-current-language" class="trp-with-flags">
                 <a href="javascript:void(0)" class="trp-floater-ls-disabled-language" onclick="void(0)"><?php echo $this->add_flag( $current_language['code'], $current_language['name'] ); echo ( $trp_floater_ls_names == 'name' ? $current_language['name'] : $current_language['code'] ); ?></a>
             </div>
-            <!-- class="trp-with-flags" ----- should be added only when we display flags -->
+            <!-- TODO: class="trp-with-flags" ----- should be added only when we display flags -->
             <div id="trp-floater-ls-language-list" class="trp-with-flags">
                 <?php
                 foreach( $other_languages as $code => $name ) {
@@ -130,6 +129,7 @@ class TRP_Language_Switcher{
         // Path to folder with flags images
         $flags_path = TRP_PLUGIN_URL .'assets/images/flags/';
         $flags_path = apply_filters( 'trp_flags_path', $flags_path, $language_code );
+        // TODO: Check language codes to match flags file name
 
         // File name for specific flag
         $flag_file_name = $language_code .'.png';
