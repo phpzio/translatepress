@@ -81,14 +81,13 @@ class TRP_Translate_Press{
 
         $this->loader->add_filter( 'home_url', $this->language_switcher, 'add_language_to_home_url', 1, 4 );
         $this->loader->add_filter( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
+        $this->loader->add_action( 'wp_footer', array( $this->language_switcher, 'add_floater_language_switcher' ) );
+        
+        add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
-
-        add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
-
-        add_action( 'wp_footer', array( $this->language_switcher, 'add_floater_language_switcher' ) );
 
         /* manage slug translation hooks */
         $this->loader->add_filter( 'request', $this->slug_manager, 'change_slug_var_in_request' );
