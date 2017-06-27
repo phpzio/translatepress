@@ -47,7 +47,11 @@
 #trp-floater-ls-current-language,
 #trp-floater-ls-language-list {
     text-align: center;
-    /*margin-top: 15px;*/
+}
+
+#trp-floater-ls-current-language.trp-with-flags,
+#trp-floater-ls-language-list.trp-with-flags {
+    text-align: left;
 }
 
 #trp-floater-ls-current-language {
@@ -73,6 +77,10 @@
 #trp-floater-ls .trp-floater-ls-disabled-language {
     pointer-events: none;
     cursor: default;
+}
+
+#trp-floater-ls .trp-flag-image {
+    margin: 0 5px;
 }
 
 @media only screen and ( max-width: 800px ) {

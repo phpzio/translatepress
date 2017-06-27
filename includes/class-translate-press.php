@@ -88,6 +88,8 @@ class TRP_Translate_Press{
 
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
+        add_action( 'wp_footer', array( $this->language_switcher, 'add_floater_language_switcher' ) );
+
         /* manage slug translation hooks */
         $this->loader->add_filter( 'request', $this->slug_manager, 'change_slug_var_in_request' );
         $this->loader->add_filter( 'post_link', $this->slug_manager, 'translate_slug_for_posts', 10, 3 );
