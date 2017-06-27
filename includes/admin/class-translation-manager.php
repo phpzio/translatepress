@@ -70,6 +70,7 @@ class TRP_Translation_Manager{
         if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) ) {
             echo '<meta name="trp-slug" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
         }
+
     }
 
 
@@ -165,7 +166,6 @@ class TRP_Translation_Manager{
 
         die();
     }
-
 
     public function save_translations(){
 

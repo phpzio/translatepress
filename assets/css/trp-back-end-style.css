@@ -5,7 +5,7 @@ table#trp-options td{
 }
 
 span.select2-container{
-    width: 200px !important;
+    width: 240px !important;
 }
 
 #trp-options .trp-text-input{
@@ -13,7 +13,7 @@ span.select2-container{
 }
 
 #trp-options .trp-select{
-    min-width:200px;
+    min-width:240px;
 }
 
 /*
@@ -43,7 +43,7 @@ input.trp-translation-published{
 
 
 #trp-published-header{
-    padding-left: 182px;
+    padding-left: 222px;
 }
 
 .trp-sortable-handle{
@@ -69,7 +69,7 @@ input.trp-translation-published{
 .trp-remove-language{
     color: #a00;
     cursor: pointer;
-    padding-left: 100px;
+    margin-left: 100px;
 }
 
 .trp-remove-language:hover{
@@ -82,4 +82,8 @@ input.trp-translation-published{
 
 .trp-ls-type{
     margin-bottom: 20px;
+}
+
+.trp-ls-select-option{
+    margin-top: 10px;
 }

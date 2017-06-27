@@ -25,7 +25,25 @@ body{
 .trp-controls-container{
     height: 100%;
     overflow-x: auto;
-    padding:12px;
+}
+
+
+#trp-save-container{
+    float: right;
+}
+
+.trp-controls-section{
+    background: #fff;
+    color: #555d66;
+    cursor: default;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.trp-controls-section-content{
+    padding: 12px;
 }
 
 .ui-resizable-handle {
@@ -50,7 +68,38 @@ body{
     top: 0;
     height: 100%;
 }
-/** end **/
+
+#trp-controls-close{
+    cursor: pointer;
+    font: 400 26px/42px dashicons;
+    font-weight: bold;
+    content: "\f335";
+    display: inline-block;
+    width: 45px;
+    height: 41px;
+    background: #eee;
+    border: none;
+    border-top: 4px solid #eee;
+    border-right: 1px solid #ddd;
+    color: #444;
+    text-align: center;
+    -webkit-transition: color .15s ease-in-out,border-color .15s ease-in-out,background .15s ease-in-out;
+    transition: color .15s ease-in-out,border-color .15s ease-in-out,background .15s ease-in-out;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    text-decoration: none;
+}
+
+#trp-controls-close:focus,
+#trp-controls-close:hover{
+    background: #fff;
+    color: #0073aa;
+    border-top-color: #0073aa;
+    outline: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
 
 #trp-preview{
     position: absolute;
@@ -120,14 +169,27 @@ span.select2-container{
 }
 .trp-toggle-languages {
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .trp-toggle-languages, .trp-next-previous-buttons{
     color: darkblue;
     cursor: pointer;
 }
+
+.trp-toggle-languages:hover,
+.trp-next-previous-buttons:hover{
+    color: #0073aa;
+}
+
+.trp-language-name{
+    padding-bottom: 10px;
+    color: black;
+}
+
 .trp-language-text{
     padding-right: 9px;
+    padding-bottom: 12px;
 }
 
 .trp-language-text textarea{
@@ -137,7 +199,6 @@ span.select2-container{
     max-width: 100%;
     min-width: 100%;
     width: 100%;
-
 }
 
 .trp-discard-changes{
@@ -148,9 +209,15 @@ span.select2-container{
 }
 
 .trp-unsaved-changes .trp-discard-changes{
-    color: darkblue;
+    color: #a00;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.trp-unsaved-changes .trp-discard-changes:hover{
+    color: #dc3232;
     cursor: pointer;
 }
+
 
 .trp-default-language{
     margin-top: 50px;
@@ -165,9 +232,9 @@ span.select2-container{
 }
 
 #trp-save{
+    margin-right: 10px;
+    margin-top: 9px;
     margin-left: 10px;
-    margin-top: 15px;
-    margin-bottom: 50px;
     background: #0085ba;
     border-color: #0073aa #006799 #006799;
     -webkit-box-shadow: 0 1px 0 #006799;
@@ -212,10 +279,6 @@ span.select2-container{
     color: #008000;
     font-size: 14px;
     display:none;
-}
-
-#trp-string-list{
-    margin-bottom: 15px;
 }
 
 /*

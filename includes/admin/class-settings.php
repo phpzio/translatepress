@@ -5,6 +5,29 @@ class TRP_Settings{
     protected $settings;
     protected $trp_query;
 
+    public function get_language_switcher_options(){
+        $ls_options = apply_filters( 'trp_language_switcher_output', array(
+            'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', TRP_PLUGIN_SLUG ) ),
+            'short-names'       => array( 'full_names'  => false, 'short_names'  => true, 'flags' => false, 'label' => __( 'Short Language Names', TRP_PLUGIN_SLUG ) ),
+            'flags-full-names'  => array( 'full_names'  => true, 'short_names'  => false, 'flags' => true, 'label' => __( 'Flags with Full Language Names', TRP_PLUGIN_SLUG ) ),
+            'flags-short-names' => array( 'full_names'  => false, 'short_names'  => true, 'flags' => true, 'label' => __( 'Flags with Short Language Names', TRP_PLUGIN_SLUG ) ),
+            'only-flags'        => array( 'full_names'  => false, 'short_names'  => false, 'flags' => true, 'label' => __( 'Only Flags', TRP_PLUGIN_SLUG ) ),
+        ) );
+        return $ls_options;
+    }
+
+    public function output_language_switcher_select( $ls_type, $ls_setting ){
+        $ls_options = $this->get_language_switcher_options();
+        $output = '<select id=' . $ls_type . ' name=trp_settings[' . $ls_type .'] class="trp-select trp-ls-select-option">';
+        foreach( $ls_options as $key => $ls_option ){
+            $selected = ( $ls_setting == $key ) ? 'selected' : '';
+            $output .= '<option value="' . $key . '" ' . $selected . ' >' . $ls_option['label'] . '</option>';
+        }
+        $output .= '</select>';
+
+        echo $output;
+    }
+
     public function __construct( ) {
         $this->set_options();
     }
@@ -67,6 +90,25 @@ class TRP_Settings{
         if( !empty( $settings['g-translate-key'] ) )
             $settings['g-translate-key'] = sanitize_text_field( $settings['g-translate-key']  );
 
+        if ( !empty( $settings['trp-ls-floater'] ) ){
+            $settings['trp-ls-floater'] = sanitize_text_field( $settings['trp-ls-floater'] );
+        }else{
+            $settings['trp-ls-floater'] = 'no';
+        }
+
+        $available_options = $this->get_language_switcher_options();
+        if ( ! isset( $available_options[ $settings['shortcode-options'] ] ) ){
+            $settings['shortcode-options'] = 'full-names';
+        }
+        if ( ! isset( $available_options[ $settings['menu-options'] ] ) ){
+            $settings['menu-options'] = 'full-names';
+        }
+        if ( ! isset( $available_options[ $settings['floater-options'] ] ) ){
+            $settings['floater-options'] = 'full-names';
+        }
+
+        $this->create_menu_entries( $settings['publish-languages'] );
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -85,7 +127,11 @@ class TRP_Settings{
                 'default-language'      => $default,
                 'translation-languages' => array( $default ),
                 'publish-languages'     => array( $default ),
-                'g-translate'           => 'no'
+                'g-translate'           => 'no',
+                'trp-ls-floater'        => 'yes',
+                'shortcode-options'     => 'full-names',
+                'menu-options'          => 'full-names',
+                'floater-options'       => 'full-names',
             );
             update_option ( 'trp_settings', $settings );
         }
@@ -132,6 +178,30 @@ class TRP_Settings{
             </td>
         </tr>
         <?php
+    }
+
+    protected function create_menu_entries( $languages ){
+        $published_languages = TRP_Utils::get_language_names( $languages );
+
+        foreach ( $published_languages as $language_code => $language_name ) {
+            $existing_ls = get_page_by_title( $language_name, OBJECT, 'language-switcher'  );
+            if ( $existing_ls == null ) {
+                $ls = array(
+                    'post_title' => $language_name,
+                    'post_content' => $language_code,
+                    'post_status' => 'publish',
+                    'post_type' => 'language-switcher'
+                );
+                wp_insert_post($ls);
+            }
+        }
+
+        $posts = get_posts( array( 'post_type' =>'language-switcher',  'posts_per_page'   => -1  ) );
+        foreach ( $posts as $post ){
+            if ( ! in_array( $post->post_content, $languages ) ){
+                wp_delete_post( $post->ID );
+            }
+        }
     }
 }
 

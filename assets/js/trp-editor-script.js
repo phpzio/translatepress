@@ -12,6 +12,7 @@ function TRP_Editor(){
     var preview_container = jQuery( '#trp-preview' );
     var controls = jQuery( '#trp-controls' );
     var save_button = jQuery( '#trp-save' );
+    var close_button = jQuery( '#trp-controls-close' );
     var translated_textareas = [];
     this.edit_translation_button = null;
     var categories;
@@ -31,6 +32,7 @@ function TRP_Editor(){
     };
 
     this.initialize = function(){
+        _this.saving_translation_ui();
 
         _this.edit_translation_button = null;
 
@@ -51,9 +53,16 @@ function TRP_Editor(){
     };
 
     this.update_parent_url = function(){
+
         var location = document.getElementById("trp-preview-iframe").contentWindow.location.href;
+        var close_url = location.replace( '&trp-edit-translation=preview', '' );
+        close_url = close_url.replace( '?trp-edit-translation=preview', '?' );
+        if ( close_url[close_url.length -1] == '?' ){
+            close_url = close_url.slice(0, -1);
+        }
+        close_button.attr( 'href', close_url );
         location = location.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' );
-        window.history.pushState( null, null, location );
+        window.history.replaceState( null, null, location );
     };
 
     this.iframe_strings_lookup = function(){
@@ -126,6 +135,7 @@ function TRP_Editor(){
                 }
             }
         }
+        _this.saved_translation_ui();
     };
 
     this.edit_strings = function ( trp_string, index ){
@@ -203,7 +213,7 @@ function TRP_Editor(){
 
     this.get_dictionaries = function(){
         return dictionaries;
-    }
+    };
 
     this.ajax_save_strings = function ( strings_to_save, action ){
         jQuery.ajax({
@@ -232,11 +242,13 @@ function TRP_Editor(){
     };
 
     this.saved_translation_ui = function(){
-        change_tracker.mark_changes_saved();
         save_button.removeAttr( 'disabled' );
         loading_animation.css('display', 'none');
-        translation_saved.css("display","inline");
-        translation_saved.delay(3000).fadeOut(400);
+        if ( change_tracker ) {
+            change_tracker.mark_changes_saved();
+            translation_saved.css("display","inline");
+            translation_saved.delay(3000).fadeOut(400);
+        }
     };
 
     this.toggle_languages = function (){
@@ -294,12 +306,9 @@ function TRP_Editor(){
     }
 
     function format_option(option){
-        //todo options that don't have title get (undefined). fix this.
-      //  if ( option.title ) {
-            option = jQuery(
+        option = jQuery(
                 '<div>' + option.text + '</div><div class="string-selector-description">' + option.title + '</div>'
             );
-       // }
         return option;
     }
 
@@ -511,8 +520,8 @@ function TRP_Lister( current_dictionary ) {
             for ( var i in category_array[category] ) {
                 var original = category_array[category][i].original;
                 var description = '';
-                if ( category_array[category][i].node_description != "" ){
-                    description = '(' + category_array[category][i].node_description + ') ';
+                if ( category_array[category][i].node_description != undefined ){
+                    description = '(' + category_array[category][i].node_description + ')';
                 }
                 if ( original ) {
                     jquery_string_selector.append(jQuery('<option></option>').attr( 'value', category_array[category][i].index).text( _this.format_text( original, category_array[category][i] )).attr( 'title', description ) );//category_array[category][i].index).text(original.substring(0, 90) + suspension_dots));

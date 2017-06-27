@@ -23,8 +23,6 @@ class TRP_Query{
     }
 
     public function get_existing_translations( $strings_array, $language_code ){
-
-
 //        error_log(json_encode($strings_array));
         //todo what happens if a string has quotes in it. it might break.
         $dictionary = $this->db->get_results("SELECT original,translated FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','", array_map( array( $this, 'full_trim' ), $strings_array ) )."') AND status != " . self::NOT_TRANSLATED, OBJECT_K );
