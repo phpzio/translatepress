@@ -67,7 +67,6 @@ class TRP_Translation_Render{
     }
 
     protected function get_node_description( $current_node ){
-        //todo provide descriptions based on current node for meta title, meta description etc.
         $node_type_descriptions = apply_filters( 'trp_node_type_descriptions',
             array(
                 array(
@@ -160,7 +159,6 @@ class TRP_Translation_Render{
                 if(strpos($row->outertext,'[vc_') === false) {
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     if ( $row->parent()->tag == 'title' ) {
-                        //todo mark string as title
                         array_push($nodes, array('node' => $row, 'type' => 'page_title'));
                     }else {
                         array_push($nodes, array('node' => $row, 'type' => 'text'));

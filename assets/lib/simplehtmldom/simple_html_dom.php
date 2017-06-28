@@ -38,9 +38,6 @@
  * @subpackage trp_simple_html_dom
  */
 
-//todo remove namespace, prefix everything
-//todo adjust parameters acccording to weglot Max file size etc.
-
 /**
  * All of the Defines for the classes below.
  * @author S.C. Chen <me578022@gmail.com>

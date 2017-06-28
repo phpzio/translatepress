@@ -17,7 +17,6 @@ function TRP_Iframe_Preview(){
         });
 
         jQuery('form').each(function () {
-            // todo check if form works
             jQuery( this ).append( jQuery('<input></input>').attr({ type: 'hidden', value: 'preview', name: 'trp-edit-translation' }) );
             //this.action = update_query_string('trp-edit-translation', 'preview', this.action);
         });

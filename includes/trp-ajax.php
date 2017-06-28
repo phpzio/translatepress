@@ -19,7 +19,6 @@ class TRP_Ajax{
             //error_log( 'Successful connection to DB' );
             mysqli_close($this->connection);
         }else{
-            //todo make sure it gets error so that it tries via regular wp-ajax
             //error_log( 'Error connecting to DB' );
             $this->return_error();
 
@@ -33,7 +32,6 @@ class TRP_Ajax{
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
                 if ( isset($string->original ) ) {
-                    // todo replace sanitize
                     $original_array[$key] = filter_var( $string->original, FILTER_SANITIZE_STRING );
                 }
             }

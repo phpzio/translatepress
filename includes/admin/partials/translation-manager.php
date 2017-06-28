@@ -19,7 +19,6 @@
 
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
 
-    // todo maybe move hook (or create another one in footer) to load scripts lower
     do_action( 'trp_head' );
     ?>
 
@@ -35,7 +34,7 @@
         <div id="trp-controls">
             <div class="trp-controls-container">
                 <div id="trp-close-save">
-                    <a id="trp-controls-close" href="<?php  echo TRP_Utils::get_current_page_url(); ?>">&times;</a>
+                    <a id="trp-controls-close" href="#">&times;</a>
                     <div id="trp-save-container">
                         <span id="trp-translation-saved" style="display: none"><?php _e( 'Saved!', TRP_PLUGIN_SLUG ); ?></span>
                         <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">

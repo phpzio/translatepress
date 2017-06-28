@@ -27,7 +27,6 @@ class TRP_Translate_Press{
     }
 
     protected function load_dependencies() {
-        // todo if file exists on everything
         require_once TRP_PLUGIN_DIR . 'includes/admin/class-settings.php';
         require_once TRP_PLUGIN_DIR . 'includes/admin/class-translation-manager.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-hooks-loader.php';

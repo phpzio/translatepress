@@ -11,8 +11,13 @@ class TRP_Url_Converter {
     }
 
     public function add_hreflang_to_head(){
+        $languages = $this->settings['publish-languages'];
+        if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'true' ) {
+            $languages = $this->settings['translation-languages'];
+        }
+
         foreach ( $this->settings['publish-languages'] as $language ) {
-            echo '<link rel="alternate" hreflang="' . $language .'" href="' . $this->get_url_for_language( $language ) . '" />';
+            echo '<link rel="alternate" hreflang="' . $language . '" href="' . $this->get_url_for_language( $language ) . '" />';
         }
     }
 
