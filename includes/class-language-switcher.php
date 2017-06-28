@@ -57,6 +57,9 @@ class TRP_Language_Switcher{
 
     public function enqueue_language_switcher_scripts( ){
         wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-language-switcher.js', array('jquery'));
+
+        wp_enqueue_script( 'trp-floater-language-switcher-script', TRP_PLUGIN_URL . 'assets/js/trp-floater-language-switcher.js', array( 'jquery' ) );
+        wp_enqueue_style( 'trp-floater-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-floater-language-switcher.css' );
     }
 
     public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
@@ -71,6 +74,113 @@ class TRP_Language_Switcher{
         }
 
         return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
+    }
+
+    public function add_floater_language_switcher() {
+
+        // Check if floater language switcher is active and return if not
+        if( $this->settings['trp-ls-floater'] != 'yes' ) {
+            return;
+        }
+
+        // Current language
+        global $TRP_LANGUAGE;
+
+        // All the published languages
+        $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
+
+        // Floater languages display defaults
+        $floater_class = 'trp-floater-ls-names';
+        $floater_flags_class = '';
+
+        // Floater languages settings
+        $ls_options = $this->trp_settings_object->get_language_switcher_options();
+        $floater_settings = $ls_options[$this->settings['floater-options']];
+
+        if( $floater_settings['full_names'] ) {
+            $floater_class  = 'trp-floater-ls-names';
+        }
+
+        if( $floater_settings['short_names'] ) {
+            $floater_class  = 'trp-floater-ls-codes';
+        }
+
+        if( $floater_settings['flags'] && ! $floater_settings['full_names'] && ! $floater_settings['short_names'] ) {
+            $floater_class  = 'trp-floater-ls-flags';
+        }
+
+        if( $floater_settings['flags'] && ( $floater_settings['full_names'] || $floater_settings['short_names'] ) ) {
+            $floater_flags_class = 'trp-with-flags';
+        }
+
+        $current_language = array();
+        $other_languages = array();
+
+        foreach( $published_languages as $code => $name ) {
+            if( $code == $TRP_LANGUAGE ) {
+                $current_language['code'] = $code;
+                $current_language['name'] = $name;
+            } else {
+                $other_languages[$code] = $name;
+            }
+        }
+
+        $current_language_label = '';
+
+        if( $floater_settings['full_names'] ) {
+            $current_language_label = ucfirst( $current_language['name'] );
+        }
+
+        if( $floater_settings['short_names'] ) {
+            $current_language_label = strtoupper( $current_language['code'] );
+        }
+
+        ?>
+        <div id="trp-floater-ls" class="<?php echo $floater_class ?>">
+            <div id="trp-floater-ls-current-language" class="<?php echo $floater_flags_class ?>">
+                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language" onclick="void(0)"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo $current_language_label; ?></a>
+            </div>
+            <div id="trp-floater-ls-language-list" class="<?php echo $floater_flags_class ?>">
+                <?php
+                foreach( $other_languages as $code => $name ) {
+                    $language_label = '';
+
+                    if( $floater_settings['full_names'] ) {
+                        $language_label = ucfirst( $name );
+                    }
+
+                    if( $floater_settings['short_names'] ) {
+                        $language_label = strtoupper( $code );
+                    }
+
+                    ?>
+                    <a href="javascript:void(0)" title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
+                <?php
+                }
+                ?>
+                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo $current_language_label; ?></a>
+            </div>
+        </div>
+
+    <?php
+    }
+
+    public function add_flag( $language_code, $language_name ) {
+
+        // Path to folder with flags images
+        $flags_path = TRP_PLUGIN_URL .'assets/images/flags/';
+        $flags_path = apply_filters( 'trp_flags_path', $flags_path, $language_code );
+        // TODO: Check language codes to match flags file name
+
+        // File name for specific flag
+        $flag_file_name = $language_code .'.png';
+        $flag_file_name = apply_filters( 'trp_flag_file_name', $flag_file_name, $language_code );
+
+        // HTML code to display flag image
+        $flag_html = '<img class="trp-flag-image" src="'. $flags_path . $flag_file_name .'" width="18" height="12" alt="' . $language_code . '" title="' . $language_name . '">';
+
+        return $flag_html;
+
     }
 
     public function add_ls_to_menu( ){
@@ -121,6 +231,5 @@ class TRP_Language_Switcher{
 
         return $items;
     }
-
 
 }
