@@ -9,12 +9,16 @@
     overflow: hidden;
 }
 
-#trp-floater-ls.trp-floater-ls-code {
+#trp-floater-ls.trp-floater-ls-codes {
     width: 75px;
 }
 
-#trp-floater-ls.trp-floater-ls-name {
+#trp-floater-ls.trp-floater-ls-names {
     width: 120px;
+}
+
+#trp-floater-ls.trp-floater-ls-flags {
+    width: 50px;
 }
 
 #trp-floater-ls-language-list {

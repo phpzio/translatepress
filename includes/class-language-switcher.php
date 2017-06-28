@@ -78,46 +78,87 @@ class TRP_Language_Switcher{
 
     public function add_floater_language_switcher() {
 
+        // Check if floater language switcher is active and return if not
+        if( $this->settings['trp-ls-floater'] != 'yes' ) {
+            return;
+        }
+
         // Current language
         global $TRP_LANGUAGE;
 
         // All the published languages
         $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
 
-        // Check if we display language code or name
-        $trp_floater_ls_names = ( isset( $this->settings['trp-ls-floater-names'] ) && $this->settings['trp-ls-floater-names'] == 'yes' ? 'name' : 'code' );
+        // Floater languages display defaults
+        $floater_class = 'trp-floater-ls-names';
+        $floater_flags_class = '';
 
-        // Add a specific class for when we display language code and another for language name
-        $trp_floater_ls_class = ( $trp_floater_ls_names == 'name' ? 'trp-floater-ls-name' : 'trp-floater-ls-code' );
+        // Floater languages settings
+        $ls_options = $this->trp_settings_object->get_language_switcher_options();
+        $floater_settings = $ls_options[$this->settings['floater-options']];
+
+        if( $floater_settings['full_names'] ) {
+            $floater_class  = 'trp-floater-ls-names';
+        }
+
+        if( $floater_settings['short_names'] ) {
+            $floater_class  = 'trp-floater-ls-codes';
+        }
+
+        if( $floater_settings['flags'] && ! $floater_settings['full_names'] && ! $floater_settings['short_names'] ) {
+            $floater_class  = 'trp-floater-ls-flags';
+        }
+
+        if( $floater_settings['flags'] && ( $floater_settings['full_names'] || $floater_settings['short_names'] ) ) {
+            $floater_flags_class = 'trp-with-flags';
+        }
 
         $current_language = array();
         $other_languages = array();
+
         foreach( $published_languages as $code => $name ) {
             if( $code == $TRP_LANGUAGE ) {
-                $current_language['code'] = strtoupper( $code );
-                $current_language['name'] = ucfirst( $name );
+                $current_language['code'] = $code;
+                $current_language['name'] = $name;
             } else {
                 $other_languages[$code] = $name;
             }
         }
 
+        $current_language_label = '';
+
+        if( $floater_settings['full_names'] ) {
+            $current_language_label = ucfirst( $current_language['name'] );
+        }
+
+        if( $floater_settings['short_names'] ) {
+            $current_language_label = strtoupper( $current_language['code'] );
+        }
+
         ?>
-        <div id="trp-floater-ls" class="<?php echo $trp_floater_ls_class ?>">
-            <!-- TODO: class="trp-with-flags" ----- should be added only when we display flags -->
-            <div id="trp-floater-ls-current-language" class="trp-with-flags">
-                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language" onclick="void(0)"><?php echo $this->add_flag( $current_language['code'], $current_language['name'] ); echo ( $trp_floater_ls_names == 'name' ? $current_language['name'] : $current_language['code'] ); ?></a>
+        <div id="trp-floater-ls" class="<?php echo $floater_class ?>">
+            <div id="trp-floater-ls-current-language" class="<?php echo $floater_flags_class ?>">
+                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language" onclick="void(0)"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo $current_language_label; ?></a>
             </div>
-            <!-- TODO: class="trp-with-flags" ----- should be added only when we display flags -->
-            <div id="trp-floater-ls-language-list" class="trp-with-flags">
+            <div id="trp-floater-ls-language-list" class="<?php echo $floater_flags_class ?>">
                 <?php
                 foreach( $other_languages as $code => $name ) {
-                    $language_label = ( $trp_floater_ls_names == 'name' ? $name : strtoupper( $code ) )
+                    $language_label = '';
+
+                    if( $floater_settings['full_names'] ) {
+                        $language_label = ucfirst( $name );
+                    }
+
+                    if( $floater_settings['short_names'] ) {
+                        $language_label = strtoupper( $code );
+                    }
+
                     ?>
-                    <a href="javascript:void(0)" title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo $this->add_flag( $code, $name ); echo $language_label; ?></a>
+                    <a href="javascript:void(0)" title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
                 <?php
                 }
                 ?>
-                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language"><?php echo $this->add_flag( $current_language['code'], $current_language['name'] ); echo ( $trp_floater_ls_names == 'name' ? $current_language['name'] : $current_language['code'] ); ?></a>
+                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo $current_language_label; ?></a>
             </div>
         </div>
 
