@@ -68,7 +68,7 @@ class TRP_Language_Switcher{
 
         global $TRP_LANGUAGE;
         $abs_home = $this->url_converter->get_abs_home();
-        $new_url = $abs_home . '/' . $TRP_LANGUAGE;
+        $new_url = trailingslashit( $abs_home ) . $TRP_LANGUAGE;
         if ( ! empty( $path ) ){
             $new_url .= '/' . ltrim( $path, '/' );
         }

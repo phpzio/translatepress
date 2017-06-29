@@ -56,7 +56,7 @@ class TRP_Settings{
     public function sanitize_settings( $settings ){
 
         if ( !isset ( $settings['default-language'] ) ) {
-            $settings['default-language'] = 'en';
+            $settings['default-language'] = 'en_US';
         }
         if ( !isset ( $settings['translation-languages'] ) ){
             $settings['translation-languages'] = array();
@@ -121,8 +121,10 @@ class TRP_Settings{
 
         if ( 'not_set' == $settings ){
             // initialize default settings
-            //todo set default language based on get_locale(). https://wpcentral.io/internationalization/ for a full list
-            $default = 'en';
+            $default = get_locale();
+            if ( empty( $default ) ){
+                $default = 'en_US';
+            }
             $settings = array(
                 'default-language'      => $default,
                 'translation-languages' => array( $default ),

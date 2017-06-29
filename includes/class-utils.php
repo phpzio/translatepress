@@ -1,7 +1,7 @@
 <?php
 class TRP_Utils{
 
-    protected static $languages = array(
+    protected static $google_translate_languages = array(
         'af'     => 'Afrikaans',
 		'sq'     => 'Albanian',
 		'am'     => 'Amharic',
@@ -108,8 +108,24 @@ class TRP_Utils{
 		'zu'     => 'Zulu',
     );
 
-    public static function get_languages(){
-        return apply_filters( 'trp_languages', self::$languages );
+	protected static $languages = array();
+
+	/*
+	 * Possible values  $english_or_native_name: 'english_name', 'native_name'
+	 */
+
+    public static function get_languages( $english_or_native_name = 'english_name' ){
+		if ( empty( self::$languages[$english_or_native_name] ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
+			$wp_languages = wp_get_available_translations();
+			$default = array( 'language'	=> 'en_US', 'english_name'=> 'English (United States)', 'native_name' => 'English (United States)' );
+			self::$languages[$english_or_native_name] = array( $default['language'] => $default[$english_or_native_name] );
+			foreach ( $wp_languages as $wp_language ) {
+				self::$languages[$english_or_native_name][$wp_language['language']] = $wp_language[$english_or_native_name];
+			}
+		}
+
+        return apply_filters( 'trp_languages', self::$languages[$english_or_native_name] );
     }
 
 	public static function get_language_names( $language_codes ){
