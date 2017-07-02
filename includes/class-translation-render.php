@@ -119,9 +119,12 @@ class TRP_Translation_Render{
             ));
 
         foreach( $node_type_descriptions as $node_type_description ){
+            if ( isset( $node_type_description['attribute'] )) {
+                $attribute = $node_type_description['attribute'];
+            }
             if ( $current_node['type'] == $node_type_description['type'] &&
                 (
-                    ( isset( $node_type_description['attribute'] ) && isset( $current_node['node']->$node_type_description['attribute'] ) && $current_node['node']->$node_type_description['attribute'] == $node_type_description['value'] ) ||
+                    ( isset( $node_type_description['attribute'] ) && isset( $current_node['node']->$attribute ) && $current_node['node']->$attribute == $node_type_description['value'] ) ||
                     ( ! isset( $node_type_description['attribute'] ) )
                 )
             ) {
@@ -298,6 +301,8 @@ class TRP_Translation_Render{
                 } else {
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
+
+                    if ( $nodes[$i]['type'] == 'post_slug' ) error_log($nodes[$i]['type']);
                     if ( $this->get_node_description( $nodes[$i] ) ) {
                         $nodes[$i]['node']->setAttribute('data-trp-node-description', $this->get_node_description($nodes[$i]));
                     }
@@ -334,7 +339,7 @@ class TRP_Translation_Render{
         $home_url = parse_url( home_url() );
 
         // Decide on target
-        if( $link_url['host'] == $home_url['host'] ) {
+        if( !isset ($link_url['host'] ) || $link_url['host'] == $home_url['host'] ) {
             // Is an internal link
             return false;
 

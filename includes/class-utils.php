@@ -128,10 +128,11 @@ class TRP_Utils{
         return apply_filters( 'trp_languages', self::$languages[$english_or_native_name] );
     }
 
-	public static function get_language_names( $language_codes ){
+	public static function get_language_names( $language_codes, $english_or_native_name = 'english_name' ){
 		$return = array();
+        $languages = self::get_languages($english_or_native_name);
 		foreach ( $language_codes as $language_code ){
-			$return[$language_code] = self::$languages[$language_code];
+			$return[$language_code] = $languages[$language_code];
 		}
 
 		return $return;

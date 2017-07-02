@@ -10,6 +10,7 @@ ____________________________________________
 - did not escape ' apostroph when doing SQL
 - merge language switcher floater template ( floater should take into account checkbox, and dropdowns )
 - get initial default locale
+- get WP language codes
 
 
 
@@ -18,7 +19,7 @@ ____________________________________________
   WIP
 -------
 
-- get WP language codes
+- missing (page-slug) description in editor for some php versions
 
 
 
@@ -29,7 +30,7 @@ ____________________________________________
 -------
 
 - changing language from floater in editor, not working
-- 404 when page slug is translated
+- 404 when page slug is translated with permalinks set to post name
 - indexof js error on edit profile page
 - () empty paranthesis on dynamicly translated strings
 - in editor clicking on a link without language information will not change the Editor language back to Default (editor does not take into account language from url)
