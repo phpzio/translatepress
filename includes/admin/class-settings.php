@@ -54,7 +54,7 @@ class TRP_Settings{
     }
 
     public function sanitize_settings( $settings ){
-
+        error_log( json_encode( $settings ));
         if ( !isset ( $settings['default-language'] ) ) {
             $settings['default-language'] = 'en_US';
         }
@@ -80,7 +80,7 @@ class TRP_Settings{
         if ( ! in_array( $settings['default-language'], $settings['publish-languages'] ) ){
             array_unshift( $settings['publish-languages'], $settings['default-language'] );
         }
-        error_log( json_encode( $settings ));
+
 
         if( !empty( $settings['g-translate'] ) )
             $settings['g-translate'] = sanitize_text_field( $settings['g-translate']  );
@@ -107,7 +107,20 @@ class TRP_Settings{
             $settings['floater-options'] = 'full-names';
         }
 
+        //todo make sure slugs are unique among themselves.
+        foreach( $settings['translation-languages'] as $language_code ){
+            if ( empty ( $settings['url-slugs'][$language_code] ) ){
+                $settings['url-slugs'][$language_code] = $language_code;
+            }else{
+                $settings['url-slugs'][$language_code] = sanitize_title( strtolower( $settings['url-slugs'][$language_code] )) ;
+            }
+        }
+
         $this->create_menu_entries( $settings['publish-languages'] );
+
+        $settings['google-translate-codes'] = TRP_Utils::get_google_translate_codes( $settings['publish-languages'] );
+
+
 
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
@@ -134,6 +147,7 @@ class TRP_Settings{
                 'shortcode-options'     => 'full-names',
                 'menu-options'          => 'full-names',
                 'floater-options'       => 'full-names',
+                'url-slugs'             => array( 'en' => 'en' ),
             );
             update_option ( 'trp_settings', $settings );
         }

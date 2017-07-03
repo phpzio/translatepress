@@ -1,114 +1,9 @@
 <?php
 class TRP_Utils{
 
-    protected static $google_translate_languages = array(
-        'af'     => 'Afrikaans',
-		'sq'     => 'Albanian',
-		'am'     => 'Amharic',
-		'ar'     => 'Arabic',
-		'hy'     => 'Armenian',
-		'az'     => 'Azeerbaijani',
-		'eu'     => 'Basque',
-		'be'     => 'Belarusian',
-		'bn'     => 'Bengali',
-		'bs'     => 'Bosnian',
-		'bg'     => 'Bulgarian',
-		'ca'     => 'Catalan',
-		'ceb'    => 'Cebuano',
-		'ny'     => 'Chichewa',
-		'zh-CN'  => 'Chinese (Simplified)',
-		'zh-TW'  => 'Chinese (Traditional)',
-		'co'     => 'Corsican',
-		'hr'     => 'Croatian',
-		'cs'     => 'Czech',
-		'da'     => 'Danish',
-		'nl'     => 'Dutch',
-		'en'     => 'English',
-		'eo'     => 'Esperanto',
-		'et'     => 'Estonian',
-		'tl'     => 'Filipino',
-		'fi'     => 'Finnish',
-		'fr'     => 'French',
-		'fy'     => 'Frisian',
-		'gl'     => 'Galician',
-		'ka'     => 'Georgian',
-		'de'     => 'German',
-		'el'     => 'Greek',
-		'gu'     => 'Gujarati',
-		'ht'     => 'Haitian Creole',
-		'ha'     => 'Hausa',
-		'haw'    => 'Hawaiian',
-		'iw'     => 'Hebrew',
-		'hi'     => 'Hindi',
-        'hmn'    => 'Hmong',
-		'hu'     => 'Hungarian',
-		'is'     => 'Icelandic',
-		'ig'     => 'Igbo',
-		'id'     => 'Indonesian',
-		'ga'     => 'Irish',
-		'it'     => 'Italian',
-		'ja'     => 'Japanese',
-		'jw'     => 'Javanese',
-		'kn'     => 'Kannada',
-		'kk'     => 'Kazakh',
-		'km'     => 'Khmer',
-		'ko'     => 'Korean',
-		'ku'     => 'Kurdish',
-		'ky'     => 'Kyrgyz',
-		'lo'     => 'Lao',
-		'la'     => 'Latin',
-		'lv'     => 'Latvian',
-		'lt'     => 'Lithuanian',
-		'lb'     => 'Luxembourgish',
-		'mk'     => 'Macedonian',
-		'mg'     => 'Malagasy',
-		'ms'     => 'Malay',
-		'ml'     => 'Malayalam',
-		'mt'     => 'Maltese',
-		'mi'     => 'Maori',
-		'mr'     => 'Marathi',
-		'mn'     => 'Mongolian',
-		'my'     => 'Burmese',
-		'ne'     => 'Nepali',
-		'no'     => 'Norwegian',
-		'ps'     => 'Pashto',
-		'fa'     => 'Persian',
-		'pl'     => 'Polish',
-		'pt'     => 'Portuguese',
-		'ma'     => 'Punjabi',
-		'ro'     => 'Romanian',
-		'ru'     => 'Russian',
-		'sm'     => 'Samoan',
-		'gd'     => 'Scots',
-		'sr'     => 'Serbian',
-		'st'     => 'Sesotho',
-		'sn'     => 'Shona',
-		'sd'     => 'Sindhi',
-		'si'     => 'Sinhala',
-		'sk'     => 'Slovak',
-		'sl'     => 'Slovenian',
-		'so'     => 'Somali',
-		'es'     => 'Spanish',
-		'su'     => 'Sundanese',
-		'sw'     => 'Swahili',
-		'sv'     => 'Swedish',
-		'tg'     => 'Tajik',
-		'ta'     => 'Tamil',
-		'te'     => 'Telugu',
-		'th'     => 'Thai',
-		'tr'     => 'Turkish',
-		'uk'     => 'Ukrainian',
-		'ur'     => 'Urdu',
-		'uz'     => 'Uzbek',
-		'vi'     => 'Vietnamese',
-		'cy'     => 'Welsh',
-		'xh'     => 'Xhosa',
-		'yi'     => 'Yiddish',
-		'yo'     => 'Yoruba',
-		'zu'     => 'Zulu',
-    );
+  	protected static $languages = array();
 
-	protected static $languages = array();
+	protected static $wp_languages;
 
 	/*
 	 * Possible values  $english_or_native_name: 'english_name', 'native_name'
@@ -117,8 +12,8 @@ class TRP_Utils{
     public static function get_languages( $english_or_native_name = 'english_name' ){
 		if ( empty( self::$languages[$english_or_native_name] ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
-			$wp_languages = wp_get_available_translations();
-			$default = array( 'language'	=> 'en_US', 'english_name'=> 'English (United States)', 'native_name' => 'English (United States)' );
+			$wp_languages = self::get_wp_languages();
+			$default = array( 'language'	=> 'en', 'english_name'=> 'English (United States)', 'native_name' => 'English (United States)' );
 			self::$languages[$english_or_native_name] = array( $default['language'] => $default[$english_or_native_name] );
 			foreach ( $wp_languages as $wp_language ) {
 				self::$languages[$english_or_native_name][$wp_language['language']] = $wp_language[$english_or_native_name];
@@ -127,6 +22,38 @@ class TRP_Utils{
 
         return apply_filters( 'trp_languages', self::$languages[$english_or_native_name] );
     }
+
+	public static function get_wp_languages(){
+		if ( empty( self::$wp_languages ) ){
+			self::$wp_languages = wp_get_available_translations();
+		}
+		return self::$wp_languages;
+	}
+
+	public static function get_google_translate_codes( $language_codes ){
+		$google_translate_codes = array();
+		$wp_languages = self::get_wp_languages();
+		$map_wp_codes_to_google = apply_filters( 'trp_map_wp_codes_to_google', array(
+			'en_US' => 'en',
+			'zh_HK' => 'zh-TW',
+			'zh_TW'	=> 'zh-TW',
+			'zh_CN'	=> 'zh-CN',
+
+		) );
+		foreach ( $language_codes as $language_code ) {
+			if ( isset( $map_wp_codes_to_google[$language_code] ) ){
+				$google_translate_codes[$language_code] = $map_wp_codes_to_google[$language_code];
+			}else {
+				foreach ($wp_languages as $wp_language) {
+					if ($wp_language['language'] == $language_code) {
+						$google_translate_codes[$language_code] = reset($wp_language['iso']);
+						break;
+					}
+				}
+			}
+		}
+		return $google_translate_codes;
+	}
 
 	public static function get_language_names( $language_codes, $english_or_native_name = 'english_name' ){
 		$return = array();

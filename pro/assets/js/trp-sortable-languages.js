@@ -5,7 +5,7 @@ function TRP_Sortable_Languages() {
         var message = jQuery( element.target ).attr( 'data-confirm-message' );
         var confirmed = confirm( message );
         if ( confirmed ) {
-            jQuery ( element.target ).parent().remove();
+            jQuery ( element.target ).parent().parent().remove();
         }
     };
 
@@ -30,8 +30,11 @@ function TRP_Sortable_Languages() {
 
         var checkbox = new_option.find( 'input.trp-translation-published' );
         checkbox.removeAttr( 'disabled' );
-        checkbox.attr( 'checked', false );
         checkbox.val( new_language );
+
+        var url_slug = new_option.find( 'input.trp-language-slug' );
+        url_slug.val( new_language.toLowerCase() );
+        url_slug.attr('name', 'trp_settings[url-slugs][' + new_language + ']' );
 
         var remove = new_option.find( '.trp-remove-language' ).toggle();
 

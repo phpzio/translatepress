@@ -30,20 +30,29 @@ span.select2-container{
 /*
  *  Language Selector
  */
+#trp-languages-table{
+    width: 1px;
+    margin-left: -42px
+}
+table#trp-languages-table td{
+    padding: 5px;
+}
+
+table#trp-languages-table th{
+    text-align: center;
+}
+
 .trp-language{
     padding-bottom: 5px;
     padding-top: 5px;
-    margin-left: -27px;
 }
 
 input.trp-translation-published{
-    margin-left: 50px;
     margin-top: 1px;
 }
 
-
-#trp-published-header{
-    padding-left: 222px;
+.trp-language-slug{
+    width: 80px;
 }
 
 .trp-sortable-handle{
@@ -57,10 +66,6 @@ input.trp-translation-published{
     margin-top: -1px;
 }
 
-#trp-add-language{
-    margin-left: 45px;
-}
-
 #trp-new-language{
     padding-bottom: 5px;
     padding-top: 5px;
@@ -69,15 +74,14 @@ input.trp-translation-published{
 .trp-remove-language{
     color: #a00;
     cursor: pointer;
-    margin-left: 100px;
 }
 
 .trp-remove-language:hover{
     color: red;
 }
 
-.trp-ls-customize{
-    margin-left: 30px;
+#trp-add-language{
+    margin-left: 5px;
 }
 
 .trp-ls-type{

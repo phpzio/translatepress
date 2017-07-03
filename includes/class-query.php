@@ -41,7 +41,7 @@ class TRP_Query{
     }
 
     public function check_table( $language_code ){
-        $table_name = $this->db->prefix . 'trp_dictionary_' . $language_code;
+        $table_name = $this->get_table_name($language_code);
         if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
             // table not in database. Create new table
             $charset_collate = $this->db->get_charset_collate();
@@ -107,7 +107,8 @@ class TRP_Query{
     }
 
     protected function get_table_name( $language_code ){
-        return $this->db->prefix . 'trp_dictionary_' . $language_code;
+
+        return $this->db->prefix . 'trp_dictionary_' . strtolower( $language_code );
     }
 
     public function get_string_rows( $id_array, $original_array, $language_code ){

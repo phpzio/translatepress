@@ -302,7 +302,6 @@ class TRP_Translation_Render{
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
 
-                    if ( $nodes[$i]['type'] == 'post_slug' ) error_log($nodes[$i]['type']);
                     if ( $this->get_node_description( $nodes[$i] ) ) {
                         $nodes[$i]['node']->setAttribute('data-trp-node-description', $this->get_node_description($nodes[$i]));
                     }
