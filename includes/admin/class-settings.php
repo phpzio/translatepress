@@ -107,9 +107,16 @@ class TRP_Settings{
             $settings['floater-options'] = 'full-names';
         }
 
-        //todo make sure slugs are unique among themselves.
+        $duplicate_exists = false;
+        foreach( $settings['url-slugs'] as $urlslug ) {
+            if ( count ( array_keys( $settings['url-slugs'], $urlslug ) ) > 1 ){
+                $duplicate_exists = true;
+                break;
+            }
+        }
+
         foreach( $settings['translation-languages'] as $language_code ){
-            if ( empty ( $settings['url-slugs'][$language_code] ) ){
+            if ( $duplicate_exists ||  empty ( $settings['url-slugs'][$language_code] ) ){
                 $settings['url-slugs'][$language_code] = $language_code;
             }else{
                 $settings['url-slugs'][$language_code] = sanitize_title( strtolower( $settings['url-slugs'][$language_code] )) ;

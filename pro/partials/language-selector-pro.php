@@ -25,7 +25,7 @@
                         </select>
                     </td>
                     <td>
-                        <input class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" value="<?php echo $this->settings['url-slugs'][$selected_language_code]; ?>">
+                        <input class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" style="text-transform: lowercase;" value="<?php echo $this->settings['url-slugs'][$selected_language_code]; ?>">
                     </td>
                     <td align="center">
                         <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" <?php echo ( in_array( $selected_language_code, $this->settings['publish-languages'] ) ) ? 'checked ' : ''; echo ( $default_language ) ? 'disabled ' : ''; ?> />

@@ -50,11 +50,37 @@ function TRP_Sortable_Languages() {
 
     };
 
+    function has_duplicates(array) {
+        var valuesSoFar = Object.create(null);
+        for (var i = 0; i < array.length; ++i) {
+            var value = array[i];
+            if (value in valuesSoFar) {
+                return true;
+            }
+            valuesSoFar[value] = true;
+        }
+        return false;
+    }
+
+    this.check_unique_url_slugs = function (event){
+        var url_slugs = [];
+        jQuery( '.trp-language-slug' ).each( function (){
+            url_slugs.push( jQuery( this ).val() );
+        } );
+        if ( has_duplicates(url_slugs)){
+            // todo translate this
+            alert( 'Error! Duplicate Url slug values.' );
+            event.preventDefault();
+        }
+    };
+
     this.initialize = function () {
         jQuery( '#trp-sortable-languages' ).sortable({ handle: '.trp-sortable-handle' });
         jQuery( '#trp-add-language' ).click( _this.add_language );
         jQuery( '.trp-remove-language' ).click( _this.remove_language );
         jQuery( '#trp-default-language' ).on( 'change', _this.update_default_language );
+        console.log(jQuery( "form[action='options.php']"));
+        jQuery( "form[action='options.php']").on ( 'submit', _this.check_unique_url_slugs );
 
         //todo remove already selected languages from selects
     };
