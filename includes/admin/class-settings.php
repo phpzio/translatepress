@@ -107,6 +107,16 @@ class TRP_Settings{
             $settings['floater-options'] = 'full-names';
         }
 
+
+        foreach( $settings['translation-languages'] as $language_code ){
+            if ( empty ( $settings['url-slugs'][$language_code] ) ){
+                $settings['url-slugs'][$language_code] = $language_code;
+            }else{
+                $settings['url-slugs'][$language_code] = sanitize_title( strtolower( $settings['url-slugs'][$language_code] )) ;
+            }
+        }
+
+        // check for duplicates in url slugs
         $duplicate_exists = false;
         foreach( $settings['url-slugs'] as $urlslug ) {
             if ( count ( array_keys( $settings['url-slugs'], $urlslug ) ) > 1 ){
@@ -114,14 +124,12 @@ class TRP_Settings{
                 break;
             }
         }
-
-        foreach( $settings['translation-languages'] as $language_code ){
-            if ( $duplicate_exists ||  empty ( $settings['url-slugs'][$language_code] ) ){
+        if ( $duplicate_exists ){
+            foreach( $settings['translation-languages'] as $language_code ) {
                 $settings['url-slugs'][$language_code] = $language_code;
-            }else{
-                $settings['url-slugs'][$language_code] = sanitize_title( strtolower( $settings['url-slugs'][$language_code] )) ;
             }
         }
+
 
         $this->create_menu_entries( $settings['publish-languages'] );
 
