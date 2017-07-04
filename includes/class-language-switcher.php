@@ -67,8 +67,9 @@ class TRP_Language_Switcher{
             return $url;
 
         global $TRP_LANGUAGE;
+        $url_slug = $this->settings['url-slugs'][$TRP_LANGUAGE];
         $abs_home = $this->url_converter->get_abs_home();
-        $new_url = trailingslashit( $abs_home ) . $TRP_LANGUAGE;
+        $new_url = trailingslashit( $abs_home ) . $url_slug;
         if ( ! empty( $path ) ){
             $new_url .= '/' . ltrim( $path, '/' );
         }
@@ -118,7 +119,7 @@ class TRP_Language_Switcher{
 
         foreach( $published_languages as $code => $name ) {
             if( $code == $TRP_LANGUAGE ) {
-                $current_language['code'] = $code;
+                $current_language['code'] = $this->settings['url-slugs'][$code];
                 $current_language['name'] = $name;
             } else {
                 $other_languages[$code] = $name;
@@ -150,7 +151,7 @@ class TRP_Language_Switcher{
                     }
 
                     if( $floater_settings['short_names'] ) {
-                        $language_label = strtoupper( $code );
+                        $language_label = strtoupper( $this->settings['url-slugs'][$code] );
                     }
 
                     ?>
@@ -218,7 +219,7 @@ class TRP_Language_Switcher{
                     $items[$key]->title .= '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAAD1BMVEUAI5X////tKTk/Wq/2lJzlzbSZAAAAGElEQVQYlWNgAANmRjBgYQIDhlHBwSQIAJUFAfVnNwpwAAAAAElFTkSuQmCC">';
                 }
                 if ( $menu_settings['short_names'] ) {
-                    $items[$key]->title .= $language_code;
+                    $items[$key]->title .= $this->settings['url-slugs'][$language_code];
                 }
                 if ( $menu_settings['full_names'] ) {
                     $items[$key]->title .= $language_name;

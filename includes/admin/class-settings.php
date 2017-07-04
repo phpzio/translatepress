@@ -54,7 +54,6 @@ class TRP_Settings{
     }
 
     public function sanitize_settings( $settings ){
-        error_log( json_encode( $settings ));
         if ( !isset ( $settings['default-language'] ) ) {
             $settings['default-language'] = 'en_US';
         }
@@ -130,12 +129,9 @@ class TRP_Settings{
             }
         }
 
-
         $this->create_menu_entries( $settings['publish-languages'] );
 
         $settings['google-translate-codes'] = TRP_Utils::get_google_translate_codes( $settings['publish-languages'] );
-
-
 
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
@@ -162,7 +158,7 @@ class TRP_Settings{
                 'shortcode-options'     => 'full-names',
                 'menu-options'          => 'full-names',
                 'floater-options'       => 'full-names',
-                'url-slugs'             => array( 'en' => 'en' ),
+                'url-slugs'             => array( 'en_US' => 'en' ),
             );
             update_option ( 'trp_settings', $settings );
         }

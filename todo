@@ -12,6 +12,10 @@ ____________________________________________
 - get initial default locale
 - get WP language codes
 - missing (page-slug) description in editor for some php versions
+- add language directly published to avoid confusion
+- hreflang should only output the published languages not all the translation-languages
+- add custom url slugs
+- make wp->google language code mapping
 
 
 
@@ -20,8 +24,6 @@ ____________________________________________
   WIP
 -------
 
-- make wp->google language code mapping
-- add custom url slugs
 
 
 
@@ -31,14 +33,14 @@ ____________________________________________
  BUGS
 -------
 
+-i custom template does not redirect to default language, even in normal page view.
+-i changing language in editor fast ( before loading the preview page ), goes undefined in url
+-i changing language from floater in editor, not working
+-i in editor clicking on a link without language information will not change the Editor language back to Default (editor does not take into account language from url)
 - la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
-- changing language from floater in editor, not working
 - 404 when page slug is translated with permalinks set to post name
 - indexof js error on edit profile page
 - () empty paranthesis on dynamicly translated strings
-- in editor clicking on a link without language information will not change the Editor language back to Default (editor does not take into account language from url)
-- custom template does not redirect to default language, even in normal page view.
-- changing language in editor fast ( before loading the preview page ), goes undefined in url
 - img src gets translated when it shouldn't. see flags.
 - see if images can get selected in editor
 
@@ -46,18 +48,18 @@ ____________________________________________
 -----------
  Big To Do
 -----------
-- load flag in menu language switcher
-- shortcode should take into account short-name, full-name, flags
+-i load flag in menu language switcher
+-i shortcode should take into account short-name, full-name, flags
 - default language should have optional encoding in url
 - current language in menu (language-switcher cpt)
 - force custom links option
 - edit this in admin bar
 - string translation table
-- when only 1 or 2 languages, in editor looks wierd
+- when only 1 or 2 languages, in editor looks weird
 - free version
 - edd update class
 - multisite
-- challenges: 
+- challenges:
   - paged pages, user listing
   - support for translating emails
   - caching plugins
@@ -67,9 +69,9 @@ ____________________________________________
 -------------
  Small To Do
 -------------
+-i editor pencil icon has white background
+-i highlighting should be done with css, and with a nice colour (editor js line 473)
 - check to see if mutation observer is loaded first most
-- editor pencil icon has white background
-- highlighting should be done with css, and with a nice colour (editor js line 473)
 - conflict with custom profile menu
 - no translate class on language switchers around the world
 - don't allow exit of the editor with unsaved changes
@@ -80,6 +82,7 @@ ____________________________________________
 - cookie language
 - check if no-translate class ignores children too
 - add no translate on admin bar and scripts
+- saved! appears when navigating editor
 - responsive settings page on small width //
 - translate dynamic added strings //
 - add number of strings in category Text(6) Meta (3) //
@@ -90,11 +93,12 @@ ____________________________________________
 - common factor when initializing pro and free components. //
 - make sure page title is translated auto, and manually //
 - remove already selected languages from selects in settings //
-- add language directly published to avoid confusion
+- unpublished languages can be reached at url
 
 
 _____________________
 IDEAS
 
 - opening editor closes back to where editor was started
-- if wp back-end language is changed to the translation language,  , the editor should recognize from the language set from WP then the , the editor should already know the
+- if wp back-end language is changed to the translation language, the editor should recognize the already translated strings
+ from the theme and plugins and set them as already translated, in our dictionary.

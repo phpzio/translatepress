@@ -22,12 +22,13 @@ class TRP_Machine_Translator{
 
     /**
      * @param $new_strings array with the strings that need translation. The keys are the node number in the DOM so we need to preserve the m
-     * @param $language_code string language code of the language that we will be translating to
+     * @param $trp_language_code string wp language code of the language that we will be translating to. Not equal to the google language code
      * @return array array with the translation strings and the preserved keys or an empty array if something went wrong
      */
-    public function translate_array( $new_strings, $language_code ){
+    public function translate_array( $new_strings, $trp_language_code ){
         /* we need these settings to go on */
-        if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['default-language'] ) || empty( $language_code ) )
+        $language_code = $this->settings['google-translate-codes'][$trp_language_code];
+        if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['google-translate-codes'][$this->settings['default-language']] ) || empty( $language_code ) )
             return array();
 
         $translated_strings = array();
@@ -39,7 +40,7 @@ class TRP_Machine_Translator{
             foreach( $new_strings_chunks as $new_strings_chunk ){
                 /* build our translation request */
                 $translation_request = 'key='.$this->settings['g-translate-key'];
-                $translation_request .= '&source='.$this->settings['default-language'];
+                $translation_request .= '&source='.$this->settings['google-translate-codes'][$this->settings['default-language']];
                 $translation_request .= '&target='.$language_code;
                 foreach( $new_strings_chunk as $new_string ){
                     $translation_request .= '&q='.rawurlencode(html_entity_decode( $new_string, ENT_QUOTES ));

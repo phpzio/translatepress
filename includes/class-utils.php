@@ -13,7 +13,7 @@ class TRP_Utils{
 		if ( empty( self::$languages[$english_or_native_name] ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
 			$wp_languages = self::get_wp_languages();
-			$default = array( 'language'	=> 'en', 'english_name'=> 'English (United States)', 'native_name' => 'English (United States)' );
+			$default = array( 'language'	=> 'en_US', 'english_name'=> 'English (United States)', 'native_name' => 'English (United States)' );
 			self::$languages[$english_or_native_name] = array( $default['language'] => $default[$english_or_native_name] );
 			foreach ( $wp_languages as $wp_language ) {
 				self::$languages[$english_or_native_name][$wp_language['language']] = $wp_language[$english_or_native_name];
@@ -38,7 +38,6 @@ class TRP_Utils{
 			'zh_HK' => 'zh-TW',
 			'zh_TW'	=> 'zh-TW',
 			'zh_CN'	=> 'zh-CN',
-
 		) );
 		foreach ( $language_codes as $language_code ) {
 			if ( isset( $map_wp_codes_to_google[$language_code] ) ){
