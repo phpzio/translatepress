@@ -16,6 +16,7 @@ ____________________________________________
 - hreflang should only output the published languages not all the translation-languages
 - add custom url slugs
 - make wp->google language code mapping
+- in editor clicking on a link without language information will not change the Editor language back to Default (editor does not take into account language from url)
 
 
 
@@ -36,7 +37,6 @@ ____________________________________________
 -i custom template does not redirect to default language, even in normal page view.
 -i changing language in editor fast ( before loading the preview page ), goes undefined in url
 -i changing language from floater in editor, not working
--i in editor clicking on a link without language information will not change the Editor language back to Default (editor does not take into account language from url)
 - la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
 - 404 when page slug is translated with permalinks set to post name
 - indexof js error on edit profile page

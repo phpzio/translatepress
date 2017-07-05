@@ -31,12 +31,25 @@ function TRP_Editor(){
         form.submit();
     };
 
+    this.update_language = function(){
+        var lang = get_query_string( 'lang' );
+        if ( lang && lang != trp_language ){
+            trp_language = lang;
+            trp_on_screen_language = lang;
+        }
+        var select_language = document.getElementById( 'trp-language-select' );
+        select_language.value = lang;
+        jQuery( select_language ).trigger( 'change' );
+    };
+
     this.initialize = function(){
         _this.saving_translation_ui();
 
         _this.edit_translation_button = null;
 
         _this.update_parent_url();
+
+        //_this.update_language();
 
         _this.iframe_strings_lookup();
 
@@ -310,6 +323,16 @@ function TRP_Editor(){
                 '<div>' + option.text + '</div><div class="string-selector-description">' + option.title + '</div>'
             );
         return option;
+    }
+
+    function get_query_string(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return null;
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
     add_event_handlers();

@@ -53,6 +53,10 @@ class TRP_Url_Converter {
             $new_url = $url;
         }
 
+        if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
+            $new_url = add_query_arg( 'lang', $language, $new_url );
+        }
+
         return $new_url;
     }
 

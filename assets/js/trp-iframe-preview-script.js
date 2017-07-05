@@ -6,6 +6,9 @@ function TRP_Iframe_Preview(){
             if (this.action != '') {
                 if ( isLinkPreviewable ( this ) ) {
                     this.href = update_query_string('trp-edit-translation', 'preview', this.href);
+                    if ( get_query_string( 'lang', this.href ) == null ) {
+                        this.href = update_query_string('lang', window.parent.trp_language, this.href);
+                    }
                 }else {
                     jQuery( this ).on( 'click',
                         function(event) {
@@ -23,6 +26,15 @@ function TRP_Iframe_Preview(){
         
     };
 
+    function get_query_string(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return null;
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
 
     function update_query_string(key, value, url) {
         if (!url) url = window.location.href;

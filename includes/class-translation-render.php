@@ -196,29 +196,11 @@ class TRP_Translation_Render{
                 array_push( $nodes, array('node'=>$row,'type'=>'post_slug') );
             }
         }
-        foreach ( $html->find('iframe') as $k => $row ) {
-            if($this->full_trim($row->src)!="" && strpos($this->full_trim($row->src),'.youtube.') !== false	&& !$this->hasAncestorAttribute( $row, $no_translate_attribute )) {
-                array_push( $translateable_strings, $row->src );
-                array_push( $nodes, array('node'=>$row,'type'=>'iframe_src') );
-            }
-        }
         foreach ( $html->find('img') as $k => $row ) {
-            if($this->full_trim($row->src)!="" && !$this->hasAncestorAttribute( $row, $no_translate_attribute ))
-            {
-                array_push( $translateable_strings, $row->src );
-                array_push( $nodes, array('node'=>$row,'type'=>'image_src') );
-            }
             if($this->full_trim($row->alt)!="" && !$this->hasAncestorAttribute( $row, $no_translate_attribute ))
             {
                 array_push( $translateable_strings, $row->alt );
                 array_push( $nodes, array('node'=>$row,'type'=>'image_alt') );
-            }
-        }
-        foreach ( $html->find('a') as $k => $row ) {
-            if($this->full_trim($row->href)!="" && substr($this->full_trim($row->href),-4)==".pdf" &&  !$this->hasAncestorAttribute( $row, $no_translate_attribute ))
-            {
-                array_push( $translateable_strings, $row->href );
-                array_push( $nodes, array('node'=>$row,'type'=>'a_pdf') );
             }
         }
 
@@ -246,20 +228,8 @@ class TRP_Translation_Render{
                 'accessor' => 'content',
                 'attribute' => false
             ),
-            'iframe_src' => array(
-                'accessor' => 'src',
-                'attribute' => false
-            ),
             'image_alt' => array(
                 'accessor' => 'alt',
-                'attribute' => false
-            ),
-            'image_src' => array(
-                'accessor' => 'src',
-                'attribute' => false
-            ),
-            'a_pdf' => array(
-                'accessor' => 'href',
                 'attribute' => false
             ),
             'submit' => array(
