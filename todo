@@ -17,7 +17,10 @@ ____________________________________________
 - add custom url slugs
 - make wp->google language code mapping
 - in editor clicking on a link without language information will not change the Editor language back to Default (editor does not take into account language from url)
-
+-i changing language in editor fast ( before loading the preview page ), goes undefined in url
+- changing language from floater in editor, not working
+- add no translate on admin bar
+- no translate class on language switchers around the world
 
 
 
@@ -35,8 +38,6 @@ ____________________________________________
 -------
 
 -i custom template does not redirect to default language, even in normal page view.
--i changing language in editor fast ( before loading the preview page ), goes undefined in url
--i changing language from floater in editor, not working
 - la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
 - 404 when page slug is translated with permalinks set to post name
 - indexof js error on edit profile page
@@ -73,7 +74,7 @@ ____________________________________________
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
 - check to see if mutation observer is loaded first most
 - conflict with custom profile menu
-- no translate class on language switchers around the world
+- change table name to EN_FR (default-translated)
 - don't allow exit of the editor with unsaved changes
 - <body class = language>
 - seo <html language parameter
@@ -81,7 +82,7 @@ ____________________________________________
 - make language switcher a callable function
 - cookie language
 - check if no-translate class ignores children too
-- add no translate on admin bar and scripts
+- add no translate on scripts
 - saved! appears when navigating editor
 - responsive settings page on small width //
 - translate dynamic added strings //

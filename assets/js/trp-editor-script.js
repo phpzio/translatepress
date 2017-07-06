@@ -20,27 +20,15 @@ function TRP_Editor(){
     var jquery_string_selector = jQuery( '#trp-string-categories' );
     var change_tracker;
 
-
     this.change_language = function( select ){
         var language = select.value;
         var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language + ']').first().attr('href');
-        var form = document.getElementById( 'trp-language-switch-form' );
-        var select_language = document.getElementById( 'trp-language-select' );
-        select_language.value = language;
-        form.action = link;
-        form.submit();
+        if ( link != 'undefined' ){
+            select.form.action = link;
+            select.form.submit();
+        }
     };
 
-    this.update_language = function(){
-        var lang = get_query_string( 'lang' );
-        if ( lang && lang != trp_language ){
-            trp_language = lang;
-            trp_on_screen_language = lang;
-        }
-        var select_language = document.getElementById( 'trp-language-select' );
-        select_language.value = lang;
-        jQuery( select_language ).trigger( 'change' );
-    };
 
     this.initialize = function(){
         _this.saving_translation_ui();
@@ -48,8 +36,6 @@ function TRP_Editor(){
         _this.edit_translation_button = null;
 
         _this.update_parent_url();
-
-        //_this.update_language();
 
         _this.iframe_strings_lookup();
 
@@ -454,7 +440,7 @@ function TRP_String( language, array_index ){
         jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : jquery_object;
 
         if ( jquery_object ){
-            if ( trp_on_screen_language == trp_language ) {
+            if ( trp_language == trp_on_screen_language ) {
                 var text_to_set = null;
                 if (new_settings.hasOwnProperty('translated') && new_settings.translated != _this.translated) {
                     text_to_set = decode_html ( new_settings.translated );

@@ -6,10 +6,11 @@ class TRP_Translation_Render{
     protected $trp_query;
 
 
-    public function __construct( $settings, $machine_translator, $trp_query ){
+    public function __construct( $settings, $machine_translator, $trp_query, $url_converter ){
         $this->settings = $settings;
         $this->machine_translator = $machine_translator;
         $this->trp_query = $trp_query;
+        $this->url_converter = $url_converter;
     }
 
     public function start_object_cache(){
@@ -148,13 +149,21 @@ class TRP_Translation_Render{
             return $output;
         }
 
-        $no_translate_attribute = 'data-trp-skiptranslate';
+        $no_translate_attribute = 'data-no-translation';
 
         $translateable_strings = array();
         $nodes = array();
         //$output = utf8_encode ($output);
 
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+
+        $no_translate_selectors = apply_filters( 'trp_no_translate_selectors', array( '#wpadminbar' ), $TRP_LANGUAGE );
+
+        foreach ( $no_translate_selectors as $no_translate_selector ){
+            foreach ( $html->find( $no_translate_selector ) as $k => $row ){
+                $row->setAttribute( $no_translate_attribute );
+            }
+        }
 
         foreach ( $html->find('text') as $k => $row ){
             if($this->full_trim($row->outertext)!="" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric($this->full_trim($row->outertext)) && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
@@ -284,7 +293,7 @@ class TRP_Translation_Render{
         if ( $preview_mode ){
             foreach( $html->find('a[href!="#"]') as $a_href)  {
                 $url = $a_href->href;
-                if( $this->is_external_link( $url )) {
+                if( $this->is_external_link( $url ) || $this->is_different_language( $url ) ) {
                     $a_href->setAttribute( 'class', 'trp-unpreviewable' );
                 }
             }
@@ -318,11 +327,15 @@ class TRP_Translation_Render{
         }
     }
 
-    protected function get_translated_string_ids( $translated_strings, $language_code ){
-
-        return $translated_strings_ids;
+    protected function is_different_language( $url ){
+        global $TRP_LANGUAGE;
+        $lang = $this->url_converter->get_lang_from_url_string( $url );
+        if ( $lang == $TRP_LANGUAGE ){
+            return false;
+        }else{
+            return true;
+        }
     }
-
 
     public function process_strings( $translateable_strings, $language_code ){
         $translated_strings = array();

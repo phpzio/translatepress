@@ -119,7 +119,7 @@ class TRP_Language_Switcher{
 
         foreach( $published_languages as $code => $name ) {
             if( $code == $TRP_LANGUAGE ) {
-                $current_language['code'] = $this->settings['url-slugs'][$code];
+                $current_language['code'] = $code;
                 $current_language['name'] = $name;
             } else {
                 $other_languages[$code] = $name;
@@ -133,15 +133,15 @@ class TRP_Language_Switcher{
         }
 
         if( $floater_settings['short_names'] ) {
-            $current_language_label = strtoupper( $current_language['code'] );
+            $current_language_label = strtoupper( $this->settings['url-slugs'][$current_language['code']] );
         }
 
         ?>
-        <div id="trp-floater-ls" class="<?php echo $floater_class ?>">
+        <div id="trp-floater-ls" data-no-translation class="<?php echo $floater_class; echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? ' trp-unpreviewable' : '' ?>">
             <div id="trp-floater-ls-current-language" class="<?php echo $floater_flags_class ?>">
                 <a href="javascript:void(0)" class="trp-floater-ls-disabled-language" onclick="void(0)"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo $current_language_label; ?></a>
             </div>
-            <div id="trp-floater-ls-language-list" class="<?php echo $floater_flags_class ?>">
+            <div id="trp-floater-ls-language-list" class="<?php echo $floater_flags_class; echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? ' trp-unpreviewable' : ''?>">
                 <?php
                 foreach( $other_languages as $code => $name ) {
                     $language_label = '';
@@ -155,7 +155,7 @@ class TRP_Language_Switcher{
                     }
 
                     ?>
-                    <a href="javascript:void(0)" title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
+                    <a href="javascript:void(0)" class="<?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? ' trp-unpreviewable' : ''?>" title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
                 <?php
                 }
                 ?>
@@ -213,7 +213,7 @@ class TRP_Language_Switcher{
                 $language_name = $ls_post->post_title;
 
                 $items[$key]->url = $this->url_converter->get_url_for_language( $language_code );
-                $items[$key]->title = '<span>';
+                $items[$key]->title = '<span data-no-translation>';
                 if ( $menu_settings['flags'] ) {
                     //todo get flag for country
                     $items[$key]->title .= '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAAD1BMVEUAI5X////tKTk/Wq/2lJzlzbSZAAAAGElEQVQYlWNgAANmRjBgYQIDhlHBwSQIAJUFAfVnNwpwAAAAAElFTkSuQmCC">';
