@@ -21,6 +21,7 @@ ____________________________________________
 - changing language from floater in editor, not working
 - add no translate on admin bar
 - no translate class on language switchers around the world
+- check if no-translate class ignores children too
 
 
 
@@ -28,6 +29,7 @@ ____________________________________________
   WIP
 -------
 
+-i load flag in menu language switcher
 
 
 
@@ -49,7 +51,6 @@ ____________________________________________
 -----------
  Big To Do
 -----------
--i load flag in menu language switcher
 -i shortcode should take into account short-name, full-name, flags
 - default language should have optional encoding in url
 - current language in menu (language-switcher cpt)
@@ -72,6 +73,7 @@ ____________________________________________
 -------------
 -i editor pencil icon has white background
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
+- isset peste toate setarile url-slugs si altele. incearca pluginul fara "settings" din db
 - check to see if mutation observer is loaded first most
 - conflict with custom profile menu
 - change table name to EN_FR (default-translated)
@@ -81,7 +83,6 @@ ____________________________________________
 - get browser language
 - make language switcher a callable function
 - cookie language
-- check if no-translate class ignores children too
 - add no translate on scripts
 - saved! appears when navigating editor
 - responsive settings page on small width //
@@ -95,6 +96,7 @@ ____________________________________________
 - make sure page title is translated auto, and manually //
 - remove already selected languages from selects in settings //
 - unpublished languages can be reached at url
+- rename plugin directory to translatepress without dash
 
 
 _____________________
