@@ -4,6 +4,7 @@ class TRP_Settings{
 
     protected $settings;
     protected $trp_query;
+    protected $url_converter;
 
     public function get_language_switcher_options(){
         $ls_options = apply_filters( 'trp_language_switcher_output', array(
@@ -38,6 +39,10 @@ class TRP_Settings{
 
     public function set_trp_query( $trp_query ){
         $this->trp_query = $trp_query;
+    }
+
+    public function set_url_converter( $url_converter ){
+        $this->url_converter = $url_converter;
     }
 
     public function register_menu_page(){

@@ -108,7 +108,7 @@ class TRP_Query{
 
     protected function get_table_name( $language_code ){
 
-        return $this->db->prefix . 'trp_dictionary_' . strtolower( $language_code );
+        return $this->db->prefix . 'trp_dictionary_' . $this->settings['default-language'] . '_'. strtolower( $language_code );
     }
 
     public function get_string_rows( $id_array, $original_array, $language_code ){

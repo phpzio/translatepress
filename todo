@@ -22,14 +22,14 @@ ____________________________________________
 - add no translate on admin bar
 - no translate class on language switchers around the world
 - check if no-translate class ignores children too
-
+- fixed bug with dynamic translation not working in default language
+- load flag in menu language switcher
 
 
 -------
   WIP
 -------
 
--i load flag in menu language switcher
 
 
 

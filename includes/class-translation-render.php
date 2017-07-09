@@ -14,8 +14,6 @@ class TRP_Translation_Render{
     }
 
     public function start_object_cache(){
-
-
         global $TRP_LANGUAGE;
         if( is_admin() ||
         ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
@@ -161,7 +159,7 @@ class TRP_Translation_Render{
 
         foreach ( $no_translate_selectors as $no_translate_selector ){
             foreach ( $html->find( $no_translate_selector ) as $k => $row ){
-                $row->setAttribute( $no_translate_attribute );
+                $row->setAttribute( $no_translate_attribute, '' );
             }
         }
 
@@ -427,17 +425,27 @@ class TRP_Translation_Render{
     public function enqueue_dynamic_translation(){
         global $TRP_LANGUAGE;
 
-        if ( $TRP_LANGUAGE != $this->settings['default-language'] ) {
-            wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'));
-
+        if ( $TRP_LANGUAGE != $this->settings['default-language'] || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ) {
+            $language_to_query = $TRP_LANGUAGE;
+            if ( $TRP_LANGUAGE == $this->settings['default-language']  ) {
+                foreach ($this->settings['translation-languages'] as $language) {
+                    if ( $language != $this->settings['default-language'] ) {
+                        $language_to_query = $language;
+                        break;
+                    }
+                }
+            }
             $trp_data = array(
                 'trp_ajax_url' => apply_filters('trp_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
                 'trp_wp_ajax_url' => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
-                'trp_language' => $TRP_LANGUAGE
+                'trp_language_to_query' => $language_to_query,
+                'trp_original_language' => $this->settings['default-language'],
+                'trp_current_language' => $TRP_LANGUAGE
             );
             if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
             }
+            wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'));
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }

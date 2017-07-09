@@ -7,7 +7,7 @@ function TRP_Translator(){
     var active = true;
     var ajax_url = trp_data.trp_ajax_url;
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
-
+    var language_to_query;
 
     this.ajax_get_translation = function( strings_to_query, url ) {
         jQuery.ajax({
@@ -17,7 +17,8 @@ function TRP_Translator(){
             data: {
                 action: 'trp_get_translations',
                 async: false,
-                language: language,
+                language: language_to_query,
+                original_language: original_language,
                 strings: JSON.stringify( strings_to_query )
             },
             success: function( response ) {
@@ -39,16 +40,16 @@ function TRP_Translator(){
     };
 
     this.update_strings = function( response, strings_to_query ) {
-        if ( response != null && response[language] != null ){
+        if ( response != null && response[language_to_query] != null ){
             for ( var j in strings_to_query ) {
                 var queried_string = strings_to_query[j];
                 var translation_found = false;
                 var initial_value = queried_string.original;
-                for( var i in response[language] ) {
-                    var response_string = response[language][i];
+                for( var i in response[language_to_query] ) {
+                    var response_string = response[language_to_query][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
-                        response[language][i].jquery_object = jQuery( queried_string.node );
-                        if (response_string.translated != '') {
+                        response[language_to_query][i].jquery_object = jQuery( queried_string.node );
+                        if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
                             queried_string.node.innerText = text_to_set;
@@ -93,7 +94,9 @@ function TRP_Translator(){
 
     this.initialize = function() {
 
-        language = trp_data.trp_language;
+        current_language = trp_data.trp_current_language;
+        original_language = trp_data.trp_original_language;
+        language_to_query = trp_data.trp_language_to_query;
         // create an observer instance
         observer = new MutationObserver( _this.detect_new_strings );
 
@@ -124,10 +127,14 @@ function TRP_Translator(){
 }
 
 var trpTranslator;
-var language;
+var current_language;
+var original_language;
 
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {
     trpTranslator = new TRP_Translator();
+    //TODO remove this when finished
+    jQuery( ".site-branding" ).append("<h1>new word</h1>");
+
 });
 

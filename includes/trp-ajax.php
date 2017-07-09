@@ -9,13 +9,13 @@ class TRP_Ajax{
 
     public function __construct( ){
 
-        if ( !isset( $_POST['action'] ) || $_POST['action'] !== 'trp_get_translations' || empty( $_POST['strings'] ) || empty( $_POST['language'] ) ) {
+        if ( !isset( $_POST['action'] ) || $_POST['action'] !== 'trp_get_translations' || empty( $_POST['strings'] ) || empty( $_POST['language'] ) || empty( $_POST['original_language'] ) ) {
             die();
         }
 
         if ( $this->connect_to_db() ){
 
-            $this->output_translations( $this->sanitize_strings( $_POST['strings'] ), filter_var( $_POST['language'], FILTER_SANITIZE_STRING ) );
+            $this->output_translations( $this->sanitize_strings( $_POST['strings'] ), filter_var( $_POST['language'], FILTER_SANITIZE_STRING ), filter_var( $_POST['original_language'], FILTER_SANITIZE_STRING ) );
             //error_log( 'Successful connection to DB' );
             mysqli_close($this->connection);
         }else{

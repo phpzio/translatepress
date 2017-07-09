@@ -28,7 +28,7 @@ class TRP_Url_Converter {
         if ( empty( $language ) ) {
             $language = $TRP_LANGUAGE;
         }
-        $url_slug = $this->settings['url-slugs'][$language];
+        $url_slug = $this->get_url_slug( $language );
         if ( empty( $url ) && is_object( $post ) && ( !is_home() ) ) {
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post->ID );
@@ -38,7 +38,7 @@ class TRP_Url_Converter {
                 $url = $this->cur_page_url();
             }
             $abs_home = trailingslashit( $this->get_abs_home() );
-            $prefixes = apply_filters( 'trp_prefix_abs_home', array( $abs_home . $this->settings['url-slugs'][$TRP_LANGUAGE] . '/', $abs_home ) );
+            $prefixes = apply_filters( 'trp_prefix_abs_home', array( $abs_home . $this->get_url_slug( $TRP_LANGUAGE ) . '/', $abs_home ) );
             foreach( $prefixes as $prefix ){
                 if ( substr( $url, 0, strlen( $prefix ) ) == $prefix ) {
                     $path = substr($url, strlen($prefix));
@@ -54,6 +54,14 @@ class TRP_Url_Converter {
         }
 
         return $new_url;
+    }
+
+    public function get_url_slug( $language_code ){
+        $url_slug = $language_code;
+        if( isset( $this->settings['url-slugs'][$language_code] ) ){
+            $url_slug = $this->settings['url-slugs'][$language_code];
+        }
+        return $url_slug;
     }
 
     /**
@@ -135,7 +143,11 @@ class TRP_Url_Converter {
         $lang_get_parts = explode( '?', $lang );
         $lang           = $lang_get_parts[ 0 ];
 
-        return $lang && in_array ( $lang, $this->settings['url-slugs'] ) ? array_search( $lang, $this->settings['url-slugs'] ) : $this->settings['default-language'];
+        if ( isset( $this->settings['url-slugs'] ) ) {
+            return $lang && in_array($lang, $this->settings['url-slugs']) ? array_search($lang, $this->settings['url-slugs']) : $this->settings['default-language'];
+        }else{
+            return $lang && in_array($lang, $this->settings['translation-languages']) ? $lang : $this->settings['default-language'];
+        }
     }
 
     protected function cur_page_url() {
