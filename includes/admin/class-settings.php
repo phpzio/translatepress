@@ -163,7 +163,7 @@ class TRP_Settings{
                 'shortcode-options'     => 'full-names',
                 'menu-options'          => 'full-names',
                 'floater-options'       => 'full-names',
-                'url-slugs'             => array( 'en_US' => 'en' ),
+                'url-slugs'             => array( 'en_US' => 'en_us' ),
             );
             update_option ( 'trp_settings', $settings );
         }
@@ -214,6 +214,8 @@ class TRP_Settings{
 
     protected function create_menu_entries( $languages ){
         $published_languages = TRP_Utils::get_language_names( $languages );
+        $published_languages['current_language'] = __( 'Current Language', TRP_PLUGIN_SLUG );
+        $languages[] = 'current_language';
 
         foreach ( $published_languages as $language_code => $language_name ) {
             $existing_ls = get_page_by_title( $language_name, OBJECT, 'language-switcher'  );

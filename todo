@@ -26,12 +26,14 @@ ____________________________________________
 - load flag in menu language switcher
 - img src gets translated when it shouldn't. see flags.
 - see if images can get selected in editor
+- custom template does not redirect to default language, even in normal page view.
+- current language in menu (language-switcher cpt)
 
 
 -------
   WIP
 -------
-
+- wp language code backup
 
 
 
@@ -41,7 +43,6 @@ ____________________________________________
  BUGS
 -------
 
--i custom template does not redirect to default language, even in normal page view.
 - la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
 - 404 when page slug is translated with permalinks set to post name
 - indexof js error on edit profile page
@@ -52,7 +53,6 @@ ____________________________________________
  Big To Do
 -----------
 -i shortcode should take into account short-name, full-name, flags
--i current language in menu (language-switcher cpt)
 - default language should have optional encoding in url
 - force custom links option
 - edit this in admin bar

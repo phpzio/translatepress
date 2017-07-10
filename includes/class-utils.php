@@ -5,6 +5,9 @@ class TRP_Utils{
 
 	protected static $wp_languages;
 
+	// todo get a backup;
+	protected static $wp_languages_backup = array();
+
 	/*
 	 * Possible values  $english_or_native_name: 'english_name', 'native_name'
 	 */
@@ -26,6 +29,9 @@ class TRP_Utils{
 	public static function get_wp_languages(){
 		if ( empty( self::$wp_languages ) ){
 			self::$wp_languages = wp_get_available_translations();
+			if ( count( self::$wp_languages ) == 0 ) {
+				self::$wp_languages = self::$wp_languages_backup;
+			}
 		}
 		return self::$wp_languages;
 	}

@@ -192,6 +192,7 @@ class TRP_Language_Switcher{
     }
 
     public function ls_menu_permalinks( $items, $menu, $args ){
+        global $TRP_LANGUAGE;
         foreach ( $items as $key => $item ){
             if ( $item->object == 'language-switcher' ){
                 $ls_id = get_post_meta( $item->ID, '_menu_item_object_id', true );
@@ -203,6 +204,17 @@ class TRP_Language_Switcher{
                 $menu_settings = $ls_options[$this->settings['menu-options']];
                 $language_code = $ls_post->post_content;
                 $language_name = $ls_post->post_title;
+
+                if ( $language_code == $TRP_LANGUAGE ){
+                    unset($items[$key]);
+                    continue;
+                }
+
+                if ( $language_code == 'current_language' ){
+                    $language_code = $TRP_LANGUAGE;
+                    $language_names = TRP_Utils::get_language_names( array( $TRP_LANGUAGE ) );
+                    $language_name = $language_names[$language_code];
+                }
 
                 $items[$key]->url = $this->url_converter->get_url_for_language( $language_code );
                 $items[$key]->title = '<span data-no-translation>';
