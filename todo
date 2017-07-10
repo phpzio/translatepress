@@ -52,8 +52,8 @@ ____________________________________________
  Big To Do
 -----------
 -i shortcode should take into account short-name, full-name, flags
+-i current language in menu (language-switcher cpt)
 - default language should have optional encoding in url
-- current language in menu (language-switcher cpt)
 - force custom links option
 - edit this in admin bar
 - string translation table
@@ -97,6 +97,7 @@ ____________________________________________
 - remove already selected languages from selects in settings //
 - unpublished languages can be reached at url
 - rename plugin directory to translatepress without dash
+- link to menu in translate settings
 
 
 _____________________

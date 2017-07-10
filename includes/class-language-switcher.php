@@ -32,7 +32,10 @@ class TRP_Language_Switcher{
                 return $language_code;
             }
         }else{
-            return $this->url_converter->get_lang_from_url_string( );
+            $lang_from_url = $this->url_converter->get_lang_from_url_string( );
+            if ( $lang_from_url != null ){
+                return $lang_from_url;
+            }
         }
 
         return $this->settings['default-language'];
@@ -64,21 +67,6 @@ class TRP_Language_Switcher{
         }
 
         wp_enqueue_style( 'trp-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-language-switcher.css' );
-    }
-
-    public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
-        if( is_customize_preview() || is_admin() )
-            return $url;
-
-        global $TRP_LANGUAGE;
-        $url_slug = $this->url_converter->get_url_slug( $TRP_LANGUAGE );
-        $abs_home = $this->url_converter->get_abs_home();
-        $new_url = trailingslashit( $abs_home ) . $url_slug;
-        if ( ! empty( $path ) ){
-            $new_url .= '/' . ltrim( $path, '/' );
-        }
-
-        return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
     }
 
     public function add_floater_language_switcher() {
@@ -222,7 +210,7 @@ class TRP_Language_Switcher{
                     $items[$key]->title .= $this->add_flag( $language_code, $language_name );
                 }
                 if ( $menu_settings['short_names'] ) {
-                    $items[$key]->title .= '<span class="trp-ls-language-name">' . $this->url_converter->get_url_slug( $language_code ) . '</span>';
+                    $items[$key]->title .= '<span class="trp-ls-language-name">' . strtoupper( $this->url_converter->get_url_slug( $language_code ) ) . '</span>';
                 }
                 if ( $menu_settings['full_names'] ) {
                     $items[$key]->title .= '<span class="trp-ls-language-name">' . $language_name . '</span>';

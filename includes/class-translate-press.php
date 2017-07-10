@@ -78,7 +78,7 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp', $this->translation_render, 'start_object_cache' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation' );
 
-        $this->loader->add_filter( 'home_url', $this->language_switcher, 'add_language_to_home_url', 1, 4 );
+
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
         $this->loader->add_action( 'wp_footer', $this->language_switcher, 'add_floater_language_switcher' );
         $this->loader->add_filter( 'init', $this->language_switcher, 'add_ls_to_menu' );
@@ -96,6 +96,8 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'get_page_uri', $this->slug_manager, 'translate_slugs_for_pages', 10, 2 );
         $this->loader->add_action( 'wp_ajax_trp_save_slug_translation', $this->slug_manager, 'save_translated_slug' );
 
+        $this->loader->add_action( 'template_redirect', $this->url_converter, 'redirect_to_default_language' );
+        $this->loader->add_filter( 'home_url', $this->url_converter, 'add_language_to_home_url', 1, 4 );
         $this->loader->add_action( 'wp_head', $this->url_converter, 'add_hreflang_to_head' );
 
         $this->loader->add_filter( 'widget_text', null, 'do_shortcode', 11 );

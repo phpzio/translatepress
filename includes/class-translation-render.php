@@ -328,6 +328,9 @@ class TRP_Translation_Render{
     protected function is_different_language( $url ){
         global $TRP_LANGUAGE;
         $lang = $this->url_converter->get_lang_from_url_string( $url );
+        if ( $lang == null ){
+            $lang = $this->settings['default-language'];
+        }
         if ( $lang == $TRP_LANGUAGE ){
             return false;
         }else{
