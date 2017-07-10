@@ -20,7 +20,7 @@ class TRP_Language_Switcher{
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;
         $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
-        require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-1.php';
+        require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-shortcode.php';
         return ob_get_clean();
     }
 

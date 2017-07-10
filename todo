@@ -24,6 +24,8 @@ ____________________________________________
 - check if no-translate class ignores children too
 - fixed bug with dynamic translation not working in default language
 - load flag in menu language switcher
+- img src gets translated when it shouldn't. see flags.
+- see if images can get selected in editor
 
 
 -------
@@ -44,8 +46,6 @@ ____________________________________________
 - 404 when page slug is translated with permalinks set to post name
 - indexof js error on edit profile page
 - () empty paranthesis on dynamicly translated strings
-- img src gets translated when it shouldn't. see flags.
-- see if images can get selected in editor
 
 
 -----------
