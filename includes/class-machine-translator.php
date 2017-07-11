@@ -2,12 +2,9 @@
 
 class TRP_Machine_Translator{
     protected $settings;
-    protected $trp_query;
 
-    public function __construct( $settings, $trp_query ){
+    public function __construct( $settings ){
         $this->settings = $settings;
-        $this->trp_query = $trp_query;
-        // and probably other variable initialized to facilitate API call
     }
 
     /**

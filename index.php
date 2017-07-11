@@ -26,17 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 
 function trp_run_translate_press() {
-    require_once plugin_dir_path(__FILE__) . 'includes/class-translate-press.php';
+    require_once plugin_dir_path(__FILE__) . 'class-translate-press.php';
 
-    if ( file_exists ( plugin_dir_path(__FILE__) . 'pro/class-translate-press-pro.php' ) ) {
-        require_once plugin_dir_path(__FILE__) . 'pro/class-translate-press-pro.php';
-        if ( class_exists( 'TRP_Translate_Press_Pro' ) ) {
-            $trp = new TRP_Translate_Press_Pro();
-        }
-    }else {
-        $trp = new TRP_Translate_Press();
-    }
+    $trp = TRP_Translate_Press::get_trp_instance();
     $trp->run();
 }
-trp_run_translate_press();
 
+trp_run_translate_press();

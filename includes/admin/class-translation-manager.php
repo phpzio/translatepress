@@ -6,11 +6,8 @@ class TRP_Translation_Manager{
     protected $trp_query;
     protected $slug_manager;
 
-    public function __construct( $settings, $translation_render, $trp_query, $slug_manager ){
+    public function __construct( $settings ){
         $this->settings = $settings;
-        $this->translation_render = $translation_render;
-        $this->trp_query = $trp_query;
-        $this->slug_manager = $slug_manager;
     }
 
     // mode == true, mode == preview
@@ -111,6 +108,17 @@ class TRP_Translation_Manager{
                     // todo make sure the language exists in the settings
                     $current_language = esc_attr( $_POST['language'] );
 
+                    $trp = TRP_Translate_Press::get_trp_instance();
+                    if ( ! $this->trp_query ) {
+                        $this->trp_query = $trp->get_component('trp_query');
+                    }
+                    if ( ! $this->slug_manager ) {
+                        $this->slug_manager = $trp->get_component('slug_manager');
+                    }
+                    if ( ! $this->translation_render ) {
+                        $this->translation_render = $trp->get_component('translation_render');
+                    }
+
                     // necessary in order to obtain all the original strings
                     if ( $this->settings['default-language'] != $current_language ) {
                         //todo current user can
@@ -190,6 +198,12 @@ class TRP_Translation_Manager{
                         }
                     }
                 }
+
+                if ( ! $this->trp_query ) {
+                    $trp = TRP_Translate_Press::get_trp_instance();
+                    $this->trp_query = $trp->get_component('trp_query');
+                }
+
                 foreach( $update_strings as $language => $update_string_array ) {
                     $this->trp_query->insert_strings( array(), $update_string_array, $language );
                 }

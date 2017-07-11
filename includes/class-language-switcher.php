@@ -6,10 +6,9 @@ class TRP_Language_Switcher{
     protected $url_converter;
     protected $trp_settings_object;
 
-    public function __construct( $settings, $url_converter, $trp_settings_object ){
+    public function __construct( $settings, $url_converter ){
         $this->settings = $settings;
         $this->url_converter = $url_converter;
-        $this->trp_settings_object = $trp_settings_object;
         $language = $this->get_current_language();
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
@@ -74,6 +73,11 @@ class TRP_Language_Switcher{
         // Check if floater language switcher is active and return if not
         if( $this->settings['trp-ls-floater'] != 'yes' ) {
             return;
+        }
+
+        if ( ! $this->trp_settings_object ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_settings_object = $trp->get_component('trp_settings');
         }
 
         // Current language
@@ -193,6 +197,10 @@ class TRP_Language_Switcher{
 
     public function ls_menu_permalinks( $items, $menu, $args ){
         global $TRP_LANGUAGE;
+        if ( ! $this->trp_settings_object ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_settings_object = $trp->get_component('trp_settings');
+        }
         foreach ( $items as $key => $item ){
             if ( $item->object == 'language-switcher' ){
                 $ls_id = get_post_meta( $item->ID, '_menu_item_object_id', true );

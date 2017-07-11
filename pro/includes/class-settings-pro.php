@@ -3,6 +3,10 @@
 class TRP_Settings_Pro extends TRP_Settings{
 
     protected function languages_selector( $languages ){
+        if ( ! $this->url_converter ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->url_converter = $trp->get_component( 'url_converter' );
+        }
         require_once( TRP_PLUGIN_DIR . 'pro/partials/language-selector-pro.php' );
     }
 
