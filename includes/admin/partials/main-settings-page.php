@@ -44,6 +44,19 @@
             </tr>
 
             <tr>
+                <th scope="row"><?php _e( 'Force language in custom links', TRP_PLUGIN_SLUG ); ?> </th>
+                <td>
+                    <select id="trp-g-translate" name="trp_settings[force-language-to-custom-links]" class="trp-select">
+                        <option value="no" <?php selected( $this->settings['force-language-to-custom-links'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="yes" <?php selected( $this->settings['force-language-to-custom-links'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                    </select>
+                    <p class="description">
+                        <?php _e( 'Select Yes if you want to force custom links without language encoding to  add the subdirectory in the url for the default language.', TRP_PLUGIN_SLUG ); ?>
+                    </p>
+                </td>
+            </tr>
+
+            <tr>
                 <th scope="row"><?php _e( 'Google Translate', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[g-translate]" class="trp-select">

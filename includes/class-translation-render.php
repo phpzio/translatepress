@@ -208,6 +208,7 @@ class TRP_Translation_Render{
             }
         }
 
+
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
             $this->trp_query = $trp->get_component('trp_query');
@@ -290,12 +291,22 @@ class TRP_Translation_Render{
 
         }
 
-        if ( $preview_mode ){
-            foreach( $html->find('a[href!="#"]') as $a_href)  {
+        if ( ! $this->url_converter ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->url_converter = $trp->get_component('url_converter');
+        }
+
+        foreach( $html->find('a[href!="#"]') as $a_href)  {
+            $url = $a_href->href;
+            $is_external_link = $this->is_external_link( $url );
+
+            if ( $this->settings['force-language-to-custom-links'] && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null ){
+                $a_href->href = apply_filters( 'trp_force_custom_links', $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $url ), $url, $TRP_LANGUAGE, $a_href );
                 $url = $a_href->href;
-                if( $this->is_external_link( $url ) || $this->is_different_language( $url ) ) {
-                    $a_href->setAttribute( 'class', 'trp-unpreviewable' );
-                }
+            }
+
+            if( $preview_mode && ( $is_external_link || $this->is_different_language( $url )  ) ) {
+                $a_href->setAttribute( 'class', 'trp-unpreviewable' );
             }
         }
 

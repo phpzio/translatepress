@@ -87,9 +87,20 @@ class TRP_Settings{
             $settings['g-translate'] = sanitize_text_field( $settings['g-translate']  );
         else
             $settings['g-translate'] = 'no';
-        
+
         if( !empty( $settings['g-translate-key'] ) )
             $settings['g-translate-key'] = sanitize_text_field( $settings['g-translate-key']  );
+
+        if( !empty( $settings['add-subdirectory-to-default-language'] ) )
+            $settings['add-subdirectory-to-default-language'] = sanitize_text_field( $settings['add-subdirectory-to-default-language']  );
+        else
+            $settings['add-subdirectory-to-default-language'] = 'no';
+
+        if( !empty( $settings['force-language-to-custom-links'] ) )
+            $settings['force-language-to-custom-links'] = sanitize_text_field( $settings['force-language-to-custom-links']  );
+        else
+            $settings['force-language-to-custom-links'] = 'no';
+
 
         if ( !empty( $settings['trp-ls-floater'] ) ){
             $settings['trp-ls-floater'] = sanitize_text_field( $settings['trp-ls-floater'] );
@@ -155,6 +166,7 @@ class TRP_Settings{
             'translation-languages'                 => array( $default ),
             'publish-languages'                     => array( $default ),
             'add-subdirectory-to-default-language'  => 'no',
+            'force-language-to-custom-links'        => 'no',
             'g-translate'                           => 'no',
             'trp-ls-floater'                        => 'yes',
             'shortcode-options'                     => 'full-names',

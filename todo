@@ -32,9 +32,10 @@ ____________________________________________
 - wp language code backup
 - () empty paranthesis on dynamicly translated strings
 - common factor when initializing pro and free components.
--i when only 1 or 2 languages, in editor looks weird
+- when only 1 or 2 languages, in editor looks weird
 - free version
 -i default language should have optional encoding in url
+- isset peste toate setarile url-slugs si altele. incearca pluginul fara "settings" din db
 
 
 
@@ -77,7 +78,6 @@ ____________________________________________
 
 -i editor pencil icon has white background
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
-- isset peste toate setarile url-slugs si altele. incearca pluginul fara "settings" din db
 - check to see if mutation observer is loaded first most
 - conflict with custom profile menu
 - conflict of translate dom changes with pb repeater
@@ -87,7 +87,6 @@ ____________________________________________
 - get browser language
 - make language switcher a callable function
 - cookie language
-- add no translate on scripts
 - saved! appears when navigating editor
 - responsive settings page on small width //
 - translate dynamic added strings //
