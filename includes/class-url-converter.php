@@ -12,6 +12,11 @@ class TRP_Url_Converter {
 
 
     public function redirect_to_default_language() {
+        global $TRP_LANGUAGE;
+        if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $TRP_LANGUAGE == $this->settings['default-language'] ) {
+            return;
+        }
+
         $lang_from_url = $this->get_lang_from_url_string( $this->cur_page_url() );
         if ( $lang_from_url == null ) {
             header( 'Location: ' . $this->get_url_for_language( $this->settings['default-language'] ) );
@@ -21,9 +26,10 @@ class TRP_Url_Converter {
 
     public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
         global $TRP_LANGUAGE;
-       /* if ( $TRP_LANGUAGE == $this->settings['default-language'] ){
+        if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $TRP_LANGUAGE == $this->settings['default-language'] ) {
             return $url;
-        }*/
+        }
+
         if( is_customize_preview() || is_admin() )
             return $url;
 
@@ -87,9 +93,14 @@ class TRP_Url_Converter {
 
     public function get_url_slug( $language_code ){
         $url_slug = $language_code;
-        if( isset( $this->settings['url-slugs'][$language_code] ) ){
+        if( isset( $this->settings['url-slugs'][$language_code] ) ) {
             $url_slug = $this->settings['url-slugs'][$language_code];
         }
+
+        if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $language_code == $this->settings['default-language'] ) {
+            $url_slug = '';
+        }
+
         return $url_slug;
     }
 

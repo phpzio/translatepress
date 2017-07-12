@@ -143,29 +143,37 @@ class TRP_Settings{
     }
 
     protected function set_options(){
-        $settings = get_option( 'trp_settings', 'not_set' );
+        $settings_option = get_option( 'trp_settings', 'not_set' );
 
-        if ( 'not_set' == $settings ){
-            // initialize default settings
-            $default = get_locale();
-            if ( empty( $default ) ){
-                $default = 'en_US';
+        // initialize default settings
+        $default = get_locale();
+        if ( empty( $default ) ){
+            $default = 'en_US';
+        }
+        $default_settings = array(
+            'default-language'                      => $default,
+            'translation-languages'                 => array( $default ),
+            'publish-languages'                     => array( $default ),
+            'add-subdirectory-to-default-language'  => 'no',
+            'g-translate'                           => 'no',
+            'trp-ls-floater'                        => 'yes',
+            'shortcode-options'                     => 'full-names',
+            'menu-options'                          => 'full-names',
+            'floater-options'                       => 'full-names',
+            'url-slugs'                             => array( 'en_US' => 'en_us' ),
+        );
+        if ( 'not_set' == $settings_option ){
+            update_option ( 'trp_settings', $default_settings );
+            $settings_option = $default_settings;
+        }else{
+            foreach ( $default_settings as $key_default_setting => $value_default_setting ){
+                if ( !isset ( $settings_option[$key_default_setting] ) ) {
+                    $settings_option[$key_default_setting] = $value_default_setting;
+                }
             }
-            $settings = array(
-                'default-language'      => $default,
-                'translation-languages' => array( $default ),
-                'publish-languages'     => array( $default ),
-                'g-translate'           => 'no',
-                'trp-ls-floater'        => 'yes',
-                'shortcode-options'     => 'full-names',
-                'menu-options'          => 'full-names',
-                'floater-options'       => 'full-names',
-                'url-slugs'             => array( 'en_US' => 'en_us' ),
-            );
-            update_option ( 'trp_settings', $settings );
         }
 
-        $this->settings = $settings;
+        $this->settings = $settings_option;
     }
 
     public function enqueue_scripts_and_styles( $hook ) {

@@ -34,6 +34,7 @@ ____________________________________________
 - common factor when initializing pro and free components.
 -i when only 1 or 2 languages, in editor looks weird
 - free version
+-i default language should have optional encoding in url
 
 
 
@@ -59,7 +60,6 @@ ____________________________________________
 -----------
 
 -i shortcode should take into account short-name, full-name, flags
-- default language should have optional encoding in url
 - force custom links option
 - edit this in admin bar
 - edd update class

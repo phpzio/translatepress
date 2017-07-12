@@ -31,6 +31,19 @@
             <?php $this->languages_selector( $languages ); ?>
 
             <tr>
+                <th scope="row"><?php _e( 'Use subdirectory for default language', TRP_PLUGIN_SLUG ); ?> </th>
+                <td>
+                    <select id="trp-g-translate" name="trp_settings[add-subdirectory-to-default-language]" class="trp-select">
+                        <option value="no" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="yes" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                    </select>
+                    <p class="description">
+                        <?php _e( 'Select Yes if you want to add the subdirectory in the url for the default language.', TRP_PLUGIN_SLUG ); ?>
+                    </p>
+                </td>
+            </tr>
+
+            <tr>
                 <th scope="row"><?php _e( 'Google Translate', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[g-translate]" class="trp-select">
