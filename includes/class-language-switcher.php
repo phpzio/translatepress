@@ -6,10 +6,9 @@ class TRP_Language_Switcher{
     protected $url_converter;
     protected $trp_settings_object;
 
-    public function __construct( $settings, $url_converter, $trp_settings_object ){
+    public function __construct( $settings, $url_converter ){
         $this->settings = $settings;
         $this->url_converter = $url_converter;
-        $this->trp_settings_object = $trp_settings_object;
         $language = $this->get_current_language();
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
@@ -38,7 +37,10 @@ class TRP_Language_Switcher{
                 return $language_code;
             }
         }else{
-            return $this->url_converter->get_lang_from_url_string( );
+            $lang_from_url = $this->url_converter->get_lang_from_url_string( );
+            if ( $lang_from_url != null ){
+                return $lang_from_url;
+            }
         }
 
         return $this->settings['default-language'];
@@ -72,26 +74,16 @@ class TRP_Language_Switcher{
         wp_enqueue_style( 'trp-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-language-switcher.css' );
     }
 
-    public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
-        if( is_customize_preview() || is_admin() )
-            return $url;
-
-        global $TRP_LANGUAGE;
-        $url_slug = $this->url_converter->get_url_slug( $TRP_LANGUAGE );
-        $abs_home = $this->url_converter->get_abs_home();
-        $new_url = trailingslashit( $abs_home ) . $url_slug;
-        if ( ! empty( $path ) ){
-            $new_url .= '/' . ltrim( $path, '/' );
-        }
-
-        return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
-    }
-
     public function add_floater_language_switcher() {
 
         // Check if floater language switcher is active and return if not
         if( $this->settings['trp-ls-floater'] != 'yes' ) {
             return;
+        }
+
+        if ( ! $this->trp_settings_object ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_settings_object = $trp->get_component('trp_settings');
         }
 
         // Current language
@@ -210,6 +202,11 @@ class TRP_Language_Switcher{
     }
 
     public function ls_menu_permalinks( $items, $menu, $args ){
+        global $TRP_LANGUAGE;
+        if ( ! $this->trp_settings_object ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_settings_object = $trp->get_component('trp_settings');
+        }
         foreach ( $items as $key => $item ){
             if ( $item->object == 'language-switcher' ){
                 $ls_id = get_post_meta( $item->ID, '_menu_item_object_id', true );
@@ -222,13 +219,24 @@ class TRP_Language_Switcher{
                 $language_code = $ls_post->post_content;
                 $language_name = $ls_post->post_title;
 
+                if ( $language_code == $TRP_LANGUAGE ){
+                    unset($items[$key]);
+                    continue;
+                }
+
+                if ( $language_code == 'current_language' ){
+                    $language_code = $TRP_LANGUAGE;
+                    $language_names = TRP_Utils::get_language_names( array( $TRP_LANGUAGE ) );
+                    $language_name = $language_names[$language_code];
+                }
+
                 $items[$key]->url = $this->url_converter->get_url_for_language( $language_code );
                 $items[$key]->title = '<span data-no-translation>';
                 if ( $menu_settings['flags'] ) {
                     $items[$key]->title .= $this->add_flag( $language_code, $language_name );
                 }
                 if ( $menu_settings['short_names'] ) {
-                    $items[$key]->title .= '<span class="trp-ls-language-name">' . $this->url_converter->get_url_slug( $language_code ) . '</span>';
+                    $items[$key]->title .= '<span class="trp-ls-language-name">' . strtoupper( $this->url_converter->get_url_slug( $language_code ) ) . '</span>';
                 }
                 if ( $menu_settings['full_names'] ) {
                     $items[$key]->title .= '<span class="trp-ls-language-name">' . $language_name . '</span>';

@@ -529,7 +529,7 @@ function TRP_Lister( current_dictionary ) {
             for ( var i in category_array[category] ) {
                 var original = category_array[category][i].original;
                 var description = '';
-                if ( category_array[category][i].node_description != undefined ){
+                if ( category_array[category][i].node_description != undefined && category_array[category][i].node_description != '' ){
                     description = '(' + category_array[category][i].node_description + ')';
                 }
                 if ( original ) {

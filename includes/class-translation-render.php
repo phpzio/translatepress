@@ -4,13 +4,10 @@ class TRP_Translation_Render{
     protected $settings;
     protected $machine_translator;
     protected $trp_query;
+    protected $url_converter;
 
-
-    public function __construct( $settings, $machine_translator, $trp_query, $url_converter ){
+    public function __construct( $settings ){
         $this->settings = $settings;
-        $this->machine_translator = $machine_translator;
-        $this->trp_query = $trp_query;
-        $this->url_converter = $url_converter;
     }
 
     public function start_object_cache(){
@@ -211,6 +208,11 @@ class TRP_Translation_Render{
             }
         }
 
+        if ( ! $this->trp_query ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_query = $trp->get_component('trp_query');
+        }
+
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
 
         $preview_mode = isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview';
@@ -327,7 +329,14 @@ class TRP_Translation_Render{
 
     protected function is_different_language( $url ){
         global $TRP_LANGUAGE;
+        if ( ! $this->url_converter ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->url_converter = $trp->get_component('url_converter');
+        }
         $lang = $this->url_converter->get_lang_from_url_string( $url );
+        if ( $lang == null ){
+            $lang = $this->settings['default-language'];
+        }
         if ( $lang == $TRP_LANGUAGE ){
             return false;
         }else{
@@ -337,6 +346,11 @@ class TRP_Translation_Render{
 
     public function process_strings( $translateable_strings, $language_code ){
         $translated_strings = array();
+
+        if ( ! $this->trp_query ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_query = $trp->get_component('trp_query');
+        }
 
         // get existing translations
         $dictionary = $this->trp_query->get_existing_translations( array_values($translateable_strings), $language_code );
@@ -349,6 +363,11 @@ class TRP_Translation_Render{
             }else{
                 $new_strings[$i] = $translateable_strings[$i];
             }
+        }
+
+        if ( ! $this->machine_translator ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->machine_translator = $trp->get_component('machine_translator');
         }
 
         // machine translate new strings

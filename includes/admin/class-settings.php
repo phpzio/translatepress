@@ -6,6 +6,10 @@ class TRP_Settings{
     protected $trp_query;
     protected $url_converter;
 
+    public function __construct( ) {
+        $this->set_options();
+    }
+
     public function get_language_switcher_options(){
         $ls_options = apply_filters( 'trp_language_switcher_output', array(
             'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', TRP_PLUGIN_SLUG ) ),
@@ -29,20 +33,8 @@ class TRP_Settings{
         echo $output;
     }
 
-    public function __construct( ) {
-        $this->set_options();
-    }
-
     public function get_settings(){
         return $this->settings;
-    }
-
-    public function set_trp_query( $trp_query ){
-        $this->trp_query = $trp_query;
-    }
-
-    public function set_url_converter( $url_converter ){
-        $this->url_converter = $url_converter;
     }
 
     public function register_menu_page(){
@@ -59,6 +51,10 @@ class TRP_Settings{
     }
 
     public function sanitize_settings( $settings ){
+        if ( ! $this->trp_query ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_query = $trp->get_component('trp_query');
+        }
         if ( !isset ( $settings['default-language'] ) ) {
             $settings['default-language'] = 'en_US';
         }
@@ -214,6 +210,8 @@ class TRP_Settings{
 
     protected function create_menu_entries( $languages ){
         $published_languages = TRP_Utils::get_language_names( $languages );
+        $published_languages['current_language'] = __( 'Current Language', TRP_PLUGIN_SLUG );
+        $languages[] = 'current_language';
 
         foreach ( $published_languages as $language_code => $language_name ) {
             $existing_ls = get_page_by_title( $language_name, OBJECT, 'language-switcher'  );

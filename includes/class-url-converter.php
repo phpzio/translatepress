@@ -10,6 +10,35 @@ class TRP_Url_Converter {
         $this->settings = $settings;
     }
 
+
+    public function redirect_to_default_language() {
+        $lang_from_url = $this->get_lang_from_url_string( $this->cur_page_url() );
+        if ( $lang_from_url == null ) {
+            header( 'Location: ' . $this->get_url_for_language( $this->settings['default-language'] ) );
+            exit;
+        }
+    }
+
+    public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
+        global $TRP_LANGUAGE;
+       /* if ( $TRP_LANGUAGE == $this->settings['default-language'] ){
+            return $url;
+        }*/
+        if( is_customize_preview() || is_admin() )
+            return $url;
+
+
+        $url_slug = $this->get_url_slug( $TRP_LANGUAGE );
+        $abs_home = $this->get_abs_home();
+        $new_url = trailingslashit( $abs_home ) . $url_slug;
+        if ( ! empty( $path ) ){
+            $new_url .= '/' . ltrim( $path, '/' );
+        }
+        //var_dump( $new_url );
+
+        return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
+    }
+
     public function add_hreflang_to_head(){
         $languages = $this->settings['publish-languages'];
         if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
@@ -144,9 +173,9 @@ class TRP_Url_Converter {
         $lang           = $lang_get_parts[ 0 ];
 
         if ( isset( $this->settings['url-slugs'] ) ) {
-            return $lang && in_array($lang, $this->settings['url-slugs']) ? array_search($lang, $this->settings['url-slugs']) : $this->settings['default-language'];
+            return $lang && in_array($lang, $this->settings['url-slugs']) ? array_search($lang, $this->settings['url-slugs']) : null; //$this->settings['default-language'];
         }else{
-            return $lang && in_array($lang, $this->settings['translation-languages']) ? $lang : $this->settings['default-language'];
+            return $lang && in_array($lang, $this->settings['translation-languages']) ? $lang : null;//$this->settings['default-language'];
         }
     }
 
