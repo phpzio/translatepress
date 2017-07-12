@@ -31,6 +31,9 @@ ____________________________________________
 - change table name to EN_FR (default-translated)
 - wp language code backup
 - () empty paranthesis on dynamicly translated strings
+- common factor when initializing pro and free components.
+-i when only 1 or 2 languages, in editor looks weird
+- free version
 
 
 
@@ -48,19 +51,18 @@ ____________________________________________
 
 - la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
 - 404 when page slug is translated with permalinks set to post name
-- indexof js error on edit profile page
+
 
 
 -----------
  Big To Do
 -----------
+
 -i shortcode should take into account short-name, full-name, flags
--i when only 1 or 2 languages, in editor looks weird
 - default language should have optional encoding in url
 - force custom links option
 - edit this in admin bar
 - edd update class
-- free version
 - multisite
 - challenges:
   - paged pages, user listing
@@ -72,11 +74,13 @@ ____________________________________________
 -------------
  Small To Do
 -------------
+
 -i editor pencil icon has white background
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
 - isset peste toate setarile url-slugs si altele. incearca pluginul fara "settings" din db
 - check to see if mutation observer is loaded first most
 - conflict with custom profile menu
+- conflict of translate dom changes with pb repeater
 - don't allow exit of the editor with unsaved changes
 - <body class = language>
 - seo <html language parameter
@@ -92,7 +96,6 @@ ____________________________________________
 - make sure current_user_can checks are on point //
 - make sure the language exists in the settings when get_translations //
 - different charset collation for each language? //
-- common factor when initializing pro and free components. //
 - make sure page title is translated auto, and manually //
 - remove already selected languages from selects in settings //
 - unpublished languages can be reached at url

@@ -23,7 +23,7 @@ function TRP_Editor(){
     this.change_language = function( select ){
         var language = select.value;
         var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language + ']').first().attr('href');
-        if ( link != 'undefined' ){
+        if ( link != undefined ){
             select.form.action = link;
             select.form.submit();
         }
@@ -111,7 +111,7 @@ function TRP_Editor(){
                 change_tracker = new TRP_Change_Tracker( _this.original_textarea, translated_textareas );
             },
             error: function(errorThrown){
-                console.log( 'Translate Press AJAX Request Error' );
+                console.log( 'TranslatePress AJAX Request Error' );
             }
 
         });
@@ -230,7 +230,7 @@ function TRP_Editor(){
             },
             error: function(errorThrown){
                 loading_animation.toggle();
-                console.log( 'Translate Press AJAX Request Error' );
+                console.log( 'TranslatePress AJAX Request Error' );
             }
         });
     };

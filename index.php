@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Translate Press
+Plugin Name: TranslatePress
 Plugin URI: https://www.cozmoslabs.com/
 Description: A simple WordPress translation plugin
 Version: 0.0.1

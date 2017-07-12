@@ -22,10 +22,10 @@
     do_action( 'trp_head' );
     ?>
 
-    <title>Translate Press</title>
+    <title>TranslatePress</title>
     <script type="application/javascript">
         var trp_language = '<?php echo $TRP_LANGUAGE; ?>';
-        var trp_on_screen_language = '<?php echo $translation_languages[0]; ?>';
+        var trp_on_screen_language = '<?php echo ( isset( $translation_languages[0] ) ) ? $translation_languages[0] : 'null' ; ?>';
         var trp_ajax_url = '<?php echo apply_filters( 'trp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>';
     </script>
 </head>
@@ -45,20 +45,14 @@
                 </div>
                 <div class="trp-controls-section">
                     <div class="trp-controls-section-content">
-                        <?php
-                        if ( count( $trp_settings['translation-languages'] ) > 1 ){ ?>
-                            <form id="trp-language-switch-form" action="" method="GET">
-                                <select id="trp-language-select" name="lang" onchange='trpEditor.change_language( this )'>
-                                    <?php foreach ( $available_languages as $code => $language ) { ?>
-                                        <option value="<?php echo $code; ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo $language; ?> </option>
-                                    <?php } ?>
-                                </select>
-                                <input type="hidden" name="trp-edit-translation" value="true">
-                            </form>
-                        <?php }else{ ?>
-                            <span > <?php echo $trp_settings['translation-languages'][0]; ?></span>
-                        <?php } ?>
-
+                        <form id="trp-language-switch-form" action="" method="GET">
+                            <select id="trp-language-select" name="lang" onchange='trpEditor.change_language( this )'>
+                                <?php foreach ( $available_languages as $code => $language ) { ?>
+                                    <option value="<?php echo $code; ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo $language; ?> </option>
+                                <?php } ?>
+                            </select>
+                            <input type="hidden" name="trp-edit-translation" value="true">
+                        </form>
                         <div id="trp-string-list">
                             <select id="trp-string-categories" data-trp-placeholder="<?php _e( 'Select string to translate...', TRP_PLUGIN_SLUG ); ?>"></select>
                         </div>
@@ -66,27 +60,31 @@
                 </div>
                 <div class="trp-controls-section">
                     <div class="trp-controls-section-content">
-                        <div id="trp-next-previous">
-                            <span id="trp-previous" class="trp-next-previous-buttons">&#171; <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></span>
-                            <span id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> &#187;</span>
-                        </div>
-                        <div id="<?php echo $trp_settings['default-language'];?>" class="trp-language-text trp-default-language">
-                            <div class="trp-language-name"><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></div>
-                            <textarea id="trp-original" disabled></textarea>
-                        </div>
-                        <?php
-                        foreach( $translation_languages as $language ){?>
-                            <div id="trp-language-<?php echo $language;?>" class="trp-language-text <?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
-                                <div class="trp-language-name"><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $language ]; ?> </div>
-                                <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id=""></textarea>
-                                <div class="trp-discard-changes"><?php _e( 'Discard changes', TRP_PLUGIN_SLUG );?></div>
+                        <?php if ( count( $trp_settings['translation-languages'] ) > 1 ){ ?>
+                            <div id="trp-next-previous">
+                                <span id="trp-previous" class="trp-next-previous-buttons">&#171; <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></span>
+                                <span id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> &#187;</span>
                             </div>
-                            <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
-                                $other_languages = __( 'Other languages', TRP_PLUGIN_SLUG );
-                                ?>
-                                <div id="trp-show-all-languages" class="trp-toggle-languages">&#11208; <span><?php echo $other_languages ?></span></div>
-                                <div id="trp-hide-all-languages" class="trp-toggle-languages">&#11206; <span><?php echo $other_languages ?></span></div>
-                            <?php } ?>
+                            <div id="<?php echo $trp_settings['default-language'];?>" class="trp-language-text trp-default-language">
+                                <div class="trp-language-name"><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></div>
+                                <textarea id="trp-original" disabled></textarea>
+                            </div>
+                            <?php
+                            foreach( $translation_languages as $language ){?>
+                                <div id="trp-language-<?php echo $language;?>" class="trp-language-text <?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
+                                    <div class="trp-language-name"><?php _e( 'To ', TRP_PLUGIN_SLUG ); echo $available_languages[ $language ]; ?> </div>
+                                    <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id=""></textarea>
+                                    <div class="trp-discard-changes"><?php _e( 'Discard changes', TRP_PLUGIN_SLUG );?></div>
+                                </div>
+                                <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
+                                    $other_languages = __( 'Other languages', TRP_PLUGIN_SLUG );
+                                    ?>
+                                    <div id="trp-show-all-languages" class="trp-toggle-languages">&#11208; <span><?php echo $other_languages ?></span></div>
+                                    <div id="trp-hide-all-languages" class="trp-toggle-languages">&#11206; <span><?php echo $other_languages ?></span></div>
+                                <?php } ?>
+                            <?php }?>
+                        <?php } else{ ?>
+                            <div> <?php echo __( 'No languages set for translation. Please select a translation language from <i>Settings->TranslatePress</i>. ', TRP_PLUGIN_SLUG );?></div>
                         <?php }?>
                     </div>
                 </div>

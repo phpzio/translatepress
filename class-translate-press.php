@@ -31,7 +31,7 @@ class TRP_Translate_Press{
     public function __construct() {
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-        define( 'TRP_PLUGIN_SLUG', 'translate-press' );
+        define( 'TRP_PLUGIN_SLUG', 'translatepress' );
 
         $this->load_dependencies();
         $this->initialize_components();

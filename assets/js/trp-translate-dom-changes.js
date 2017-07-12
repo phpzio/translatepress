@@ -33,7 +33,7 @@ function TRP_Translator(){
                     _this.ajax_get_translation( strings_to_query, wp_ajax_url );
                 }else{
                     _this.update_strings( null, strings_to_query );
-                    console.log( 'Translate Press AJAX Request Error' );
+                    console.log( 'TranslatePress AJAX Request Error' );
                 }
             }
         });

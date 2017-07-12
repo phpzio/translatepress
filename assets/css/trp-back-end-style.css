@@ -16,6 +16,14 @@ span.select2-container{
     min-width:240px;
 }
 
+#trp-published-language{
+    margin-left: 20px;
+}
+
+#trp-active-checkbox{
+    margin-left: 5px;
+}
+
 /*
 //todo  make it responsive la width mic
 @media screen and (max-width: 400px){

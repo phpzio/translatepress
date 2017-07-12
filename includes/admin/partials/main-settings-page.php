@@ -2,7 +2,7 @@
 <div id="trp-main-settings">
     <form method="post" action="options.php">
         <?php settings_fields( 'trp_settings' ); ?>
-        <h1> <?php _e( 'Translate Press', TRP_PLUGIN_SLUG );?></h1>
+        <h1> <?php _e( 'TranslatePress', TRP_PLUGIN_SLUG );?></h1>
         <table id="trp-options" class="form-table">
             <tr>
                 <th scope="row"><?php _e( 'Manage Translations', TRP_PLUGIN_SLUG ); ?> </th>
@@ -34,11 +34,11 @@
                 <th scope="row"><?php _e( 'Google Translate', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[g-translate]" class="trp-select">
-                            <option value="no" <?php selected( $this->settings['g-translate'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
-                            <option value="yes" <?php selected( $this->settings['g-translate'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="no" <?php selected( $this->settings['g-translate'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="yes" <?php selected( $this->settings['g-translate'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Enable or disable the automatic translation of the site with Google Translate. ', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Enable or disable the automatic translation of the site with Google Translate. <br>Note: Not all languages support automatic translation. Please consult the <a href="https://cloud.google.com/translate/docs/languages" target="_blank" title="Automatic translation supported languages.">supported languages list</a>. ', TRP_PLUGIN_SLUG ); ?>
                     </p>
                 </td>
             </tr>

@@ -38,10 +38,11 @@ class TRP_Settings{
     }
 
     public function register_menu_page(){
-        add_options_page( 'Translate Press', 'Translate Press', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
+        add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
     }
 
     public function settings_page_content(){
+//        error_log( json_encode($this->settings));
         $languages = TRP_Utils::get_languages();
         require_once TRP_PLUGIN_DIR . 'includes/admin/partials/main-settings-page.php';
     }
@@ -184,6 +185,7 @@ class TRP_Settings{
     }
 
     protected function languages_selector( $languages ){
+        $selected_language_code = '';
         ?>
         <tr>
             <th scope="row"> <?php _e( 'Translation Language', TRP_PLUGIN_SLUG ) ?> </th>
@@ -191,14 +193,14 @@ class TRP_Settings{
                 <select id="trp-translation-language" name="trp_settings[translation-languages][]" class="trp-select2">
                     <option value=""><?php _e( 'Choose...', TRP_PLUGIN_SLUG );?></option>
                     <?php foreach( $languages as $language_code => $language_name ){ ?>
-                    <option value="<?php echo $language_code; ?>" <?php echo ( in_array( $language_code, $this->settings['translation-languages'] ) && $language_code != $this->settings['default-language'] ) ? 'selected' : '' ; ?>>
+                    <option value="<?php echo $language_code; ?>" <?php if ( in_array( $language_code, $this->settings['translation-languages'] ) && $language_code != $this->settings['default-language'] ) { echo 'selected'; $selected_language_code = $language_code; } ?>>
                         <?php echo $language_name; ?>
                     </option>
                 <?php }?>
                 </select>
                 <label>
-                    <input type="checkbox" class="trp-translation-published" name="trp_settings[publish-languages][]" value="<?php $language_code = array_values(array_slice($this->settings['translation-languages'], -1)); /*last element*/ echo $language_code[0]; ?>" <?php echo ( in_array( $language_code, $this->settings['publish-languages'] ) && ( $language_code != $this->settings['default-language'] ) ) ? 'checked' : ''; ?>>
-                    <span id="trp-published-language"><b><?php _e( 'Publish', TRP_PLUGIN_SLUG ); ?></b></span>
+                    <span id="trp-published-language"><b><?php _e( 'Active?', TRP_PLUGIN_SLUG ); ?></b></span>
+                    <input id="trp-active-checkbox" type="checkbox" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" <?php echo (  ( count ( $this->settings['translation-languages'] ) == 1 ) ||  ( in_array( $selected_language_code, $this->settings['publish-languages'] ) ) ) ? 'checked' : ''; ?>>
                 </label>
                 <p class="description">
                     <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, you will need the PRO version.', TRP_PLUGIN_SLUG ); ?>
