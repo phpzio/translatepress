@@ -17,10 +17,16 @@ class TRP_Language_Switcher{
 
     public function language_switcher(){
         ob_start();
+
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;
         $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
+
+        $ls_options = $this->trp_settings_object->get_language_switcher_options();
+        $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
+
         require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-shortcode.php';
+
         return ob_get_clean();
     }
 

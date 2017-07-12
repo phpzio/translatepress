@@ -163,7 +163,7 @@ class TRP_Settings{
                 'shortcode-options'     => 'full-names',
                 'menu-options'          => 'full-names',
                 'floater-options'       => 'full-names',
-                'url-slugs'             => array( 'en_US' => 'en' ),
+                'url-slugs'             => array( 'en_US' => 'en_us' ),
             );
             update_option ( 'trp_settings', $settings );
         }
