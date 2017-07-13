@@ -72,6 +72,26 @@ class TRP_Language_Switcher{
         }
 
         wp_enqueue_style( 'trp-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-language-switcher.css' );
+
+        if( ! $this->trp_settings_object ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_settings_object = $trp->get_component( 'trp_settings' );
+        }
+
+        $ls_options = $this->trp_settings_object->get_language_switcher_options();
+        $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
+
+        if( $shortcode_settings['flags'] ) {
+            wp_enqueue_script( 'jquery-ui-core' );
+            wp_enqueue_script( 'jquery-ui-widget' );
+            wp_enqueue_script( 'jquery-ui-menu' );
+            wp_enqueue_script( 'jquery-ui-position' );
+            wp_enqueue_script( 'jquery-ui-selectmenu' );
+
+
+            //wp_enqueue_style( 'jquery-ui-style', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
+            //wp_enqueue_style( 'jquery-ui-style' );
+        }
     }
 
     public function add_floater_language_switcher() {
@@ -248,6 +268,14 @@ class TRP_Language_Switcher{
         }
 
         return $items;
+    }
+
+    public function enqueue_jquery_ui( $is_needed ) {
+
+        if( $is_needed ) {
+            wp_enqueue_script( 'jquery-ui-core' );
+        }
+
     }
 
 }
