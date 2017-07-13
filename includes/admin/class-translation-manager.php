@@ -64,7 +64,7 @@ class TRP_Translation_Manager{
 
     public function add_slug_as_meta_tag() {
         global $post;
-        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) ) {
+        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) && !is_home() && !is_archive() ) {
             echo '<meta name="trp-slug" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
         }
 
@@ -213,33 +213,25 @@ class TRP_Translation_Manager{
         die();
     }
 
-  /*  public function publish_language(){
-
-        // todo "current user can" check
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_publish_language' && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) && ! empty( $_POST['publish' ] ) ) {
-                if ( $_POST['publish' ] == 'publish' ) {
-
-                    // keep language order
-                    foreach ($this->settings['translation-languages'] as $language) {
-                        if ($language == $_POST['language'] || in_array($language, $this->settings['publish-languages'])) {
-                            $publish_languages[] = $language;
-                        }
-                    }
-
-                    $this->settings['publish-languages'] = $publish_languages;
-                    update_option( 'trp_settings', $this->settings );
-                }else if ( $_POST['publish'] == 'unpublish' ) {
-                    $language_key = array_search ( $_POST['language'], $this->settings['publish-languages'] );
-                    if ( $language_key !== false ){
-                        unset( $this->settings['publish-languages'][ $language_key ] );
-                        $this->settings['publish-languages'] = array_values( $this->settings['publish-languages'] );
-                        update_option( 'trp_settings', $this->settings );
-                    }
-                }
-            }
+    public function add_shortcut_to_translation_editor( $wp_admin_bar ){
+        if ( is_admin () ){
+            return;
         }
-        die();
-    }*/
+        global $post;
+        if ( is_object( $post ) && ! is_archive() && !is_home() ){
+            $url = get_permalink( $post );
+        }else{
+            $url = TRP_Utils::get_current_page_url();
+        }
+        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
+
+        $args = array(
+            'id'    => 'trp_edit_translation',
+            'title' => __( 'Edit Page Translations', TRP_PLUGIN_SLUG ),
+            'href'  => $url,
+            'meta'  => array( 'class' => 'trp-edit-translation' )
+        );
+        $wp_admin_bar->add_node( $args );
+    }
 
 }

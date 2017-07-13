@@ -132,7 +132,6 @@ class TRP_Translation_Render{
 
     }
 
-
     public function translate_page( $output ){
         if ( strlen( $output ) < 1 ){
             return $output;
@@ -430,7 +429,6 @@ class TRP_Translation_Render{
         return $translated_strings;
     }
 
-
     protected function hasAncestorAttribute($node,$attribute) {
         $currentNode = $node;
         while($currentNode->parent() && $currentNode->parent()->tag!="html") {
@@ -441,7 +439,6 @@ class TRP_Translation_Render{
         }
         return false;
     }
-
 
     protected function start_output_buffering(){
         $post_type = get_post_type();
@@ -479,6 +476,5 @@ class TRP_Translation_Render{
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }
-
 
 }

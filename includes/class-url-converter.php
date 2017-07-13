@@ -25,6 +25,11 @@ class TRP_Url_Converter {
     }
 
     public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
+/*        if ( ! empty( $path ) && ( strpos( 'wp-admin', $path ) !== false || strpos( 'wp-login.php', $path ) !== false ) ){
+            error_log( $path );
+            return $url;
+        }*/
+
         global $TRP_LANGUAGE;
         if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $TRP_LANGUAGE == $this->settings['default-language'] ) {
             return $url;

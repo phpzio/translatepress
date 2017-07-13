@@ -36,12 +36,17 @@ ____________________________________________
 - free version
 -i default language should have optional encoding in url
 - isset peste toate setarile url-slugs si altele. incearca pluginul fara "settings" din db
+- force custom links option
+- make language switcher a callable function
+- edit this in admin bar
 
 
 
 -------
   WIP
 -------
+
+- do not translate wp-admin links
 
 
 
@@ -61,9 +66,7 @@ ____________________________________________
 -----------
 
 -i shortcode should take into account short-name, full-name, flags
-- force custom links option
-- edit this in admin bar
-- edd update class
+-i edd update class
 - multisite
 - challenges:
   - paged pages, user listing
@@ -78,23 +81,21 @@ ____________________________________________
 
 -i editor pencil icon has white background
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
+- check for //TODO remove this when finished
 - check to see if mutation observer is loaded first most
-- conflict with custom profile menu
+- make sure current_user_can checks are on point //
 - conflict of translate dom changes with pb repeater
-- don't allow exit of the editor with unsaved changes
+- conflict with custom profile menu
+- cookie language
 - <body class = language>
 - seo <html language parameter
+- don't allow exit of the editor with unsaved changes
 - get browser language
-- make language switcher a callable function
-- cookie language
 - saved! appears when navigating editor
 - responsive settings page on small width //
 - translate dynamic added strings //
 - add number of strings in category Text(6) Meta (3) //
-- check for //TODO remove this when finished
-- make sure current_user_can checks are on point //
 - make sure the language exists in the settings when get_translations //
-- different charset collation for each language? //
 - make sure page title is translated auto, and manually //
 - remove already selected languages from selects in settings //
 - unpublished languages can be reached at url

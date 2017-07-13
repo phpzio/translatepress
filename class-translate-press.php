@@ -55,6 +55,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-query.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-url-converter.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-slug-manager.php';
+        require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
 
         $this->loader = new TRP_Hooks_Loader();
@@ -102,12 +103,12 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp_footer', $this->language_switcher, 'add_floater_language_switcher' );
         $this->loader->add_filter( 'init', $this->language_switcher, 'add_ls_to_menu' );
         $this->loader->add_action( 'wp_get_nav_menu_items', $this->language_switcher, 'ls_menu_permalinks', 10, 3 );
-
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
+        $this->loader->add_action( 'admin_bar_menu', $this->translation_manager, 'add_shortcut_to_translation_editor', 90, 1 );
 
         /* manage slug translation hooks */
         $this->loader->add_filter( 'request', $this->slug_manager, 'change_slug_var_in_request' );
