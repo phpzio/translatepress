@@ -300,8 +300,8 @@ button.ui-button::-moz-focus-inner {
     border: none;
 }
 .ui-checkboxradio-radio-label .ui-icon-background {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: 1em;
     overflow: visible;
     border: none;
@@ -1067,8 +1067,8 @@ a.ui-button:active,
 
 /* states and images */
 .ui-icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
 }
 .ui-icon,
 .ui-widget-content .ui-icon {
@@ -1346,8 +1346,10 @@ option.avatar {
     background-repeat: no-repeat !important;
     padding-left: 20px !important;
 }
-.avatar .ui-icon {
-    background-position: left top !important;
+
+.ui-icon.trp-current-language-icon,
+.trp-avatar .ui-icon {
+    background-position: left center !important;
 }
 
 .ui-icon.trp-flag-icon {
@@ -1374,14 +1376,14 @@ option.avatar {
 .ui-selectmenu-button.ui-widget span,
 .trp-ls-li.ui-menu-item span {
     display: inline-block;
-    margin: 5px 5px;
+    margin: 3px 5px;
     vertical-align: middle;
 }
 
-.ui-selectmenu-button.ui-widget {
-
+.ui-state-default .ui-icon.trp-current-language-icon {
+    background-image: url( 'http://www.gravatar.com/avatar/b3e04a46e85ad3e165d66f5d927eb609?d=monsterid&r=g&s=16' );
 }
 
-.ui-state-default .ui-icon.custom-icon {
-    background-image: url( 'http://www.gravatar.com/avatar/b3e04a46e85ad3e165d66f5d927eb609?d=monsterid&r=g&s=16' );
+form.trp-language-switcher-form .ui-selectmenu-button span.dashicons-arrow-down {
+    float: right;
 }

@@ -188,7 +188,7 @@ class TRP_Language_Switcher{
     <?php
     }
 
-    public function add_flag( $language_code, $language_name ) {
+    public function add_flag( $language_code, $language_name, $location = NULL ) {
 
         // Path to folder with flags images
         $flags_path = TRP_PLUGIN_URL .'assets/images/flags/';
@@ -201,6 +201,11 @@ class TRP_Language_Switcher{
 
         // HTML code to display flag image
         $flag_html = '<img class="trp-flag-image" src="'. $flags_path . $flag_file_name .'" width="18" height="12" alt="' . $language_code . '" title="' . $language_name . '">';
+
+        if( $location == 'ls_shortcode' ) {
+            $flag_url = $flags_path . $flag_file_name;
+            return $flag_url;
+        }
 
         return $flag_html;
 

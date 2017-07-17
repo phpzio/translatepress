@@ -6,43 +6,6 @@ function trp_change_language( select ){
 }
 
 jQuery( document ).ready( function( ) {
-    /*try {
-        jQuery("body select.trp-language-switcher-select").msDropDown();
-    } catch(e) {
-        alert(e.message);
-    }*/
-
-    //jQuery(".trp-language-switcher-select").selectmenu();
-
-    /*jQuery(function () {
-        jQuery.widget("custom.TFOiconSelectImg", jQuery.ui.selectmenu, {
-            _renderItem: function (ul, item) {
-                var li = jQuery("<li>", { html: item.element.html() });
-                var attr = item.element.attr("data-style");
-                if (typeof attr !== typeof undefined && attr !== false) {
-                    jQuery("<span>", {
-                        style: item.element.attr("data-style"),
-                        "class": "ui-icon TFOOptlstFiltreImg"
-                    }).appendTo(li);
-                }
-                return li.appendTo(ul);
-            }
-        });
-
-        //jQuery(".trp-language-switcher-select")
-        jQuery("select")
-            .TFOiconSelectImg({
-                create: function (event, ui) {
-                    var widget = jQuery(this).TFOiconSelectImg("widget");
-                    $span = jQuery('<span id="' + this.id + 'ImgSelected" class="TFOSizeImgSelected"> ').html("<img src='http://icons.iconarchive.com/icons/custom-icon-design/all-country-flag/256/Hungary-Flag-icon.png'>").appendTo(widget);
-                    $span.attr("style", jQuery(this).children(":first").data("style"));
-                },
-                change: function (event, ui) {
-                    jQuery("#" + this.id + 'ImgSelected').attr("style", ui.item.element.data("style"));
-                }
-            }).TFOiconSelectImg("menuWidget").addClass("ui-menu-icons customicons");
-    });*/
-
     jQuery.widget( "custom.iconselectmenu", jQuery.ui.selectmenu, {
         _renderItem: function( ul, item ) {
             var li = jQuery( "<li class='trp-ls-li'>" ),
@@ -57,14 +20,35 @@ jQuery( document ).ready( function( ) {
             jQuery( "<span>", {
                 style: item.element.attr( "data-style" ),
                 "class": "ui-icon " + item.element.attr( "data-class" )
-            })
-                .prependTo( wrapper );
+            } ).prependTo( wrapper );
 
             return li.append( wrapper ).appendTo( ul );
         }
     });
 
-    jQuery( ".trp-language-switcher-select" )
+    jQuery( '.trp-language-switcher-select' ).each( function() {
+        jQuery( this )
+            .iconselectmenu( {
+                change: function() {
+                    /*jQuery( this ).closest( 'form.trp-language-switcher-form' ).find( '.trp-current-language-icon' )
+                        .css( 'background-image', 'url(' + jQuery( this ).find( 'option[value="' + ui.item.value + '"]' ).data( 'flag-url' ) + ')' );*/
+                },
+                select: function( event, ui ) {
+                    jQuery( this ).closest( 'form.trp-language-switcher-form' ).find( '.trp-current-language-icon' )
+                        .css( 'background-image', 'url(' + jQuery( this ).find( 'option[value="' + ui.item.value + '"]' ).data( 'flag-url' ) + ')' );
+                    if( typeof parent.trpEditor == 'undefined' ) {
+                        window.location.replace( document.querySelector( 'link[hreflang="' + ui.item.value + '"]' ).href );
+                    }
+                },
+                icons: {
+                    button: "trp-current-language-icon"
+                }
+            } ).iconselectmenu( "menuWidget" ).addClass( "ui-menu-icons trp-avatar" );
+
+
+    } );
+
+    /*jQuery( ".trp-language-switcher-select" )
         .iconselectmenu( {
             change: function() {
                 console.log( jQuery( this ).val() );
@@ -74,7 +58,14 @@ jQuery( document ).ready( function( ) {
             }
         } )
         .iconselectmenu( "menuWidget")
-        .addClass( "ui-menu-icons avatar" );
+        .addClass( "ui-menu-icons trp-avatar" );*/
 
+    jQuery( '<span>', {
+        "class": "dashicons dashicons-arrow-down"
+    } ).appendTo( jQuery( 'form.trp-language-switcher-form .ui-selectmenu-button' ) );
+
+    jQuery( '.ui-state-default .ui-icon.trp-current-language-icon' ).each( function() {
+        jQuery( this ).css( 'background-image', 'url( http://local.wordpress.dev/wp-content/plugins/translate-press/assets/images/flags/en_US.png )' );
+    } );
 
 } );
