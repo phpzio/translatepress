@@ -54,9 +54,6 @@ class TRP_Translation_Manager{
 
     public function enqueue_preview_scripts_and_styles(){
         if ( $this->conditions_met( 'preview' ) ) {
-            /* twentyfifteen theme scrolls header uncontrolled on page load because of this  */
-            show_admin_bar( false );
-
             wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery') );
             wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css' );
         }
@@ -70,7 +67,6 @@ class TRP_Translation_Manager{
 
     }
 
-
     protected function extract_original_strings( $strings, $original_array, $id_array ){
         if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {
@@ -80,7 +76,6 @@ class TRP_Translation_Manager{
         return array_values( $original_array );
     }
 
-    // todo "current user can" check
     public function get_translations() {
         //error_log('get_translations');
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
@@ -94,9 +89,9 @@ class TRP_Translation_Manager{
                     foreach ( $strings as $key => $string ) {
                         if ( isset( $string->slug ) && $string->slug === true ){
                             $slug_info = array(
-                                'post_id'   => $string->slug_post_id,
-                                'id'        => $string->id,
-                                'original'  => $string->original );
+                                'post_id'   => (int)$string->slug_post_id,
+                                'id'        => (int)$string->id,
+                                'original'  => sanitize_text_field( $string->original ) );
                             continue;
                         }
                         if ( isset( $string->id ) && is_numeric( $string->id ) ) {
@@ -105,8 +100,8 @@ class TRP_Translation_Manager{
                             $original_array[$key] = sanitize_text_field( $string->original );
                         }
                     }
-                    // todo make sure the language exists in the settings
-                    $current_language = esc_attr( $_POST['language'] );
+
+                    $current_language = $_POST['language'];
 
                     $trp = TRP_Translate_Press::get_trp_instance();
                     if ( ! $this->trp_query ) {
@@ -121,7 +116,6 @@ class TRP_Translation_Manager{
 
                     // necessary in order to obtain all the original strings
                     if ( $this->settings['default-language'] != $current_language ) {
-                        //todo current user can
                         if ( current_user_can ( 'manage_options' ) ) {
                             $this->translation_render->process_strings($original_array, $current_language);
                         }
@@ -151,7 +145,6 @@ class TRP_Translation_Manager{
                             if (empty($original_strings)) {
                                 $original_strings = $this->extract_original_strings($dictionaries[$current_language], $original_array, $id_array);
                             }
-                            //todo current user can
                             if (current_user_can('manage_options')) {
                                 $this->translation_render->process_strings($original_strings, $language);
                             }
@@ -177,8 +170,7 @@ class TRP_Translation_Manager{
 
     public function save_translations(){
 
-        // todo "current user can" check
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
                 $update_strings = array();
@@ -214,7 +206,7 @@ class TRP_Translation_Manager{
     }
 
     public function add_shortcut_to_translation_editor( $wp_admin_bar ){
-        if ( is_admin () ){
+        if ( is_admin () || ! current_user_can( 'manage_options' )){
             return;
         }
         global $post;
@@ -234,4 +226,10 @@ class TRP_Translation_Manager{
         $wp_admin_bar->add_node( $args );
     }
 
+    public function hide_admin_bar_when_in_editor(){
+        if ($this->conditions_met('preview')) {
+            return false;
+        }
+        return true;
+    }
 }

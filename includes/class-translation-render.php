@@ -299,13 +299,14 @@ class TRP_Translation_Render{
             $url = $a_href->href;
             $is_external_link = $this->is_external_link( $url );
 
-            if ( $this->settings['force-language-to-custom-links'] && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null ){
+            if ( $this->settings['force-language-to-custom-links'] == 'yes' && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$this->is_admin_link($url) ){
+
                 $a_href->href = apply_filters( 'trp_force_custom_links', $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $url ), $url, $TRP_LANGUAGE, $a_href );
                 $url = $a_href->href;
             }
 
             if( $preview_mode && ( $is_external_link || $this->is_different_language( $url )  ) ) {
-                $a_href->setAttribute( 'class', 'trp-unpreviewable' );
+                $a_href->setAttribute( 'data-trp-unpreviewable', 'trp-unpreviewable' );
             }
         }
 
@@ -352,6 +353,14 @@ class TRP_Translation_Render{
         }else{
             return true;
         }
+    }
+
+    protected function is_admin_link( $url ){
+        if ( strpos( $url, admin_url() ) !== false || strpos( $url, wp_login_url() ) !== false ){
+            return true;
+        }
+        return false;
+
     }
 
     public function process_strings( $translateable_strings, $language_code ){

@@ -54,9 +54,10 @@ function TRP_Iframe_Preview(){
     }
 
     function is_link_previewable( element ) {
-        if ( ! jQuery( element ).hasClass( 'trp-unpreviewable' ) ){
-            return true;
+        if ( jQuery( element ).attr( 'data-trp-unpreviewable' ) == 'trp-unpreviewable' ){
+            return false;
         }
+        return true;
     }
 
     _this.initialize();

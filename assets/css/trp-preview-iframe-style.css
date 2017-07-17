@@ -13,6 +13,6 @@ span.trp-edit-translation{
     /*text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;*/
 }
 
-.trp-unpreviewable {
-    cursor: not-allowed /*!important*/;
+[data-trp-unpreviewable="trp-unpreviewable"]{
+    cursor: not-allowed;
 }
