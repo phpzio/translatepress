@@ -7,7 +7,7 @@ class TRP_Settings_Pro extends TRP_Settings{
             $trp = TRP_Translate_Press::get_trp_instance();
             $this->url_converter = $trp->get_component( 'url_converter' );
         }
-        require_once( TRP_PLUGIN_DIR . 'pro/partials/language-selector-pro.php' );
+        require_once( TRP_PLUGIN_DIR . 'pro/includes/partials/language-selector-pro.php' );
     }
 
     public function enqueue_sortable_language_script( ){

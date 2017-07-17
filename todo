@@ -39,18 +39,20 @@ ____________________________________________
 - force custom links option
 - make language switcher a callable function
 - edit this in admin bar
-
 - do not translate wp-admin links
 - make sure current_user_can checks are on point //
 - make sure the language exists in the settings when get_translations //
 - fixed bug with admin bar screwing up the editor
 - fixed bug with external links in editor
 
+-i highlighting should be done with css, and with a nice colour (editor js line 473)
+
 
 -------
   WIP
 -------
 
+-i edd update class
 
 
 
@@ -70,7 +72,6 @@ ____________________________________________
 -----------
 
 -i shortcode should take into account short-name, full-name, flags
--i edd update class
 - multisite
 - challenges:
   - paged pages, user listing
@@ -84,7 +85,6 @@ ____________________________________________
 -------------
 
 -i editor pencil icon has white background
--i highlighting should be done with css, and with a nice colour (editor js line 473)
 - check for //TODO remove this when finished
 - check to see if mutation observer is loaded first most
 - conflict of translate dom changes with pb repeater
