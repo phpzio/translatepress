@@ -157,11 +157,11 @@ class TRP_Language_Switcher{
         }
 
         ?>
-        <div id="trp-floater-ls" data-no-translation class="<?php echo $floater_class; echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? ' trp-unpreviewable' : '' ?>">
+        <div id="trp-floater-ls" data-no-translation class="<?php echo $floater_class; ?>" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?>>
             <div id="trp-floater-ls-current-language" class="<?php echo $floater_flags_class ?>">
                 <a href="javascript:void(0)" class="trp-floater-ls-disabled-language" onclick="void(0)"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo $current_language_label; ?></a>
             </div>
-            <div id="trp-floater-ls-language-list" class="<?php echo $floater_flags_class; echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? ' trp-unpreviewable' : ''?>">
+            <div id="trp-floater-ls-language-list" class="<?php echo $floater_flags_class;?>" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : ''?>">
                 <?php
                 foreach( $other_languages as $code => $name ) {
                     $language_label = '';
@@ -175,7 +175,7 @@ class TRP_Language_Switcher{
                     }
 
                     ?>
-                    <a href="javascript:void(0)" class="<?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? ' trp-unpreviewable' : ''?>" title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
+                    <a href="javascript:void(0)" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?> title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
                 <?php
                 }
                 ?>

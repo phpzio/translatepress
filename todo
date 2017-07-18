@@ -85,6 +85,9 @@ ____________________________________________
 -------------
 
 -i editor pencil icon has white background
+-i get_slug_url should return slug for url language even for use subdirectory for default language =no. Short language names don't work.
+-i url slug should get default ISO, then CODE if iso already exists
+-i dataunpreviewable pe shortcode atunci cand se incarca jQuery UI.
 - check for //TODO remove this when finished
 - check to see if mutation observer is loaded first most
 - conflict of translate dom changes with pb repeater
