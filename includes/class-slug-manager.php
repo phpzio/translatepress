@@ -17,7 +17,8 @@ class TRP_Slug_Manager {
         if ( $query_vars == null ){
             return $query_vars;
         }
-        //error_log(json_encode($query_vars));
+        //die(var_dump($query_vars));
+        error_log(json_encode($query_vars));
         if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ){
             if (!empty($query_vars['name'])) {
                 if (!empty($query_vars['post_type'])) {

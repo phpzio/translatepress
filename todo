@@ -44,7 +44,6 @@ ____________________________________________
 - make sure the language exists in the settings when get_translations //
 - fixed bug with admin bar screwing up the editor
 - fixed bug with external links in editor
-
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
 - add check when free to not display more than 2 languages
 

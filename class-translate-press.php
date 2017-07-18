@@ -96,7 +96,7 @@ class TRP_Translate_Press{
 
     protected function define_frontend_hooks(){
         $this->loader->add_action( 'wp', $this->translation_render, 'start_object_cache' );
-        $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation' );
+        $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );
 
 
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
