@@ -16,9 +16,14 @@ class TRP_Language_Switcher{
 
     public function language_switcher(){
         ob_start();
+
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;
         $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
+
+        $ls_options = $this->trp_settings_object->get_language_switcher_options();
+        $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
+
         require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-shortcode.php';
 
         return ob_get_clean();
@@ -67,6 +72,24 @@ class TRP_Language_Switcher{
         }
 
         wp_enqueue_style( 'trp-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-language-switcher.css' );
+
+        if( ! $this->trp_settings_object ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_settings_object = $trp->get_component( 'trp_settings' );
+        }
+
+        $ls_options = $this->trp_settings_object->get_language_switcher_options();
+        $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
+
+        if( $shortcode_settings['flags'] ) {
+            wp_enqueue_script( 'jquery-ui-core' );
+            wp_enqueue_script( 'jquery-ui-widget' );
+            wp_enqueue_script( 'jquery-ui-menu' );
+            wp_enqueue_script( 'jquery-ui-position' );
+            wp_enqueue_script( 'jquery-ui-selectmenu' );
+
+            wp_enqueue_style( 'trp-jquery-ui-style', TRP_PLUGIN_URL . 'assets/css/trp-jquery-ui.css');
+        }
     }
 
     public function add_floater_language_switcher() {
@@ -163,7 +186,7 @@ class TRP_Language_Switcher{
     <?php
     }
 
-    public function add_flag( $language_code, $language_name ) {
+    public function add_flag( $language_code, $language_name, $location = NULL ) {
 
         // Path to folder with flags images
         $flags_path = TRP_PLUGIN_URL .'assets/images/flags/';
@@ -176,6 +199,11 @@ class TRP_Language_Switcher{
 
         // HTML code to display flag image
         $flag_html = '<img class="trp-flag-image" src="'. $flags_path . $flag_file_name .'" width="18" height="12" alt="' . $language_code . '" title="' . $language_name . '">';
+
+        if( $location == 'ls_shortcode' ) {
+            $flag_url = $flags_path . $flag_file_name;
+            return $flag_url;
+        }
 
         return $flag_html;
 
@@ -243,6 +271,14 @@ class TRP_Language_Switcher{
         }
 
         return $items;
+    }
+
+    public function enqueue_jquery_ui( $is_needed ) {
+
+        if( $is_needed ) {
+            wp_enqueue_script( 'jquery-ui-core' );
+        }
+
     }
 
 }
