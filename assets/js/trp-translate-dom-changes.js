@@ -132,7 +132,7 @@ var original_language;
 
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {
-    trpTranslator = new TRP_Translator();
+    //trpTranslator = new TRP_Translator();
     //TODO remove this when finished
     jQuery( ".site-branding" ).append("<h1>new word</h1>");
 

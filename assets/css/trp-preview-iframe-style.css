@@ -1,14 +1,46 @@
 /*
     String editor button
 */
-span.trp-edit-translation{
-    background: url('../images/edit.png') no-repeat center center;
+
+span.trp-edit-translation {
     width: 30px;
     height: 30px;
     display: inline-block;
     position: absolute;
     margin-left: -30px;
     cursor: pointer;
+    pointer-events: auto;
+    color: #fff;
+    min-width: 30px;
+    min-height: 30px;
+    line-height: 1em!important;
+    font-size: 18px;
+    z-index: 5;
+    background: #0085ba!important;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    -webkit-box-shadow: 0 2px 1px rgba(46,68,83,.15);
+    box-shadow: 0 2px 1px rgba(46,68,83,.15);
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 3px;
+    text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;
+}
+
+span.trp-edit-translation:hover {
+    background: #008ec2!important;
+}
+
+span.trp-edit-translation svg {
+    fill: #fff;
+    min-width: 20px;
+    min-height: 20px;
+    width: 20px;
+    height: 20px;
+    margin: auto;
 }
 
 [data-trp-unpreviewable="trp-unpreviewable"]{
