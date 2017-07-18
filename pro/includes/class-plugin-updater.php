@@ -7,14 +7,14 @@ class TRP_Plugin_Updater{
         define( 'TRP_STORE_URL', 'http://yoursite.com' );
         // the name of your product. This should match the download name in EDD exactly
         define( 'TRP_ITEM_NAME', 'Sample Plugin' );
-        if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
+        if( !class_exists( 'TRP_EDD_SL_Plugin_Updater' ) ) {
             // load our custom updater
             include TRP_PLUGIN_DIR . 'pro/includes/class-edd-sl-plugin-updater.php';
         }
         // retrieve our license key from the DB
         $license_key = trim( get_option( 'trp_license_key' ) );
         // setup the updater
-        $edd_updater = new EDD_SL_Plugin_Updater( TRP_STORE_URL, __FILE__, array(
+        $edd_updater = new TRP_EDD_SL_Plugin_Updater( TRP_STORE_URL, __FILE__, array(
                 'version' 	=> '1.0', 		// current version number
                 'license' 	=> $license_key, 	// license key (used get_option above to retrieve from DB)
                 'item_name' => TRP_ITEM_NAME, 	// name of this plugin
@@ -24,7 +24,15 @@ class TRP_Plugin_Updater{
         );
     }
     public function license_menu() {
-        add_plugins_page( 'TranslatePress License', 'TranslatePress License', 'manage_options', 'trp_license_settings_page', array( $this, 'license_page' ) );
+        add_submenu_page(
+            'TRPHidden',
+            'TranslatePress License',
+            'TRPHidden',
+            'manage_options',
+            'trp_license_key',
+            array( $this, 'license_page' )
+        );
+        //add_plugins_page( 'TranslatePress License', 'TranslatePress License', 'manage_options', 'trp_license_key', array( $this, 'license_page' ) );
     }
 
 
@@ -38,7 +46,7 @@ class TRP_Plugin_Updater{
     }
     public function register_option() {
         // creates our settings in the options table
-        register_setting('license', 'trp_license_key', 'edd_sanitize_license' );
+        register_setting('trp_license_key', 'trp_license_key', array( $this, 'edd_sanitize_license' ) );
     }
 
 
@@ -157,7 +165,7 @@ class TRP_Plugin_Updater{
 
             // Check if anything passed on a message constituting a failure
             if ( ! empty( $message ) ) {
-                $base_url = admin_url( 'plugins.php?page=' . 'trp_license_settings_page' );
+                $base_url = admin_url( 'admin.php?page=' . 'trp_license_key' );
                 $redirect = add_query_arg( array( 'sl_activation' => 'false', 'message' => urlencode( $message ) ), $base_url );
 
                 wp_redirect( $redirect );
@@ -167,7 +175,7 @@ class TRP_Plugin_Updater{
             // $license_data->license will be either "valid" or "invalid"
 
             update_option( 'trp_license_status', $license_data->license );
-            wp_redirect( admin_url( 'plugins.php?page=' . 'trp_license_settings_page' ) );
+            wp_redirect( admin_url( 'admin.php?page=' . 'trp_license_key' ) );
             exit();
         }
     }

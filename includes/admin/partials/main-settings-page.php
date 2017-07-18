@@ -2,7 +2,9 @@
 <div id="trp-main-settings">
     <form method="post" action="options.php">
         <?php settings_fields( 'trp_settings' ); ?>
-        <h1> <?php _e( 'TranslatePress', TRP_PLUGIN_SLUG );?></h1>
+        <h1> <?php _e( 'TranslatePress Settings', TRP_PLUGIN_SLUG );?></h1>
+        <?php do_action ( 'trp_settings_navigation_tabs' ); ?>
+
         <table id="trp-options" class="form-table">
             <tr>
                 <th scope="row"><?php _e( 'Manage Translations', TRP_PLUGIN_SLUG ); ?> </th>

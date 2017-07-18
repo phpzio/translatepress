@@ -183,6 +183,7 @@ class TRP_Settings{
                     $settings_option[$key_default_setting] = $value_default_setting;
                 }
             }
+            $settings_option = $this->check_translation_settings( $settings_option );
         }
 
         $this->settings = $settings_option;
@@ -228,6 +229,32 @@ class TRP_Settings{
             </td>
         </tr>
         <?php
+    }
+
+    public function check_translation_settings( $settings ){
+        foreach ( $settings['translation-languages'] as $language_code ) {
+            if ( $settings['default-language'] != $language_code ) {
+                $translation_language = $language_code;
+                break;
+            }
+        }
+        $settings['translation-languages'] = array( $settings['default-language'] );
+        if ( !empty( $translation_language ) ){
+            $settings['translation-languages'][] = $translation_language;
+        }
+
+        foreach ( $settings['publish-languages'] as $language_code ) {
+            if ( $settings['default-language'] != $language_code ) {
+                $translation_language = $language_code;
+                break;
+            }
+        }
+        $settings['publish-languages'] = array( $settings['default-language'] );
+        if ( !empty( $translation_language ) ){
+            $settings['publish-languages'][] = $translation_language;
+        }
+
+        return $settings;
     }
 
     protected function create_menu_entries( $languages ){

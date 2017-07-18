@@ -46,6 +46,7 @@ ____________________________________________
 - fixed bug with external links in editor
 
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
+- add check when free to not display more than 2 languages
 
 
 -------
@@ -72,7 +73,7 @@ ____________________________________________
 -----------
 
 -i shortcode should take into account short-name, full-name, flags
-- multisite
+- multisite single license setting
 - challenges:
   - paged pages, user listing
   - support for translating emails
@@ -89,7 +90,6 @@ ____________________________________________
 - check to see if mutation observer is loaded first most
 - conflict of translate dom changes with pb repeater
 - conflict with custom profile menu
-- add check when free to not display more than 2 languages
 - cookie language
 - <body class = language>
 - seo <html language parameter

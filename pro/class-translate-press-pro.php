@@ -19,10 +19,10 @@ class TRP_Translate_Press_Pro extends TRP_Translate_Press{
         $this->loader->add_action( 'admin_menu', $this->trp_plugin_updater, 'license_menu' );
         $this->loader->add_action( 'admin_init', $this->trp_plugin_updater, 'register_option' );
         $this->loader->add_action( 'admin_notices', $this->trp_plugin_updater, 'admin_notices' );
-        $this->loader->add_action( 'admin_init', $this->trp_plugin_updater, 'activate_license');
-
+        $this->loader->add_action( 'admin_init', $this->trp_plugin_updater, 'activate_license' );
 
         $this->loader->add_action( 'admin_enqueue_scripts', $this->trp_settings, 'enqueue_sortable_language_script' );
+        $this->loader->add_action( 'trp_settings_navigation_tabs', $this->trp_settings, 'add_navigation_tabs' );
     }
 
 }
