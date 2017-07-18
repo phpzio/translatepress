@@ -5,10 +5,6 @@
             <option data-class="trp-flag-icon" data-style="background-image: url( <?php echo $this->add_flag( $code, $name, 'ls_shortcode' ) ?> );" data-flag-url="<?php echo $this->add_flag( $code, $name, 'ls_shortcode' ) ?>" value="<?php echo $code ?>" <?php echo ( $current_language == $code ) ? 'selected' : '' ?> >
                 <?php
 
-                /*if( $shortcode_settings['flags'] ) {
-                    echo $this->add_flag( $code, $name );
-                }*/
-
                 if( $shortcode_settings['full_names'] ) {
                     echo ucfirst( $name );
                 }

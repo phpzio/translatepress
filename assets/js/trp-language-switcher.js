@@ -31,34 +31,20 @@ jQuery( document ).ready( function( ) {
     jQuery( '.trp-language-switcher-select' ).each( function() {
         jQuery( this )
             .iconselectmenu( {
-                change: function() {
-                    /*jQuery( this ).closest( 'form.trp-language-switcher-form' ).find( '.trp-current-language-icon' )
-                        .css( 'background-image', 'url(' + jQuery( this ).find( 'option[value="' + ui.item.value + '"]' ).data( 'flag-url' ) + ')' );*/
+                change: function( event, ui ) {
+                    if( typeof parent.trpEditor == 'undefined' ) {
+                        window.location.replace( document.querySelector( 'link[hreflang="' + ui.item.value + '"]' ).href );
+                    }
                 },
                 select: function( event, ui ) {
                     jQuery( this ).closest( 'form.trp-language-switcher-form' ).find( '.trp-current-language-icon' )
                         .css( 'background-image', 'url(' + jQuery( this ).find( 'option[value="' + ui.item.value + '"]' ).data( 'flag-url' ) + ')' );
-                    /*if( typeof parent.trpEditor == 'undefined' ) {
-                        window.location.replace( document.querySelector( 'link[hreflang="' + ui.item.value + '"]' ).href );
-                    }*/
                 },
                 icons: {
                     button: 'trp-current-language-icon'
                 }
             } ).iconselectmenu( 'menuWidget' ).addClass( 'ui-menu-icons trp-flag-icon' );
     } );
-
-    /*jQuery( ".trp-language-switcher-select" )
-        .iconselectmenu( {
-            change: function() {
-                console.log( jQuery( this ).val() );
-            },
-            icons: {
-                button: "custom-icon"
-            }
-        } )
-        .iconselectmenu( "menuWidget")
-        .addClass( "ui-menu-icons trp-avatar" );*/
 
     jQuery( '<span>', {
         'class': 'dashicons dashicons-arrow-down'
@@ -68,4 +54,14 @@ jQuery( document ).ready( function( ) {
         jQuery( this ).css( 'background-image', 'url(' + jQuery( this ).closest( 'form.trp-language-switcher-form' ).find( 'select.trp-language-switcher-select' ).find( ':selected' ).data( 'flag-url' ) + ')' );
     } );
 
+    jQuery( 'form.trp-language-switcher-form .ui-selectmenu-button' ).click( function() {
+        var id = jQuery( this ).attr( 'id' );
+        var width = jQuery( this ).width();
+
+        jQuery( '.ui-menu.trp-flag-icon' ).each( function() {
+            if( jQuery( this ).attr( 'aria-labelledby' ) == id ) {
+                jQuery( this ).width( width );
+            }
+        } );
+    } );
 } );

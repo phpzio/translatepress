@@ -88,9 +88,7 @@ class TRP_Language_Switcher{
             wp_enqueue_script( 'jquery-ui-position' );
             wp_enqueue_script( 'jquery-ui-selectmenu' );
 
-
-            //wp_enqueue_style( 'jquery-ui-style', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
-            //wp_enqueue_style( 'jquery-ui-style' );
+            wp_enqueue_style( 'jquery-ui-style', TRP_PLUGIN_URL . 'assets/css/jquery-ui.css');
         }
     }
 
