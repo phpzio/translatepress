@@ -6,9 +6,10 @@ function trp_change_language( select ){
 }
 
 jQuery( document ).ready( function( ) {
+
     jQuery.widget( 'trp.iconselectmenu', jQuery.ui.selectmenu, {
         _renderItem: function( ul, item ) {
-            var li = jQuery( '<li class="trp-ls-li">' );
+            var li = jQuery( '<li class="trp-ls-li" data-no-translation>' );
             var wrapper = jQuery( '<div style="display: inline-block;">' );
 
             if( item.disabled ) {
@@ -27,6 +28,7 @@ jQuery( document ).ready( function( ) {
             return li.append( wrapper ).appendTo( ul );
         }
     } );
+
 
     jQuery( '.trp-language-switcher-select' ).each( function() {
         jQuery( this )
@@ -64,4 +66,5 @@ jQuery( document ).ready( function( ) {
             }
         } );
     } );
+
 } );

@@ -1,4 +1,4 @@
-<div class="trp-language-switcher ">
+<div class="trp-language-switcher " data-no-translation>
     <form class="trp-language-switcher-form" action="" method="POST">
         <select data-no-translation class="trp-language-switcher-select" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?> name="lang" onchange='trp_change_language( this )'>
             <?php foreach ( $published_languages as $code => $name ){ ?>
