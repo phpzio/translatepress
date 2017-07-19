@@ -2,30 +2,31 @@
 
 class TRP_Translate_Press{
     protected $loader;
-    protected $trp_settings;
+    protected $settings;
     protected $translation_render;
     protected $machine_translator;
-    protected $trp_query;
+    protected $query;
     protected $language_switcher;
     protected $translation_manager;
     protected $slug_manager;
     protected $url_converter;
-    public static $trp_translate_press = null;
+    protected $languages;
+    public static $translate_press = null;
 
     public static function get_trp_instance(){
-        if ( self::$trp_translate_press == null ){
+        if ( self::$translate_press == null ){
             if ( file_exists ( plugin_dir_path(__FILE__) . 'pro/class-translate-press-pro.php' ) ) {
                 require_once plugin_dir_path(__FILE__) . 'pro/class-translate-press-pro.php';
                 if ( class_exists( 'TRP_Translate_Press_Pro' ) ) {
-                    self::$trp_translate_press = new TRP_Translate_Press_Pro();
+                    self::$translate_press = new TRP_Translate_Press_Pro();
                 }
             }
-            if ( self::$trp_translate_press == null ) {
-                self::$trp_translate_press = new TRP_Translate_Press();
+            if ( self::$translate_press == null ) {
+                self::$translate_press = new TRP_Translate_Press();
             }
         }
 
-        return self::$trp_translate_press;
+        return self::$translate_press;
     }
 
     public function __construct() {
@@ -48,7 +49,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/admin/class-settings.php';
         require_once TRP_PLUGIN_DIR . 'includes/admin/class-translation-manager.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-hooks-loader.php';
-        require_once TRP_PLUGIN_DIR . 'includes/class-utils.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-languages.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-render.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-language-switcher.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-machine-translator.php';
@@ -59,29 +60,30 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
 
         $this->loader = new TRP_Hooks_Loader();
+        $this->languages = new TRP_Languages();
     }
 
     protected function initialize_components() {
-        $this->trp_settings = new TRP_Settings();
+        $this->settings = new TRP_Settings();
 
-        $this->translation_render = new TRP_Translation_Render( $this->trp_settings->get_settings() );
+        $this->translation_render = new TRP_Translation_Render( $this->settings->get_settings() );
     }
 
     protected function initialize_common_components(){
-        $this->url_converter = new TRP_Url_Converter( $this->trp_settings->get_settings() );
-        $this->language_switcher = new TRP_Language_Switcher( $this->trp_settings->get_settings(), $this->url_converter );
-        $this->trp_query = new TRP_Query( $this->trp_settings->get_settings() );
-        $this->slug_manager = new TRP_Slug_Manager( $this->trp_settings->get_settings() );
-        $this->machine_translator = new TRP_Machine_Translator( $this->trp_settings->get_settings() );
-        $this->translation_manager = new TRP_Translation_Manager( $this->trp_settings->get_settings() );
+        $this->url_converter = new TRP_Url_Converter( $this->settings->get_settings() );
+        $this->language_switcher = new TRP_Language_Switcher( $this->settings->get_settings(), $this->url_converter );
+        $this->query = new TRP_Query( $this->settings->get_settings() );
+        $this->slug_manager = new TRP_Slug_Manager( $this->settings->get_settings() );
+        $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings() );
+        $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
 
     }
 
     protected function define_admin_hooks() {
-        $this->loader->add_action( 'admin_menu', $this->trp_settings, 'register_menu_page' );
-        $this->loader->add_action( 'admin_init', $this->trp_settings, 'register_setting' );
-        $this->loader->add_action( 'admin_notices', $this->trp_settings, 'admin_notices' );
-        $this->loader->add_action( 'admin_enqueue_scripts', $this->trp_settings, 'enqueue_scripts_and_styles', 10, 1 );
+        $this->loader->add_action( 'admin_menu', $this->settings, 'register_menu_page' );
+        $this->loader->add_action( 'admin_init', $this->settings, 'register_setting' );
+        $this->loader->add_action( 'admin_notices', $this->settings, 'admin_notices' );
+        $this->loader->add_action( 'admin_enqueue_scripts', $this->settings, 'enqueue_scripts_and_styles', 10, 1 );
 
 
         $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations', $this->translation_manager, 'get_translations' );

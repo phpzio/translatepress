@@ -5,6 +5,7 @@ class TRP_Language_Switcher{
     protected $settings;
     protected $url_converter;
     protected $trp_settings_object;
+    protected $trp_languages;
 
     public function __construct( $settings, $url_converter ){
         $this->settings = $settings;
@@ -19,7 +20,12 @@ class TRP_Language_Switcher{
 
         global $TRP_LANGUAGE;
         $current_language = $TRP_LANGUAGE;
-        $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
+
+        if ( ! $this->trp_languages ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_languages = $trp->get_component( 'languages' );
+        }
+        $published_languages = $this->trp_languages->get_language_names( $this->settings['publish-languages'] );
 
         $ls_options = $this->trp_settings_object->get_language_switcher_options();
         $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
@@ -75,7 +81,7 @@ class TRP_Language_Switcher{
 
         if( ! $this->trp_settings_object ) {
             $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_settings_object = $trp->get_component( 'trp_settings' );
+            $this->trp_settings_object = $trp->get_component( 'settings' );
         }
 
         $ls_options = $this->trp_settings_object->get_language_switcher_options();
@@ -101,14 +107,18 @@ class TRP_Language_Switcher{
 
         if ( ! $this->trp_settings_object ) {
             $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_settings_object = $trp->get_component('trp_settings');
+            $this->trp_settings_object = $trp->get_component( 'settings' );
         }
 
         // Current language
         global $TRP_LANGUAGE;
 
         // All the published languages
-        $published_languages = TRP_Utils::get_language_names( $this->settings['publish-languages'] );
+        if ( ! $this->trp_languages ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_languages = $trp->get_component( 'languages' );
+        }
+        $published_languages = $this->trp_languages->get_language_names( $this->settings['publish-languages'] );
 
         // Floater languages display defaults
         $floater_class = 'trp-floater-ls-names';
@@ -153,7 +163,7 @@ class TRP_Language_Switcher{
         }
 
         if( $floater_settings['short_names'] ) {
-            $current_language_label = strtoupper( $this->url_converter->get_url_slug( $current_language['code'] ) );
+            $current_language_label = strtoupper( $this->url_converter->get_url_slug( $current_language['code'], false ) );
         }
 
         ?>
@@ -171,7 +181,7 @@ class TRP_Language_Switcher{
                     }
 
                     if( $floater_settings['short_names'] ) {
-                        $language_label = strtoupper( $this->url_converter->get_url_slug( $code ) );
+                        $language_label = strtoupper( $this->url_converter->get_url_slug( $code, false ) );
                     }
 
                     ?>
@@ -228,8 +238,13 @@ class TRP_Language_Switcher{
         global $TRP_LANGUAGE;
         if ( ! $this->trp_settings_object ) {
             $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_settings_object = $trp->get_component('trp_settings');
+            $this->trp_settings_object = $trp->get_component( 'settings' );
         }
+        if ( ! $this->trp_languages ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_languages = $trp->get_component( 'languages' );
+        }
+
         foreach ( $items as $key => $item ){
             if ( $item->object == 'language-switcher' ){
                 $ls_id = get_post_meta( $item->ID, '_menu_item_object_id', true );
@@ -249,7 +264,7 @@ class TRP_Language_Switcher{
 
                 if ( $language_code == 'current_language' ){
                     $language_code = $TRP_LANGUAGE;
-                    $language_names = TRP_Utils::get_language_names( array( $TRP_LANGUAGE ) );
+                    $language_names = $this->trp_languages->get_language_names( array( $TRP_LANGUAGE ) );
                     $language_name = $language_names[$language_code];
                 }
 
@@ -259,7 +274,7 @@ class TRP_Language_Switcher{
                     $items[$key]->title .= $this->add_flag( $language_code, $language_name );
                 }
                 if ( $menu_settings['short_names'] ) {
-                    $items[$key]->title .= '<span class="trp-ls-language-name">' . strtoupper( $this->url_converter->get_url_slug( $language_code ) ) . '</span>';
+                    $items[$key]->title .= '<span class="trp-ls-language-name">' . strtoupper( $this->url_converter->get_url_slug( $language_code, false ) ) . '</span>';
                 }
                 if ( $menu_settings['full_names'] ) {
                     $items[$key]->title .= '<span class="trp-ls-language-name">' . $language_name . '</span>';

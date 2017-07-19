@@ -96,13 +96,13 @@ class TRP_Url_Converter {
         return $new_url;
     }
 
-    public function get_url_slug( $language_code ){
+    public function get_url_slug( $language_code, $accept_empty_return = true ){
         $url_slug = $language_code;
         if( isset( $this->settings['url-slugs'][$language_code] ) ) {
             $url_slug = $this->settings['url-slugs'][$language_code];
         }
 
-        if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $language_code == $this->settings['default-language'] ) {
+        if ( $accept_empty_return && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $language_code == $this->settings['default-language'] ) {
             $url_slug = '';
         }
 
@@ -195,7 +195,7 @@ class TRP_Url_Converter {
         }
     }
 
-    protected function cur_page_url() {
+    public function cur_page_url() {
         $pageURL = 'http';
 
         if ((isset($_SERVER["HTTPS"])) && ($_SERVER["HTTPS"] == "on"))

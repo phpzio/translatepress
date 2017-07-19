@@ -5,6 +5,7 @@ class TRP_Settings{
     protected $settings;
     protected $trp_query;
     protected $url_converter;
+    protected $trp_languages;
 
     public function __construct( ) {
         $this->set_options();
@@ -43,7 +44,11 @@ class TRP_Settings{
 
     public function settings_page_content(){
 //        error_log( json_encode($this->settings));
-        $languages = TRP_Utils::get_languages();
+        if ( ! $this->trp_languages ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_languages = $trp->get_component( 'languages' );
+        }
+        $languages = $this->trp_languages->get_languages();
         require_once TRP_PLUGIN_DIR . 'includes/admin/partials/main-settings-page.php';
     }
 
@@ -54,7 +59,11 @@ class TRP_Settings{
     public function sanitize_settings( $settings ){
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_query = $trp->get_component('trp_query');
+            $this->trp_query = $trp->get_component( 'query' );;
+        }
+        if ( ! $this->trp_languages ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_languages = $trp->get_component( 'languages' );
         }
         if ( !isset ( $settings['default-language'] ) ) {
             $settings['default-language'] = 'en_US';
@@ -119,6 +128,9 @@ class TRP_Settings{
             $settings['floater-options'] = 'full-names';
         }
 
+        if ( ! isset( $settings['url-slugs'] ) ){
+            $settings['url-slugs'] = $this->trp_languages->get_iso_codes( $settings['translation-languages'] );
+        }
 
         foreach( $settings['translation-languages'] as $language_code ){
             if ( empty ( $settings['url-slugs'][$language_code] ) ){
@@ -144,7 +156,7 @@ class TRP_Settings{
 
         $this->create_menu_entries( $settings['publish-languages'] );
 
-        $settings['google-translate-codes'] = TRP_Utils::get_google_translate_codes( $settings['publish-languages'] );
+        $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );
 
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
@@ -258,7 +270,11 @@ class TRP_Settings{
     }
 
     protected function create_menu_entries( $languages ){
-        $published_languages = TRP_Utils::get_language_names( $languages );
+        if ( ! $this->trp_languages ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->trp_languages = $trp->get_component( 'languages' );
+        }
+        $published_languages = $this->trp_languages->get_language_names( $languages );
         $published_languages['current_language'] = __( 'Current Language', TRP_PLUGIN_SLUG );
         $languages[] = 'current_language';
 

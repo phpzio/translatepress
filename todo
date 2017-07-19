@@ -46,13 +46,19 @@ ____________________________________________
 - fixed bug with external links in editor
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
 - add check when free to not display more than 2 languages
+- edd update class
+- editor pencil icon has white background
+- shortcode should take into account short-name, full-name, flags
+
+- get_slug_url should return slug for url language even for use subdirectory for default language =no. Short language names don't work.
+-i url slug should get default ISO, then CODE if iso already exists
+
 
 
 -------
   WIP
 -------
 
--i edd update class
 
 
 
@@ -62,6 +68,7 @@ ____________________________________________
  BUGS
 -------
 
+-i dom_translate breaks jquery stuff like language switcher and editor pencil icon
 -i la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
 -i 404 when page slug is translated with permalinks set to post name
 
@@ -71,7 +78,7 @@ ____________________________________________
  Big To Do
 -----------
 
--i shortcode should take into account short-name, full-name, flags
+-i edd correct license activating
 - multisite single license setting
 - challenges:
   - paged pages, user listing
@@ -84,9 +91,6 @@ ____________________________________________
  Small To Do
 -------------
 
--i editor pencil icon has white background
--i get_slug_url should return slug for url language even for use subdirectory for default language =no. Short language names don't work.
--i url slug should get default ISO, then CODE if iso already exists
 -i dataunpreviewable pe shortcode atunci cand se incarca jQuery UI.
 - check for //TODO remove this when finished
 - check to see if mutation observer is loaded first most

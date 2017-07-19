@@ -10,7 +10,7 @@
                 }
 
                 if( $shortcode_settings['short_names'] ) {
-                    echo strtoupper( $this->url_converter->get_url_slug( $code ) );
+                    echo strtoupper( $this->url_converter->get_url_slug( $code, false ) );
                 }
 
                 ?>
