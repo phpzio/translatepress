@@ -5,7 +5,7 @@
             <thead>
                 <tr>
                     <th colspan="2"><?php _e( 'Language', TRP_PLUGIN_SLUG ); ?></th>
-                    <th><?php _e( 'URL Slug', TRP_PLUGIN_SLUG ); ?></th>
+                    <th><?php _e( 'Slug', TRP_PLUGIN_SLUG ); ?></th>
                     <th><?php _e( 'Active', TRP_PLUGIN_SLUG ); ?></th>
                 </tr>
             </thead>

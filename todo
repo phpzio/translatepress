@@ -49,9 +49,9 @@ ____________________________________________
 - edd update class
 - editor pencil icon has white background
 - shortcode should take into account short-name, full-name, flags
-
+- check to see if mutation observer is loaded first most
 - get_slug_url should return slug for url language even for use subdirectory for default language =no. Short language names don't work.
--i url slug should get default ISO, then CODE if iso already exists
+- url slug should get default ISO, then CODE if iso already exists
 
 
 
@@ -59,6 +59,7 @@ ____________________________________________
   WIP
 -------
 
+-i dom_translate breaks jquery stuff like language switcher and editor pencil icon
 
 
 
@@ -68,7 +69,6 @@ ____________________________________________
  BUGS
 -------
 
--i dom_translate breaks jquery stuff like language switcher and editor pencil icon
 -i la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
 -i 404 when page slug is translated with permalinks set to post name
 
@@ -92,8 +92,8 @@ ____________________________________________
 -------------
 
 -i dataunpreviewable pe shortcode atunci cand se incarca jQuery UI.
+-i Floater width should be bigger when flags + shortnames (EN_US)
 - check for //TODO remove this when finished
-- check to see if mutation observer is loaded first most
 - conflict of translate dom changes with pb repeater
 - conflict with custom profile menu
 - cookie language
