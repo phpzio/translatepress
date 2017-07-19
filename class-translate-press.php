@@ -46,8 +46,8 @@ class TRP_Translate_Press{
     }
 
     protected function load_dependencies() {
-        require_once TRP_PLUGIN_DIR . 'includes/admin/class-settings.php';
-        require_once TRP_PLUGIN_DIR . 'includes/admin/class-translation-manager.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-settings.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-translation-manager.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-hooks-loader.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-languages.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-render.php';

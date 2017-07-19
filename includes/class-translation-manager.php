@@ -32,7 +32,7 @@ class TRP_Translation_Manager{
             return $page_template;
         }
 
-        return TRP_PLUGIN_DIR . 'includes/admin/partials/translation-manager.php' ;
+        return TRP_PLUGIN_DIR . 'includes/partials/translation-manager.php' ;
     }
 
     public function enqueue_scripts_and_styles(){

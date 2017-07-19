@@ -49,7 +49,7 @@ class TRP_Settings{
             $this->trp_languages = $trp->get_component( 'languages' );
         }
         $languages = $this->trp_languages->get_languages();
-        require_once TRP_PLUGIN_DIR . 'includes/admin/partials/main-settings-page.php';
+        require_once TRP_PLUGIN_DIR . 'includes/partials/main-settings-page.php';
     }
 
     public function register_setting(){
