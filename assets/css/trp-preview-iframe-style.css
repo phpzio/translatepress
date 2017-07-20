@@ -44,7 +44,7 @@ span.trp-edit-translation svg {
 }
 
 [data-trp-unpreviewable="trp-unpreviewable"]{
-    cursor: not-allowed;
+    cursor: not-allowed !important;
 }
 
 .trp-highlight{

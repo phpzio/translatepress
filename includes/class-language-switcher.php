@@ -87,6 +87,8 @@ class TRP_Language_Switcher{
         $ls_options = $this->trp_settings_object->get_language_switcher_options();
         $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
 
+        $ls_script_vars_array = array();
+
         if( $shortcode_settings['flags'] ) {
             wp_enqueue_script( 'jquery-ui-core' );
             wp_enqueue_script( 'jquery-ui-widget' );
@@ -95,7 +97,13 @@ class TRP_Language_Switcher{
             wp_enqueue_script( 'jquery-ui-selectmenu' );
 
             wp_enqueue_style( 'trp-jquery-ui-style', TRP_PLUGIN_URL . 'assets/css/trp-jquery-ui.css');
+
+            $ls_script_vars_array['shortcode_ls_flags'] = true;
+        } else {
+            $ls_script_vars_array['shortcode_ls_flags'] = null;
         }
+
+        wp_localize_script( 'trp-language-switcher', 'trp_language_switcher_data', $ls_script_vars_array );
     }
 
     public function add_floater_language_switcher() {
