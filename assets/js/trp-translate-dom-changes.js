@@ -48,11 +48,11 @@ function TRP_Translator(){
                 for( var i in response[language_to_query] ) {
                     var response_string = response[language_to_query][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
-                        response[language_to_query][i].jquery_object = jQuery( queried_string.node );
+                        response[language_to_query][i].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
-                            queried_string.node.innerText = text_to_set;
+                            queried_string.node.textContent = text_to_set;
                             _this.unpause_observer();
                             translation_found = true;
                             break;
@@ -61,18 +61,15 @@ function TRP_Translator(){
                 }
 
                 if ( ! translation_found ){
-                    //console.log(queried_string.node);
-                    //console.log(initial_value);
-                    queried_string.node.innerText = initial_value;
+                    queried_string.node.textContent = initial_value;
                 }
-
                 if ( typeof parent.trpEditor !== 'undefined' ) {
                     parent.trpEditor.populate_strings( response );
                 }
             }
         }else{
             for ( var j in strings_to_query ) {
-                strings_to_query[j].node.innerText = strings_to_query[j].original;
+                strings_to_query[j].node.textContent = strings_to_query[j].original;
             }
         }
     };
@@ -89,13 +86,20 @@ function TRP_Translator(){
                             continue;
                         }
 
-                        strings.push({node: mutation.addedNodes[i], original: mutation.addedNodes[i].innerText});
-                        //mutation.addedNodes[i] = mutation.addedNodes[i];
-                        //var text = jQuery(mutation.addedNodes[i]).text();
-                        //console.log( jQuery(mutation.addedNodes[i]));
-                       // console.log( strings[(strings.length -1) ].original );
-                        //console.log(mutation.addedNodes[i].innerText);
-                        mutation.addedNodes[i].innerText = '';
+                        var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
+                        var all_strings = all_nodes.contents().filter(function(){
+                            if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
+                                return this
+                            }
+                        });
+                        if ( typeof parent.trpEditor !== 'undefined' ) {
+                            all_strings.wrap('<translate-press></translate-press>');
+                        }
+                        var all_strings_length = all_strings.length;
+                        for (var j = 0; j < all_strings_length; j++ ) {
+                            strings.push({node: all_strings[j], original: all_strings[j].textContent});
+                            all_strings[j].textContent = '';
+                        }
                     }
                 }
             });
@@ -147,7 +151,7 @@ var original_language;
 jQuery( function() {
     trpTranslator = new TRP_Translator();
     //TODO remove this when finished
-    jQuery( ".site-branding" ).append("<div data-no-tran2slation><h1>new word</h1></div>");
+    jQuery( ".site-branding" ).append("<div><h1>123</h1><div>abc<h2>def</h2>new word</div></div>");
     jQuery( ".site-branding" ).append("<h1>new word2</h1>");
 
 });

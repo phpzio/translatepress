@@ -52,15 +52,13 @@ ____________________________________________
 - check to see if mutation observer is loaded first most
 - get_slug_url should return slug for url language even for use subdirectory for default language =no. Short language names don't work.
 - url slug should get default ISO, then CODE if iso already exists
+- dom_translate breaks jquery stuff like language switcher and editor pencil icon
 
 
 
 -------
   WIP
 -------
-
--i dom_translate breaks jquery stuff like language switcher and editor pencil icon
-
 
 
 
@@ -78,6 +76,8 @@ ____________________________________________
  Big To Do
 -----------
 
+-i beautiful Language name
+-native language name option
 -i edd correct license activating
 - multisite single license setting
 - challenges:
