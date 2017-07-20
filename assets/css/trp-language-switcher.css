@@ -2,6 +2,15 @@
     margin: 0 5px;
 }
 
+.trp-language-switcher-select {
+    width: 100%;
+    border: 1px solid #c5c5c5;
+    background: #f6f6f6;
+    font-weight: normal;
+    color: #454545;
+    padding: 5px;
+}
+
 .ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl { border-top-left-radius: 0 !important; }
 .ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr { border-top-right-radius: 0 !important; }
 .ui-corner-all, .ui-corner-bottom, .ui-corner-left, .ui-corner-bl { border-bottom-left-radius: 0 !important; }
@@ -14,7 +23,7 @@
 }
 
 form.trp-language-switcher-form .ui-widget,
-.trp-flag-icon.ui-widget {
+.trp-ls-options-with-flag-icons.ui-widget {
     display: inline-block;
 }
 
@@ -35,10 +44,6 @@ form.trp-language-switcher-form span.ui-selectmenu-text {
     width: 100% !important;
 }
 
-.ui-selectmenu-menu.ui-front {
-    font-size: 12px !important;
-}
-
 .ui-selectmenu-menu.ui-front .trp-ls-li {
     list-style-image: inherit !important;
 }
@@ -56,15 +61,15 @@ form.trp-language-switcher-form .ui-selectmenu-button span.dashicons-arrow-down 
 }
 
 .ui-icon.trp-current-language-icon,
-.trp-flag-icon .ui-icon {
+.trp-ls-options-with-flag-icons .ui-icon {
     background-position: left center;
 }
 
-.ui-selectmenu-menu .trp-flag-icon .trp-ls-li div {
+.ui-selectmenu-menu .trp-ls-options-with-flag-icons .trp-ls-li div {
     width: 100%;
 }
 
-.ui-selectmenu-menu .trp-flag-icon .trp-ls-li span:not( .trp-flag-icon ) {
+.ui-selectmenu-menu .trp-ls-options-with-flag-icons .trp-ls-li span:not( .trp-flag-icon ) {
     width: 70%;
     white-space: nowrap;
     overflow: hidden;

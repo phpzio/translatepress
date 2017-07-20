@@ -7,16 +7,18 @@ function trp_change_language( select ){
 
 jQuery( document ).ready( function( ) {
 
+    // Run this code only if flags are enabled in shortcode language switcher
     if( trp_language_switcher_data.shortcode_ls_flags ) {
         jQuery.widget( 'trp.iconselectmenu', jQuery.ui.selectmenu, {
             _renderItem : function( ul, item ) {
+                // Check if Translation Editor and add data-trp-unpreviewable
                 var data_trp_unpreviewable = '';
                 if( typeof parent.trpEditor != 'undefined' ) {
                     data_trp_unpreviewable = 'data-trp-unpreviewable="trp-unpreviewable"';
                 }
 
                 var li = jQuery( '<li class="trp-ls-li" data-no-translation ' + data_trp_unpreviewable + '>' );
-                var wrapper = jQuery( '<div style="display: inline-block;">' );
+                var wrapper = jQuery( '<div class="trp-ls-div" style="display: inline-block;">' );
 
                 if( item.disabled ) {
                     li.addClass( 'ui-state-disabled' );
@@ -45,34 +47,39 @@ jQuery( document ).ready( function( ) {
                         }
                     },
                     select : function( event, ui ) {
+                        // Add the right flag to the selected option
                         jQuery( this ).closest( 'form.trp-language-switcher-form' ).find( '.trp-current-language-icon' )
                             .css( 'background-image', 'url(' + jQuery( this ).find( 'option[value="' + ui.item.value + '"]' ).data( 'flag-url' ) + ')' );
                     },
                     icons : {
                         button : 'trp-current-language-icon'
                     }
-                } ).iconselectmenu( 'menuWidget' ).addClass( 'ui-menu-icons trp-flag-icon' );
+                } ).iconselectmenu( 'menuWidget' ).addClass( 'ui-menu-icons trp-ls-options-with-flag-icons' );
         } );
 
+        // Add arrow-down icon to the jQuery UI select
         jQuery( '<span>', {
             'class' : 'dashicons dashicons-arrow-down'
         } ).appendTo( jQuery( 'form.trp-language-switcher-form .ui-selectmenu-button' ) );
 
+        // Add the right flag to the selected option
         jQuery( '.ui-state-default .ui-icon.trp-current-language-icon' ).each( function() {
             jQuery( this ).css( 'background-image', 'url(' + jQuery( this ).closest( 'form.trp-language-switcher-form' ).find( 'select.trp-language-switcher-select' ).find( ':selected' ).data( 'flag-url' ) + ')' );
         } );
 
-        jQuery( 'form.trp-language-switcher-form .ui-selectmenu-button' ).click( function() {
+        // Adjust the font size of select options based on the select font size
+        jQuery( 'form.trp-language-switcher-form .ui-selectmenu-button' ).each( function() {
             var id = jQuery( this ).attr( 'id' );
-            var width = jQuery( this ).width();
+            var font_size = jQuery( this ).css( 'font-size' );
 
-            jQuery( '.ui-menu.trp-flag-icon' ).each( function() {
+            jQuery( '.ui-menu.trp-ls-options-with-flag-icons' ).each( function() {
                 if( jQuery( this ).attr( 'aria-labelledby' ) == id ) {
-                    jQuery( this ).width( width );
+                    jQuery( this ).css( 'font-size', font_size );
                 }
             } );
         } );
 
+        // Check if Translation Editor and add data-trp-unpreviewable
         if( typeof parent.trpEditor != 'undefined' ) {
             jQuery( 'form.trp-language-switcher-form .ui-selectmenu-button' ).each( function() {
                 jQuery( this ).attr( 'data-trp-unpreviewable', 'trp-unpreviewable' );
