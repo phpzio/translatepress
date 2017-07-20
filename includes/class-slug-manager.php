@@ -10,6 +10,36 @@ class TRP_Slug_Manager {
     }
 
     /**
+     * When we have the permalink structure set to postname we need an extra filter for pages with translated slugs. In this case
+     * we need to change the slug of the page to the original one before the query in the get_page_by_path function. In this permalink setting
+     * there is no difference between post links and page links so WP uses get_page_by_path in the parse_request function to determine if it is a page or not and if we don't
+     * check the original slug it will think it is a post.
+     * @param $title
+     * @param $raw_title
+     * @param $context
+     * @return string
+     */
+    public function change_query_for_page_by_page_slug( $title, $raw_title, $context ){
+        global $TRP_LANGUAGE;
+        if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ){
+            if( !empty( $context ) && $context == 'query' ) {
+                if (!empty($GLOBALS['wp_rewrite']->permalink_structure) && $GLOBALS['wp_rewrite']->permalink_structure == '/%postname%/') {
+                    global $wp_current_filter;
+                    if (!empty($wp_current_filter[0]) && $wp_current_filter[0] == 'sanitize_title') {
+                        $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+                        /* in version 4.8.0 get_page_by_path is the seventh function in the call-stack for our case. I don't think this will change but if the code stops working this is a good place to look first */
+                        if (!empty($callstack_functions[7]['function']) && $callstack_functions[7]['function'] == 'get_page_by_path') {
+                            $title = $this->get_original_slug($title, 'page');
+                        }
+                    }
+                }
+            }
+        }
+
+        return $title;
+    }
+
+    /**
      * Change the query_vars if we find a translated slug in the database
      */
     public function change_slug_var_in_request( $query_vars ){
@@ -17,7 +47,7 @@ class TRP_Slug_Manager {
         if ( $query_vars == null ){
             return $query_vars;
         }
-        //error_log(json_encode($query_vars));
+
         if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ){
             if (!empty($query_vars['name'])) {
                 if (!empty($query_vars['post_type'])) {
@@ -71,6 +101,10 @@ class TRP_Slug_Manager {
 
     /* change the slug for pages in permalinks */
     public function translate_slugs_for_pages( $uri, $page ){
+        global $TRP_LANGUAGE;
+        if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] == $TRP_LANGUAGE )
+            return $uri;
+
         $old_uri = $uri;
         if( strpos( $uri, '/' ) === false ){//means we do not have any page ancestors in the link so proceed
             $uri = $this->get_translated_slug( $page );
@@ -129,7 +163,7 @@ class TRP_Slug_Manager {
      * @param $slug the translated slug
      * @return string the original slug if we can find it
      */
-    protected function get_original_slug( $slug ){
+    protected function get_original_slug( $slug, $post_type = '' ){
         global $TRP_LANGUAGE, $wpdb;
 
         if( !empty( $TRP_LANGUAGE ) ){
@@ -145,9 +179,18 @@ class TRP_Slug_Manager {
 
             if( !empty( $translated_slug ) ){
                 $post_id = $translated_slug[0]->post_id;
-                $post = get_post( $post_id );
-                if( !empty( $post ) )
-                    $slug = $post->post_name;
+                if( empty( $post_type ) ){
+                    $post = get_post( $post_id );
+                    if( !empty( $post ) )
+                        $slug = $post->post_name;
+                }
+                elseif( $post_type == 'page' ){
+                    if( get_post_type( $post_id ) == 'page' ){
+                        $post = get_post( $post_id );
+                        if( !empty( $post ) )
+                            $slug = $post->post_name;
+                    }
+                }
             }
         }
 
