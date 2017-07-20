@@ -53,6 +53,8 @@ ____________________________________________
 - get_slug_url should return slug for url language even for use subdirectory for default language =no. Short language names don't work.
 - url slug should get default ISO, then CODE if iso already exists
 - dom_translate breaks jquery stuff like language switcher and editor pencil icon
+- dataunpreviewable pe shortcode atunci cand se incarca jQuery UI.
+- 404 when page slug is translated with permalinks set to post name
 
 
 
@@ -68,7 +70,6 @@ ____________________________________________
 -------
 
 -i la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
--i 404 when page slug is translated with permalinks set to post name
 
 
 
@@ -91,7 +92,6 @@ ____________________________________________
  Small To Do
 -------------
 
--i dataunpreviewable pe shortcode atunci cand se incarca jQuery UI.
 -i Floater width should be bigger when flags + shortnames (EN_US)
 - check for //TODO remove this when finished
 - conflict of translate dom changes with pb repeater

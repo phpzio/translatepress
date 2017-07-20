@@ -7,19 +7,30 @@ class TRP_Languages{
 
 	protected $wp_languages_backup = array();
 
+	protected $settings;
+
 	/*
 	 * Possible values  $english_or_native_name: 'english_name', 'native_name'
 	 */
 
-    public function get_languages( $english_or_native_name = 'english_name' ){
+    public function get_languages( $english_or_native_name = null ){
+		if ( !$english_or_native_name ){
+			if ( !$this->settings ){
+				$trp = TRP_Translate_Press::get_trp_instance();
+				$trp_settings = $trp->get_component( 'settings' );
+				$this->settings = $trp_settings->get_settings();
+			}
+			$english_or_native_name = $this->settings['native_or_english_name'];
+		}
+
 		if ( empty( $this->languages[$english_or_native_name] ) ) {
 			$wp_languages = $this->get_wp_languages();
 			foreach ( $wp_languages as $wp_language ) {
-				$this->languages[$english_or_native_name][$wp_language['language']] = $wp_language[$english_or_native_name];
+				$this->languages[$english_or_native_name][$wp_language['language']] = apply_filters( 'trp_language_name', $wp_language[$english_or_native_name], $wp_language['language'], $english_or_native_name );
 			}
 		}
 
-        return apply_filters( 'trp_languages', $this->languages[$english_or_native_name] );
+        return apply_filters( 'trp_languages', $this->languages[$english_or_native_name], $english_or_native_name );
     }
 
 	public function get_wp_languages(){
@@ -30,7 +41,7 @@ class TRP_Languages{
 				$this->wp_languages = $this->get_wp_languages_backup();
 			}
 		}
-		$default = array( 'en_US' => array( 'language'	=> 'en_US', 'english_name'=> 'English (United States)', 'native_name' => 'English (United States)', 'iso' => array( 'en' ) ) );
+		$default = array( 'en_US' => array( 'language'	=> 'en_US', 'english_name'=> 'English (United States)', 'native_name' => 'English', 'iso' => array( 'en' ) ) );
 		return $default + $this->wp_languages;
 	}
 
@@ -61,7 +72,7 @@ class TRP_Languages{
 		return array_keys ( $this->get_languages() );
 	}
 
-	public function get_language_names( $language_codes, $english_or_native_name = 'english_name' ){
+	public function get_language_names( $language_codes, $english_or_native_name = null ){
 		$return = array();
         $languages = $this->get_languages($english_or_native_name);
 		foreach ( $language_codes as $language_code ){
@@ -69,6 +80,23 @@ class TRP_Languages{
 		}
 
 		return $return;
+	}
+
+	public function beautify_language_name( $name, $code, $english_or_native = 'english_name' ){
+		if ( $english_or_native == 'english_name' ) {
+			$beautiful_language_names = array(
+				'en_US' => 'English',
+				'es_ES' => 'Spanish',
+				'fr_FR' => 'French',
+				'nb_NO' => 'Norwegian',
+				'zh_CN' => 'Chinese',
+			);
+			if (isset ($beautiful_language_names[$code])) {
+				return $beautiful_language_names[$code];
+			}
+		}
+		return $name;
+
 	}
 
 	public function get_wp_languages_backup(){

@@ -127,6 +127,8 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'widget_text', null, 'do_shortcode', 11 );
         $this->loader->add_filter( 'widget_text', null, 'shortcode_unautop', 11 );
 
+        $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 3 );
+
 
     }
 

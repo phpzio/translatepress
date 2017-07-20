@@ -33,6 +33,19 @@
             <?php $this->languages_selector( $languages ); ?>
 
             <tr>
+                <th scope="row"><?php _e( 'Native language name', TRP_PLUGIN_SLUG ); ?> </th>
+                <td>
+                    <select id="trp-g-translate" name="trp_settings[native_or_english_name]" class="trp-select">
+                        <option value="english_name" <?php selected( $this->settings['native_or_english_name'], 'english_name' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="native_name" <?php selected( $this->settings['native_or_english_name'], 'native_name' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                    </select>
+                    <p class="description">
+                        <?php _e( 'Select Yes if you want languages to display in their native names. Otherwise, they will be displayed in English.', TRP_PLUGIN_SLUG ); ?>
+                    </p>
+                </td>
+            </tr>
+
+            <tr>
                 <th scope="row"><?php _e( 'Use subdirectory for default language', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[add-subdirectory-to-default-language]" class="trp-select">

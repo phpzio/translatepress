@@ -263,18 +263,18 @@ class TRP_Language_Switcher{
                 $ls_options = $this->trp_settings_object->get_language_switcher_options();
                 $menu_settings = $ls_options[$this->settings['menu-options']];
                 $language_code = $ls_post->post_content;
-                $language_name = $ls_post->post_title;
 
                 if ( $language_code == $TRP_LANGUAGE ){
                     unset($items[$key]);
                     continue;
                 }
 
-                if ( $language_code == 'current_language' ){
+                if ( $language_code == 'current_language' ) {
                     $language_code = $TRP_LANGUAGE;
-                    $language_names = $this->trp_languages->get_language_names( array( $TRP_LANGUAGE ) );
-                    $language_name = $language_names[$language_code];
                 }
+                $language_names = $this->trp_languages->get_language_names( array( $language_code ) );
+                $language_name = $language_names[$language_code];
+
 
                 $items[$key]->url = $this->url_converter->get_url_for_language( $language_code );
                 $items[$key]->title = '<span data-no-translation>';

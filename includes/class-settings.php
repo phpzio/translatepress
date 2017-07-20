@@ -48,7 +48,7 @@ class TRP_Settings{
             $trp = TRP_Translate_Press::get_trp_instance();
             $this->trp_languages = $trp->get_component( 'languages' );
         }
-        $languages = $this->trp_languages->get_languages();
+        $languages = $this->trp_languages->get_languages( 'english_name' );
         require_once TRP_PLUGIN_DIR . 'includes/partials/main-settings-page.php';
     }
 
@@ -97,8 +97,15 @@ class TRP_Settings{
         else
             $settings['g-translate'] = 'no';
 
+
+
         if( !empty( $settings['g-translate-key'] ) )
             $settings['g-translate-key'] = sanitize_text_field( $settings['g-translate-key']  );
+
+        if( !empty( $settings['native_or_english_name'] ) )
+            $settings['native_or_english_name'] = sanitize_text_field( $settings['native_or_english_name']  );
+        else
+            $settings['native_or_english_name'] = 'english_name';
 
         if( !empty( $settings['add-subdirectory-to-default-language'] ) )
             $settings['add-subdirectory-to-default-language'] = sanitize_text_field( $settings['add-subdirectory-to-default-language']  );
@@ -177,6 +184,7 @@ class TRP_Settings{
             'default-language'                      => $default,
             'translation-languages'                 => array( $default ),
             'publish-languages'                     => array( $default ),
+            'native_or_english_name'                => 'native_name',
             'add-subdirectory-to-default-language'  => 'no',
             'force-language-to-custom-links'        => 'no',
             'g-translate'                           => 'no',
