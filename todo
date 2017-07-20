@@ -55,6 +55,9 @@ ____________________________________________
 - dom_translate breaks jquery stuff like language switcher and editor pencil icon
 - dataunpreviewable pe shortcode atunci cand se incarca jQuery UI.
 - 404 when page slug is translated with permalinks set to post name
+- conflict of translate dom changes with pb repeater
+-i beautiful Language name
+- native language name option
 
 
 
@@ -69,7 +72,6 @@ ____________________________________________
  BUGS
 -------
 
--i la cristi pe instanta nu se inlocuiesc string-urile din php, decat din JS
 
 
 
@@ -77,12 +79,9 @@ ____________________________________________
  Big To Do
 -----------
 
--i beautiful Language name
--native language name option
 -i edd correct license activating
 - multisite single license setting
 - challenges:
-  - paged pages, user listing
   - support for translating emails
   - caching plugins
 
@@ -92,17 +91,15 @@ ____________________________________________
  Small To Do
 -------------
 
--i Floater width should be bigger when flags + shortnames (EN_US)
-- check for //TODO remove this when finished
-- conflict of translate dom changes with pb repeater
-- conflict with custom profile menu
+-c Floater width should be bigger when flags + shortnames (EN_US)
+-c Editor icon goes outside iframe
+- conflict with custom profile menus
 - cookie language
 - <body class = language>
 - seo <html language parameter
 - don't allow exit of the editor with unsaved changes
 - get browser language
 - saved! appears when navigating editor
-- responsive settings page on small width //
 - translate dynamic added strings //
 - add number of strings in category Text(6) Meta (3) //
 - make sure page title is translated auto, and manually //

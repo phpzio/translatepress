@@ -201,8 +201,7 @@ class TRP_Slug_Manager {
      * Function on ajax hook to save the slug translation. 
      */
     public function save_translated_slug(){
-        // todo "current user can" check
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_slug_translation' && !empty( $_POST['strings'] ) ) {
                 $slugs = json_decode(stripslashes($_POST['strings']));
                 $update_slugs = array();

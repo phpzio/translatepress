@@ -459,6 +459,11 @@ class TRP_Translation_Render{
     }
 
     public function enqueue_dynamic_translation(){
+        $enable_dynamic_translation = apply_filters( 'trp_enable_dynamic_translation', true );
+        if ( ! $enable_dynamic_translation ){
+            return;
+        }
+
         global $TRP_LANGUAGE;
 
         if ( $TRP_LANGUAGE != $this->settings['default-language'] || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ) {

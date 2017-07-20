@@ -16,7 +16,6 @@ class TRP_Query{
         $this->settings =$settings;
     }
 
-    //todo maybe move to UTILS to avoid duplicate
     protected function full_trim( $word ) {
         return trim( addslashes($word)," \t\n\r\0\x0B\xA0�" );
     }
@@ -46,7 +45,6 @@ class TRP_Query{
             // table not in database. Create new table
             $charset_collate = $this->db->get_charset_collate();
 
-            // todo different charset collation for each language?
             $sql = "CREATE TABLE `" . $table_name . "`(
                                     id bigint(20) AUTO_INCREMENT NOT NULL PRIMARY KEY,
                                     original  longtext NOT NULL,

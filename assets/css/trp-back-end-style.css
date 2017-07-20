@@ -24,15 +24,6 @@ span.select2-container{
     margin-left: 5px;
 }
 
-/*
-//todo  make it responsive la width mic
-@media screen and (max-width: 400px){
-    span.select2-container{
-        clear: none;
-        width: 100% !important;
-    }
-}
-*/
 
 /* PRO */
 /*

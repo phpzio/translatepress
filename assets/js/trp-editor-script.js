@@ -475,13 +475,10 @@ function TRP_String( language, array_index ){
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click', _this.edit_string );
 
-        //todo maybe css not js
         jQuery( this ).addClass( 'trp-highlight' );
-        //jQuery(this).css('box-shadow', 'rgb(119, 172, 255) 0px 0px 5px 0px inset');
     };
 
     this.unhighlight = function (){
-        //jquery_object.css('box-shadow', 'none');
         jQuery( this ).removeClass( 'trp-highlight' );
     };
 

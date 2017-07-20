@@ -36,7 +36,6 @@ class TRP_Language_Switcher{
     }
 
     public function get_current_language(){
-        //todo add all possible ways of determining language: cookies, global define etc.
         if ( isset( $_REQUEST['lang'] ) ){
             $language_code = esc_attr( $_REQUEST['lang'] );
             if ( in_array( $language_code, $this->settings['translation-languages'] ) ) {
@@ -209,7 +208,6 @@ class TRP_Language_Switcher{
         // Path to folder with flags images
         $flags_path = TRP_PLUGIN_URL .'assets/images/flags/';
         $flags_path = apply_filters( 'trp_flags_path', $flags_path, $language_code );
-        // TODO: Check language codes to match flags file name
 
         // File name for specific flag
         $flag_file_name = $language_code .'.png';
