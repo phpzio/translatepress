@@ -3,8 +3,14 @@
 <html <?php language_attributes(); ?> class="no-js">
 <head>
     <?php
-    global $TRP_LANGUAGE, $trp_settings;
-    $available_languages = TRP_Utils::get_language_names( $trp_settings['translation-languages'] );
+    global $TRP_LANGUAGE;
+    $trp = TRP_Translate_Press::get_trp_instance();
+    $trp_languages = $trp->get_component( 'languages' );
+    $settings_component = $trp->get_component( 'settings' );
+    $url_converter = $trp->get_component('url_converter');
+    $trp_settings = $settings_component->get_settings();
+
+    $available_languages = $trp_languages->get_language_names( $trp_settings['translation-languages'] );
 
     // move the current language to the beginning of the array
     $translation_languages = $trp_settings['translation-languages'];
@@ -18,6 +24,7 @@
     $translation_languages = array_values( $translation_languages );
 
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
+    $current_url = $url_converter->cur_page_url();
 
     do_action( 'trp_head' );
     ?>
@@ -91,7 +98,7 @@
             </div>
         </div>
         <div id="trp-preview">
-                <iframe id="trp-preview-iframe" onload="trpEditor.initialize();" src="<?php echo add_query_arg( 'trp-edit-translation', 'preview', TRP_Utils::get_current_page_url() );?>" width="100%" height="100%"></iframe>
+                <iframe id="trp-preview-iframe" onload="trpEditor.initialize();" src="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>" width="100%" height="100%"></iframe>
         </div>
     </div>
 </body>

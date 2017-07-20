@@ -72,7 +72,7 @@ class TRP_Slug_Manager {
                 $query_vars['pagename'] = implode( '/', $translated_pagenames );
             }
         }
-        //error_log(json_encode($query_vars));
+        
         return $query_vars;
     }
 

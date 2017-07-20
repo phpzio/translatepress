@@ -61,6 +61,8 @@ function TRP_Translator(){
                 }
 
                 if ( ! translation_found ){
+                    //console.log(queried_string.node);
+                    //console.log(initial_value);
                     queried_string.node.innerText = initial_value;
                 }
 
@@ -81,9 +83,20 @@ function TRP_Translator(){
             mutations.forEach( function (mutation) {
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     if ( mutation.addedNodes[i].innerText && mutation.addedNodes[i].innerText.trim() != '' ) {
+                        var node = jQuery( mutation.addedNodes[i] );
+                        var attribute = node.attr( 'data-no-translation' );
+                        if ( (typeof attribute !== typeof undefined && attribute !== false) || node.parents( '[data-no-translation]').length > 0 ){
+                            continue;
+                        }
+
                         strings.push({node: mutation.addedNodes[i], original: mutation.addedNodes[i].innerText});
+                        //mutation.addedNodes[i] = mutation.addedNodes[i];
+                        //var text = jQuery(mutation.addedNodes[i]).text();
+                        //console.log( jQuery(mutation.addedNodes[i]));
+                       // console.log( strings[(strings.length -1) ].original );
+                        //console.log(mutation.addedNodes[i].innerText);
+                        mutation.addedNodes[i].innerText = '';
                     }
-                    mutation.addedNodes[i].innerText = '';
                 }
             });
             if ( strings.length > 0 ) {
@@ -134,7 +147,8 @@ var original_language;
 jQuery( function() {
     trpTranslator = new TRP_Translator();
     //TODO remove this when finished
-    jQuery( ".site-branding" ).append("<h1>new word</h1>");
+    jQuery( ".site-branding" ).append("<div data-no-tran2slation><h1>new word</h1></div>");
+    jQuery( ".site-branding" ).append("<h1>new word2</h1>");
 
 });
 

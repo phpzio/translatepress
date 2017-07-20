@@ -44,16 +44,22 @@ ____________________________________________
 - make sure the language exists in the settings when get_translations //
 - fixed bug with admin bar screwing up the editor
 - fixed bug with external links in editor
-
 -i highlighting should be done with css, and with a nice colour (editor js line 473)
 - add check when free to not display more than 2 languages
+- edd update class
+- editor pencil icon has white background
+- shortcode should take into account short-name, full-name, flags
+- check to see if mutation observer is loaded first most
+- get_slug_url should return slug for url language even for use subdirectory for default language =no. Short language names don't work.
+- url slug should get default ISO, then CODE if iso already exists
+
 
 
 -------
   WIP
 -------
 
--i edd update class
+-i dom_translate breaks jquery stuff like language switcher and editor pencil icon
 
 
 
@@ -72,7 +78,7 @@ ____________________________________________
  Big To Do
 -----------
 
--i shortcode should take into account short-name, full-name, flags
+-i edd correct license activating
 - multisite single license setting
 - challenges:
   - paged pages, user listing
@@ -85,9 +91,9 @@ ____________________________________________
  Small To Do
 -------------
 
--i editor pencil icon has white background
+-i dataunpreviewable pe shortcode atunci cand se incarca jQuery UI.
+-i Floater width should be bigger when flags + shortnames (EN_US)
 - check for //TODO remove this when finished
-- check to see if mutation observer is loaded first most
 - conflict of translate dom changes with pb repeater
 - conflict with custom profile menu
 - cookie language
