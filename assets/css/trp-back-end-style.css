@@ -1,0 +1,92 @@
+/* Free */
+
+table#trp-options td{
+    padding-left: 28px;
+}
+
+span.select2-container{
+    width: 240px !important;
+}
+
+#trp-options .trp-text-input{
+    width:40%;
+}
+
+#trp-options .trp-select{
+    min-width:240px;
+}
+
+#trp-published-language{
+    margin-left: 20px;
+}
+
+#trp-active-checkbox{
+    margin-left: 5px;
+}
+
+
+/* PRO */
+/*
+ *  Language Selector
+ */
+#trp-languages-table{
+    width: 1px;
+    margin-left: -42px
+}
+table#trp-languages-table td{
+    padding: 5px;
+}
+
+table#trp-languages-table th{
+    text-align: center;
+}
+
+.trp-language{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+input.trp-translation-published{
+    margin-top: 1px;
+}
+
+.trp-language-slug{
+    width: 80px;
+}
+
+.trp-sortable-handle{
+    background: url('../images/sorting-icon-dots.png') no-repeat center center;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 7px;
+    cursor: move;
+    margin-top: -1px;
+}
+
+#trp-new-language{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.trp-remove-language{
+    color: #a00;
+    cursor: pointer;
+}
+
+.trp-remove-language:hover{
+    color: red;
+}
+
+#trp-add-language{
+    margin-left: 10px;
+}
+
+.trp-ls-type{
+    margin-bottom: 20px;
+}
+
+.trp-ls-select-option{
+    margin-top: 10px;
+}
