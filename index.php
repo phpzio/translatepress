@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: TranslatePress
-Plugin URI: https://www.cozmoslabs.com/
-Description: A simple WordPress translation plugin
-Version: 0.0.1
-Author: Cozmoslabs, Razvan Mocanu
-Author URI: https://www.cozmoslabs.com/
+Plugin URI: https://translatepress.com/
+Description: Automatic translation plugin with front-end editing.
+Version: 0.9.9
+Author: Cozmoslabs, Razvan Mocanu, Madalin Ungureanu, Christophor Hurduban
+Author URI: https://translatepress.com/
 License: GPL2
 
 == Copyright ==
