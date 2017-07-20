@@ -115,6 +115,7 @@ class TRP_Translate_Press{
 
         /* manage slug translation hooks */
         $this->loader->add_filter( 'request', $this->slug_manager, 'change_slug_var_in_request' );
+        $this->loader->add_filter( 'sanitize_title', $this->slug_manager, 'change_query_for_page_by_page_slug', 10, 3 );
         $this->loader->add_filter( 'post_link', $this->slug_manager, 'translate_slug_for_posts', 10, 3 );
         $this->loader->add_filter( 'get_page_uri', $this->slug_manager, 'translate_slugs_for_pages', 10, 2 );
         $this->loader->add_action( 'wp_ajax_trp_save_slug_translation', $this->slug_manager, 'save_translated_slug' );
