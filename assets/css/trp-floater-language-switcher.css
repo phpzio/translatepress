@@ -1,6 +1,6 @@
 #trp-floater-ls {
     position: fixed;
-    z-index: 99;
+    z-index: 9999999;
     bottom: 0;
     left: 80%;
     background-color: #212121;
