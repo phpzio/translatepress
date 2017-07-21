@@ -40,19 +40,27 @@ form.trp-language-switcher-form span.ui-selectmenu-text {
     position: inherit;
 }
 
-.trp-language-switcher form.trp-language-switcher-form .ui-selectmenu-button.ui-widget {
+.trp-language-switcher form.trp-language-switcher-form:not( .trp-ls-shortcode-only-flags ) .ui-selectmenu-button.ui-widget {
     width: 100% !important;
+}
+
+.trp-language-switcher form.trp-language-switcher-form.trp-ls-shortcode-only-flags .ui-selectmenu-button.ui-widget {
+    width: auto !important;
 }
 
 .ui-selectmenu-menu.ui-front .trp-ls-li {
     list-style-image: inherit !important;
 }
 
-.ui-selectmenu-button.ui-widget span,
+form.trp-language-switcher-form .ui-selectmenu-button.ui-widget span,
 .trp-ls-li.ui-menu-item span {
     display: inline-block;
     margin: 3px 2px 3px 5px;
     vertical-align: middle;
+}
+
+form.trp-language-switcher-form .ui-selectmenu-button.ui-widget span.trp-current-language-icon {
+    margin-top: 4px;
 }
 
 form.trp-language-switcher-form .ui-selectmenu-button span.dashicons-arrow-down {
