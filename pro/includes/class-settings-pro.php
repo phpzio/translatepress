@@ -24,24 +24,20 @@ class TRP_Settings_Pro extends TRP_Settings{
     public function add_navigation_tabs(){
         $tabs = apply_filters( 'trp_settings_tabs', array(
             array(
-                'name'      => 'General',
+                'name'      => __( 'General', TRP_PLUGIN_SLUG ),
                 'url'       => admin_url( 'options-general.php?page=translate-press' ),
-                'nav_tab'   => 'trp-settings-general'
+                'page'      => 'translate-press'
             ),
             array(
-                'name'  => 'License',
+                'name'  => __( 'License', TRP_PLUGIN_SLUG ),
                 'url'   => admin_url( 'admin.php?page=trp_license_key' ),
-                'nav_tab'   => 'trp-settings-license'
+                'page'  => 'trp_license_key'
             )
         ));
 
-        $active_tab = $tabs[0]['nav_tab'];
-        if ( isset( $_GET['nav_tab'] ) ){
-            foreach ( $tabs as $tab ){
-                if ( $_GET['nav_tab'] == $tab['nav_tab'] ) {
-                    $active_tab = $tab['nav_tab'];
-                }
-            }
+        $active_tab = 'translate-press';
+        if ( isset( $_GET['page'] ) ){
+            $active_tab = esc_attr( $_GET['page'] );
         }
 
         require ( TRP_PLUGIN_DIR . 'pro/includes/partials/settings-navigation-tabs.php');

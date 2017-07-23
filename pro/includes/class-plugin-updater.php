@@ -12,7 +12,7 @@ class TRP_Plugin_Updater{
             include TRP_PLUGIN_DIR . 'pro/includes/class-edd-sl-plugin-updater.php';
         }
         // retrieve our license key from the DB
-        $license_key = trim( get_option( 'trp_license_key' ) );
+        $license_key = trim( $this->get_option( 'trp_license_key' ) );
         // setup the updater
         $edd_updater = new TRP_EDD_SL_Plugin_Updater( TRP_STORE_URL, __FILE__, array(
                 'version' 	=> '1.0', 		// current version number
@@ -23,6 +23,19 @@ class TRP_Plugin_Updater{
             )
         );
     }
+
+    protected function get_option( $license_key_option ){
+        return get_option( $license_key_option );
+    }
+
+    protected function delete_option( $license_key_option ){
+        delete_option( $license_key_option );
+    }
+
+    protected function update_option( $license_key_option, $value ){
+        update_option( $license_key_option, $value );
+    }
+
     public function license_menu() {
         add_submenu_page(
             'TRPHidden',
@@ -42,8 +55,8 @@ class TRP_Plugin_Updater{
         ob_start();
         require TRP_PLUGIN_DIR . 'pro/includes/partials/license-settings-page.php';
         echo ob_get_clean();
-
     }
+
     public function register_option() {
         // creates our settings in the options table
         register_setting('trp_license_key', 'trp_license_key', array( $this, 'edd_sanitize_license' ) );
@@ -51,9 +64,9 @@ class TRP_Plugin_Updater{
 
 
     public function edd_sanitize_license( $new ) {
-        $old = get_option( 'trp_license_key' );
+        $old = $this->get_option( 'trp_license_key' );
         if( $old && $old != $new ) {
-            delete_option( 'trp_license_status' ); // new license has been entered, so must reactivate
+            $this->delete_option( 'trp_license_status' ); // new license has been entered, so must reactivate
         }
         return $new;
     }
@@ -91,7 +104,7 @@ class TRP_Plugin_Updater{
                 return; // get out if we didn't click the Activate button
 
             // retrieve the license from the database
-            $license = trim( get_option( 'trp_license_key' ) );
+            $license = trim( $this->get_option( 'trp_license_key' ) );
 
 
             // data to send in our API request
@@ -174,7 +187,7 @@ class TRP_Plugin_Updater{
 
             // $license_data->license will be either "valid" or "invalid"
 
-            update_option( 'trp_license_status', $license_data->license );
+            $this->update_option( 'trp_license_status', $license_data->license );
             wp_redirect( admin_url( 'admin.php?page=' . 'trp_license_key' ) );
             exit();
         }

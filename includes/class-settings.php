@@ -184,7 +184,7 @@ class TRP_Settings{
             'default-language'                      => $default,
             'translation-languages'                 => array( $default ),
             'publish-languages'                     => array( $default ),
-            'native_or_english_name'                => 'native_name',
+            'native_or_english_name'                => 'english_name',
             'add-subdirectory-to-default-language'  => 'no',
             'force-language-to-custom-links'        => 'no',
             'g-translate'                           => 'no',
@@ -192,7 +192,7 @@ class TRP_Settings{
             'shortcode-options'                     => 'full-names',
             'menu-options'                          => 'full-names',
             'floater-options'                       => 'full-names',
-            'url-slugs'                             => array( 'en_US' => 'en_us' ),
+            'url-slugs'                             => array( 'en_US' => 'en' ),
         );
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
@@ -296,6 +296,9 @@ class TRP_Settings{
                     'post_type' => 'language-switcher'
                 );
                 wp_insert_post($ls);
+            }else{
+                $existing_ls->post_title = $language_name;
+                $existing_ls->post_content = $language_code;
             }
         }
 
