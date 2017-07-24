@@ -7,6 +7,7 @@ class TRP_Settings{
     protected $url_converter;
     protected $trp_languages;
 
+
     public function __construct( ) {
         $this->set_options();
     }
@@ -43,7 +44,6 @@ class TRP_Settings{
     }
 
     public function settings_page_content(){
-//        error_log( json_encode($this->settings));
         if ( ! $this->trp_languages ){
             $trp = TRP_Translate_Press::get_trp_instance();
             $this->trp_languages = $trp->get_component( 'languages' );

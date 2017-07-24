@@ -1,6 +1,9 @@
 
 function TRP_Iframe_Preview(){
+
     var _this = this;
+
+
     this.initialize = function() {
         jQuery('a').each(function () { 
             if (this.action != '' && this.href.indexOf('void(0)') === -1 ) {
@@ -18,7 +21,6 @@ function TRP_Iframe_Preview(){
 
         jQuery('form').each(function () {
             jQuery( this ).append( jQuery('<input></input>').attr({ type: 'hidden', value: 'preview', name: 'trp-edit-translation' }) );
-            //this.action = update_query_string('trp-edit-translation', 'preview', this.action);
         });
 
     };
@@ -64,7 +66,7 @@ function TRP_Iframe_Preview(){
 }
 
 var trp_preview_iframe;
-jQuery( function(){
 
+jQuery( function(){
     trp_preview_iframe = new TRP_Iframe_Preview();
 });

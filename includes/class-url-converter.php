@@ -5,11 +5,10 @@ class TRP_Url_Converter {
     protected $absolute_home;
     protected $settings;
 
-    // wpml-url-converter.class
+
     public function __construct( $settings ){
         $this->settings = $settings;
     }
-
 
     public function redirect_to_default_language() {
         global $TRP_LANGUAGE;
@@ -25,11 +24,6 @@ class TRP_Url_Converter {
     }
 
     public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
-/*        if ( ! empty( $path ) && ( strpos( 'wp-admin', $path ) !== false || strpos( 'wp-login.php', $path ) !== false ) ){
-            error_log( $path );
-            return $url;
-        }*/
-
         global $TRP_LANGUAGE;
         if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $TRP_LANGUAGE == $this->settings['default-language'] ) {
             return $url;
@@ -45,7 +39,6 @@ class TRP_Url_Converter {
         if ( ! empty( $path ) ){
             $new_url .= '/' . ltrim( $path, '/' );
         }
-        //var_dump( $new_url );
 
         return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
     }
@@ -109,12 +102,10 @@ class TRP_Url_Converter {
         return $url_slug;
     }
 
-    /**
-     * Returns the unfiltered home_url by directly retrieving it from wp_options.
-     */
     public function get_abs_home() {
         global $wpdb;
 
+        // returns the unfiltered home_url by directly retrieving it from wp_options.
         $this->absolute_home = $this->absolute_home
             ? $this->absolute_home
             : ( ! is_multisite() && defined( 'WP_HOME' )
@@ -135,19 +126,7 @@ class TRP_Url_Converter {
         return $this->absolute_home;
     }
 
-
-
-    /**
-     * @param string $url url either with or without schema
-     *                    Removes the subdirectory in which WordPress is installed from a url.
-     *                    If WordPress is not installed in a subdirectory, then the input is returned unaltered.
-     *
-     * @return string the url input without the blog's subdirectory. Potentially existing schemata on the input are kept intact.
-     */
     protected function strip_subdir_from_url( $url ) {
-        /** @var WPML_URL_Converter $wpml_url_converter */
-
-
         $subdir       = parse_url( $this->get_abs_home(), PHP_URL_PATH );
         $subdir_slugs = array_values( array_filter( explode( '/', $subdir ) ) );
 
@@ -160,8 +139,6 @@ class TRP_Url_Converter {
 
         return untrailingslashit( $url );
     }
-
-
 
     public function get_lang_from_url_string( $url = null ) {
         if ( ! $url ){
@@ -217,6 +194,5 @@ class TRP_Url_Converter {
 
         return $pageURL;
     }
-
 
 }

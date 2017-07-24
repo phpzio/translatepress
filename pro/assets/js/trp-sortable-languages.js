@@ -107,10 +107,6 @@ function TRP_Sortable_Languages() {
         jQuery( '#trp-default-language' ).on( 'change', _this.update_default_language );
         jQuery( "form[action='options.php']").on ( 'submit', _this.check_unique_url_slugs );
         jQuery( '#trp-languages-table .trp-translation-language' ).on( 'change', _this.update_url_slug_and_status )
-
-
-
-        //todo remove already selected languages from selects
     };
 
     this.initialize();

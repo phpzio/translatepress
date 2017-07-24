@@ -1,7 +1,5 @@
 <?php
 
-
-
 class TRP_Ajax{
 
     protected $connection;
@@ -16,10 +14,10 @@ class TRP_Ajax{
         if ( $this->connect_to_db() ){
 
             $this->output_translations( $this->sanitize_strings( $_POST['strings'] ), filter_var( $_POST['language'], FILTER_SANITIZE_STRING ), filter_var( $_POST['original_language'], FILTER_SANITIZE_STRING ) );
-            //error_log( 'Successful connection to DB' );
+            //Successful connection to DB
             mysqli_close($this->connection);
         }else{
-            //error_log( 'Error connecting to DB' );
+            //Error connecting to DB
             $this->return_error();
 
         }
@@ -100,7 +98,7 @@ class TRP_Ajax{
         $result = mysqli_query( $this->connection, $sql );
         if ( mysqli_num_rows( $result ) > 0 ) {
             $result_object = mysqli_fetch_assoc($result);
-            $this->table_prefix = $result_object['prefix'];
+            return $result_object['prefix'];
         } else {
             return false;
         }

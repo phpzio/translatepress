@@ -13,6 +13,7 @@ class TRP_Translate_Press{
     protected $languages;
     public static $translate_press = null;
 
+
     public static function get_trp_instance(){
         if ( self::$translate_press == null ){
             if ( file_exists ( plugin_dir_path(__FILE__) . 'pro/class-translate-press-pro.php' ) ) {

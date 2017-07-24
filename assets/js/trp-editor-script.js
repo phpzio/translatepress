@@ -20,6 +20,7 @@ function TRP_Editor(){
     var jquery_string_selector = jQuery( '#trp-string-categories' );
     var change_tracker;
 
+
     this.change_language = function( select ){
         var language = select.value;
         var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language + ']').first().attr('href');
@@ -28,7 +29,6 @@ function TRP_Editor(){
             select.form.submit();
         }
     };
-
 
     this.initialize = function(){
         _this.saving_translation_ui();
@@ -68,13 +68,6 @@ function TRP_Editor(){
         _this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
         strings = [];
         dictionaries = [];
-
-        /*
-         var all_strings = this.preview_iframe.find( 'body *' ).contents().filter(function(){
-         if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-         return this
-         }
-         }).wrap("<translate-press></translate-press>");*/
 
         var all_strings = _this.preview_iframe.contents().find( '[data-trp-translate-id]' );
         // add iframe title
@@ -311,16 +304,6 @@ function TRP_Editor(){
         return option;
     }
 
-    function get_query_string(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return null;
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
-
     add_event_handlers();
 }
 
@@ -331,6 +314,7 @@ function TRP_Dictionary( language_code ){
     this.strings = []; // TRP_String
     this.language = language_code;
     var current_index = 0;
+
 
     this.set_current_index = function ( index ){
         current_index = index;
@@ -407,7 +391,6 @@ function TRP_String( language, array_index ){
     this.original = null;
     this.translated = null;
     this.status = null;
-    //todo translate this
     this.node_type = 'Dynamic Added Strings';
     this.node_description = '';
     var jquery_object = null;
@@ -488,7 +471,6 @@ function TRP_String( language, array_index ){
     };
 
     this.set_raw_string = function( raw_string ){
-        //jquery_object = jQuery( raw_string ).parent();
         jquery_object = jQuery( raw_string );
         var translation_id_attribute = jquery_object.attr( TRP_TRANSLATION_ID );
         if ( translation_id_attribute ){
@@ -504,13 +486,16 @@ function TRP_String( language, array_index ){
             _this.original = jquery_object.text();
         }
     };
+
 }
 
 function TRP_Lister( current_dictionary ) {
+
     var _this = this;
     var jquery_string_selector = jQuery( '#trp-string-categories' );
     var dictionary = current_dictionary;
     var category_array;
+
 
     this.select_string = function(){
         dictionary.edit_string_index( jquery_string_selector.val() );
@@ -522,7 +507,6 @@ function TRP_Lister( current_dictionary ) {
         jquery_string_selector.find( 'optgroup').remove();
         jquery_string_selector.append(jQuery('<option></option>'));
         for ( var category in category_array ){
-            // todo add number of strings in category Text(6) Meta (3)
             jquery_string_selector.append( jQuery( '<optgroup></optgroup>' ).attr( 'label', _this.format_category_name( category ) ) );
             for ( var i in category_array[category] ) {
                 var original = category_array[category][i].original;
@@ -559,24 +543,17 @@ function TRP_Lister( current_dictionary ) {
         jquery_string_selector.off( 'change', _this.select_string );
         jquery_string_selector.val( id ).change();
         jquery_string_selector.on( 'change', _this.select_string );
-/*        for( var category in category_array ){
-            for( var s in category_array[category] ){
-                if ( category_array[category][s].id == id ){
-                    jquery_string_selector.val( s).change();
-                    break;
-                }
-            }
-        }*/
-
     };
 
 }
 
 function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
+
     var _this = this;
     var changes_saved = true;
     var original_textarea = _original_textarea;
     var translated_textareas = _translated_textareas;
+
 
     this.check_unsaved_changes = function(){
 
@@ -600,20 +577,6 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
 
     this.show_unsaved_changes = function( key ){
         translated_textareas[key].parent().addClass('trp-unsaved-changes');
-
-        /*var dictionaries = trpEditor.get_dictionaries();
-        var original = original_textarea.val();
-        if ( original != "" ) {
-            var textarea_parent = translated_textareas[key].parent();
-            if ( ! textarea_parent.hasClass( 'trp-unsaved-changes' ) ) {
-                var translated = translated_textareas[key].val();
-                var string = dictionaries[key].get_string_by_original(original);
-                if (string.translated != translated) {
-                    translated_textareas[key].parent().addClass('trp-unsaved-changes');
-                }
-            }
-
-        }*/
     };
 
     this.destroy = function(){

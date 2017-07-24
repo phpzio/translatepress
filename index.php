@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: TranslatePress
+Plugin Name: TranslatePress Beta
 Plugin URI: https://translatepress.com/
 Description: Automatic translation plugin with front-end editing.
-Version: 0.9.9
+Version: 0.9.0
 Author: Cozmoslabs, Razvan Mocanu, Madalin Ungureanu, Cristophor Hurduban
 Author URI: https://translatepress.com/
 License: GPL2

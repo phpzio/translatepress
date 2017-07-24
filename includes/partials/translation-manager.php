@@ -106,5 +106,5 @@
 
 
 
-<?php //get_footer();
+<?php
 

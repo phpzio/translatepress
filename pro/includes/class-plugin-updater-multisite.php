@@ -1,6 +1,7 @@
 <?php
 
 class TRP_Plugin_Updater_Multisite extends TRP_Plugin_Updater {
+
     protected function get_option( $option ){
         return get_site_option( $option );
     }
@@ -46,7 +47,6 @@ class TRP_Plugin_Updater_Multisite extends TRP_Plugin_Updater {
         return $tabs;
     }
 
-
     function activate_network_license1(){
         if( is_super_admin( get_current_user_id() ) ){
             $namesetting = $_POST['wpnd_settings']['new_blog_name'];
@@ -63,5 +63,7 @@ class TRP_Plugin_Updater_Multisite extends TRP_Plugin_Updater {
             return;
         $this->update_option('trp_license_key', esc_attr( $_POST['trp_license_key'] ));
         parent::activate_license();
+
     }
+
 }

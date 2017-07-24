@@ -10,6 +10,7 @@ class TRP_Query{
     const MACHINE_TRANSLATED = 1;
     const HUMAN_REVIEWED = 2;
 
+
     public function __construct( $settings ){
         global $wpdb;
         $this->db = $wpdb;
@@ -32,9 +33,11 @@ class TRP_Query{
     public function get_constant_not_translated(){
         return self::NOT_TRANSLATED;
     }
+
     public function get_constant_machine_translated(){
         return self::MACHINE_TRANSLATED;
     }
+
     public function get_constant_human_reviewed(){
         return self::HUMAN_REVIEWED;
     }

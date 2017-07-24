@@ -7,6 +7,7 @@ class TRP_Translation_Manager{
     protected $slug_manager;
     protected $url_converter;
 
+
     public function __construct( $settings ){
         $this->settings = $settings;
     }
@@ -73,7 +74,6 @@ class TRP_Translation_Manager{
     }
 
     public function get_translations() {
-        //error_log('get_translations');
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));

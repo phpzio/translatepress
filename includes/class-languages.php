@@ -2,17 +2,14 @@
 class TRP_Languages{
 
   	protected $languages = array();
-
 	protected $wp_languages;
-
 	protected $wp_languages_backup = array();
-
 	protected $settings;
+
 
 	/*
 	 * Possible values  $english_or_native_name: 'english_name', 'native_name'
 	 */
-
     public function get_languages( $english_or_native_name = 'english_name' ){
 		if ( empty( $this->languages[$english_or_native_name] ) ) {
 			$wp_languages = $this->get_wp_languages();

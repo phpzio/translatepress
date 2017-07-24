@@ -137,7 +137,6 @@ class TRP_Translation_Render{
             return $output;
         }
         global $TRP_LANGUAGE;
-        $start = microtime(true);
         $language_code = $this->get_language();
         if ($language_code === false) {
             return $output;
@@ -147,7 +146,6 @@ class TRP_Translation_Render{
 
         $translateable_strings = array();
         $nodes = array();
-        //$output = utf8_encode ($output);
 
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
@@ -219,7 +217,6 @@ class TRP_Translation_Render{
         if ( $preview_mode ) {
             $translated_string_ids = $this->trp_query->get_string_ids($translateable_strings, $language_code);
         }
-        //error_log(json_encode($translated_strings));
         $node_accessor = apply_filters( 'trp_node_accessors', array(
             'text' => array(
                 'accessor' => 'outertext',
@@ -311,7 +308,7 @@ class TRP_Translation_Render{
         }
 
 
-        return /*(microtime(true) - $start)  . */ $html->save();
+        return $html->save();
     }
 
     protected function is_external_link( $url ){
@@ -391,7 +388,6 @@ class TRP_Translation_Render{
 
         // machine translate new strings
         if ( $this->machine_translator->is_available() ) {
-            //todo translate page title too
             $machine_strings = $this->machine_translator->translate_array( $new_strings, $language_code );
         }else{
             $machine_strings = false;

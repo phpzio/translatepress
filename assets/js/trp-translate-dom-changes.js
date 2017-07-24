@@ -9,6 +9,7 @@ function TRP_Translator(){
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
     var language_to_query;
 
+
     this.ajax_get_translation = function( strings_to_query, url ) {
         jQuery.ajax({
             url: url,

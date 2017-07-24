@@ -49,9 +49,7 @@ class TRP_Plugin_Updater{
             'trp_license_key',
             array( $this, 'license_page' )
         );
-        //add_plugins_page( 'TranslatePress License', 'TranslatePress License', 'manage_options', 'trp_license_key', array( $this, 'license_page' ) );
     }
-
 
     public function license_page(){
         $license = $this->get_option('trp_license_key');
@@ -66,7 +64,6 @@ class TRP_Plugin_Updater{
         // creates our settings in the options table
         register_setting('trp_license_key', 'trp_license_key', array( $this, 'edd_sanitize_license' ) );
     }
-
 
     public function edd_sanitize_license( $new ) {
         $old = $this->get_option( 'trp_license_key' );
@@ -193,9 +190,5 @@ class TRP_Plugin_Updater{
             exit();
         }
     }
-
-
-
-
 
 }

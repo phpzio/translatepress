@@ -3,6 +3,7 @@
 class TRP_Machine_Translator{
     protected $settings;
 
+
     public function __construct( $settings ){
         $this->settings = $settings;
     }
