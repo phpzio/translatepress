@@ -282,27 +282,34 @@ class TRP_Settings{
             $trp = TRP_Translate_Press::get_trp_instance();
             $this->trp_languages = $trp->get_component( 'languages' );
         }
-        $published_languages = $this->trp_languages->get_language_names( $languages );
-        $published_languages['current_language'] = __( 'Current Language', TRP_PLUGIN_SLUG );
+        $published_languages = $this->trp_languages->get_language_names( $languages, 'english_name' );
+        $published_languages['current_language'] = __( '- Current Language -', TRP_PLUGIN_SLUG );
         $languages[] = 'current_language';
+        $posts = get_posts( array( 'post_type' =>'language-switcher',  'posts_per_page'   => -1  ) );
 
         foreach ( $published_languages as $language_code => $language_name ) {
-            $existing_ls = get_page_by_title( $language_name, OBJECT, 'language-switcher'  );
-            if ( $existing_ls == null ) {
-                $ls = array(
-                    'post_title' => $language_name,
-                    'post_content' => $language_code,
-                    'post_status' => 'publish',
-                    'post_type' => 'language-switcher'
-                );
-                wp_insert_post($ls);
+            $existing_ls = null;
+            foreach( $posts as $post ){
+                if ( $post->post_content == $language_code ){
+                    $existing_ls = $post;
+                    break;
+                }
+            }
+
+            $ls = array(
+                'post_title' => $language_name,
+                'post_content' => $language_code,
+                'post_status' => 'publish',
+                'post_type' => 'language-switcher'
+            );
+            if ( $existing_ls ){
+                $ls['ID'] = $existing_ls->ID;
+                wp_update_post( $ls );
             }else{
-                $existing_ls->post_title = $language_name;
-                $existing_ls->post_content = $language_code;
+                wp_insert_post( $ls );
             }
         }
 
-        $posts = get_posts( array( 'post_type' =>'language-switcher',  'posts_per_page'   => -1  ) );
         foreach ( $posts as $post ){
             if ( ! in_array( $post->post_content, $languages ) ){
                 wp_delete_post( $post->ID );

@@ -13,16 +13,7 @@ class TRP_Languages{
 	 * Possible values  $english_or_native_name: 'english_name', 'native_name'
 	 */
 
-    public function get_languages( $english_or_native_name = null ){
-		if ( !$english_or_native_name ){
-			if ( !$this->settings ){
-				$trp = TRP_Translate_Press::get_trp_instance();
-				$trp_settings = $trp->get_component( 'settings' );
-				$this->settings = $trp_settings->get_settings();
-			}
-			$english_or_native_name = $this->settings['native_or_english_name'];
-		}
-
+    public function get_languages( $english_or_native_name = 'english_name' ){
 		if ( empty( $this->languages[$english_or_native_name] ) ) {
 			$wp_languages = $this->get_wp_languages();
 			foreach ( $wp_languages as $wp_language ) {
@@ -45,8 +36,8 @@ class TRP_Languages{
 		return $default + $this->wp_languages;
 	}
 
-	public function get_iso_codes( $language_codes, $google_translate_codes = true ){
-		$google_translate_codes = array();
+	public function get_iso_codes( $language_codes, $map_google_codes = true ){
+		$iso_codes = array();
 		$wp_languages = $this->get_wp_languages();
 		$map_wp_codes_to_google = apply_filters( 'trp_map_wp_codes_to_google', array(
 			'zh_HK' => 'zh-TW',
@@ -54,18 +45,18 @@ class TRP_Languages{
 			'zh_CN'	=> 'zh-CN',
 		) );
 		foreach ( $language_codes as $language_code ) {
-			if ( $google_translate_codes && isset( $map_wp_codes_to_google[$language_code] ) ){
-				$google_translate_codes[$language_code] = $map_wp_codes_to_google[$language_code];
+			if ( $map_google_codes && isset( $map_wp_codes_to_google[$language_code] ) ){
+				$iso_codes[$language_code] = $map_wp_codes_to_google[$language_code];
 			}else {
 				foreach ($wp_languages as $wp_language) {
 					if ($wp_language['language'] == $language_code) {
-						$google_translate_codes[$language_code] = reset($wp_language['iso']);
+						$iso_codes[$language_code] = reset($wp_language['iso']);
 						break;
 					}
 				}
 			}
 		}
-		return $google_translate_codes;
+		return $iso_codes;
 	}
 
 	public function get_all_language_codes(){
@@ -73,8 +64,16 @@ class TRP_Languages{
 	}
 
 	public function get_language_names( $language_codes, $english_or_native_name = null ){
+		if ( !$english_or_native_name ){
+			if ( !$this->settings ){
+				$trp = TRP_Translate_Press::get_trp_instance();
+				$trp_settings = $trp->get_component( 'settings' );
+				$this->settings = $trp_settings->get_settings();
+			}
+			$english_or_native_name = $this->settings['native_or_english_name'];
+		}
 		$return = array();
-        $languages = $this->get_languages($english_or_native_name);
+        $languages = $this->get_languages( $english_or_native_name );
 		foreach ( $language_codes as $language_code ){
 			$return[$language_code] = $languages[$language_code];
 		}
