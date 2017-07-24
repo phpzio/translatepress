@@ -13,6 +13,7 @@ class TRP_Language_Switcher{
         $language = $this->get_current_language();
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
+        $this->add_cookie( $TRP_LANGUAGE );
     }
 
     public function language_switcher(){
@@ -307,6 +308,12 @@ class TRP_Language_Switcher{
         if( $is_needed ) {
             wp_enqueue_script( 'jquery-ui-core' );
         }
+
+    }
+
+    public function add_cookie( $current_language ) {
+
+        setcookie( 'trp_current_language', $current_language, strtotime( '+30 days' ), "/" );
 
     }
 
