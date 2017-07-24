@@ -1,6 +1,6 @@
 #trp-floater-ls {
     position: fixed;
-    z-index: 99;
+    z-index: 9999999;
     bottom: 0;
     left: 80%;
     background-color: #212121;
@@ -9,12 +9,8 @@
     overflow: hidden;
 }
 
-#trp-floater-ls.trp-floater-ls-codes {
-    width: 80px;
-}
-
 #trp-floater-ls.trp-floater-ls-names {
-    width: 120px;
+    max-width: 160px;
 }
 
 #trp-floater-ls.trp-floater-ls-flags {
@@ -42,15 +38,13 @@
 #trp-floater-ls-current-language a,
 #trp-floater-ls-language-list a {
     display: block;
-    /*padding-bottom: 5px;
-    padding-top: 10px;*/
-    padding: 10px 10px 5px 10px;
+    padding: 10px 15px 5px 15px;
     font-size: 90%;
 }
 
 #trp-floater-ls-current-language,
 #trp-floater-ls-language-list {
-    text-align: center;
+    text-align: left;
 }
 
 #trp-floater-ls-current-language.trp-with-flags,
@@ -75,7 +69,6 @@
 #trp-floater-ls-language-list a:hover {
     color: #FAFAFA;
     background-color: #424242;
-
 }
 
 #trp-floater-ls .trp-floater-ls-disabled-language {
@@ -83,8 +76,8 @@
     cursor: default;
 }
 
-#trp-floater-ls .trp-flag-image {
-    margin: 0 5px;
+#trp-floater-ls .trp-with-flags .trp-flag-image {
+    margin-right: 5px;
 }
 
 @media only screen and ( max-width: 800px ) {
