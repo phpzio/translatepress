@@ -47,11 +47,18 @@ jQuery( document ).ready( function( ) {
             jQuery( this )
                 .iconselectmenu( {
                     create: function ( event, ui ) {
+                        // Remove span for language name when empty
                         if( ! jQuery.trim( jQuery( jQuery( event )[0]['target'] ).text() ) ) {
                             jQuery( 'form.trp-language-switcher-form .ui-selectmenu-text' ).remove();
                         }
+
+                        // Add title attr
+                        jQuery( '.trp-current-language-icon' ).closest( 'span.ui-selectmenu-button' ).attr(
+                            'title', jQuery.trim( jQuery( '.trp-language-switcher-select' ).find( ':selected' ).attr( 'title' ) )
+                        );
                     },
                     change: function( event, ui ) {
+                        // Change language
                         if( typeof parent.trpEditor == 'undefined' ) {
                             window.location.replace( document.querySelector( 'link[hreflang="' + ui.item.value + '"]' ).href );
                         }
