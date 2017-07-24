@@ -18,8 +18,8 @@ class TRP_Translate_Press_Pro extends TRP_Translate_Press{
         if ( is_multisite() ) {
             $this->plugin_updater = new TRP_Plugin_Updater_Multisite();
             $this->loader->add_action( 'network_admin_menu', $this->plugin_updater, 'license_menu' );
-            $this->loader->add_action( 'network_admin_edit_trp_license_key', $this->plugin_updater, 'license_page' );
-            $this->loader->add_filter( 'trp_settings_tabs', $this->plugin_updater, 'license_page_url' );
+            $this->loader->add_action( 'network_admin_edit_trp_license_key', $this->plugin_updater, 'activate_license' );
+            $this->loader->add_filter( 'trp_settings_tabs', $this->plugin_updater, 'add_license_page_url_to_tab' );
         }else{
             $this->plugin_updater = new TRP_Plugin_Updater();
             $this->loader->add_action( 'admin_menu', $this->plugin_updater, 'license_menu' );

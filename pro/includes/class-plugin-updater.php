@@ -36,6 +36,10 @@ class TRP_Plugin_Updater{
         update_option( $license_key_option, $value );
     }
 
+    protected function license_page_url( ){
+        return admin_url( 'admin.php?page=' . 'trp_license_key' );
+    }
+
     public function license_menu() {
         add_submenu_page(
             'TRPHidden',
@@ -50,8 +54,9 @@ class TRP_Plugin_Updater{
 
 
     public function license_page(){
-        $license = get_option('trp_license_key');
-        $status = get_option('trp_license_status');
+        $license = $this->get_option('trp_license_key');
+        $status = $this->get_option('trp_license_status');
+        $action = 'options.php';
         ob_start();
         require TRP_PLUGIN_DIR . 'pro/includes/partials/license-settings-page.php';
         echo ob_get_clean();
@@ -95,17 +100,13 @@ class TRP_Plugin_Updater{
     }
 
     public function activate_license() {
-
         // listen for our activate button to be clicked
         if( isset( $_POST['edd_license_activate'] ) ) {
-
             // run a quick security check
             if( ! check_admin_referer( 'trp_license_nonce', 'trp_license_nonce' ) )
                 return; // get out if we didn't click the Activate button
-
             // retrieve the license from the database
             $license = trim( $this->get_option( 'trp_license_key' ) );
-
 
             // data to send in our API request
             $api_params = array(
@@ -188,7 +189,7 @@ class TRP_Plugin_Updater{
             // $license_data->license will be either "valid" or "invalid"
 
             $this->update_option( 'trp_license_status', $license_data->license );
-            wp_redirect( admin_url( 'admin.php?page=' . 'trp_license_key' ) );
+            wp_redirect( $this->license_page_url() );
             exit();
         }
     }
