@@ -237,7 +237,7 @@ class TRP_Language_Switcher{
             'public'                => false,
             'label'                 => 'Language Switcher'
         );
-        register_post_type( 'language-switcher', $args );
+        register_post_type( 'language_switcher', $args );
     }
 
     public function ls_menu_permalinks( $items, $menu, $args ){
@@ -254,10 +254,10 @@ class TRP_Language_Switcher{
         $item_key_to_unset = false;
         $current_language_set = false;
         foreach ( $items as $key => $item ){
-            if ( $item->object == 'language-switcher' ){
+            if ( $item->object == 'language_switcher' ){
                 $ls_id = get_post_meta( $item->ID, '_menu_item_object_id', true );
                 $ls_post = get_post( $ls_id );
-                if ( $ls_post == null || $ls_post->post_type != 'language-switcher' ) {
+                if ( $ls_post == null || $ls_post->post_type != 'language_switcher' ) {
                     continue;
                 }
                 $ls_options = $this->trp_settings_object->get_language_switcher_options();

@@ -58,6 +58,8 @@ ____________________________________________
 - conflict of translate dom changes with pb repeater
 -i beautiful Language name
 - native language name option
+-c Floater width should be bigger when flags + shortnames (EN_US)
+- conflict with custom profile menus
 
 
 
@@ -65,6 +67,7 @@ ____________________________________________
   WIP
 -------
 
+- multisite single license setting
 
 
 
@@ -80,10 +83,6 @@ ____________________________________________
 -----------
 
 -i edd correct license activating
-- multisite single license setting
-- challenges:
-  - support for translating emails
-  - caching plugins
 
 
 
@@ -91,9 +90,7 @@ ____________________________________________
  Small To Do
 -------------
 
--c Floater width should be bigger when flags + shortnames (EN_US)
 -c Editor icon goes outside iframe
-- conflict with custom profile menus
 - cookie language
 - <body class = language>
 - seo <html language parameter
@@ -116,3 +113,6 @@ IDEAS
 - opening editor closes back to where editor was started
 - if wp back-end language is changed to the translation language, the editor should recognize the already translated strings
  from the theme and plugins and set them as already translated, in our dictionary.
+- highlight selected string from dropdown list in Editor
+- support for translating emails
+

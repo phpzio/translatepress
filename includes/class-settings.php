@@ -285,7 +285,7 @@ class TRP_Settings{
         $published_languages = $this->trp_languages->get_language_names( $languages, 'english_name' );
         $published_languages['current_language'] = __( '- Current Language -', TRP_PLUGIN_SLUG );
         $languages[] = 'current_language';
-        $posts = get_posts( array( 'post_type' =>'language-switcher',  'posts_per_page'   => -1  ) );
+        $posts = get_posts( array( 'post_type' =>'language_switcher',  'posts_per_page'   => -1  ) );
 
         foreach ( $published_languages as $language_code => $language_name ) {
             $existing_ls = null;
@@ -300,7 +300,7 @@ class TRP_Settings{
                 'post_title' => $language_name,
                 'post_content' => $language_code,
                 'post_status' => 'publish',
-                'post_type' => 'language-switcher'
+                'post_type' => 'language_switcher'
             );
             if ( $existing_ls ){
                 $ls['ID'] = $existing_ls->ID;
