@@ -78,7 +78,6 @@ form.trp-language-switcher-form .ui-selectmenu-button span.dashicons-arrow-down 
 }
 
 .ui-selectmenu-menu .trp-ls-options-with-flag-icons .trp-ls-li span:not( .trp-flag-icon ) {
-    /*width: 70%;*/
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

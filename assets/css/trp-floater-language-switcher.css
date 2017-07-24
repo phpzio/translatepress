@@ -9,12 +9,7 @@
     overflow: hidden;
 }
 
-#trp-floater-ls.trp-floater-ls-codes {
-    /*width: 80px;*/
-}
-
 #trp-floater-ls.trp-floater-ls-names {
-    /*width: 120px;*/
     max-width: 160px;
 }
 
@@ -43,8 +38,6 @@
 #trp-floater-ls-current-language a,
 #trp-floater-ls-language-list a {
     display: block;
-    /*padding-bottom: 5px;
-    padding-top: 10px;*/
     padding: 10px 15px 5px 15px;
     font-size: 90%;
 }
@@ -52,7 +45,6 @@
 #trp-floater-ls-current-language,
 #trp-floater-ls-language-list {
     text-align: left;
-    /* TODO: center of left ? */
 }
 
 #trp-floater-ls-current-language.trp-with-flags,
