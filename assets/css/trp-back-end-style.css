@@ -33,6 +33,12 @@ span.select2-container{
     background-color: #008ec2;
 }
 
+.nav-tab.trp-translation-editor:focus {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+
 /* PRO */
 /*
  *  Language Selector
