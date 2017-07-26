@@ -1,5 +1,6 @@
 .menu-item-object-language_switcher .trp-flag-image {
-    margin: 0 5px;
+    margin: -1px 5px;
+    vertical-align: baseline;
 }
 
 .trp-language-switcher-select {
