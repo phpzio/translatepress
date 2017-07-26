@@ -71,7 +71,7 @@ body{
 
 #trp-controls-close{
     cursor: pointer;
-    font: 400 26px/42px dashicons;
+    font: 400 26px/40px dashicons;
     font-weight: bold;
     content: "\f335";
     display: inline-block;
@@ -244,7 +244,6 @@ span.select2-container{
     text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;
     display: inline-block;
     font-size: 13px;
-    line-height: 26px;
     height: 28px;
     padding: 0 10px 1px;
     cursor: pointer;
