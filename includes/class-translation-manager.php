@@ -227,10 +227,13 @@ class TRP_Translation_Manager{
         $wp_admin_bar->add_node( $args );
     }
 
-    public function hide_admin_bar_when_in_editor(){
-        if ($this->conditions_met('preview')) {
+    public function hide_admin_bar_when_in_editor( $show_admin_bar ) {
+
+        if( $this->conditions_met( 'preview' ) ) {
             return false;
         }
-        return true;
+
+        return $show_admin_bar;
+
     }
 }
