@@ -24,9 +24,14 @@ class TRP_Settings_Pro extends TRP_Settings{
     public function add_navigation_tabs(){
         $tabs = apply_filters( 'trp_settings_tabs', array(
             array(
-                'name'      => __( 'General', TRP_PLUGIN_SLUG ),
-                'url'       => admin_url( 'options-general.php?page=translate-press' ),
-                'page'      => 'translate-press'
+                'name'  => __( 'General', TRP_PLUGIN_SLUG ),
+                'url'   => admin_url( 'options-general.php?page=translate-press' ),
+                'page'  => 'translate-press'
+            ),
+            array(
+                'name'  => __( 'Translate Site', TRP_PLUGIN_SLUG ),
+                'url'   => add_query_arg( 'trp-edit-translation', 'true', home_url() ),
+                'page'  => 'trp_translation_editor'
             ),
             array(
                 'name'  => __( 'License', TRP_PLUGIN_SLUG ),

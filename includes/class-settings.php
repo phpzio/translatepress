@@ -210,11 +210,14 @@ class TRP_Settings{
     }
 
     public function enqueue_scripts_and_styles( $hook ) {
-        if ( $hook == 'settings_page_translate-press' ) {
+        if ( $hook == 'settings_page_translate-press' || 'settings_page_trp_license_key' ) {
             wp_enqueue_style(
                 'trp-settings-style',
                 TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css'
             );
+        }
+
+        if ( $hook == 'settings_page_translate-press' ) {
             wp_enqueue_script(
                 'trp-settings-script',
                 TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js'

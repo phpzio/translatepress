@@ -7,13 +7,6 @@
 
         <table id="trp-options" class="form-table">
             <tr>
-                <th scope="row"><?php _e( 'Manage Translations', TRP_PLUGIN_SLUG ); ?> </th>
-                <td>
-                    <a href="<?php echo add_query_arg( 'trp-edit-translation', 'true', home_url() ); ?>"><button type="button" class="button-secondary trp-open-translation-editor"> <?php _e( 'Open Translation Editor', TRP_PLUGIN_SLUG ); ?></button></a>
-                </td>
-
-            </tr>
-            <tr>
                 <th scope="row"><?php _e( 'Default Language', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
                     <select id="trp-default-language" name="trp_settings[default-language]" class="trp-select2">

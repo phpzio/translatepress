@@ -24,6 +24,20 @@ span.select2-container{
     margin-left: 5px;
 }
 
+.nav-tab.trp-translation-editor {
+    background-color: #0085ba;
+    color: #ffffff;
+}
+
+.nav-tab.trp-translation-editor:hover {
+    background-color: #008ec2;
+}
+
+.nav-tab.trp-translation-editor:focus {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
 
 /* PRO */
 /*
