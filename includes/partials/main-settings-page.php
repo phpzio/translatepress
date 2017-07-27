@@ -1,5 +1,5 @@
 
-<div id="trp-main-settings">
+<div id="trp-main-settings" class="wrap">
     <form method="post" action="options.php">
         <?php settings_fields( 'trp_settings' ); ?>
         <h1> <?php _e( 'TranslatePress Settings', TRP_PLUGIN_SLUG );?></h1>

@@ -71,14 +71,14 @@ class TRP_Language_Switcher{
     }
 
     public function enqueue_language_switcher_scripts( ){
-        wp_enqueue_script('trp-language-switcher', TRP_PLUGIN_URL . 'assets/js/trp-language-switcher.js', array('jquery'));
+        wp_enqueue_script('trp-language-switcher', TRP_PLUGIN_URL . 'assets/js/trp-language-switcher.js', array('jquery'), TRP_PLUGIN_VERSION );
 
         if ( isset( $this->settings['trp-ls-floater'] ) && $this->settings['trp-ls-floater'] == 'yes' ) {
-            wp_enqueue_script('trp-floater-language-switcher-script', TRP_PLUGIN_URL . 'assets/js/trp-floater-language-switcher.js', array('jquery'));
-            wp_enqueue_style('trp-floater-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-floater-language-switcher.css');
+            wp_enqueue_script('trp-floater-language-switcher-script', TRP_PLUGIN_URL . 'assets/js/trp-floater-language-switcher.js', array('jquery'), TRP_PLUGIN_VERSION );
+            wp_enqueue_style('trp-floater-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-floater-language-switcher.css', array(), TRP_PLUGIN_VERSION );
         }
 
-        wp_enqueue_style( 'trp-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-language-switcher.css' );
+        wp_enqueue_style( 'trp-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-language-switcher.css', array(), TRP_PLUGIN_VERSION );
 
         if( ! $this->trp_settings_object ) {
             $trp = TRP_Translate_Press::get_trp_instance();
@@ -97,7 +97,7 @@ class TRP_Language_Switcher{
             wp_enqueue_script( 'jquery-ui-position' );
             wp_enqueue_script( 'jquery-ui-selectmenu' );
 
-            wp_enqueue_style( 'trp-jquery-ui-style', TRP_PLUGIN_URL . 'assets/css/trp-jquery-ui.css');
+            wp_enqueue_style( 'trp-jquery-ui-style', TRP_PLUGIN_URL . 'assets/css/trp-jquery-ui.css', array(), TRP_PLUGIN_VERSION );
 
             $ls_script_vars_array['shortcode_ls_flags'] = true;
         } else {

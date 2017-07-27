@@ -213,18 +213,17 @@ class TRP_Settings{
         if ( $hook == 'settings_page_translate-press' || 'settings_page_trp_license_key' ) {
             wp_enqueue_style(
                 'trp-settings-style',
-                TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css'
+                TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css',
+                array(),
+                TRP_PLUGIN_VERSION
             );
         }
 
         if ( $hook == 'settings_page_translate-press' ) {
-            wp_enqueue_script(
-                'trp-settings-script',
-                TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js'
-            );
+            wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
 
-            wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ) );
-            wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css');
+            wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
+            wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
         }
     }
 

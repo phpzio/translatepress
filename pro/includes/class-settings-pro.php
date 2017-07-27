@@ -11,7 +11,7 @@ class TRP_Settings_Pro extends TRP_Settings{
     }
 
     public function enqueue_sortable_language_script( ){
-        wp_enqueue_script( 'trp-sortable-languages', TRP_PLUGIN_URL . 'pro/assets/js/trp-sortable-languages.js', array( 'jquery-ui-sortable') );
+        wp_enqueue_script( 'trp-sortable-languages', TRP_PLUGIN_URL . 'pro/assets/js/trp-sortable-languages.js', array( 'jquery-ui-sortable'), TRP_PLUGIN_VERSION );
         if ( ! $this->trp_languages ){
             $trp = TRP_Translate_Press::get_trp_instance();
             $this->trp_languages = $trp->get_component( 'languages' );

@@ -106,7 +106,7 @@ function TRP_Sortable_Languages() {
         jQuery( '.trp-remove-language' ).click( _this.remove_language );
         jQuery( '#trp-default-language' ).on( 'change', _this.update_default_language );
         jQuery( "form[action='options.php']").on ( 'submit', _this.check_unique_url_slugs );
-        jQuery( '#trp-languages-table .trp-translation-language' ).on( 'change', _this.update_url_slug_and_status )
+        jQuery( '#trp-languages-table' ).on( 'change', '.trp-translation-language', _this.update_url_slug_and_status );
     };
 
     this.initialize();

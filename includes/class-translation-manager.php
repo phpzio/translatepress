@@ -37,11 +37,11 @@ class TRP_Translation_Manager{
     }
 
     public function enqueue_scripts_and_styles(){
-        wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css');
-        wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ) );
+        wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
+        wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
 
-        wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js' );
-        wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css' );
+        wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
+        wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array(), TRP_PLUGIN_VERSION );
 
         $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-core', 'jquery-effects-core', 'jquery-ui-resizable', 'trp-translation-manager-script', 'trp-select2-lib-js' ) );
         $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'trp-translation-manager-style', 'trp-select2-lib-css' /*'wp-admin', 'dashicons', 'common', 'site-icon', 'buttons'*/ ) );
@@ -51,8 +51,8 @@ class TRP_Translation_Manager{
 
     public function enqueue_preview_scripts_and_styles(){
         if ( $this->conditions_met( 'preview' ) ) {
-            wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery') );
-            wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css' );
+            wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery'), TRP_PLUGIN_VERSION );
+            wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css', array(), TRP_PLUGIN_VERSION );
         }
     }
 
@@ -201,30 +201,61 @@ class TRP_Translation_Manager{
         die();
     }
 
-    public function add_shortcut_to_translation_editor( $wp_admin_bar ){
-        if ( is_admin () || ! current_user_can( 'manage_options' )){
+    public function add_shortcut_to_translation_editor( $wp_admin_bar ) {
+
+        if( ! current_user_can( 'manage_options' ) ) {
             return;
         }
-        global $post;
-        if ( is_object( $post ) && ! is_archive() && !is_home() && !is_search() ){
-            $url = get_permalink( $post );
-        }else{
-            if ( ! $this->url_converter ) {
-                $trp = TRP_Translate_Press::get_trp_instance();
-                $this->url_converter = $trp->get_component('url_converter');
+
+        if( is_admin () ) {
+            $url = add_query_arg( 'trp-edit-translation', 'true', home_url() );
+
+            $title = __( 'Translate Site', TRP_PLUGIN_SLUG );
+            $url_target = '_blank';
+        } else {
+            global $post;
+
+            if( is_object( $post ) && ! is_archive() && ! is_home() && ! is_search() ) {
+                $url = get_permalink( $post );
+            } else {
+                if( ! $this->url_converter ) {
+                    $trp = TRP_Translate_Press::get_trp_instance();
+                    $this->url_converter = $trp->get_component( 'url_converter' );
+                }
+
+                $url = $this->url_converter->cur_page_url();
             }
 
-            $url = $this->url_converter->cur_page_url();
-        }
-        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
+            $url = add_query_arg( 'trp-edit-translation', 'true', $url );
 
-        $args = array(
-            'id'    => 'trp_edit_translation',
-            'title' => __( 'Translate Page', TRP_PLUGIN_SLUG ),
-            'href'  => $url,
-            'meta'  => array( 'class' => 'trp-edit-translation' )
+            $title = __( 'Translate Page', TRP_PLUGIN_SLUG );
+            $url_target = '';
+        }
+
+        $wp_admin_bar->add_node(
+            array(
+                'id'        => 'trp_edit_translation',
+                'title'     => '<span class="ab-icon"></span><span class="ab-label">'. $title .'</span>',
+                'href'      => $url,
+                'meta'      => array(
+                    'class'     => 'trp-edit-translation',
+                    'target'    => $url_target
+                )
+            )
         );
-        $wp_admin_bar->add_node( $args );
+
+        $wp_admin_bar->add_node(
+            array(
+                'id'        => 'trp_settings_page',
+                'title'     => __( 'Settings', TRP_PLUGIN_SLUG ),
+                'href'      => admin_url( 'options-general.php?page=translate-press' ),
+                'parent'    => 'trp_edit_translation',
+                'meta'      => array(
+                    'class' => 'trp-settings-page'
+                )
+            )
+        );
+
     }
 
     public function hide_admin_bar_when_in_editor( $show_admin_bar ) {
