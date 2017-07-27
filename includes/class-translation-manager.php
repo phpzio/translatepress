@@ -97,7 +97,7 @@ class TRP_Translation_Manager{
                         }
                     }
 
-                    $current_language = $_POST['language'];
+                    $current_language = sanitize_text_field( $_POST['language'] );
 
                     $trp = TRP_Translate_Press::get_trp_instance();
                     if ( ! $this->trp_query ) {
