@@ -70,20 +70,25 @@ function TRP_Editor(){
         dictionaries = [];
 
         var all_strings = _this.preview_iframe.contents().find( '[data-trp-translate-id]' );
-        // add iframe title
-        all_strings.push ( jQuery( document.getElementById("trp-preview-iframe").contentDocument.title )[0] );
-        var strings_to_query = [];
-        for ( var i = 0; i < all_strings.length; i++ ) {
-            var string = new TRP_String( trp_on_screen_language, i );
-            string.set_raw_string( all_strings[i] );
-            strings.push( string );
-            strings_to_query.push( string.get_details());
+        if( all_strings.length != 0 ){
+            // add iframe title
+            all_strings.push ( jQuery( document.getElementById("trp-preview-iframe").contentDocument.title )[0] );
+            var strings_to_query = [];
+            for ( var i = 0; i < all_strings.length; i++ ) {
+                var string = new TRP_String( trp_on_screen_language, i );
+                string.set_raw_string( all_strings[i] );
+                strings.push( string );
+                strings_to_query.push( string.get_details());
+            }
+
+            dictionaries[trp_on_screen_language] = new TRP_Dictionary( trp_on_screen_language );
+            dictionaries[trp_on_screen_language].set_on_screen_strings( strings );
+
+            _this.ajax_get_strings( strings_to_query );
         }
-
-        dictionaries[trp_on_screen_language] = new TRP_Dictionary( trp_on_screen_language );
-        dictionaries[trp_on_screen_language].set_on_screen_strings( strings );
-
-        _this.ajax_get_strings( strings_to_query );
+        else{
+            loading_animation.toggle();
+        }
     };
 
     this.ajax_get_strings = function( strings_to_query ){
