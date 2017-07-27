@@ -94,7 +94,7 @@
                                 <?php } ?>
                             <?php }?>
                         <?php } else{ ?>
-                            <div> <?php echo __( 'No languages set for translation. Please select a translation language from <i>Settings->TranslatePress</i>. ', TRP_PLUGIN_SLUG );?></div>
+                            <div> <?php printf( __( 'No languages set for translation. Please select a translation language from <a href="%s">Settings->TranslatePress</a>', TRP_PLUGIN_SLUG ), admin_url( 'options-general.php?page=translate-press' ) );?></div>
                         <?php }?>
                     </div>
                 </div>
