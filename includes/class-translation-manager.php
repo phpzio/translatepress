@@ -58,7 +58,7 @@ class TRP_Translation_Manager{
 
     public function add_slug_as_meta_tag() {
         global $post;
-        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) && !is_home() && !is_archive() ) {
+        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) && !is_home() && !is_archive() && !is_search() ) {
             echo '<meta name="trp-slug" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
         }
 
@@ -206,7 +206,7 @@ class TRP_Translation_Manager{
             return;
         }
         global $post;
-        if ( is_object( $post ) && ! is_archive() && !is_home() ){
+        if ( is_object( $post ) && ! is_archive() && !is_home() && !is_search() ){
             $url = get_permalink( $post );
         }else{
             if ( ! $this->url_converter ) {
@@ -220,7 +220,7 @@ class TRP_Translation_Manager{
 
         $args = array(
             'id'    => 'trp_edit_translation',
-            'title' => __( 'Edit Page Translations', TRP_PLUGIN_SLUG ),
+            'title' => __( 'Translate Page', TRP_PLUGIN_SLUG ),
             'href'  => $url,
             'meta'  => array( 'class' => 'trp-edit-translation' )
         );

@@ -126,13 +126,13 @@ class TRP_Settings{
 
         $available_options = $this->get_language_switcher_options();
         if ( ! isset( $available_options[ $settings['shortcode-options'] ] ) ){
-            $settings['shortcode-options'] = 'full-names';
+            $settings['shortcode-options'] = 'flags-full-names';
         }
         if ( ! isset( $available_options[ $settings['menu-options'] ] ) ){
-            $settings['menu-options'] = 'full-names';
+            $settings['menu-options'] = 'flags-full-names';
         }
         if ( ! isset( $available_options[ $settings['floater-options'] ] ) ){
-            $settings['floater-options'] = 'full-names';
+            $settings['floater-options'] = 'flags-full-names';
         }
 
         if ( ! isset( $settings['url-slugs'] ) ){
@@ -189,9 +189,9 @@ class TRP_Settings{
             'force-language-to-custom-links'        => 'no',
             'g-translate'                           => 'no',
             'trp-ls-floater'                        => 'yes',
-            'shortcode-options'                     => 'full-names',
-            'menu-options'                          => 'full-names',
-            'floater-options'                       => 'full-names',
+            'shortcode-options'                     => 'flags-full-names',
+            'menu-options'                          => 'flags-full-names',
+            'floater-options'                       => 'flags-full-names',
             'url-slugs'                             => array( 'en_US' => 'en' ),
         );
         if ( 'not_set' == $settings_option ){
@@ -247,7 +247,7 @@ class TRP_Settings{
                     <input id="trp-active-checkbox" type="checkbox" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" <?php echo (  ( count ( $this->settings['translation-languages'] ) == 1 ) ||  ( in_array( $selected_language_code, $this->settings['publish-languages'] ) ) ) ? 'checked' : ''; ?>>
                 </label>
                 <p class="description">
-                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, you will need the PRO version.', TRP_PLUGIN_SLUG ); ?>
+                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, you will need the <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a> version.', TRP_PLUGIN_SLUG ); ?>
                 </p>
             </td>
         </tr>
@@ -286,7 +286,7 @@ class TRP_Settings{
             $this->trp_languages = $trp->get_component( 'languages' );
         }
         $published_languages = $this->trp_languages->get_language_names( $languages, 'english_name' );
-        $published_languages['current_language'] = __( '- Current Language -', TRP_PLUGIN_SLUG );
+        $published_languages['current_language'] = __( 'Current Language', TRP_PLUGIN_SLUG );
         $languages[] = 'current_language';
         $posts = get_posts( array( 'post_type' =>'language_switcher',  'posts_per_page'   => -1  ) );
 

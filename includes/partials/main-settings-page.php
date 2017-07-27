@@ -72,7 +72,7 @@
                         <option value="yes" <?php selected( $this->settings['g-translate'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Enable or disable the automatic translation of the site with Google Translate. <br>Note: Not all languages support automatic translation. Please consult the <a href="https://cloud.google.com/translate/docs/languages" target="_blank" title="Automatic translation supported languages.">supported languages list</a>. ', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Enable or disable the automatic translation of the site with Google Translate. Existing translations will be not be affected.<br>Note: Not all languages support automatic translation. Please consult the <a href="https://cloud.google.com/translate/docs/languages" target="_blank" title="Automatic translation supported languages.">supported languages list</a>. ', TRP_PLUGIN_SLUG ); ?>
                     </p>
                 </td>
             </tr>
