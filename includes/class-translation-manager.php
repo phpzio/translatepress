@@ -202,7 +202,7 @@ class TRP_Translation_Manager{
     }
 
     public function add_shortcut_to_translation_editor( $wp_admin_bar ) {
-        
+
         if( ! current_user_can( 'manage_options' ) ) {
             return;
         }
@@ -215,7 +215,7 @@ class TRP_Translation_Manager{
         } else {
             global $post;
 
-            if( is_object( $post ) && ! is_archive() && ! is_home() ) {
+            if( is_object( $post ) && ! is_archive() && ! is_home() && ! is_search() ) {
                 $url = get_permalink( $post );
             } else {
                 if( ! $this->url_converter ) {
