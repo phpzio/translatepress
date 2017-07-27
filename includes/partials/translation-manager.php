@@ -63,15 +63,20 @@
                         <div id="trp-string-list">
                             <select id="trp-string-categories" data-trp-placeholder="<?php _e( 'Select string to translate...', TRP_PLUGIN_SLUG ); ?>"></select>
                         </div>
+                        <?php if( count( $trp_settings['translation-languages'] ) > 1 ) { ?>
+                            <div id="trp-next-previous">
+                                <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></button>
+                                <button type="button" id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> <span>&raquo;</span></button>
+                            </div>
+                        <?php } ?>
                     </div>
+                    <?php if( count( $trp_settings['translation-languages'] ) > 1 ) { ?>
+                        <br class="clear">
+                    <?php } ?>
                 </div>
                 <div class="trp-controls-section">
                     <div class="trp-controls-section-content">
                         <?php if ( count( $trp_settings['translation-languages'] ) > 1 ){ ?>
-                            <div id="trp-next-previous">
-                                <span id="trp-previous" class="trp-next-previous-buttons">&#171; <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></span>
-                                <span id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> &#187;</span>
-                            </div>
                             <div id="<?php echo $trp_settings['default-language'];?>" class="trp-language-text trp-default-language">
                                 <div class="trp-language-name"><?php _e( 'From ', TRP_PLUGIN_SLUG ); echo $available_languages[ $trp_settings['default-language'] ];  ?></div>
                                 <textarea id="trp-original" disabled></textarea>
@@ -91,7 +96,7 @@
                                 <?php } ?>
                             <?php }?>
                         <?php } else{ ?>
-                            <div> <?php echo __( 'No languages set for translation. Please select a translation language from <i>Settings->TranslatePress</i>. ', TRP_PLUGIN_SLUG );?></div>
+                            <div> <?php printf( __( 'No languages set for translation. Please select a translation language from <a href="%s">Settings->TranslatePress</a>', TRP_PLUGIN_SLUG ), admin_url( 'options-general.php?page=translate-press' ) );?></div>
                         <?php }?>
                     </div>
                 </div>
