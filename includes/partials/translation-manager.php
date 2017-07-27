@@ -70,7 +70,9 @@
                             </div>
                         <?php } ?>
                     </div>
-                    <br class="clear">
+                    <?php if( count( $trp_settings['translation-languages'] ) > 1 ) { ?>
+                        <br class="clear">
+                    <?php } ?>
                 </div>
                 <div class="trp-controls-section">
                     <div class="trp-controls-section-content">
