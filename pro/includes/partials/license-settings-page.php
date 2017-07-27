@@ -1,4 +1,4 @@
-<div id="trp-license-settings">
+<div id="trp-license-settings" class="wrap">
     <form method="post" action="<?php echo $action; ?>">
         <?php settings_fields( 'trp_license_key' ); ?>
         <h1> <?php _e( 'TranslatePress Settings', TRP_PLUGIN_SLUG );?></h1>
