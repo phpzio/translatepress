@@ -44,7 +44,11 @@ class TRP_Translation_Render{
     }
 
     protected function full_trim( $word ) {
-        return trim( $word," \t\n\r\0\x0B\xA0�" );
+        $word = addslashes( trim($word," \t\n\r\0\x0B\xA0�" ) );
+        if ( htmlentities( $word ) == "" ){
+            $word = '';
+        }
+        return $word;
     }
 
     protected function get_node_type_category( $current_node_type ){

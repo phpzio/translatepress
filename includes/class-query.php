@@ -18,7 +18,12 @@ class TRP_Query{
     }
 
     protected function full_trim( $word ) {
-        return trim( addslashes($word)," \t\n\r\0\x0B\xA0�" );
+
+        $word = addslashes( trim($word," \t\n\r\0\x0B\xA0�" ) );
+        if ( htmlentities( $word ) == "" ){
+            $word = '';
+        }
+        return $word;
     }
 
     protected function int_trim( $int ){
@@ -68,7 +73,6 @@ class TRP_Query{
         if ( count( $new_strings ) == 0 && count( $update_strings ) == 0 ){
             return;
         }
-
         $query = "INSERT INTO `" . $this->get_table_name( $language_code ) . "` ( id, original, translated, status ) VALUES ";
 
         $values = array();
@@ -88,10 +92,7 @@ class TRP_Query{
 
         $query .= implode(', ', $place_holders);
         $query .= $on_duplicate;
-
-        $this->db->query( $this->db->prepare("$query ", $values) );
-        // you cannot insert multiple rows at once using insert() method.
-        // but by using prepare you cannot insert NULL values.
+        $this->db->query( $this->db->prepare($query . ' ', $values) );
     }
 
 
