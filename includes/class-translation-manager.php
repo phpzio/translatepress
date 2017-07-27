@@ -201,30 +201,63 @@ class TRP_Translation_Manager{
         die();
     }
 
-    public function add_shortcut_to_translation_editor( $wp_admin_bar ){
-        if ( is_admin () || ! current_user_can( 'manage_options' )){
+    public function add_shortcut_to_translation_editor( $wp_admin_bar ) {
+
+        //ddumpe($wp_admin_bar);
+
+        if( ! current_user_can( 'manage_options' ) ) {
             return;
         }
-        global $post;
-        if ( is_object( $post ) && ! is_archive() && !is_home() ){
-            $url = get_permalink( $post );
-        }else{
-            if ( ! $this->url_converter ) {
-                $trp = TRP_Translate_Press::get_trp_instance();
-                $this->url_converter = $trp->get_component('url_converter');
+
+        if( is_admin () ) {
+            $url = add_query_arg( 'trp-edit-translation', 'true', home_url() );
+
+            $title = __( 'Translate Site', TRP_PLUGIN_SLUG );
+            $url_target = '_blank';
+        } else {
+            global $post;
+
+            if( is_object( $post ) && ! is_archive() && ! is_home() ) {
+                $url = get_permalink( $post );
+            } else {
+                if( ! $this->url_converter ) {
+                    $trp = TRP_Translate_Press::get_trp_instance();
+                    $this->url_converter = $trp->get_component( 'url_converter' );
+                }
+
+                $url = $this->url_converter->cur_page_url();
             }
 
-            $url = $this->url_converter->cur_page_url();
-        }
-        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
+            $url = add_query_arg( 'trp-edit-translation', 'true', $url );
 
-        $args = array(
-            'id'    => 'trp_edit_translation',
-            'title' => __( 'Edit Page Translations', TRP_PLUGIN_SLUG ),
-            'href'  => $url,
-            'meta'  => array( 'class' => 'trp-edit-translation' )
+            $title = __( 'Translate Page', TRP_PLUGIN_SLUG );
+            $url_target = '';
+        }
+
+        $wp_admin_bar->add_node(
+            array(
+                'id'        => 'trp_edit_translation',
+                'title'     => '<span class="ab-icon"></span><span class="ab-label">'. $title .'</span>',
+                'href'      => $url,
+                'meta'      => array(
+                    'class'     => 'trp-edit-translation',
+                    'target'    => $url_target
+                )
+            )
         );
-        $wp_admin_bar->add_node( $args );
+
+        $wp_admin_bar->add_node(
+            array(
+                'id'        => 'trp_settings_page',
+                'title'     => __( 'Settings', TRP_PLUGIN_SLUG ),
+                'href'      => admin_url( 'options-general.php?page=translate-press' ),
+                'parent'    => 'trp_edit_translation',
+                'meta'      => array(
+                    'class' => 'trp-settings-page'
+                )
+            )
+        );
+
     }
 
     public function hide_admin_bar_when_in_editor( $show_admin_bar ) {
