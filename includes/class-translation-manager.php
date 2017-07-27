@@ -202,9 +202,7 @@ class TRP_Translation_Manager{
     }
 
     public function add_shortcut_to_translation_editor( $wp_admin_bar ) {
-
-        //ddumpe($wp_admin_bar);
-
+        
         if( ! current_user_can( 'manage_options' ) ) {
             return;
         }
