@@ -264,10 +264,19 @@ class TRP_Translation_Render{
             $accessor = $current_node_accessor[ 'accessor' ];
             if ( $translation_available && isset( $current_node_accessor ) && ! ( $preview_mode && ( $this->settings['default-language'] == $TRP_LANGUAGE ) ) ) {
 
+                $translateable_string = $translateable_strings[$i];
+                $alternate_translateable_string = htmlentities($translateable_strings[$i]);
+
                 if ( $current_node_accessor[ 'attribute' ] ){
-                    $nodes[$i]['node']->setAttribute( $accessor, str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->getAttribute( $accessor ) ) );
+                    if ( strpos ( $nodes[$i]['node']->getAttribute( $accessor ), $translateable_string ) === false ){
+                        $translateable_string = $alternate_translateable_string;
+                    }
+                    $nodes[$i]['node']->setAttribute( $accessor, str_replace( $translateable_string, $translated_strings[$i], $nodes[$i]['node']->getAttribute( $accessor ) ) );
                 }else{
-                    $nodes[$i]['node']->$accessor = str_replace( $translateable_strings[$i], $translated_strings[$i], $nodes[$i]['node']->$accessor );
+                    if ( strpos ( $nodes[$i]['node']->$accessor, $translateable_string ) === false ){
+                        $translateable_string = $alternate_translateable_string;
+                    }
+                    $nodes[$i]['node']->$accessor = str_replace( $translateable_string, $translated_strings[$i], $nodes[$i]['node']->$accessor );
                 }
 
                 if ( $nodes[$i]['type'] == 'image_src' && $nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i] != $translateable_strings[$i]) {
