@@ -47,17 +47,6 @@ class TRP_Plugin_Updater_Multisite extends TRP_Plugin_Updater {
         return $tabs;
     }
 
-    function activate_network_license1(){
-        if( is_super_admin( get_current_user_id() ) ){
-            $namesetting = $_POST['wpnd_settings']['new_blog_name'];
-            update_site_option('wpnd_settings_blogname', $namesetting);
-            $urlsetting = $_POST['wpnd_settings']['new_blog_url'];
-            update_site_option('wpnd_settings_blogurl', $urlsetting);
-            wp_redirect(add_query_arg(array('page' => 'wpnd_settings', 'updated' => 'true'), network_admin_url('settings.php')));
-        }
-        exit();
-    }
-
     public function activate_license() {
         if(  !isset ( $_POST['trp_license_key'] ) || ! is_super_admin( get_current_user_id() )  )
             return;
