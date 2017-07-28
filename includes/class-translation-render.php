@@ -48,6 +48,9 @@ class TRP_Translation_Render{
         if ( htmlentities( $word ) == "" ){
             $word = '';
         }
+        if ( strip_tags( $word ) == "" ){
+            $word = '';
+        }
         return $word;
     }
 
