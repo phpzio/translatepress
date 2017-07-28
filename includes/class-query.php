@@ -32,6 +32,7 @@ class TRP_Query{
 
     public function get_existing_translations( $strings_array, $language_code ){
         $dictionary = $this->db->get_results("SELECT original,translated FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','", array_map( array( $this, 'full_trim' ), $strings_array ) )."') AND status != " . self::NOT_TRANSLATED, OBJECT_K );
+
         return $dictionary;
     }
 
@@ -80,7 +81,7 @@ class TRP_Query{
         $new_strings = array_unique( $new_strings );
 
         foreach ( $new_strings as $string ) {
-            array_push( $values, NULL, $this->full_trim( $string ), NULL, self::NOT_TRANSLATED );
+            array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED );
             $place_holders[] = "( '%d', '%s', '%s', '%d')";
         }
         foreach ( $update_strings as $string ) {
@@ -97,7 +98,7 @@ class TRP_Query{
 
 
     public function get_string_ids( $original_strings, $language_code ){
-        $dictionary = $this->db->get_results("SELECT original, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','",  array_map( array( $this, 'full_trim' ), $original_strings )  )."')", OBJECT_K );
+        $dictionary = $this->db->get_results("SELECT original, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','",  array_map( array( $this, 'full_trim' ), $original_strings ) )."')", OBJECT_K );
         return $dictionary;
     }
 
