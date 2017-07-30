@@ -259,13 +259,16 @@ span.select2-container{
     vertical-align: baseline;
 }
 
-.trp-toggle-languages span,
+.trp-toggle-languages span:hover,
 .trp-next-previous-buttons:hover,
-.trp-toggle-languages span,
 .trp-next-previous-buttons:focus {
     background: #fafafa;
     border-color: #999;
     color: #222;
+}
+
+.trp-toggle-languages.trp-toggle-languages-active span:hover {
+    background: #eee;
 }
 
 .trp-toggle-languages span,
@@ -274,7 +277,7 @@ span.select2-container{
     box-shadow: 1px 1px 1px rgba(0,0,0,.2);
 }
 
-.trp-toggle-languages-active span,
+.trp-toggle-languages.trp-toggle-languages-active span,
 .trp-next-previous-buttons:active {
     background: #eee;
     border-color: #999;
