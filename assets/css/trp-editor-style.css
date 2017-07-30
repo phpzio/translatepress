@@ -172,7 +172,8 @@ span.select2-container{
     margin-bottom: 10px;
 }
 
-.trp-toggle-languages, .trp-next-previous-buttons {
+.trp-toggle-languages span,
+.trp-next-previous-buttons {
     cursor: pointer;
 }
 
@@ -216,11 +217,13 @@ span.select2-container{
     margin: 5px 0 10px 0;
 }
 
-.trp-toggle-languages span, .trp-next-previous-buttons span {
+.trp-toggle-languages span,
+.trp-next-previous-buttons span {
     font-size: initial;
 }
 
-.trp-toggle-languages span, .trp-next-previous-buttons {
+.trp-toggle-languages span,
+.trp-next-previous-buttons {
     display: inline-block;
     text-decoration: none;
     font-size: 13px;
@@ -238,10 +241,11 @@ span.select2-container{
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    min-width: 90px;
+    min-width: 85px;
 }
 
-.trp-toggle-languages span, .trp-next-previous-buttons {
+.trp-toggle-languages span,
+.trp-next-previous-buttons {
     color: #555;
     border-color: #cccccc;
     background: #f7f7f7;
@@ -250,23 +254,28 @@ span.select2-container{
     vertical-align: top;
 }
 
-.trp-toggle-languages span, .trp-next-previous-buttons {
+.trp-toggle-languages span,
+.trp-next-previous-buttons {
     vertical-align: baseline;
 }
 
-.trp-toggle-languages span, .trp-next-previous-buttons:hover,
-.trp-toggle-languages span, .trp-next-previous-buttons:focus {
+.trp-toggle-languages span,
+.trp-next-previous-buttons:hover,
+.trp-toggle-languages span,
+.trp-next-previous-buttons:focus {
     background: #fafafa;
     border-color: #999;
     color: #222;
 }
 
-.trp-toggle-languages span, .trp-next-previous-buttons:focus {
+.trp-toggle-languages span,
+.trp-next-previous-buttons:focus {
     -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.2);
     box-shadow: 1px 1px 1px rgba(0,0,0,.2);
 }
 
-.trp-toggle-languages span, .trp-next-previous-buttons:active {
+.trp-toggle-languages-active span,
+.trp-next-previous-buttons:active {
     background: #eee;
     border-color: #999;
     color: #333;
@@ -274,7 +283,17 @@ span.select2-container{
     box-shadow: inset 0 2px 5px -3px rgba( 0, 0, 0, 0.5 );
 }
 
-#trp-hide-all-languages, .trp-other-language{
+.trp-toggle-languages {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#trp-hide-all-languages,
+.trp-other-language{
     display: none;
 }
 

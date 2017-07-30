@@ -277,7 +277,7 @@ function TRP_Editor(){
 
     function add_event_handlers(){
         save_button.on( 'click', _this.save_string );
-        jQuery( '.trp-toggle-languages' ).on( 'click', _this.toggle_languages );
+        jQuery( '.trp-toggle-languages span' ).on( 'click', _this.toggle_languages );
         jQuery( '#trp-previous' ).on( 'click', _this.previous_string );
         jQuery( '#trp-next' ).on( 'click', _this.next_string );
 
