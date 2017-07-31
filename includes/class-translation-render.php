@@ -504,5 +504,7 @@ class TRP_Translation_Render{
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }
+    
+    
 
 }

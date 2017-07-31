@@ -131,6 +131,7 @@ class TRP_Translate_Press{
 
         $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 3 );
 
+        $this->loader->add_filter( 'language_attributes', $this->url_converter, 'change_lang_attr_in_html_tag', 10, 2 );
 
     }
 

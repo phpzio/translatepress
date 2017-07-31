@@ -54,6 +54,22 @@ class TRP_Url_Converter {
         }
     }
 
+    /**
+     * function that changes the lang attribute in the html tag to the current language
+     * @param $output
+     * @param $doctype
+     * @return mixed
+     */
+    public function change_lang_attr_in_html_tag( $output, $doctype ){
+        global $TRP_LANGUAGE;
+        $lang = get_bloginfo('language');
+        if ( $lang && !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ) {
+            $output = str_replace( 'lang="'. $lang .'"', 'lang="'. str_replace('_', '-', $TRP_LANGUAGE ) .'"', $output );
+        }
+
+        return $output;
+    }
+
     public function get_url_for_language ( $language = null, $url = null ) {
         global $post, $TRP_LANGUAGE;
         $trp_language_copy = $TRP_LANGUAGE;
