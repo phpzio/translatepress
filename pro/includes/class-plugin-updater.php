@@ -6,7 +6,7 @@ class TRP_Plugin_Updater{
         // this is the URL our updater / license checker pings. This should be the URL of the site with EDD installed
         define( 'TRP_STORE_URL', 'http://yoursite.com' );
         // the name of your product. This should match the download name in EDD exactly
-        define( 'TRP_ITEM_NAME', 'Sample Plugin' );
+        define( 'TRP_ITEM_NAME', 'TranslatePress' );
         if( !class_exists( 'TRP_EDD_SL_Plugin_Updater' ) ) {
             // load our custom updater
             include TRP_PLUGIN_DIR . 'pro/includes/class-edd-sl-plugin-updater.php';
@@ -18,7 +18,7 @@ class TRP_Plugin_Updater{
                 'version' 	=> '1.0', 		// current version number
                 'license' 	=> $license_key, 	// license key (used get_option above to retrieve from DB)
                 'item_name' => TRP_ITEM_NAME, 	// name of this plugin
-                'author' 	=> 'Pippin Williamson',  // author of this plugin
+                'author' 	=> 'Cozmoslabs',  // author of this plugin
                 'url'       => home_url()
             )
         );

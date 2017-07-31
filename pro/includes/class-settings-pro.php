@@ -32,12 +32,15 @@ class TRP_Settings_Pro extends TRP_Settings{
                 'name'  => __( 'Translate Site', TRP_PLUGIN_SLUG ),
                 'url'   => add_query_arg( 'trp-edit-translation', 'true', home_url() ),
                 'page'  => 'trp_translation_editor'
-            ),
+            )
+            /* Uncomment this after Beta
+            ,
             array(
                 'name'  => __( 'License', TRP_PLUGIN_SLUG ),
                 'url'   => admin_url( 'admin.php?page=trp_license_key' ),
                 'page'  => 'trp_license_key'
             )
+            */
         ));
 
         $active_tab = 'translate-press';

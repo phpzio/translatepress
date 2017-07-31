@@ -47,6 +47,7 @@ class TRP_Plugin_Updater_Multisite extends TRP_Plugin_Updater {
         return $tabs;
     }
 
+
     function activate_network_license1(){
         if( is_super_admin( get_current_user_id() ) ){
             $namesetting = sanitize_text_field( $_POST['wpnd_settings']['new_blog_name'] );
@@ -57,6 +58,7 @@ class TRP_Plugin_Updater_Multisite extends TRP_Plugin_Updater {
         }
         exit();
     }
+
 
     public function activate_license() {
         if(  !isset ( $_POST['trp_license_key'] ) || ! is_super_admin( get_current_user_id() )  )

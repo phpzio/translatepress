@@ -18,7 +18,12 @@ class TRP_Query{
     }
 
     protected function full_trim( $word ) {
-        return trim( addslashes($word)," \t\n\r\0\x0B\xA0�" );
+
+        $word = addslashes( trim($word," \t\n\r\0\x0B\xA0�" ) );
+        if ( htmlentities( $word ) == "" ){
+            $word = '';
+        }
+        return $word;
     }
 
     protected function int_trim( $int ){
@@ -27,6 +32,7 @@ class TRP_Query{
 
     public function get_existing_translations( $strings_array, $language_code ){
         $dictionary = $this->db->get_results("SELECT original,translated FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','", array_map( array( $this, 'full_trim' ), $strings_array ) )."') AND status != " . self::NOT_TRANSLATED, OBJECT_K );
+
         return $dictionary;
     }
 
@@ -68,7 +74,6 @@ class TRP_Query{
         if ( count( $new_strings ) == 0 && count( $update_strings ) == 0 ){
             return;
         }
-
         $query = "INSERT INTO `" . $this->get_table_name( $language_code ) . "` ( id, original, translated, status ) VALUES ";
 
         $values = array();
@@ -76,7 +81,7 @@ class TRP_Query{
         $new_strings = array_unique( $new_strings );
 
         foreach ( $new_strings as $string ) {
-            array_push( $values, NULL, $this->full_trim( $string ), NULL, self::NOT_TRANSLATED );
+            array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED );
             $place_holders[] = "( '%d', '%s', '%s', '%d')";
         }
         foreach ( $update_strings as $string ) {
@@ -88,15 +93,12 @@ class TRP_Query{
 
         $query .= implode(', ', $place_holders);
         $query .= $on_duplicate;
-
-        $this->db->query( $this->db->prepare("$query ", $values) );
-        // you cannot insert multiple rows at once using insert() method.
-        // but by using prepare you cannot insert NULL values.
+        $this->db->query( $this->db->prepare($query . ' ', $values) );
     }
 
 
     public function get_string_ids( $original_strings, $language_code ){
-        $dictionary = $this->db->get_results("SELECT original, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','",  array_map( array( $this, 'full_trim' ), $original_strings )  )."')", OBJECT_K );
+        $dictionary = $this->db->get_results("SELECT original, id FROM `" . $this->get_table_name( $language_code ) . "` WHERE original IN ('".implode( "','",  array_map( array( $this, 'full_trim' ), $original_strings ) )."')", OBJECT_K );
         return $dictionary;
     }
 

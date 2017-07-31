@@ -58,7 +58,7 @@ class TRP_Translation_Manager{
 
     public function add_slug_as_meta_tag() {
         global $post;
-        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) && !is_home() && !is_archive() && !is_search() ) {
+        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) && !is_home() && !is_front_page() && !is_archive() && !is_search() ) {
             echo '<meta name="trp-slug" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
         }
 
@@ -215,7 +215,7 @@ class TRP_Translation_Manager{
         } else {
             global $post;
 
-            if( is_object( $post ) && ! is_archive() && ! is_home() && ! is_search() ) {
+            if( is_object( $post ) && ! is_archive() && ! is_home() && !is_front_page() && ! is_search() ) {
                 $url = get_permalink( $post );
             } else {
                 if( ! $this->url_converter ) {
