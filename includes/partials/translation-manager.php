@@ -91,8 +91,8 @@
                                 <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
                                     $other_languages = __( 'Other languages', TRP_PLUGIN_SLUG );
                                     ?>
-                                    <div id="trp-show-all-languages" class="trp-toggle-languages">&#11208; <span><?php echo $other_languages ?></span></div>
-                                    <div id="trp-hide-all-languages" class="trp-toggle-languages">&#11206; <span><?php echo $other_languages ?></span></div>
+                                    <div id="trp-show-all-languages" class="trp-toggle-languages"><span>&#11208; <?php echo $other_languages ?></span></div>
+                                    <div id="trp-hide-all-languages" class="trp-toggle-languages trp-toggle-languages-active"><span>&#11206; <?php echo $other_languages ?></span></div>
                                 <?php } ?>
                             <?php }?>
                         <?php } else{ ?>
