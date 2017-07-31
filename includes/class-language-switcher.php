@@ -39,7 +39,7 @@ class TRP_Language_Switcher{
 
     public function get_current_language(){
         if ( isset( $_REQUEST['lang'] ) ){
-            $language_code = esc_attr( $_REQUEST['lang'] );
+            $language_code = sanitize_text_field( $_REQUEST['lang'] );
             if ( in_array( $language_code, $this->settings['translation-languages'] ) ) {
                 return $language_code;
             }
