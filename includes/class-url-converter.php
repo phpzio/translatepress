@@ -92,7 +92,7 @@ class TRP_Url_Converter {
                 if ( substr( $url, 0, strlen( $prefix ) ) == $prefix ) {
                     $path = substr($url, strlen($prefix));
                     $path = ltrim($path, '/');
-                    $new_url = $abs_home . $url_slug . '/' . $path;
+                    $new_url = trailingslashit( $abs_home . $url_slug ) . $path;
                     break;
                 }
             }
