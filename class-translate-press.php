@@ -110,7 +110,7 @@ class TRP_Translate_Press{
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
-        $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor' );
+        $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor', 90 );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
         $this->loader->add_action( 'admin_bar_menu', $this->translation_manager, 'add_shortcut_to_translation_editor', 90, 1 );
         $this->loader->add_filter( 'show_admin_bar', $this->translation_manager, 'hide_admin_bar_when_in_editor', 90 );
