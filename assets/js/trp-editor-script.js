@@ -59,6 +59,10 @@ function TRP_Editor(){
         if ( close_url[close_url.length -1] == '?' ){
             close_url = close_url.slice(0, -1);
         }
+
+        /* remove the lang atribute from url. TODO maybe use this same method for trp-edit-translation ? */
+        close_url = _this.remove_url_parameter( close_url, 'lang' );
+
         close_button.attr( 'href', close_url );
         location = location.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' );
         window.history.replaceState( null, null, location );
@@ -259,6 +263,29 @@ function TRP_Editor(){
 
     this.next_string = function(){
         dictionaries[trp_on_screen_language].set_next_string();
+    };
+
+    this.remove_url_parameter = function(url, parameter) {
+        //prefer to use l.search if you have a location/link object
+        var urlparts= url.split('?');
+        if (urlparts.length>=2) {
+
+            var prefix= encodeURIComponent(parameter)+'=';
+            var pars= urlparts[1].split(/[&;]/g);
+
+            //reverse iteration as may be destructive
+            for (var i= pars.length; i-- > 0;) {
+                //idiom for string.startsWith
+                if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                    pars.splice(i, 1);
+                }
+            }
+
+            url= urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
+            return url;
+        } else {
+            return url;
+        }
     };
 
     function resize_iframe (event, ui) {
