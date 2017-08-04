@@ -14,7 +14,7 @@ class TRP_Translation_Render{
         global $TRP_LANGUAGE;
         if( is_admin() ||
         ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
-        ( isset( $_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'true' ) ) {
+        ( isset( $_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'true' ) || defined( 'WC_DOING_AJAX' ) ) {
             return;
         }
 
