@@ -18,10 +18,8 @@ class TRP_Translation_Render{
             return;
         }
 
-        if ( $this->start_output_buffering() ) {
-            mb_http_output("UTF-8");
-            ob_start(array($this, 'translate_page'));
-        }
+        mb_http_output("UTF-8");
+        ob_start(array($this, 'translate_page'));
     }
 
     protected function get_language(){
@@ -166,7 +164,7 @@ class TRP_Translation_Render{
 
         foreach ( $html->find('text') as $k => $row ){
             if($this->full_trim($row->outertext)!="" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric($this->full_trim($row->outertext)) && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
-                && !$this->hasAncestorAttribute( $row, $no_translate_attribute )){
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )){
                 if(strpos($row->outertext,'[vc_') === false) {
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     if ( $row->parent()->tag == 'title' ) {
@@ -179,21 +177,21 @@ class TRP_Translation_Render{
         }
         foreach ( $html->find('input[type=\'submit\'],input[type=\'button\']') as $k => $row ){
             if($this->full_trim($row->value)!="" && !is_numeric($this->full_trim($row->value)) && !preg_match('/^\d+%$/',$this->full_trim($row->value))
-                && !$this->hasAncestorAttribute( $row, $no_translate_attribute )) {
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )) {
                 array_push( $translateable_strings, html_entity_decode( $row->value ) );
                 array_push( $nodes, array('node'=>$row,'type'=>'submit') );
             }
         }
         foreach ( $html->find('input[type=\'text\'],input[type=\'password\'],input[type=\'search\'],input[type=\'email\'],input:not([type]),textarea') as $k => $row ){
             if($this->full_trim($row->placeholder)!="" && !is_numeric($this->full_trim($row->placeholder)) && !preg_match('/^\d+%$/',$this->full_trim($row->placeholder))
-                && !$this->hasAncestorAttribute( $row, $no_translate_attribute )){
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )){
                 array_push( $translateable_strings, html_entity_decode ( $row->placeholder ) );
                 array_push( $nodes, array('node'=>$row,'type'=>'placeholder') );
             }
         }
         foreach ( $html->find('meta[name="description"],meta[property="og:title"],meta[property="og:description"],meta[property="og:site_name"],meta[name="twitter:title"],meta[name="twitter:description"]') as $k => $row ){
             if($this->full_trim($row->content)!="" && !is_numeric($this->full_trim($row->content)) && !preg_match('/^\d+%$/',$this->full_trim($row->content))
-                && !$this->hasAncestorAttribute( $row, $no_translate_attribute )){
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )){
                 array_push( $translateable_strings, $row->content );
                 array_push( $nodes, array('node'=>$row,'type'=>'meta_desc') );
             }
@@ -205,7 +203,7 @@ class TRP_Translation_Render{
             }
         }
         foreach ( $html->find('img') as $k => $row ) {
-            if($this->full_trim($row->alt)!="" && !$this->hasAncestorAttribute( $row, $no_translate_attribute ))
+            if($this->full_trim($row->alt)!="" && !$this->has_ancestor_attribute( $row, $no_translate_attribute ))
             {
                 array_push( $translateable_strings, $row->alt );
                 array_push( $nodes, array('node'=>$row,'type'=>'image_alt') );
@@ -313,14 +311,13 @@ class TRP_Translation_Render{
         foreach( $html->find('a[href!="#"]') as $a_href)  {
             $url = $a_href->href;
             $is_external_link = $this->is_external_link( $url );
-
-            if ( $this->settings['force-language-to-custom-links'] == 'yes' && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$this->is_admin_link($url) ){
-
+            $is_admin_link = $this->is_admin_link($url);
+            if ( $this->settings['force-language-to-custom-links'] == 'yes' && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$is_admin_link ){
                 $a_href->href = apply_filters( 'trp_force_custom_links', $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $url ), $url, $TRP_LANGUAGE, $a_href );
                 $url = $a_href->href;
             }
 
-            if( $preview_mode && ( $is_external_link || $this->is_different_language( $url )  ) ) {
+            if( $preview_mode && ( $is_external_link || $this->is_different_language( $url ) || $is_admin_link ) ) {
                 $a_href->setAttribute( 'data-trp-unpreviewable', 'trp-unpreviewable' );
             }
         }
@@ -371,6 +368,7 @@ class TRP_Translation_Render{
     }
 
     protected function is_admin_link( $url ){
+
         if ( strpos( $url, admin_url() ) !== false || strpos( $url, wp_login_url() ) !== false ){
             return true;
         }
@@ -452,22 +450,13 @@ class TRP_Translation_Render{
         return $translated_strings;
     }
 
-    protected function hasAncestorAttribute($node,$attribute) {
+    protected function has_ancestor_attribute($node,$attribute) {
         $currentNode = $node;
         while($currentNode->parent() && $currentNode->parent()->tag!="html") {
             if(isset($currentNode->parent()->$attribute))
                 return true;
             else
                 $currentNode = $currentNode->parent();
-        }
-        return false;
-    }
-
-    protected function start_output_buffering(){
-        $post_type = get_post_type();
-        $post_types = array( 'post', 'page' );
-        if ( in_array( $post_type, $post_types ) ){
-            return true;
         }
         return false;
     }
@@ -504,7 +493,5 @@ class TRP_Translation_Render{
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }
-    
-    
 
 }
