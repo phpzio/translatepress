@@ -23,7 +23,7 @@
                 </td>
             </tr>
 
-            <?php $this->languages_selector( $languages ); ?>
+            <?php do_action( 'trp_language_selector', $languages ); ?>
 
             <tr>
                 <th scope="row"><?php _e( 'Native language name', TRP_PLUGIN_SLUG ); ?> </th>

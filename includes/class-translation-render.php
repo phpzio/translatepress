@@ -41,7 +41,7 @@ class TRP_Translation_Render{
         return false;
     }
 
-    protected function full_trim( $word ) {
+    public function full_trim( $word ) {
         $word = trim($word," \t\n\r\0\x0B\xA0�" );
         if ( htmlentities( $word ) == "" ){
             $word = '';
@@ -166,10 +166,11 @@ class TRP_Translation_Render{
             if($this->full_trim($row->outertext)!="" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric($this->full_trim($row->outertext)) && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute )){
                 if(strpos($row->outertext,'[vc_') === false) {
-                    array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     if ( $row->parent()->tag == 'title' ) {
-                        array_push($nodes, array('node' => $row, 'type' => 'page_title'));
+                        //array_push($nodes, array('node' => $row, 'type' => 'page_title'));
+                        //array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     }else {
+                        array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                         array_push($nodes, array('node' => $row, 'type' => 'text'));
                     }
                 }
@@ -189,19 +190,7 @@ class TRP_Translation_Render{
                 array_push( $nodes, array('node'=>$row,'type'=>'placeholder') );
             }
         }
-        foreach ( $html->find('meta[name="description"],meta[property="og:title"],meta[property="og:description"],meta[property="og:site_name"],meta[name="twitter:title"],meta[name="twitter:description"]') as $k => $row ){
-            if($this->full_trim($row->content)!="" && !is_numeric($this->full_trim($row->content)) && !preg_match('/^\d+%$/',$this->full_trim($row->content))
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )){
-                array_push( $translateable_strings, $row->content );
-                array_push( $nodes, array('node'=>$row,'type'=>'meta_desc') );
-            }
-        }
-        foreach ($html->find('meta[name="trp-slug"]' ) as $k => $row ){
-            if ( $this->full_trim($row->content)!="" && !is_numeric($this->full_trim($row->content)) && !preg_match('/^\d+%$/',$this->full_trim($row->content ) ) ) {
-                array_push( $translateable_strings, $row->content );
-                array_push( $nodes, array('node'=>$row,'type'=>'post_slug') );
-            }
-        }
+
         foreach ( $html->find('img') as $k => $row ) {
             if($this->full_trim($row->alt)!="" && !$this->has_ancestor_attribute( $row, $no_translate_attribute ))
             {
@@ -210,6 +199,10 @@ class TRP_Translation_Render{
             }
         }
 
+        $translateable_information = array( 'translateable_strings' => $translateable_strings, 'nodes' => $nodes );
+        $translateable_information = apply_filters( 'trp_translateable_strings', $translateable_information, $html, $no_translate_attribute, $TRP_LANGUAGE, $language_code, $this );
+        $translateable_strings = $translateable_information['translateable_strings'];
+        $nodes = $translateable_information['nodes'];
 
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
@@ -450,7 +443,7 @@ class TRP_Translation_Render{
         return $translated_strings;
     }
 
-    protected function has_ancestor_attribute($node,$attribute) {
+    public function has_ancestor_attribute($node,$attribute) {
         $currentNode = $node;
         while($currentNode->parent() && $currentNode->parent()->tag!="html") {
             if(isset($currentNode->parent()->$attribute))

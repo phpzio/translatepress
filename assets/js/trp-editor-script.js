@@ -72,11 +72,14 @@ function TRP_Editor(){
         _this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
         strings = [];
         dictionaries = [];
-
         var all_strings = _this.preview_iframe.contents().find( '[data-trp-translate-id]' );
         if( all_strings.length != 0 ){
-            // add iframe title
-            all_strings.push ( jQuery( document.getElementById("trp-preview-iframe").contentDocument.title )[0] );
+            var title = document.getElementById("trp-preview-iframe").contentDocument.title;
+            if ( /<[a-z][\s\S]*>/i.test( title ) ) {
+                //console.log(jQuery(document.getElementById("trp-preview-iframe").contentDocument.title));
+                // add iframe title
+                all_strings.push ( jQuery( document.getElementById("trp-preview-iframe").contentDocument.title )[0] );
+            }
             var strings_to_query = [];
             for ( var i = 0; i < all_strings.length; i++ ) {
                 var string = new TRP_String( trp_on_screen_language, i );
@@ -406,7 +409,15 @@ function TRP_Dictionary( language_code ){
             if ( categorized[ _this.strings[i].node_type ] == undefined ) {
                 categorized[ _this.strings[i].node_type ] = [];
             }
-            categorized[ _this.strings[i].node_type ].push( _this.strings[i] );
+            if ( _this.strings[i].original != '' ){
+                categorized[ _this.strings[i].node_type ].push( _this.strings[i] );
+            }
+        }
+
+        for ( var i in categorized ){
+            if ( categorized[i].length == 0 ){
+                delete categorized[i];
+            }
         }
 
         return categorized;

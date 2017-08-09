@@ -10,8 +10,8 @@ class TRP_Translate_Press_Pro extends TRP_Translate_Press{
             require_once(TRP_PLUGIN_DIR . 'pro/includes/class-plugin-updater-multisite.php');
         }
         parent::load_dependencies();
-        require_once( TRP_PLUGIN_DIR . 'pro/includes/class-translation-render-pro.php' );
-        require_once( TRP_PLUGIN_DIR . 'pro/includes/class-settings-pro.php' );
+        //require_once( TRP_PLUGIN_DIR . 'pro/includes/class-translation-render-pro.php' );
+        //require_once( TRP_PLUGIN_DIR . 'pro/includes/class-settings-pro.php' );
     }
 
     protected function initialize_components() {
@@ -33,11 +33,11 @@ class TRP_Translate_Press_Pro extends TRP_Translate_Press{
 
         */
 
-        $this->settings = new TRP_Settings_Pro();
-        $this->translation_render = new TRP_Translation_Render_Pro($this->settings->get_settings());
+        //$this->settings = new TRP_Settings_Pro();
+        //$this->translation_render = new TRP_Translation_Render_Pro($this->settings->get_settings());
 
-        $this->loader->add_action( 'admin_enqueue_scripts', $this->settings, 'enqueue_sortable_language_script' );
-        $this->loader->add_action( 'trp_settings_navigation_tabs', $this->settings, 'add_navigation_tabs' );
+//        $this->loader->add_action( 'admin_enqueue_scripts', $this->settings, 'enqueue_sortable_language_script' );
+//        $this->loader->add_action( 'trp_settings_navigation_tabs', $this->settings, 'add_navigation_tabs' );
     }
 
 }
