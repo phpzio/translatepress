@@ -8,11 +8,11 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Automatic translation plugin with front-end editing.
+Experience a better way of translating your WordPress site, with full support for WooCommerce and site builders.
  
 == Description ==
 
-**TranslatePress is the easier way to translate WordPress.**
+**A WordPress Translation Plugin that anyone can use.**
 
 **Like this plugin?** Consider leaving a [5 star review](https://wordpress.org/support/view/plugin-reviews/translatepress?filter=5).
 
