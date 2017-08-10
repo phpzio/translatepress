@@ -164,18 +164,12 @@ class TRP_Translation_Render{
 
         foreach ( $html->find('text') as $k => $row ){
             if($this->full_trim($row->outertext)!="" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric($this->full_trim($row->outertext)) && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )){
-                if(strpos($row->outertext,'[vc_') === false) {
-                    if ( $row->parent()->tag == 'title' ) {
-                        //array_push($nodes, array('node' => $row, 'type' => 'page_title'));
-                        //array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
-                    }else {
-                        array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
-                        array_push($nodes, array('node' => $row, 'type' => 'text'));
-                    }
-                }
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute ) && $row->parent()->tag != 'title' && strpos($row->outertext,'[vc_') === false ){
+                    array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
+                    array_push($nodes, array('node' => $row, 'type' => 'text'));
             }
         }
+
         foreach ( $html->find('input[type=\'submit\'],input[type=\'button\']') as $k => $row ){
             if($this->full_trim($row->value)!="" && !is_numeric($this->full_trim($row->value)) && !preg_match('/^\d+%$/',$this->full_trim($row->value))
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute )) {
