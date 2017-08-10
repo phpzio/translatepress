@@ -33,7 +33,7 @@ class TRP_Translation_Manager{
             return $page_template;
         }
 
-        return TRP_PLUGIN_DIR . 'includes/partials/translation-manager.php' ;
+        return TRP_PLUGIN_DIR . 'partials/translation-manager.php' ;
     }
 
     public function enqueue_scripts_and_styles(){
@@ -120,7 +120,7 @@ class TRP_Translation_Manager{
                             $dictionaries[$current_language][$slug_info['id']] = array(
                                 'id'         => $slug_info['id'],
                                 'original'   => $slug_info['original'],
-                                'translated' => $this->slug_manager->get_translated_slug( $slug_info['post_id'], $current_language ),
+                                'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $current_language ),
                             );
                         }
 
@@ -149,7 +149,7 @@ class TRP_Translation_Manager{
                                 $dictionaries[$language][0] = array(
                                     'id'         => 0,
                                     'original'   => $slug_info['original'],
-                                    'translated' => $this->slug_manager->get_translated_slug( $slug_info['post_id'], $language )
+                                    'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $language ),
                                 );
                             }
                         }

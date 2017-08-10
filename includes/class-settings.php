@@ -8,10 +8,6 @@ class TRP_Settings{
     protected $trp_languages;
 
 
-    public function __construct( ) {
-        $this->set_options();
-    }
-
     public function get_language_switcher_options(){
         $ls_options = apply_filters( 'trp_language_switcher_output', array(
             'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', TRP_PLUGIN_SLUG ) ),
@@ -36,6 +32,9 @@ class TRP_Settings{
     }
 
     public function get_settings(){
+        if ( $this->settings == null ){
+            $this->set_options();
+        }
         return $this->settings;
     }
 
@@ -49,7 +48,7 @@ class TRP_Settings{
             $this->trp_languages = $trp->get_component( 'languages' );
         }
         $languages = $this->trp_languages->get_languages( 'english_name' );
-        require_once TRP_PLUGIN_DIR . 'includes/partials/main-settings-page.php';
+        require_once TRP_PLUGIN_DIR . 'partials/main-settings-page.php';
     }
 
     public function register_setting(){
@@ -203,7 +202,8 @@ class TRP_Settings{
                     $settings_option[$key_default_setting] = $value_default_setting;
                 }
             }
-            $settings_option = $this->check_translation_settings( $settings_option );
+            $settings_option = $this->check_settings_option( $settings_option, $default_settings );
+
         }
 
         $this->settings = $settings_option;
@@ -227,7 +227,7 @@ class TRP_Settings{
         }
     }
 
-    protected function languages_selector( $languages ){
+    public function languages_selector( $languages ){
         $selected_language_code = '';
         ?>
         <tr>
@@ -253,7 +253,11 @@ class TRP_Settings{
         <?php
     }
 
-    public function check_translation_settings( $settings ){
+    public function check_settings_option( $settings, $default_settings ){
+        if ( class_exists( 'TRP_Extra_Languages' ) ){
+            // checks are made in the Add-on later
+            return $settings;
+        }
         foreach ( $settings['translation-languages'] as $language_code ) {
             if ( $settings['default-language'] != $language_code ) {
                 $translation_language = $language_code;
@@ -318,5 +322,37 @@ class TRP_Settings{
             }
         }
     }
+
+
+    public function add_navigation_tabs(){
+        $tabs = apply_filters( 'trp_settings_tabs', array(
+            array(
+                'name'  => __( 'General', TRP_PLUGIN_SLUG ),
+                'url'   => admin_url( 'options-general.php?page=translate-press' ),
+                'page'  => 'translate-press'
+            ),
+            array(
+                'name'  => __( 'Translate Site', TRP_PLUGIN_SLUG ),
+                'url'   => add_query_arg( 'trp-edit-translation', 'true', home_url() ),
+                'page'  => 'trp_translation_editor'
+            )
+            /* Uncomment this after Beta
+            ,
+            array(
+                'name'  => __( 'License', TRP_PLUGIN_SLUG ),
+                'url'   => admin_url( 'admin.php?page=trp_license_key' ),
+                'page'  => 'trp_license_key'
+            )
+            */
+        ));
+
+        $active_tab = 'translate-press';
+        if ( isset( $_GET['page'] ) ){
+            $active_tab = esc_attr( $_GET['page'] );
+        }
+
+        require ( TRP_PLUGIN_DIR . 'partials/settings-navigation-tabs.php');
+    }
+
 }
 

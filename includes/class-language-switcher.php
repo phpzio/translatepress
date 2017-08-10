@@ -32,7 +32,7 @@ class TRP_Language_Switcher{
         $ls_options = $this->trp_settings_object->get_language_switcher_options();
         $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
 
-        require TRP_PLUGIN_DIR . 'includes/partials/language-switcher-shortcode.php';
+        require TRP_PLUGIN_DIR . 'partials/language-switcher-shortcode.php';
 
         return ob_get_clean();
     }
