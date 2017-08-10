@@ -7,7 +7,12 @@ class TRP_Language_Switcher{
     protected $trp_settings_object;
     protected $trp_languages;
 
-
+    /**
+     * TRP_Language_Switcher constructor.
+     *
+     * @param array $settings           Settings option.
+     * @param $url_converter            $TRP_Url_Converter object.
+     */
     public function __construct( $settings, $url_converter ){
         $this->settings = $settings;
         $this->url_converter = $url_converter;
@@ -17,6 +22,15 @@ class TRP_Language_Switcher{
         $this->add_cookie( $TRP_LANGUAGE );
     }
 
+    /**
+     * Returns HTML for shortcode language switcher.
+     *
+     * Only shows published languages.
+     * Takes into account shortcode flags and name options.
+     * Runs an output buffer on 'partials/language-switcher-shortcode.php'.
+     *
+     * @return string                   HTML for shortcode language switcher
+     */
     public function language_switcher(){
         ob_start();
 
@@ -37,7 +51,15 @@ class TRP_Language_Switcher{
         return ob_get_clean();
     }
 
-    public function get_current_language(){
+    /**
+     * Returns a valid current language code.
+     *
+     * $_REQUEST['lang'] is prioritized over current url encoding.
+     * Returns default language if nothing is found.
+     *
+     * @return string           Current language code.
+     */
+    private function get_current_language(){
         if ( isset( $_REQUEST['lang'] ) ){
             $language_code = sanitize_text_field( $_REQUEST['lang'] );
             if ( in_array( $language_code, $this->settings['translation-languages'] ) ) {
@@ -53,23 +75,13 @@ class TRP_Language_Switcher{
         return $this->settings['default-language'];
     }
 
-    protected function str_lreplace( $search, $replace, $subject ) {
-        $pos = strrpos($subject, $search);
-        if ( $pos !== false ) {
-            $subject = substr_replace($subject, $replace, $pos, strlen($search));
-        }
-        return $subject;
-    }
-
-    protected function ends_with($haystack, $needle){
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
-    }
-
+    /**
+     * Enqueue language switcher scripts and styles.
+     *
+     * Adds scripts for shortcode and floater.
+     *
+     * Hooked on wp_enqueue_scripts.
+     */
     public function enqueue_language_switcher_scripts( ){
         wp_enqueue_script('trp-language-switcher', TRP_PLUGIN_URL . 'assets/js/trp-language-switcher.js', array('jquery'), TRP_PLUGIN_VERSION );
 
@@ -107,6 +119,11 @@ class TRP_Language_Switcher{
         wp_localize_script( 'trp-language-switcher', 'trp_language_switcher_data', $ls_script_vars_array );
     }
 
+    /**
+     * Adds the floater language switcher.
+     *
+     * Hooked on wp_footer.
+     */
     public function add_floater_language_switcher() {
 
         // Check if floater language switcher is active and return if not
@@ -205,6 +222,14 @@ class TRP_Language_Switcher{
     <?php
     }
 
+    /**
+     * Return flag html.
+     *
+     * @param string $language_code         Language code.
+     * @param string $language_name         Language full name or shortname.
+     * @param string $location              NULL | ls_shortcode
+     * @return string                       Returns flag html.
+     */
     public function add_flag( $language_code, $language_name, $location = NULL ) {
 
         // Path to folder with flags images
@@ -224,10 +249,13 @@ class TRP_Language_Switcher{
         }
 
         return $flag_html;
-
     }
 
-    public function add_ls_to_menu( ){
+    /**
+     * Register language switcher post type.
+     *
+     */
+    public function register_ls_menu_switcher( ){
         $args = array(
             'exclude_from_search'   => true,
             'publicly_queryable'    => false,
@@ -242,6 +270,20 @@ class TRP_Language_Switcher{
         register_post_type( 'language_switcher', $args );
     }
 
+    /**
+     * Prepare language switcher menu items.
+     *
+     * Sets the current page permalinks to menu items.
+     * Inserts flags and full name if necessary
+     * Removes menu item of current language if Current Language item is present.
+     *
+     * Hooked on wp_get_nav_menu_items
+     *
+     * @param array $items          Menu items.
+     * @param string $menu          Menu name.
+     * @param array $args           Menu arguments.
+     * @return array                Menu items with
+     */
     public function ls_menu_permalinks( $items, $menu, $args ){
         global $TRP_LANGUAGE;
         if ( ! $this->trp_settings_object ) {
@@ -295,6 +337,7 @@ class TRP_Language_Switcher{
             }
         }
 
+        // removes menu item of current language if "Current Language" language switcher item is present.
         if ( $current_language_set && $item_key_to_unset ){
             unset($items[$item_key_to_unset]);
             $items = array_values( $items );
@@ -304,14 +347,11 @@ class TRP_Language_Switcher{
         return $items;
     }
 
-    public function enqueue_jquery_ui( $is_needed ) {
-
-        if( $is_needed ) {
-            wp_enqueue_script( 'jquery-ui-core' );
-        }
-
-    }
-
+    /**
+     * Adds cookie with language
+     *
+     * @param string $current_language          Current language code.
+     */
     public function add_cookie( $current_language ) {
 
         setcookie( 'trp_current_language', $current_language, strtotime( '+30 days' ), "/" );

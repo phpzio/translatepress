@@ -91,7 +91,7 @@ class TRP_Translate_Press{
 
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
         $this->loader->add_action( 'wp_footer', $this->language_switcher, 'add_floater_language_switcher' );
-        $this->loader->add_filter( 'init', $this->language_switcher, 'add_ls_to_menu' );
+        $this->loader->add_filter( 'init', $this->language_switcher, 'register_ls_menu_switcher' );
         $this->loader->add_action( 'wp_get_nav_menu_items', $this->language_switcher, 'ls_menu_permalinks', 10, 3 );
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
