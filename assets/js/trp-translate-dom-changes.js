@@ -1,5 +1,7 @@
 
-// observe, get, replace.
+/**
+ * Script to replace dynamically added strings with their translation.
+ */
 function TRP_Translator(){
 
     var _this = this;
@@ -9,7 +11,9 @@ function TRP_Translator(){
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
     var language_to_query;
 
-
+    /**
+     * Ajax request to get translations for strings
+     */
     this.ajax_get_translation = function( strings_to_query, url ) {
         jQuery.ajax({
             url: url,
@@ -40,6 +44,9 @@ function TRP_Translator(){
         });
     };
 
+    /**
+     * Replace original strings with translations if found.
+     */
     this.update_strings = function( response, strings_to_query ) {
         if ( response != null && response[language_to_query] != null ){
             for ( var j in strings_to_query ) {
@@ -75,6 +82,9 @@ function TRP_Translator(){
         }
     };
 
+    /**
+     * Detect and remember added strings.
+     */
     this.detect_new_strings = function( mutations ){
         if ( active ) {
             var strings = [];
@@ -110,6 +120,9 @@ function TRP_Translator(){
         }
     };
 
+    /**
+     * Initialize and configure observer.
+     */
     this.initialize = function() {
 
         current_language = trp_data.trp_current_language;
@@ -129,14 +142,23 @@ function TRP_Translator(){
         observer.observe( document.body , config );
     };
 
+    /**
+     * Stop observing new strings.
+     */
     this.disconnect = function(){
         observer.disconnect();
     };
 
+    /**
+     * Resume observing new strings added.
+     */
     this.unpause_observer = function(){
         active = true;
     };
 
+    /**
+     * Pause observing new string added.
+     */
     this.pause_observer = function(){
         active = false;
     };

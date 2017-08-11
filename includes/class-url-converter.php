@@ -1,15 +1,31 @@
 <?php
 
+/**
+ * Class TRP_Url_Converter
+ *
+ * Manages urls of translated pages.
+ */
 class TRP_Url_Converter {
 
     protected $absolute_home;
     protected $settings;
 
-
+    /**
+     * TRP_Url_Converter constructor.
+     *
+     * @param array $settings       Settings option.
+     */
     public function __construct( $settings ){
         $this->settings = $settings;
     }
 
+    /**
+     * Redirects to default page for default language.
+     *
+     * Only if settings option add-subdirectory-to-default-language is set to no.
+     *
+     * Hooked to template redirect.
+     */
     public function redirect_to_default_language() {
         global $TRP_LANGUAGE;
         if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $TRP_LANGUAGE == $this->settings['default-language'] ) {
@@ -23,6 +39,17 @@ class TRP_Url_Converter {
         }
     }
 
+    /**
+     * Add language code as a subdirectory after home url.
+     *
+     * Hooked to home_url.
+     *
+     * @param string $url               Given Url.
+     * @param string $path              Given path.
+     * @param string $orig_scheme       Scheme.
+     * @param int $blog_id              Blog id.
+     * @return string
+     */
     public function add_language_to_home_url( $url, $path, $orig_scheme, $blog_id ){
         global $TRP_LANGUAGE;
         if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $TRP_LANGUAGE == $this->settings['default-language'] ) {
@@ -43,6 +70,9 @@ class TRP_Url_Converter {
         return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
     }
 
+    /**
+     * Add Hreflang entries for each language to Header.
+     */
     public function add_hreflang_to_head(){
         $languages = $this->settings['publish-languages'];
         if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
@@ -55,10 +85,11 @@ class TRP_Url_Converter {
     }
 
     /**
-     * function that changes the lang attribute in the html tag to the current language
-     * @param $output
-     * @param $doctype
-     * @return mixed
+     * Function that changes the lang attribute in the html tag to the current language.
+     *
+     * @param string $output
+     * @param string $doctype
+     * @return string
      */
     public function change_lang_attr_in_html_tag( $output, $doctype ){
         global $TRP_LANGUAGE;
@@ -70,6 +101,15 @@ class TRP_Url_Converter {
         return $output;
     }
 
+    /**
+     * Returns language-specific url for given language.
+     *
+     * Defaults to current Url and current language.
+     *
+     * @param string $language      Language code.
+     * @param string $url           Url to encode.
+     * @return string
+     */
     public function get_url_for_language ( $language = null, $url = null ) {
         global $post, $TRP_LANGUAGE;
         $trp_language_copy = $TRP_LANGUAGE;
@@ -105,6 +145,13 @@ class TRP_Url_Converter {
         return $new_url;
     }
 
+    /**
+     * Get language code slug to use in url.
+     *
+     * @param string $language_code         Full language code.
+     * @param bool $accept_empty_return     Whether to take into account the add-subdirectory-to-default-language setting.
+     * @return string                       Url slug.
+     */
     public function get_url_slug( $language_code, $accept_empty_return = true ){
         $url_slug = $language_code;
         if( isset( $this->settings['url-slugs'][$language_code] ) ) {
@@ -118,6 +165,11 @@ class TRP_Url_Converter {
         return $url_slug;
     }
 
+    /**
+     * Return absolute home url as stored in database, unfiltered.
+     *
+     * @return string
+     */
     public function get_abs_home() {
         global $wpdb;
 
@@ -142,6 +194,12 @@ class TRP_Url_Converter {
         return $this->absolute_home;
     }
 
+    /**
+     * Get first subdirectory of url.
+     *
+     * @param string $url           Url to find subdirectory from.
+     * @return string               Subdirectory found.
+     */
     protected function strip_subdir_from_url( $url ) {
         $subdir       = parse_url( $this->get_abs_home(), PHP_URL_PATH );
         $subdir_slugs = array_values( array_filter( explode( '/', $subdir ) ) );
@@ -156,6 +214,14 @@ class TRP_Url_Converter {
         return untrailingslashit( $url );
     }
 
+    /**
+     * Return the language code from the url.
+     *
+     * Uses current url if none given.
+     *
+     * @param string $url       Url.
+     * @return string           Language code.
+     */
     public function get_lang_from_url_string( $url = null ) {
         if ( ! $url ){
             $url = $this->cur_page_url();
@@ -188,6 +254,11 @@ class TRP_Url_Converter {
         }
     }
 
+    /**
+     * Return current page url.
+     *
+     * @return string       Current page url.
+     */
     public function cur_page_url() {
         $pageURL = 'http';
 

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class TRP_Translation_Manager
+ *
+ * Handles Front-end Translation Editor, including Ajax requests.
+ */
 class TRP_Translation_Manager{
     protected $settings;
     protected $translation_render;
@@ -7,12 +12,22 @@ class TRP_Translation_Manager{
     protected $slug_manager;
     protected $url_converter;
 
-
+    /**
+     * TRP_Translation_Manager constructor.
+     *
+     * @param array $settings       Settings option.
+     */
     public function __construct( $settings ){
         $this->settings = $settings;
     }
 
     // mode == true, mode == preview
+    /**
+     * Returns boolean whether current page is part of the Translation Editor.
+     *
+     * @param string $mode          'true' | 'preview'
+     * @return bool                 Whether current page is part of the Translation Editor.
+     */
     protected function conditions_met( $mode = 'true' ){
         if ( isset( $_GET['trp-edit-translation'] ) && esc_attr( $_GET['trp-edit-translation'] ) == $mode ) {
             if ( current_user_can( 'manage_options' ) && ! is_admin() ) {
@@ -28,6 +43,14 @@ class TRP_Translation_Manager{
         return false;
     }
 
+    /**
+     * Start Translation Editor.
+     *
+     * Hooked to template_include.
+     *
+     * @param string $page_template         Current page template.
+     * @return string                       Template for translation Editor.
+     */
     public function translation_editor( $page_template ){
         if ( ! $this->conditions_met() ){
             return $page_template;
@@ -36,6 +59,9 @@ class TRP_Translation_Manager{
         return TRP_PLUGIN_DIR . 'partials/translation-manager.php' ;
     }
 
+    /**
+     * Enqueue scripts and styles for translation Editor parent window.
+     */
     public function enqueue_scripts_and_styles(){
         wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
         wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
@@ -49,6 +75,9 @@ class TRP_Translation_Manager{
         wp_print_styles( $styles_to_print );
     }
 
+    /**
+     * Enqueue scripts and styles for translation Editor preview window.
+     */
     public function enqueue_preview_scripts_and_styles(){
         if ( $this->conditions_met( 'preview' ) ) {
             wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery'), TRP_PLUGIN_VERSION );
@@ -56,6 +85,11 @@ class TRP_Translation_Manager{
         }
     }
 
+    /**
+     * Echo page slug as meta tag in preview window.
+     *
+     * Hooked to wp_head
+     */
     public function add_slug_as_meta_tag() {
         global $post;
         if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && $this->conditions_met( 'preview' ) && !is_home() && !is_front_page() && !is_archive() && !is_search() ) {
@@ -64,6 +98,14 @@ class TRP_Translation_Manager{
 
     }
 
+    /**
+     * Return array of original strings given their db ids.
+     *
+     * @param array $strings            Strings object to extract original
+     * @param array $original_array     Original strings array to append to.
+     * @param array $id_array           Id array to extract.
+     * @return array                    Original strings array + Extracted strings from ids.
+     */
     protected function extract_original_strings( $strings, $original_array, $id_array ){
         if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {
@@ -73,6 +115,12 @@ class TRP_Translation_Manager{
         return array_values( $original_array );
     }
 
+    /**
+     * Returns translations based on original strings and ids.
+     *
+     * Hooked to wp_ajax_trp_get_translations
+     *       and wp_ajax_nopriv_trp_get_translations.
+     */
     public function get_translations() {
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
@@ -164,6 +212,11 @@ class TRP_Translation_Manager{
         die();
     }
 
+    /**
+     * Save translations from ajax post.
+     *
+     * Hooked to wp_ajax_trp_save_translations.
+     */
     public function save_translations(){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) ) {
@@ -201,6 +254,13 @@ class TRP_Translation_Manager{
         die();
     }
 
+    /**
+     * Display button to enter translation Editor in admin bar
+     *
+     * Hooked to admin_bar_menu.
+     *
+     * @param $wp_admin_bar
+     */
     public function add_shortcut_to_translation_editor( $wp_admin_bar ) {
 
         if( ! current_user_can( 'manage_options' ) ) {
@@ -258,6 +318,14 @@ class TRP_Translation_Manager{
 
     }
 
+    /**
+     * Function to hide admin bar when in editor preview mode.
+     *
+     * Hooked to show_admin_bar.
+     *
+     * @param bool $show_admin_bar      TRUE | FALSE
+     * @return bool
+     */
     public function hide_admin_bar_when_in_editor( $show_admin_bar ) {
 
         if( $this->conditions_met( 'preview' ) ) {

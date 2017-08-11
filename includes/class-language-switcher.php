@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class TRP_Language_Switcher
+ *
+ * Generates all types of language switchers.
+ */
 class TRP_Language_Switcher{
 
     protected $settings;

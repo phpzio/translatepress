@@ -1,16 +1,29 @@
 <?php
 
+/**
+ * Class TRP_Translation_Render
+ *
+ * Translates pages.
+ */
 class TRP_Translation_Render{
     protected $settings;
     protected $machine_translator;
     protected $trp_query;
     protected $url_converter;
 
+    /**
+     * TRP_Translation_Render constructor.
+     *
+     * @param array $settings       Settings options.
+     */
     public function __construct( $settings ){
         $this->settings = $settings;
     }
 
-    public function start_object_cache(){
+    /**
+     * Start Output buffer to translate page.
+     */
+    public function start_output_buffer(){
         global $TRP_LANGUAGE;
         if( is_admin() ||
         ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
@@ -22,6 +35,11 @@ class TRP_Translation_Render{
         ob_start(array($this, 'translate_page'));
     }
 
+    /**
+     * Language to translate into.
+     *
+     * @return string       Language code.
+     */
     protected function get_language(){
         global $TRP_LANGUAGE;
         if ( in_array( $TRP_LANGUAGE, $this->settings['translation-languages'] ) ) {
@@ -41,6 +59,12 @@ class TRP_Translation_Render{
         return false;
     }
 
+    /**
+     * Trim strings.
+     *
+     * @param string $word      Raw string.
+     * @return string           Trimmed string.
+     */
     public function full_trim( $word ) {
         $word = trim($word," \t\n\r\0\x0B\xA0�" );
         if ( htmlentities( $word ) == "" ){
@@ -52,6 +76,12 @@ class TRP_Translation_Render{
         return $word;
     }
 
+    /**
+     * Preview mode string category name for give node type.
+     *
+     * @param string $current_node_type         Node type.
+     * @return string                           Category name.
+     */
     protected function get_node_type_category( $current_node_type ){
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
             __( 'Meta Information', TRP_PLUGIN_SLUG ) => array( 'meta_desc', 'post_slug', 'page_title' ),
@@ -67,6 +97,12 @@ class TRP_Translation_Render{
 
     }
 
+    /**
+     * String description to be used in preview mode dropdown list of strings.
+     *
+     * @param object $current_node          Current node.
+     * @return string                       Node description.
+     */
     protected function get_node_description( $current_node ){
         $node_type_descriptions = apply_filters( 'trp_node_type_descriptions',
             array(
@@ -137,6 +173,14 @@ class TRP_Translation_Render{
 
     }
 
+    /**
+     * Finding translateable strings and replacing with translations.
+     *
+     * Method called for output buffer.
+     *
+     * @param string $output        Entire HTML page as string.
+     * @return string               Translated HTML page.
+     */
     public function translate_page( $output ){
         if ( strlen( $output ) < 1 ){
             return $output;
@@ -313,6 +357,12 @@ class TRP_Translation_Render{
         return $html->save();
     }
 
+    /**
+     * Whether given url links to an external domain.
+     *
+     * @param string $url           Url.
+     * @return bool                 Whether given url links to an external domain.
+     */
     protected function is_external_link( $url ){
         // Abort if parameter URL is empty
         if( empty($url) ) {
@@ -337,6 +387,12 @@ class TRP_Translation_Render{
         }
     }
 
+    /**
+     * Whether given url links to a different language than the current one.
+     *
+     * @param string $url           Url.
+     * @return bool                 Whether given url links to a different language than the current one.
+     */
     protected function is_different_language( $url ){
         global $TRP_LANGUAGE;
         if ( ! $this->url_converter ) {
@@ -354,6 +410,12 @@ class TRP_Translation_Render{
         }
     }
 
+    /**
+     * Whether given url links to an admin page.
+     *
+     * @param string $url           Url.
+     * @return bool                 Whether given url links to an admin page.
+     */
     protected function is_admin_link( $url ){
 
         if ( strpos( $url, admin_url() ) !== false || strpos( $url, wp_login_url() ) !== false ){
@@ -363,6 +425,15 @@ class TRP_Translation_Render{
 
     }
 
+    /**
+     * Return translations for given strings in given language code.
+     *
+     * Also stores new strings, calls automatic translations and stores new translations.
+     *
+     * @param $translateable_strings
+     * @param $language_code
+     * @return array
+     */
     public function process_strings( $translateable_strings, $language_code ){
         $translated_strings = array();
 
@@ -437,6 +508,13 @@ class TRP_Translation_Render{
         return $translated_strings;
     }
 
+    /**
+     * Whether given node has ancestor with given attribute.
+     *
+     * @param object $node          Html Node.
+     * @param string $attribute     Attribute to search for.
+     * @return bool                 Whether given node has ancestor with given attribute.
+     */
     public function has_ancestor_attribute($node,$attribute) {
         $currentNode = $node;
         while($currentNode->parent() && $currentNode->parent()->tag!="html") {
@@ -448,6 +526,9 @@ class TRP_Translation_Render{
         return false;
     }
 
+    /**
+     * Enqueue dynamic translation script.
+     */
     public function enqueue_dynamic_translation(){
         $enable_dynamic_translation = apply_filters( 'trp_enable_dynamic_translation', true );
         if ( ! $enable_dynamic_translation ){

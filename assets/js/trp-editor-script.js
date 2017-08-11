@@ -1,4 +1,6 @@
-
+/**
+ * Handle Editor interface
+ */
 function TRP_Editor(){
     var _this = this;
     this.preview_iframe = null;
@@ -342,7 +344,9 @@ function TRP_Editor(){
     add_event_handlers();
 }
 
-
+/**
+ * Collection of TRP_String for a particular language.
+ */
 function TRP_Dictionary( language_code ){
 
     var _this = this;
@@ -425,6 +429,9 @@ function TRP_Dictionary( language_code ){
 
 }
 
+/**
+ * String original, translation and jquery object.
+ */
 function TRP_String( language, array_index ){
     var _this = this;
     var TRP_TRANSLATION_ID = 'data-trp-translate-id';
@@ -532,6 +539,9 @@ function TRP_String( language, array_index ){
 
 }
 
+/**
+ * String list dropdown handler
+ */
 function TRP_Lister( current_dictionary ) {
 
     var _this = this;
@@ -590,6 +600,9 @@ function TRP_Lister( current_dictionary ) {
 
 }
 
+/**
+ * Track changes of the translation textareas.
+ */
 function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
 
     var _this = this;

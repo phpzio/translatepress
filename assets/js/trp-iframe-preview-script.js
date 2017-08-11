@@ -1,9 +1,13 @@
-
+/**
+ * Script used for window previewed in Translation Editor.
+ */
 function TRP_Iframe_Preview(){
 
     var _this = this;
 
-
+    /**
+     * Add GET preview parameter for links and forms.
+     */
     this.initialize = function() {
         jQuery('a').each(function () { 
             if (this.action != '' && this.href.indexOf('void(0)') === -1 ) {
@@ -25,6 +29,10 @@ function TRP_Iframe_Preview(){
 
     };
 
+    /**
+     * Update url with query string.
+     *
+     */
     function update_query_string(key, value, url) {
         if (!url) url = window.location.href;
         var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
@@ -55,6 +63,9 @@ function TRP_Iframe_Preview(){
         }
     }
 
+    /**
+     * Return boolean whether element has unpreviewable attribute.
+     */
     function is_link_previewable( element ) {
         if ( jQuery( element ).attr( 'data-trp-unpreviewable' ) == 'trp-unpreviewable' ){
             return false;

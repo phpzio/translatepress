@@ -1,11 +1,12 @@
 <?php
 
 /**
+ * Class TRP_Hooks_Loader
+ *
  * Buffer class for action and filters
  *
  * Collects all the actions and filters then registers them all at once in WP system.
  */
-
 class TRP_Hooks_Loader{
 
     protected $actions;
