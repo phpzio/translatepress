@@ -22,7 +22,11 @@ function TRP_Editor(){
     var jquery_string_selector = jQuery( '#trp-string-categories' );
     var change_tracker;
 
-
+    /**
+     * Change the language in the Editor from the dropdown.
+     *
+     * @param select           HTML Element Select with languages
+     */
     this.change_language = function( select ){
         var language = select.value;
         var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language + ']').first().attr('href');
@@ -32,6 +36,9 @@ function TRP_Editor(){
         }
     };
 
+    /**
+     * Initialize string finding, string select dropdown and change tracker.
+     */
     this.initialize = function(){
         _this.saving_translation_ui();
 
@@ -49,10 +56,11 @@ function TRP_Editor(){
         if ( change_tracker != null ) {
             change_tracker.destroy();
         }
-
-
     };
 
+    /**
+     * Mimic the navigation in iframe to the parent window.
+     */
     this.update_parent_url = function(){
 
         var location = document.getElementById("trp-preview-iframe").contentWindow.location.href;
@@ -70,6 +78,11 @@ function TRP_Editor(){
         window.history.replaceState( null, null, location );
     };
 
+    /**
+     * Search for strings in preview window.
+     *
+     * Collects all strings prepared in the back-end and triggers ajax request.
+     */
     this.iframe_strings_lookup = function(){
         _this.preview_iframe = jQuery( '#trp-preview-iframe').contents();
         strings = [];
@@ -78,7 +91,6 @@ function TRP_Editor(){
         if( all_strings.length != 0 ){
             var title = document.getElementById("trp-preview-iframe").contentDocument.title;
             if ( /<[a-z][\s\S]*>/i.test( title ) ) {
-                //console.log(jQuery(document.getElementById("trp-preview-iframe").contentDocument.title));
                 // add iframe title
                 all_strings.push ( jQuery( document.getElementById("trp-preview-iframe").contentDocument.title )[0] );
             }
@@ -100,6 +112,11 @@ function TRP_Editor(){
         }
     };
 
+    /**
+     * Query for strings to get original translation.
+     *
+     * @param strings_to_query        Strings to find a translation for.
+     */
     this.ajax_get_strings = function( strings_to_query ){
 
         jQuery.ajax({
@@ -124,6 +141,11 @@ function TRP_Editor(){
         });
     };
 
+    /**
+     * Store response in dictionaries variables.
+     *
+     * @param response       The Ajax response message.
+     */
     this.populate_strings = function( response ){
         for ( var key in response ) {
             if ( response.hasOwnProperty( key ) ) {
@@ -144,6 +166,13 @@ function TRP_Editor(){
         _this.saved_translation_ui();
     };
 
+    /**
+     * Put the selected string into the translate textareas.
+     *
+     * The string can be selected from the preview window or from the select dropdown.
+     * @param trp_string
+     * @param index
+     */
     this.edit_strings = function ( trp_string, index ){
         if ( change_tracker.check_unsaved_changes() ) {
             return;
@@ -169,19 +198,12 @@ function TRP_Editor(){
         }
     };
 
-    this.unsaved_changes = function(){
-        var original = _this.original_textarea.val();
-        if ( original != "" ) {
-            for ( var key in translated_textareas ) {
-                var translated = translated_textareas[key].val();
-                var string = dictionaries[key].get_string_by_original(original);
-                if ( string.translated != translated ) {
-
-                }
-            }
-        }
-    };
-
+    /**
+     * Prepare modified translation and send it via Ajax for saving in db.
+     *
+     * Triggered by Save translation button.
+     * Calls function to send ajax request.
+     */
     this.save_string = function(){
         var strings_to_save = {};
         var modified = false;
@@ -217,10 +239,21 @@ function TRP_Editor(){
         }
     };
 
+    /**
+     * Getter function for dictionaries.
+     *
+     * @returns {*}         Array of dictionaries object.
+     */
     this.get_dictionaries = function(){
         return dictionaries;
     };
 
+    /**
+     * Ajax request with translation to be stored.
+     *
+     * @param strings_to_save           Strings to save in database.
+     * @param action                    'trp_save_translations' | 'trp_save_slug_translation'.
+     */
     this.ajax_save_strings = function ( strings_to_save, action ){
         jQuery.ajax({
             url: trp_ajax_url,
@@ -242,11 +275,17 @@ function TRP_Editor(){
         });
     };
 
+    /**
+     * Show UI for translation being saved.
+     */
     this.saving_translation_ui = function(){
         loading_animation.toggle();
         save_button.attr( 'disabled', 'disabled' );
     };
 
+    /**
+     * Show UI for translation done saving.
+     */
     this.saved_translation_ui = function(){
         save_button.removeAttr( 'disabled' );
         loading_animation.css('display', 'none');
@@ -257,19 +296,39 @@ function TRP_Editor(){
         }
     };
 
+    /**
+     * Toggle extra textareas for other languages
+     */
     this.toggle_languages = function (){
         jQuery( '.trp-other-language' ).toggle();
         jQuery( '.trp-toggle-languages' ).toggle();
     };
 
+    /**
+     * Get into focus previous string from String select dropdown.
+     *
+     * Triggerd by Previous Button.
+     */
     this.previous_string = function(){
         dictionaries[trp_on_screen_language].set_previous_string();
     };
 
+    /**
+     * Get into focus next string from String select dropdown.
+     *
+     * Triggerd by Next Button.
+     */
     this.next_string = function(){
         dictionaries[trp_on_screen_language].set_next_string();
     };
 
+    /**
+     * Return the given url without the given parameter and its value
+     *
+     * @param url
+     * @param parameter
+     * @returns {*}
+     */
     this.remove_url_parameter = function(url, parameter) {
         //prefer to use l.search if you have a location/link object
         var urlparts= url.split('?');
@@ -293,6 +352,12 @@ function TRP_Editor(){
         }
     };
 
+    /**
+     * Resizing preview window.
+     *
+     * @param event
+     * @param ui
+     */
     function resize_iframe (event, ui) {
         var total_width = jQuery(window).width();
         var width = controls.width();
@@ -307,6 +372,9 @@ function TRP_Editor(){
         preview_container.css('width', (total_width - width));
     }
 
+    /**
+     * Add event handlers for buttons and dropdowns.
+     */
     function add_event_handlers(){
         save_button.on( 'click', _this.save_string );
         jQuery( '.trp-toggle-languages span' ).on( 'click', _this.toggle_languages );
@@ -334,6 +402,12 @@ function TRP_Editor(){
         jQuery( '#trp-language-select' ).select2();
     }
 
+    /**
+     * Make string selection dropdown to have options with descriptions below.
+     *
+     * @param option
+     * @returns {*}
+     */
     function format_option(option){
         option = jQuery(
                 '<div>' + option.text + '</div><div class="string-selector-description">' + option.title + '</div>'
@@ -355,10 +429,24 @@ function TRP_Dictionary( language_code ){
     var current_index = 0;
 
 
+    /**
+     * The currently translated index of the Dictionary.
+     *
+     * Refers to a TRP_String object of this dictionary at the specified index.
+     *
+     * @param index
+     */
     this.set_current_index = function ( index ){
         current_index = index;
     };
 
+    /**
+     * Foreach TRP_String of this dictionary, update the values received as parameter.
+     *
+     * For new strings, create new entries.
+     *
+     * @param strings_object
+     */
     this.set_strings = function( strings_object ){
         for ( var s in _this.strings ){
             for ( var i in strings_object ){
@@ -380,10 +468,21 @@ function TRP_Dictionary( language_code ){
 
     };
 
+    /**
+     * Concatenate given strings with the existing list.
+     *
+     * @param new_strings
+     */
     this.set_on_screen_strings = function( new_strings ){
         _this.strings = _this.strings.concat( new_strings );
     };
 
+    /**
+     * Return a TRP_String entry for the given original.
+     *
+     * @param original
+     * @returns {*}
+     */
     this.get_string_by_original = function ( original ){
         for ( var i in _this.strings ){
             if ( _this.strings[i].original.trim() == original.trim() ){
@@ -393,20 +492,38 @@ function TRP_Dictionary( language_code ){
         return {};
     };
 
+    /**
+     * Place in translating textareas the previous string in the list.
+     */
     this.set_previous_string = function(){
         var index = ( current_index - 1 < 0 ) ? _this.strings.length - 1 : current_index - 1;
-        _this.strings[index].edit_string();
+        _this.edit_string_index( index );
     };
 
+    /**
+     * Place in translating textareas the next string in the list.
+     */
     this.set_next_string = function(){
         var index = ( current_index + 1 > _this.strings.length - 1 ) ? 0 : current_index + 1;
         _this.edit_string_index( index );
     };
 
+    /**
+     * Place in translating textareas the string at given index in dictionary.
+     *
+     * @param index
+     */
     this.edit_string_index = function( index ){
         _this.strings[index].edit_string();
     };
 
+    /**
+     * Return strings organized in categories.
+     *
+     * Used in String selection dropdown.
+     *
+     * @returns {Array}
+     */
     this.get_categories = function (){
         var categorized = [];
         for ( var i in _this.strings ){
@@ -449,6 +566,13 @@ function TRP_String( language, array_index ){
     this.slug = false;
     this.slug_post_id = false;
 
+    /**
+     * Return string id, original and slug details
+     *
+     * Used in get translation request.
+     *
+     * @returns {{}}
+     */
     this.get_details = function(){
         var details = {};
         if ( _this.slug ){
@@ -460,12 +584,25 @@ function TRP_String( language, array_index ){
         return details;
     };
 
+    /**
+     * Return given text converted to html.
+     *
+     * Useful for decoding special characters into displayable form.
+     *
+     * @param html
+     * @returns {*}
+     */
     function decode_html( html ) {
         var txt = document.createElement( "textarea" );
         txt.innerHTML = html;
         return txt.value;
     }
 
+    /**
+     * Update string information. Also updates in page if available.
+     *
+     * @param new_settings
+     */
     this.set_string = function ( new_settings ){
         _this.id = ( new_settings.hasOwnProperty ( 'id' ) ) ? new_settings.id : _this.id;
         _this.original = ( new_settings.hasOwnProperty ( 'original' ) ) ? new_settings.original : _this.original;
@@ -498,6 +635,9 @@ function TRP_String( language, array_index ){
         _this.translated = ( new_settings.hasOwnProperty( 'translated' ) ) ? decode_html ( new_settings.translated ) : _this.translated;
     };
 
+    /**
+     * Show the pencil and border the viewable string in Preview window.
+     */
     this.highlight = function (){
         if ( ! trpEditor.edit_translation_button ){
             jquery_object.prepend( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
@@ -511,15 +651,28 @@ function TRP_String( language, array_index ){
         jQuery( this ).addClass( 'trp-highlight' );
     };
 
+    /**
+     * Remove border for viewable string
+     */
     this.unhighlight = function (){
         jQuery( this ).removeClass( 'trp-highlight' );
     };
 
+    /**
+     * Show string in translatable textareas.
+     *
+     * @returns {boolean}
+     */
     this.edit_string = function(){
         trpEditor.edit_strings( _this, _this.index );
         return false; // cancel navigating to another link
     };
 
+    /**
+     * Extract fom raw html code the information for a TRP_String.
+     *
+     * @param raw_string
+     */
     this.set_raw_string = function( raw_string ){
         jquery_object = jQuery( raw_string );
         var translation_id_attribute = jquery_object.attr( TRP_TRANSLATION_ID );
@@ -550,10 +703,16 @@ function TRP_Lister( current_dictionary ) {
     var category_array;
 
 
+    /**
+     * A string has been selected from the list.
+     */
     this.select_string = function(){
         dictionary.edit_string_index( jquery_string_selector.val() );
     };
 
+    /**
+     * Refresh list with new strings.
+     */
     this.reload_list = function (){
         category_array = dictionary.get_categories();
         jquery_string_selector.find( 'option').remove();
@@ -576,6 +735,9 @@ function TRP_Lister( current_dictionary ) {
         jquery_string_selector.on( 'change', _this.select_string );
     };
 
+    /**
+     * Cut the length of text displayed in string dropdown list.
+     */
     this.format_text = function ( original, string ){
         var suspension_dots = '...';
         if ( original.length <= 90){
@@ -585,6 +747,9 @@ function TRP_Lister( current_dictionary ) {
         return original.substring(0, 90) + suspension_dots ;
     };
 
+    /**
+     * Format the name for the option group in string dropdown list.
+     */
     this.format_category_name = function( name ){
         name = name.replace(/_/g, ' ');
         name = name.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -592,6 +757,11 @@ function TRP_Lister( current_dictionary ) {
         return name;
     };
 
+    /**
+     * Change the selected string in string dropdown list based on the id.
+     *
+     * @param id
+     */
     this.update_selected_string = function( id ){
         jquery_string_selector.off( 'change', _this.select_string );
         jquery_string_selector.val( id ).change();
@@ -611,6 +781,13 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
     var translated_textareas = _translated_textareas;
 
 
+    /**
+     * Check if there are unsaved translations in textareas.
+     *
+     * Show animation in case it does.
+     *
+     * @returns {boolean}
+     */
     this.check_unsaved_changes = function(){
 
         if ( !changes_saved ){
@@ -626,19 +803,32 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
         return !changes_saved;
     };
 
+    /**
+     * Disable restrictions for saving.
+     */
     this.mark_changes_saved = function(){
         changes_saved = true;
         _this.initialize();
     };
 
+    /**
+     * Enable restrictions for saving.
+     * @param key
+     */
     this.show_unsaved_changes = function( key ){
         translated_textareas[key].parent().addClass('trp-unsaved-changes');
     };
 
+    /**
+     * Stop listening for changes.
+     */
     this.destroy = function(){
         jQuery('.trp-language-text:not(.trp-default-text)').off();
     };
 
+    /**
+     * Change was detected in textareas.
+     */
     this.change_detected = function(){
         if ( original_textarea.val() == '' ){
             return;
@@ -649,6 +839,9 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
         changes_saved = false;
     };
 
+    /**
+     * Set event listeners on translation textareas.
+     */
     this.initialize = function(){
 
         for ( var key in translated_textareas ) {
@@ -657,6 +850,9 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
         jQuery('.trp-language-text:not(.trp-default-text) textarea').off().on('input propertychange paste', _this.change_detected );
     };
 
+    /**
+     * Restore initial translation.
+     */
     this.discard_changes = function( ){
         var dictionaries = trpEditor.get_dictionaries();
         var original = original_textarea.val();
@@ -673,6 +869,9 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
         }
     };
 
+    /**
+     * Set event listeners for discard changes button.
+     */
     this.add_event_handlers = function(){
         _this.initialize();
         jQuery( '.trp-discard-changes' ).on('click', _this.discard_changes );
