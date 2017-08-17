@@ -117,11 +117,7 @@ class TRP_Settings{
         $settings['translation-languages'] = array_filter( array_unique( $settings['translation-languages'] ) );
         $settings['publish-languages'] = array_filter( array_unique( $settings['publish-languages'] ) );
 
-        foreach ( $settings['translation-languages'] as $language_code ){
-            if ( $settings['default-language'] != $language_code ) {
-                $this->trp_query->check_table( $language_code );
-            }
-        }
+
 
         if ( ! in_array( $settings['default-language'], $settings['translation-languages'] ) ){
             array_unshift( $settings['translation-languages'], $settings['default-language'] );
@@ -201,6 +197,12 @@ class TRP_Settings{
         }
 
         $this->create_menu_entries( $settings['publish-languages'] );
+
+        foreach ( $settings['translation-languages'] as $language_code ){
+            if ( $settings['default-language'] != $language_code ) {
+                $this->trp_query->check_table( $settings['default-language'], $language_code );
+            }
+        }
 
         $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );
 

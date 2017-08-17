@@ -92,8 +92,8 @@ class TRP_Query{
      *
      * @param string $language_code
      */
-    public function check_table( $language_code ){
-        $table_name = $this->get_table_name($language_code);
+    public function check_table( $default_language, $language_code ){
+        $table_name = $this->get_table_name( $language_code, $default_language );
         if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
             // table not in database. Create new table
             $charset_collate = $this->db->get_charset_collate();
@@ -181,10 +181,13 @@ class TRP_Query{
      * Return custom table name for given language code.
      *
      * @param string $language_code         Language code.
+     * @param string $default_langauge      Default language. Defaults to the one from settings.
      * @return string                       Table name.
      */
-    protected function get_table_name( $language_code ){
-
+    protected function get_table_name( $language_code, $default_langauge = null ){
+        if ( $default_langauge != null ) {
+            $this->settings['default-language'] = $default_langauge;
+        }
         return $this->db->prefix . 'trp_dictionary_' . strtolower( $this->settings['default-language'] ) . '_'. strtolower( $language_code );
     }
 

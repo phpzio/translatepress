@@ -82,6 +82,15 @@ class TRP_Languages{
 		return $iso_codes;
 	}
 
+	/**
+	 * Return an array of all language codes.
+	 *
+	 * @return array		Array of language codes.
+	 */
+	public function get_all_language_codes(){
+		return array_keys ( $this->get_languages() );
+	}
+
     /**
      * Returns array of full language names for the provided array of language codes.
      *

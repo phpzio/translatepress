@@ -16,6 +16,7 @@ class TRP_Translate_Press{
     protected $translation_manager;
     protected $url_converter;
     protected $languages;
+    protected $slug_manager;
     public static $translate_press = null;
 
     /**
@@ -139,7 +140,7 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'template_redirect', $this->url_converter, 'redirect_to_default_language' );
         $this->loader->add_filter( 'home_url', $this->url_converter, 'add_language_to_home_url', 1, 4 );
         $this->loader->add_action( 'wp_head', $this->url_converter, 'add_hreflang_to_head' );
-        $this->loader->add_filter( 'language_attributes', $this->url_converter, 'change_lang_attr_in_html_tag', 10, 2 );
+        $this->loader->add_filter( 'language_attributes', $this->url_converter, 'change_lang_attr_in_html_tag', 10, 1 );
 
 
         $this->loader->add_filter( 'widget_text', null, 'do_shortcode', 11 );
