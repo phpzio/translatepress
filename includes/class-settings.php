@@ -198,10 +198,12 @@ class TRP_Settings{
 
         $this->create_menu_entries( $settings['publish-languages'] );
 
+        require_once( ABSPATH . 'wp-includes/load.php' );
         foreach ( $settings['translation-languages'] as $language_code ){
             if ( $settings['default-language'] != $language_code ) {
                 $this->trp_query->check_table( $settings['default-language'], $language_code );
             }
+            wp_download_language_pack( $language_code );
         }
 
         $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );
