@@ -278,6 +278,13 @@ class TRP_Settings{
 
         if ( $hook == 'settings_page_translate-press' ) {
             wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
+            if ( ! $this->trp_languages ){
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $this->trp_languages = $trp->get_component( 'languages' );
+            }
+            $all_language_codes = $this->trp_languages->get_all_language_codes();
+            $iso_codes = $this->trp_languages->get_iso_codes( $all_language_codes, false );
+            wp_localize_script( 'trp-settings-script', 'trp_iso_codes', $iso_codes );
 
             wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
             wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
@@ -292,6 +299,10 @@ class TRP_Settings{
      * @param array $languages          All available languages.
      */
     public function languages_selector( $languages ){
+        if ( ! $this->url_converter ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->url_converter = $trp->get_component('url_converter');
+        }
         $selected_language_code = '';
         ?>
         <tr>
@@ -306,8 +317,9 @@ class TRP_Settings{
                 <?php }?>
                 </select>
                 <label>
-                    <span id="trp-published-language"><b><?php _e( 'Active?', TRP_PLUGIN_SLUG ); ?></b></span>
-                    <input id="trp-active-checkbox" type="checkbox" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" <?php echo (  ( count ( $this->settings['translation-languages'] ) == 1 ) ||  ( in_array( $selected_language_code, $this->settings['publish-languages'] ) ) ) ? 'checked' : ''; ?>>
+                    <span id="trp-published-language"><b><?php _e( 'Slug', TRP_PLUGIN_SLUG ); ?></b></span>
+                    <input id="trp-url-slug" class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" style="text-transform: lowercase;" value="<?php echo $this->url_converter->get_url_slug( $selected_language_code, false ); ?>">
+                    <input id="trp-active-checkbox" type="hidden" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" >
                 </label>
                 <p class="description">
                     <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', TRP_PLUGIN_SLUG ); ?>

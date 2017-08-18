@@ -22,6 +22,8 @@ function TRP_Settings() {
         var selected_language = jQuery( '#trp-translation-language' ).val();
         var checkbox = jQuery( 'input.trp-translation-published' );
         checkbox.val( selected_language );
+        var url_slug = jQuery ( '#trp-url-slug' );
+        url_slug.attr( 'name', 'trp_settings[url-slugs][' + selected_language + ']').val( '' ).val( trp_iso_codes[selected_language] );
     };
 
     /**
