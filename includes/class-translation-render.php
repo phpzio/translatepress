@@ -227,13 +227,6 @@ class TRP_Translation_Render{
             }
         }
 
-        foreach ( $html->find('img') as $k => $row ) {
-            if($this->full_trim($row->alt)!="" && !$this->has_ancestor_attribute( $row, $no_translate_attribute ))
-            {
-                array_push( $translateable_strings, $row->alt );
-                array_push( $nodes, array('node'=>$row,'type'=>'image_alt') );
-            }
-        }
 
         $translateable_information = array( 'translateable_strings' => $translateable_strings, 'nodes' => $nodes );
         $translateable_information = apply_filters( 'trp_translateable_strings', $translateable_information, $html, $no_translate_attribute, $TRP_LANGUAGE, $language_code, $this );
