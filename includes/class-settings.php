@@ -310,7 +310,7 @@ class TRP_Settings{
                     <input id="trp-active-checkbox" type="checkbox" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" <?php echo (  ( count ( $this->settings['translation-languages'] ) == 1 ) ||  ( in_array( $selected_language_code, $this->settings['publish-languages'] ) ) ) ? 'checked' : ''; ?>>
                 </label>
                 <p class="description">
-                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, you will need the <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a> version.', TRP_PLUGIN_SLUG ); ?>
+                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', TRP_PLUGIN_SLUG ); ?>
                 </p>
             </td>
         </tr>
