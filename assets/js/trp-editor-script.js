@@ -622,7 +622,11 @@ function TRP_String( language, array_index ){
                 if (text_to_set) {
                     var initial_value = jquery_object.text();
                     text_to_set = initial_value.replace(initial_value.trim(), text_to_set);
-                    jquery_object.text(text_to_set);
+                    if ( jquery_object.attr( 'data-trp-attr' ) ){
+                        jquery_object.children().attr( jquery_object.attr('data-trp-attr'), text_to_set );
+                    }else {
+                        jquery_object.text(text_to_set);
+                    }
                 }
             }
 
@@ -643,7 +647,16 @@ function TRP_String( language, array_index ){
             jquery_object.prepend( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
             trpEditor.edit_translation_button = jquery_object.children('.trp-edit-translation');
         }else{
-            jquery_object.prepend( trpEditor.edit_translation_button );
+            if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
+                jquery_object.wrap('<span data-trp-attr="value"></span>');
+                jquery_object = jquery_object.parent();
+            }
+            if ( jquery_object.attr( 'type' ) == 'search' ) {
+                jquery_object.wrap('<span data-trp-attr="placeholder"></span>');
+                jquery_object = jquery_object.parent();
+            }
+            jquery_object.prepend(trpEditor.edit_translation_button);
+
         }
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click', _this.edit_string );
