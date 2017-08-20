@@ -17,6 +17,21 @@ class TRP_Hooks_Loader{
         $this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
     }
 
+    public function remove_hook( $hook ){
+
+        $this->filters = $this->unset_hook_from_array( $this->filters, $hook );
+        $this->actions = $this->unset_hook_from_array( $this->actions, $hook );
+    }
+
+    private function unset_hook_from_array( $array, $hook ) {
+        foreach ( $array as $key => $filter ){
+            if ( $filter['hook'] == $hook ){
+                unset( $array[$key] );
+            }
+        }
+        return array_values( $array );
+    }
+
     private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
         $hooks[] = array(
             'hook'          => $hook,
@@ -36,13 +51,13 @@ class TRP_Hooks_Loader{
             }else{
                 add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
             }
-
         }
+
         foreach ( $this->actions as $hook ) {
             if ( $hook['component'] == null ){
-                add_filter( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] );
+                add_action( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] );
             }else {
-                add_action($hook['hook'], array($hook['component'], $hook['callback']), $hook['priority'], $hook['accepted_args']);
+                add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
             }
         }
     }
