@@ -94,6 +94,10 @@ class TRP_Translate_Press{
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations', $this->translation_manager, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->translation_manager, 'save_translations' );
+        
+        $this->loader->add_action( 'wp_ajax_trp_gettext_get_translations', $this->translation_manager, 'gettext_get_translations' );
+        $this->loader->add_action( 'wp_ajax_trp_gettext_save_translations', $this->translation_manager, 'gettext_save_translations' );
+        
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
 
     }
@@ -133,6 +137,15 @@ class TRP_Translate_Press{
 
         $this->loader->add_filter( 'language_attributes', $this->url_converter, 'change_lang_attr_in_html_tag', 10, 2 );
 
+        /* handle dynamic texts with gettext */
+        $this->loader->add_filter( 'locale', $this->languages, 'change_locale' );        
+        
+        $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global', 11 );
+        $this->loader->add_action( 'wp_head', $this->translation_manager, 'apply_gettext_filter', 100 );
+        $this->loader->add_action( 'shutdown', $this->translation_manager, 'machine_translate_gettext', 100 );        
+
+        /* define an update hook here */
+        $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );
     }
 
     public function run() {

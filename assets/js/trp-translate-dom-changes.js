@@ -110,6 +110,11 @@ function TRP_Translator(){
         }
     };
 
+    //function that cleans the gettext wrappers 
+    this.cleanup_gettext_wrapper = function(){
+        jQuery('trp-gettext').contents().unwrap();
+    };
+
     this.initialize = function() {
 
         current_language = trp_data.trp_current_language;
@@ -127,6 +132,9 @@ function TRP_Translator(){
         };
 
         observer.observe( document.body , config );
+
+        //try a final attempt at cleaning the gettext wrappers
+        _this.cleanup_gettext_wrapper();
     };
 
     this.disconnect = function(){

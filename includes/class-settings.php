@@ -82,6 +82,7 @@ class TRP_Settings{
             if ( $settings['default-language'] != $language_code ) {
                 $this->trp_query->check_table( $language_code );
             }
+            $this->trp_query->check_gettext_table( $language_code );
         }
 
         if ( ! in_array( $settings['default-language'], $settings['translation-languages'] ) ){

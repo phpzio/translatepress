@@ -156,6 +156,66 @@ class TRP_Translation_Render{
 
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
+        /**
+         * When we are in the translation editor: Intercept the trp-gettext that was wrapped around all the gettext texts, grab the attribute data-trpgettextoriginal
+         * which contains the original translation id and move it to the parent node if the parent node only contains that string then remove the  wrap trp-gettext, otherwise replace it with another tag.
+         * Also set a no-translation attribute.
+         * When we are in a live translation case: Intercept the trp-gettext that was wrapped around all the gettext texts, set a no-translation attribute to the parent node if the parent node only contains that string
+         * then remove the  wrap trp-gettext, otherwise replace the wrap with another tag and do the same to it
+         * We identified two cases: the wrapper trp-gettext can be as a node in the dome or ot can be inside a html attribute ( for example value )
+         * and we need to treat them differently
+         */
+
+        foreach ( $html->find("*[!nuartrebuisaexiteatributulasta]") as $k => $row ){
+            if( $row->hasAttribute('data-trpgettextoriginal') ){
+                $original_gettext_translation_id = $row->getAttribute('data-trpgettextoriginal');
+                if( count( $row->parent()->children ) == 1 ){
+                    $row->outertext = $row->innertext();
+                    $row->parent()->setAttribute('data-no-translation', '');
+                    // we are in the editor
+                    if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                        //move up the data-trpgettextoriginal attribute
+                        $row->parent()->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
+                    }
+                }
+                else{
+                    $row->outertext = '<trp-wrap class="trp-wrap" data-no-translation';
+                    if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                        $row->outertext .= ' data-trpgettextoriginal="'. $original_gettext_translation_id .'"';
+                    }
+                    $row->outertext .= '>'.$row->innertext().'</trp-wrap>';
+                }
+            }
+            else{
+                $all_attributes = $row->getAllAttributes();
+                if( !empty( $all_attributes ) ) {
+                    foreach ($all_attributes as $attr_name => $attr_value) {
+                        if (strpos($attr_value, 'trp-gettext ') !== false) {
+                            // convert to a node
+                            $node_from_value = trp_str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
+                            foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
+                                $gettext_translation = $nfv_row->innertext();
+                                $row->setAttribute($attr_name, $gettext_translation );
+                                $row->setAttribute('data-no-translation', '');
+                                // we are in the editor
+                                if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                                    $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
+                                    $row->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /* save it as a string */
+        $trpremoved = $html->save();
+        /* perform preg replace on the remaining trp-gettext tags */
+        $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $trpremoved );
+        $trpremoved = preg_replace( '/(<|&lt;)(.?)\/trp-gettext(>|&gt;)/', '', $trpremoved );
+
+        $html = trp_str_get_html($trpremoved, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+
         $no_translate_selectors = apply_filters( 'trp_no_translate_selectors', array( '#wpadminbar' ), $TRP_LANGUAGE );
 
         foreach ( $no_translate_selectors as $no_translate_selector ){

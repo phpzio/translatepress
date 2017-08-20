@@ -21,6 +21,18 @@ class TRP_Languages{
         return apply_filters( 'trp_languages', $this->languages[$english_or_native_name], $english_or_native_name );
     }
 
+	/** Set proper locale when changing languages with translatepress
+	 * @param $locale
+	 * @return mixed
+	 */
+	public function change_locale( $locale ){
+		global $TRP_LANGUAGE;
+		if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ){
+			$locale = $TRP_LANGUAGE;
+		}
+		return $locale;
+	}
+
 	public function get_wp_languages(){
 		if ( empty( $this->wp_languages ) ){
 			require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
