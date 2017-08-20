@@ -32,5 +32,6 @@ function trp_run_translatepress_hooks(){
     $trp = TRP_Translate_Press::get_trp_instance();
     $trp->run();
 }
-add_action( 'plugins_loaded', 'trp_run_translatepress_hooks' );
+/* make sure we execute our plugin before other plugins so the changes we make apply across the board */
+add_action( 'plugins_loaded', 'trp_run_translatepress_hooks', 1 );
 
