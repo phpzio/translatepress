@@ -62,6 +62,7 @@
                         </form>
                         <div id="trp-string-list">
                             <select id="trp-string-categories" data-trp-placeholder="<?php _e( 'Select string to translate...', TRP_PLUGIN_SLUG ); ?>">
+                                <option value=""></option>
                                 <?php //add here an optiongroup so we know to add all the gettext strings below this and all the other strings above this ?>
                                 <optgroup id="trp-gettext-strings-optgroup" label="<?php _e( 'Gettext strings', TRP_PLUGIN_SLUG ); ?>"></optgroup>
                             </select>

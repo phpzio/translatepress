@@ -288,7 +288,8 @@ function TRP_Editor(){
      */
     this.saved_translation_ui = function(){
         save_button.removeAttr( 'disabled' );
-        loading_animation.css('display', 'none');
+        if( gettext_dictionaries != null )
+            loading_animation.css('display', 'none');//don't hide the animation if the gettexts arent loaded
         if (  _this.change_tracker ) {
             _this.change_tracker.mark_changes_saved();
             translation_saved.css("display","inline");
@@ -736,8 +737,7 @@ function TRP_Lister( current_dictionary ) {
      */
     this.reload_list = function (){
         category_array = dictionary.get_categories();
-        /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */
-        jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).before(jQuery('<option></option>'));
+        /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */        
         for ( var category in category_array ){
             jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).before( jQuery( '<optgroup></optgroup>' ).attr( 'label', _this.format_category_name( category ) ) );
             for ( var i in category_array[category] ) {
@@ -1014,9 +1014,11 @@ jQuery(function(){
                 gettext_dictionaries = response;
                 trp_lister = new TRP_Lister( gettext_dictionaries[trp_language] );
                 trp_lister.add_gettext_strings();
+                jQuery( '#trp-string-saved-ajax-loader' ).css('display', 'none');
             },
             error: function(errorThrown){
                 console.log( 'TranslatePress AJAX Request Error' );
+                jQuery( '#trp-string-saved-ajax-loader' ).css('display', 'none');
             }
 
         });
@@ -1025,6 +1027,9 @@ jQuery(function(){
         jQuery( '#trp-preview-iframe').contents().find( '[data-trpgettextoriginal]' ).each(function(){
             trp_lister = new TRP_Lister( [] );
             jQuery(this).mouseenter(function(){
+                if( gettext_dictionaries == null )
+                    return;//the strings haven't been loaded so don't do nothing yet
+
                 gettext_string = this;
 
                 if ( ! trpEditor.edit_translation_button ){
