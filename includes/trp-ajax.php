@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * Class TRP_Ajax
+ *
+ * Custom Ajax to get translation of dynamic elements.
+ */
 class TRP_Ajax{
 
     protected $connection;
     protected $table_prefix;
 
+    /**
+     * TRP_Ajax constructor.
+     *
+     * Establishes db connection and triggers function to output translations.
+     */
     public function __construct( ){
 
         if ( !isset( $_POST['action'] ) || $_POST['action'] !== 'trp_get_translations' || empty( $_POST['strings'] ) || empty( $_POST['language'] ) || empty( $_POST['original_language'] ) ) {
@@ -24,6 +34,12 @@ class TRP_Ajax{
 
     }
 
+    /**
+     * Sanitize posted strings.
+     *
+     * @param array $posted_strings     Array of strings.
+     * @return array                    Sanitized array of strings.
+     */
     protected function sanitize_strings( $posted_strings){
         $strings = json_decode(stripslashes( $posted_strings ));
         $original_array = array();
@@ -37,6 +53,11 @@ class TRP_Ajax{
         return $original_array;
     }
 
+    /**
+     * Finds db credentials in wp-config file and tries to connect to db.
+     *
+     * @return bool     Whether connection was succesful or not.
+     */
     protected function connect_to_db(){
 
         $file = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/wp-config.php';
@@ -93,6 +114,11 @@ class TRP_Ajax{
         return true;
     }
 
+    /**
+     * Get WP table prefix.
+     *
+     * @return string       Table prefix.
+     */
     protected function sql_find_table_prefix(){
         $sql = "SELECT DISTINCT SUBSTRING(`TABLE_NAME` FROM 1 FOR ( LENGTH(`TABLE_NAME`)-8 ) ) as prefix FROM information_schema.TABLES WHERE `TABLE_NAME` LIKE '%postmeta'";
         $result = mysqli_query( $this->connection, $sql );
@@ -104,10 +130,23 @@ class TRP_Ajax{
         }
     }
 
+    /**
+     * Trim strings.
+     *
+     * @param string $word      String to trim.
+     * @return string           Trimmed string.
+     */
     protected function full_trim( $word ) {
         return trim( $word," \t\n\r\0\x0B\xA0�" );
     }
 
+    /**
+     * Output translation for given strings.
+     *
+     * @param array $strings            Array of string to translate.
+     * @param string $language          Language to translate into.
+     * @param string $original_language Language to translate from. Default language.
+     */
     protected function output_translations( $strings, $language, $original_language ){
         $sql = 'SELECT original, translated FROM ' . $this->table_prefix . 'trp_dictionary_' . strtolower( $original_language ) . '_' . strtolower( $language ) . ' WHERE original IN (\'' . implode( "','", array_map( array( $this, 'full_trim' ), $strings ) ).'\') AND status != 0';
         $result = mysqli_query( $this->connection, $sql );
@@ -124,6 +163,9 @@ class TRP_Ajax{
 
     }
 
+    /**
+     * Return error in case of connection fail and other problems.
+     */
     protected function return_error(){
         echo json_encode( 'error' );
         exit;

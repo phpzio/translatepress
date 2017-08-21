@@ -1,15 +1,26 @@
 <?php
 
+/**
+ * Class TRP_Machine_Translator
+ *
+ * Facilitates Machine Translation calls
+ */
 class TRP_Machine_Translator{
     protected $settings;
 
-
+    /**
+     * TRP_Machine_Translator constructor.
+     *
+     * @param array $settings         Settings option.
+     */
     public function __construct( $settings ){
         $this->settings = $settings;
     }
 
     /**
-     * @return bool function that determines if the automatic translation is enabled
+     * Whether automatic translation is available.
+     *
+     * @return bool                         function that determines if the automatic translation is enabled
      */
     public function is_available(){
         if( !empty( $this->settings['g-translate'] ) && $this->settings['g-translate'] == 'yes' )
@@ -19,9 +30,11 @@ class TRP_Machine_Translator{
     }
 
     /**
-     * @param $new_strings array with the strings that need translation. The keys are the node number in the DOM so we need to preserve the m
-     * @param $trp_language_code string wp language code of the language that we will be translating to. Not equal to the google language code
-     * @return array array with the translation strings and the preserved keys or an empty array if something went wrong
+     * Returns an array with the API provided translations of the $new_strings array.
+     *
+     * @param array $new_strings            array with the strings that need translation. The keys are the node number in the DOM so we need to preserve the m
+     * @param string $trp_language_code     string wp language code of the language that we will be translating to. Not equal to the google language code
+     * @return array                        array with the translation strings and the preserved keys or an empty array if something went wrong
      */
     public function translate_array( $new_strings, $trp_language_code ){
         /* we need these settings to go on */

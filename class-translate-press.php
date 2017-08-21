@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class TRP_Translate_Press
+ *
+ * Singleton. Loads required files, initializes components and hooks methods.
+ *
+ */
 class TRP_Translate_Press{
     protected $loader;
     protected $settings;
@@ -8,12 +14,16 @@ class TRP_Translate_Press{
     protected $query;
     protected $language_switcher;
     protected $translation_manager;
-    protected $slug_manager;
     protected $url_converter;
     protected $languages;
+    protected $slug_manager;
     public static $translate_press = null;
 
-
+    /**
+     * Get singleton object.
+     *
+     * @return TRP_Translate_Press      Singleton object.
+     */
     public static function get_trp_instance(){
         if ( self::$translate_press == null ){
             self::$translate_press = new TRP_Translate_Press();
@@ -22,6 +32,9 @@ class TRP_Translate_Press{
         return self::$translate_press;
     }
 
+    /**
+     * TRP_Translate_Press constructor.
+     */
     public function __construct() {
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -34,10 +47,21 @@ class TRP_Translate_Press{
         $this->define_frontend_hooks();
     }
 
+    /**
+     * Returns particular component by name.
+     *
+     * @param string $component     'loader' | 'settings' | 'translation_render' |
+     *                              'machine_translator' | 'query' | 'language_switcher' |
+     *                              'translation_manager' | 'url_converter' | 'languages'
+     * @return mixed
+     */
     public function get_component( $component ){
         return $this->$component;
     }
 
+    /**
+     * Includes necessary files.
+     */
     protected function load_dependencies() {
         require_once TRP_PLUGIN_DIR . 'includes/class-settings.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-manager.php';
@@ -52,6 +76,9 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
     }
 
+    /**
+     * Instantiates components.
+     */
     protected function initialize_components() {
         $this->loader = new TRP_Hooks_Loader();
         $this->languages = new TRP_Languages();
@@ -65,6 +92,9 @@ class TRP_Translate_Press{
 
     }
 
+    /**
+     * Hooks methods used in admin area.
+     */
     protected function define_admin_hooks() {
         $this->loader->add_action( 'admin_menu', $this->settings, 'register_menu_page' );
         $this->loader->add_action( 'admin_init', $this->settings, 'register_setting' );
@@ -88,14 +118,17 @@ class TRP_Translate_Press{
 
     }
 
+    /**
+     * Hooks methods used in front-end
+     */
     protected function define_frontend_hooks(){
-        $this->loader->add_action( 'wp', $this->translation_render, 'start_object_cache' );
+        $this->loader->add_action( 'wp', $this->translation_render, 'start_output_buffer' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );
 
 
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
         $this->loader->add_action( 'wp_footer', $this->language_switcher, 'add_floater_language_switcher' );
-        $this->loader->add_filter( 'init', $this->language_switcher, 'add_ls_to_menu' );
+        $this->loader->add_filter( 'init', $this->language_switcher, 'register_ls_menu_switcher' );
         $this->loader->add_action( 'wp_get_nav_menu_items', $this->language_switcher, 'ls_menu_permalinks', 10, 3 );
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
@@ -111,7 +144,7 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'template_redirect', $this->url_converter, 'redirect_to_default_language' );
         $this->loader->add_filter( 'home_url', $this->url_converter, 'add_language_to_home_url', 1, 4 );
         $this->loader->add_action( 'wp_head', $this->url_converter, 'add_hreflang_to_head' );
-        $this->loader->add_filter( 'language_attributes', $this->url_converter, 'change_lang_attr_in_html_tag', 10, 2 );
+        $this->loader->add_filter( 'language_attributes', $this->url_converter, 'change_lang_attr_in_html_tag', 10, 1 );
 
 
         $this->loader->add_filter( 'widget_text', null, 'do_shortcode', 11 );
@@ -130,6 +163,9 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 3 );
     }
 
+    /**
+     * Register hooks to WP.
+     */
     public function run() {
         $this->loader->run();
     }

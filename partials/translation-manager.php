@@ -53,7 +53,7 @@
                 <div class="trp-controls-section">
                     <div class="trp-controls-section-content">
                         <form id="trp-language-switch-form" action="" method="GET">
-                            <select id="trp-language-select" name="lang" onchange='trpEditor.change_language( this )'>
+                            <select id="trp-language-select" onchange='trpEditor.change_language( this )'>
                                 <?php foreach ( $available_languages as $code => $language ) { ?>
                                     <option value="<?php echo $code; ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo $language; ?> </option>
                                 <?php } ?>

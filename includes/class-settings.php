@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class TRP_Settings
+ *
+ * In charge of settings page and settings option.
+ */
 class TRP_Settings{
 
     protected $settings;
@@ -7,7 +12,14 @@ class TRP_Settings{
     protected $url_converter;
     protected $trp_languages;
 
-
+    /**
+     * Return array of customization options for language switchers.
+     *
+     * Customization options include whether to add flags, full names or short names.
+     * Used for all types of language switchers.
+     *
+     * @return array            Array with customization options.
+     */
     public function get_language_switcher_options(){
         $ls_options = apply_filters( 'trp_language_switcher_output', array(
             'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', TRP_PLUGIN_SLUG ) ),
@@ -19,6 +31,12 @@ class TRP_Settings{
         return $ls_options;
     }
 
+    /**
+     * Echo html for selecting language from all available language in settings.
+     *
+     * @param string $ls_type       shortcode_options | menu_options | floater_options
+     * @param string $ls_setting    The selected language switcher customization setting (get_language_switcher_options())
+     */
     public function output_language_switcher_select( $ls_type, $ls_setting ){
         $ls_options = $this->get_language_switcher_options();
         $output = '<select id=' . $ls_type . ' name=trp_settings[' . $ls_type .'] class="trp-select trp-ls-select-option">';
@@ -31,6 +49,11 @@ class TRP_Settings{
         echo $output;
     }
 
+    /**
+     * Returns settings_option.
+     *
+     * @return array        Settings option.
+     */
     public function get_settings(){
         if ( $this->settings == null ){
             $this->set_options();
@@ -38,10 +61,16 @@ class TRP_Settings{
         return $this->settings;
     }
 
+    /**
+     * Register Settings subpage for TranslatePress
+     */
     public function register_menu_page(){
         add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
     }
 
+    /**
+     * Settings page content.
+     */
     public function settings_page_content(){
         if ( ! $this->trp_languages ){
             $trp = TRP_Translate_Press::get_trp_instance();
@@ -51,10 +80,21 @@ class TRP_Settings{
         require_once TRP_PLUGIN_DIR . 'partials/main-settings-page.php';
     }
 
+    /**
+     * Register settings option.
+     */
     public function register_setting(){
         register_setting( 'trp_settings', 'trp_settings', array( $this, 'sanitize_settings' ) );
     }
 
+    /**
+     * Sanitizes settings option after save.
+     *
+     * Updates menu items for languages to be used in Menus.
+     *
+     * @param array $settings       Raw settings option.
+     * @return array                Sanitized option page.
+     */
     public function sanitize_settings( $settings ){
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
@@ -76,13 +116,6 @@ class TRP_Settings{
 
         $settings['translation-languages'] = array_filter( array_unique( $settings['translation-languages'] ) );
         $settings['publish-languages'] = array_filter( array_unique( $settings['publish-languages'] ) );
-
-        foreach ( $settings['translation-languages'] as $language_code ){
-            if ( $settings['default-language'] != $language_code ) {
-                $this->trp_query->check_table( $language_code );
-            }
-            $this->trp_query->check_gettext_table( $language_code );
-        }
 
         if ( ! in_array( $settings['default-language'], $settings['translation-languages'] ) ){
             array_unshift( $settings['translation-languages'], $settings['default-language'] );
@@ -163,15 +196,32 @@ class TRP_Settings{
 
         $this->create_menu_entries( $settings['publish-languages'] );
 
+        require_once( ABSPATH . 'wp-includes/load.php' );
+        foreach ( $settings['translation-languages'] as $language_code ){
+            if ( $settings['default-language'] != $language_code ) {
+                $this->trp_query->check_table( $settings['default-language'], $language_code );
+            }
+            wp_download_language_pack( $language_code );
+            $this->trp_query->check_gettext_table( $language_code );
+        }
+
         $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );
 
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
+    /**
+     * Output admin notices after saving settings.
+     */
     public function admin_notices(){
         settings_errors( 'trp_settings' );
     }
 
+    /**
+     * Set options array variable to be used across plugin.
+     *
+     * Sets a default option if it does not exist.
+     */
     protected function set_options(){
         $settings_option = get_option( 'trp_settings', 'not_set' );
 
@@ -210,6 +260,11 @@ class TRP_Settings{
         $this->settings = $settings_option;
     }
 
+    /**
+     * Enqueue scripts and styles for settings page.
+     *
+     * @param string $hook          Admin page.
+     */
     public function enqueue_scripts_and_styles( $hook ) {
         if ( $hook == 'settings_page_translate-press' || 'settings_page_trp_license_key' ) {
             wp_enqueue_style(
@@ -222,13 +277,31 @@ class TRP_Settings{
 
         if ( $hook == 'settings_page_translate-press' ) {
             wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
+            if ( ! $this->trp_languages ){
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $this->trp_languages = $trp->get_component( 'languages' );
+            }
+            $all_language_codes = $this->trp_languages->get_all_language_codes();
+            $iso_codes = $this->trp_languages->get_iso_codes( $all_language_codes, false );
+            wp_localize_script( 'trp-settings-script', 'trp_iso_codes', $iso_codes );
 
             wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
             wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
         }
     }
 
+    /**
+     * Output HTML for Translation Language option.
+     *
+     * Hooked to trp_language_selector.
+     *
+     * @param array $languages          All available languages.
+     */
     public function languages_selector( $languages ){
+        if ( ! $this->url_converter ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->url_converter = $trp->get_component('url_converter');
+        }
         $selected_language_code = '';
         ?>
         <tr>
@@ -243,17 +316,25 @@ class TRP_Settings{
                 <?php }?>
                 </select>
                 <label>
-                    <span id="trp-published-language"><b><?php _e( 'Active?', TRP_PLUGIN_SLUG ); ?></b></span>
-                    <input id="trp-active-checkbox" type="checkbox" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" <?php echo (  ( count ( $this->settings['translation-languages'] ) == 1 ) ||  ( in_array( $selected_language_code, $this->settings['publish-languages'] ) ) ) ? 'checked' : ''; ?>>
+                    <span id="trp-published-language"><b><?php _e( 'Slug', TRP_PLUGIN_SLUG ); ?></b></span>
+                    <input id="trp-url-slug" class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" style="text-transform: lowercase;" value="<?php echo $this->url_converter->get_url_slug( $selected_language_code, false ); ?>">
+                    <input id="trp-active-checkbox" type="hidden" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" >
                 </label>
                 <p class="description">
-                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, you will need the <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a> version.', TRP_PLUGIN_SLUG ); ?>
+                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', TRP_PLUGIN_SLUG ); ?>
                 </p>
             </td>
         </tr>
         <?php
     }
 
+    /**
+     * Validate settings option.
+     *
+     * @param array $settings               Settings option.
+     * @param array $default_settings       Default settings option.
+     * @return array                        Validated settings option.
+     */
     public function check_settings_option( $settings, $default_settings ){
         if ( class_exists( 'TRP_Extra_Languages' ) ){
             // checks are made in the Add-on later
@@ -284,6 +365,11 @@ class TRP_Settings{
         return $settings;
     }
 
+    /**
+     * Update language switcher menu items.
+     *
+     * @param array $languages          Array of language codes to create menu items for.
+     */
     protected function create_menu_entries( $languages ){
         if ( ! $this->trp_languages ){
             $trp = TRP_Translate_Press::get_trp_instance();
@@ -324,7 +410,10 @@ class TRP_Settings{
         }
     }
 
-
+    /**
+     * Add navigation tabs in settings.
+     *
+     */
     public function add_navigation_tabs(){
         $tabs = apply_filters( 'trp_settings_tabs', array(
             array(
