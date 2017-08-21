@@ -117,8 +117,6 @@ class TRP_Settings{
         $settings['translation-languages'] = array_filter( array_unique( $settings['translation-languages'] ) );
         $settings['publish-languages'] = array_filter( array_unique( $settings['publish-languages'] ) );
 
-
-
         if ( ! in_array( $settings['default-language'], $settings['translation-languages'] ) ){
             array_unshift( $settings['translation-languages'], $settings['default-language'] );
         }
@@ -204,6 +202,7 @@ class TRP_Settings{
                 $this->trp_query->check_table( $settings['default-language'], $language_code );
             }
             wp_download_language_pack( $language_code );
+            $this->trp_query->check_gettext_table( $language_code );
         }
 
         $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );

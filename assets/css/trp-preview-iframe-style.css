@@ -50,3 +50,11 @@ span.trp-edit-translation svg {
 .trp-highlight{
     outline: 2px solid #e2e4e7;
 }
+
+*[data-trpgettextoriginal] span.trp-edit-translation{
+    background: #00ba3f !important;
+}
+
+*[data-trpgettextoriginal] span.trp-edit-translation:hover{
+    background: #00ce44 !important;
+}
