@@ -373,8 +373,10 @@ function TRP_Editor(){
                 return;
             }
             prev_option_value = jQuery( 'option:selected', _this.jquery_string_selector ).prevAll('option').first().attr('value');
-            if( typeof prev_option_value != "undefined" && prev_option_value != '' )
-                _this.jquery_string_selector.val( prev_option_value ).trigger('change');
+            if( typeof prev_option_value != "undefined" && prev_option_value != '' ) {
+                _this.jquery_string_selector.val(prev_option_value).trigger('change');
+                _this.remove_pencil_icon();
+            }
         });
         jQuery( '#trp-next' ).on( 'click', function(e){
             e.preventDefault();
@@ -382,8 +384,10 @@ function TRP_Editor(){
                 return;
             }
             next_option_value = jQuery( 'option:selected', _this.jquery_string_selector ).nextAll('option').first().attr('value');
-            if( typeof next_option_value != "undefined" && next_option_value != '' )
-                _this.jquery_string_selector.val( next_option_value ).trigger('change');
+            if( typeof next_option_value != "undefined" && next_option_value != '' ) {
+                _this.jquery_string_selector.val(next_option_value).trigger('change');
+                _this.remove_pencil_icon();
+            }
         });
 
         controls.resizable({
@@ -406,6 +410,14 @@ function TRP_Editor(){
         _this.jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option });
         jQuery( '#trp-language-select' ).select2();
     }
+
+    /**
+     * Remove pencil icon from preview window.
+     */
+    this.remove_pencil_icon = function(){
+        jQuery( '#trp-preview-iframe').contents().find( '.trp-edit-translation' ).remove();
+        //jQuery( '.trp-edit-translation').remove();
+    };
 
     /**
      * Make string selection dropdown to have options with descriptions below.
@@ -644,11 +656,11 @@ function TRP_String( language, array_index ){
             trpEditor.edit_translation_button = jquery_object.children('.trp-edit-translation');
         }else{
             if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
-                jquery_object.wrap('<span data-trp-attr="value"></span>');
+                jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
                 jquery_object = jquery_object.parent();
             }
             if ( jquery_object.attr( 'type' ) == 'search' ) {
-                jquery_object.wrap('<span data-trp-attr="placeholder"></span>');
+                jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
                 jquery_object = jquery_object.parent();
             }
             jquery_object.prepend(trpEditor.edit_translation_button);
@@ -660,7 +672,7 @@ function TRP_String( language, array_index ){
             if ( trpEditor.change_tracker.check_unsaved_changes() ) {
                 return;
             }
-            trpEditor.jquery_string_selector.val( _this.index ).trigger('change')
+            trpEditor.jquery_string_selector.val( _this.index ).trigger( 'change', true )
         });
 
         jQuery( this ).addClass( 'trp-highlight' );
@@ -721,7 +733,7 @@ function TRP_Lister( current_dictionary ) {
     /**
      * A string has been selected from the list.
      */
-    this.select_string = function(){
+    this.select_string = function( event, keep_pencil_icon ){
         /* this is how we differentiate gettext strings from normal strings */
         trp_gettext_id = jQuery(this).find(':selected').data('trp-gettext-id');
         if( typeof trp_gettext_id != "undefined" ) {
@@ -729,6 +741,10 @@ function TRP_Lister( current_dictionary ) {
         }
         else {
             dictionary.edit_string_index(jquery_string_selector.val());
+        }
+        if ( keep_pencil_icon === undefined ){
+            console.log('remove');
+            trpEditor.remove_pencil_icon();
         }
     };
 
@@ -834,7 +850,7 @@ function TRP_Lister( current_dictionary ) {
             return;
         }
         string_id = jquery_object.data('trpgettextoriginal');
-        trpEditor.jquery_string_selector.val('gettext-'+string_id).trigger('change');
+        trpEditor.jquery_string_selector.val('gettext-'+string_id).trigger( 'change', true );
     }
 
 }
