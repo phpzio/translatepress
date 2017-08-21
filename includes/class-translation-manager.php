@@ -356,6 +356,7 @@ class TRP_Translation_Manager{
                                     'id' => (int)$string->id,
                                     'original' => sanitize_text_field($string->original),
                                     'translated' => preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $string->translated ),
+                                    'domain' => sanitize_text_field( $string->domain ),
                                     'status' => (int)$string->status
                                 ));
                             }
