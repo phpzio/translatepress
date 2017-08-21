@@ -206,8 +206,22 @@ class TRP_Translation_Render{
          * and we need to treat them differently
          */
 
+        /* store the nodes in arrays so we can sort the $trp_rows which contain trp-gettext nodes from the DOM according to the number of children and we process the simplest first */
+        $trp_rows = array();
+        $trp_attr_rows = array();
         foreach ( $html->find("*[!nuartrebuisaexiteatributulasta]") as $k => $row ){
             if( $row->hasAttribute('data-trpgettextoriginal') ){
+                $trp_rows[count( $row->children )][] = $row;
+            }
+            else{
+                $trp_attr_rows[] = $row;
+            }
+        }
+
+        /* sort them here ascending by key where the key is the number of children */
+        ksort($trp_rows);
+        foreach( $trp_rows as $level ){
+            foreach( $level as $row ){
                 $original_gettext_translation_id = $row->getAttribute('data-trpgettextoriginal');
                 if( count( $row->parent()->children ) == 1 ){
                     $row->outertext = $row->innertext();
@@ -226,28 +240,30 @@ class TRP_Translation_Render{
                     $row->outertext .= '>'.$row->innertext().'</trp-wrap>';
                 }
             }
-            else{
-                $all_attributes = $row->getAllAttributes();
-                if( !empty( $all_attributes ) ) {
-                    foreach ($all_attributes as $attr_name => $attr_value) {
-                        if (strpos($attr_value, 'trp-gettext ') !== false) {
-                            // convert to a node
-                            $node_from_value = trp_str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
-                            foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
-                                $gettext_translation = $nfv_row->innertext();
-                                $row->setAttribute($attr_name, $gettext_translation );
-                                $row->setAttribute('data-no-translation', '');
-                                // we are in the editor
-                                if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
-                                    $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
-                                    $row->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
-                                }
+        }
+
+        foreach( $trp_attr_rows as $row ){
+            $all_attributes = $row->getAllAttributes();
+            if( !empty( $all_attributes ) ) {
+                foreach ($all_attributes as $attr_name => $attr_value) {
+                    if (strpos($attr_value, 'trp-gettext ') !== false) {
+                        // convert to a node
+                        $node_from_value = trp_str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
+                        foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
+                            $gettext_translation = $nfv_row->innertext();
+                            $row->setAttribute($attr_name, $gettext_translation );
+                            $row->setAttribute('data-no-translation', '');
+                            // we are in the editor
+                            if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                                $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
+                                $row->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
                             }
                         }
                     }
                 }
             }
         }
+
         /* save it as a string */
         $trpremoved = $html->save();
         /* perform preg replace on the remaining trp-gettext tags */
