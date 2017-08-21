@@ -375,7 +375,6 @@ function TRP_Editor(){
             prev_option_value = jQuery( 'option:selected', _this.jquery_string_selector ).prevAll('option').first().attr('value');
             if( typeof prev_option_value != "undefined" && prev_option_value != '' ) {
                 _this.jquery_string_selector.val(prev_option_value).trigger('change');
-                _this.remove_pencil_icon();
             }
         });
         jQuery( '#trp-next' ).on( 'click', function(e){
@@ -386,7 +385,6 @@ function TRP_Editor(){
             next_option_value = jQuery( 'option:selected', _this.jquery_string_selector ).nextAll('option').first().attr('value');
             if( typeof next_option_value != "undefined" && next_option_value != '' ) {
                 _this.jquery_string_selector.val(next_option_value).trigger('change');
-                _this.remove_pencil_icon();
             }
         });
 
@@ -416,7 +414,6 @@ function TRP_Editor(){
      */
     this.remove_pencil_icon = function(){
         jQuery( '#trp-preview-iframe').contents().find( '.trp-edit-translation' ).remove();
-        //jQuery( '.trp-edit-translation').remove();
     };
 
     /**
@@ -743,7 +740,6 @@ function TRP_Lister( current_dictionary ) {
             dictionary.edit_string_index(jquery_string_selector.val());
         }
         if ( keep_pencil_icon === undefined ){
-            console.log('remove');
             trpEditor.remove_pencil_icon();
         }
     };
