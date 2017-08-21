@@ -584,6 +584,9 @@ class TRP_Translation_Render{
      */
     public function has_ancestor_attribute($node,$attribute) {
         $currentNode = $node;
+        if ( isset( $node->$attribute ) ){
+            return true;
+        }
         while($currentNode->parent() && $currentNode->parent()->tag!="html") {
             if(isset($currentNode->parent()->$attribute))
                 return true;
