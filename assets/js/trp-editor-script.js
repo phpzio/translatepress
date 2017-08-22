@@ -514,7 +514,7 @@ function TRP_Dictionary( language_code ){
     this.edit_string_index = function( index ){
         /* start modifications of the editor screen */
         jQuery('.trp-save-string').attr('id', 'trp-save');
-        jQuery( '.trp-language-name[data-trp-gettext-language-name]').text(jQuery( '.trp-language-name[data-trp-default-language-name]').data('trp-default-language-name'));
+        jQuery( '.trp-language-name[data-trp-gettext-language-name]').text(jQuery( '.trp-language-name[data-trp-default-language-name]').attr('data-trp-default-language-name'));
         jQuery( '#trp-gettext-original' ).hide();
         jQuery( '.trp-discard-on-default-language' ).hide();
         jQuery( '.trp-default-language textarea' ).attr('disabled', '');
@@ -732,8 +732,8 @@ function TRP_Lister( current_dictionary ) {
      */
     this.select_string = function( event, keep_pencil_icon ){
         /* this is how we differentiate gettext strings from normal strings */
-        trp_gettext_id = jQuery(this).find(':selected').data('trp-gettext-id');
-        if( typeof trp_gettext_id != "undefined" ) {
+        trp_gettext_id = jQuery(this).find(':selected').attr('data-trp-gettext-id');
+        if( trp_gettext_id ) {
             _this.set_textareas_with_gettext(trp_gettext_id);
         }
         else {
@@ -808,7 +808,7 @@ function TRP_Lister( current_dictionary ) {
         /* start modifications of the editor screen */
         jQuery( '#trp-gettext-original' ).show();
         jQuery('.trp-save-string').attr('id', 'trp-save-gettext');
-        jQuery( '.trp-language-name[data-trp-gettext-language-name]').text(jQuery( '.trp-language-name[data-trp-gettext-language-name]').data('trp-gettext-language-name'));
+        jQuery( '.trp-language-name[data-trp-gettext-language-name]').text(jQuery( '.trp-language-name[data-trp-gettext-language-name]').attr('data-trp-gettext-language-name'));
         jQuery( '.trp-discard-on-default-language' ).show();
         /* end modifications of the editor screen */
 
@@ -830,7 +830,7 @@ function TRP_Lister( current_dictionary ) {
                 jQuery( textarea ).val( original );
             }
             else{
-                textarea_language = jQuery( textarea ).data("trp-language-code");
+                textarea_language = jQuery( textarea ).attr("data-trp-language-code");
                 jQuery( gettext_dictionaries[textarea_language] ).each(function(){
                     if( this.original == original && this.domain == domain ){
                         jQuery( textarea ).val( this.translated );
@@ -845,7 +845,7 @@ function TRP_Lister( current_dictionary ) {
         if ( trpEditor.change_tracker.check_unsaved_changes() ) {
             return;
         }
-        string_id = jquery_object.data('trpgettextoriginal');
+        string_id = jquery_object.attr('data-trpgettextoriginal');
         trpEditor.jquery_string_selector.val('gettext-'+string_id).trigger( 'change', true );
     }
 
@@ -862,7 +862,7 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
     /* clone the textareas here so we don;t actually modify the translated_textareas object in the TRP_Editor */
     var check_translated_textareas = jQuery.extend({}, _translated_textareas);
     /* make the change tracker aware of the default language textarea. we need this when editing gettext strings */
-    check_translated_textareas[original_textarea.data('trp-language-code')] = jQuery( '#trp-original' );
+    check_translated_textareas[original_textarea.attr('data-trp-language-code')] = jQuery( '#trp-original' );
 
     /**
      * Check if there are unsaved translations in textareas.
@@ -927,7 +927,7 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
         }
         var id = this.id.replace( 'trp-translated-', '' );
         if( id == trpEditor.original_textarea.attr('id') )
-            id = trpEditor.original_textarea.data('trp-language-code');
+            id = trpEditor.original_textarea.attr('data-trp-language-code');
         jQuery( this ).off();
         _this.show_unsaved_changes( id );
         changes_saved = false;
@@ -1010,7 +1010,7 @@ jQuery(function(){
         var gettext_strings = jQuery( '#trp-preview-iframe').contents().find( '[data-trpgettextoriginal]' );
         gettext_string_ids = [];
         gettext_strings.each( function(){
-            gettext_string_ids.push( jQuery(this).data('trpgettextoriginal'));
+            gettext_string_ids.push( jQuery(this).attr('data-trpgettextoriginal'));
         });
 
         jQuery.ajax({
@@ -1036,53 +1036,56 @@ jQuery(function(){
         });
 
         /* handle clicking the edit icon on gettext strings */
-        jQuery( '#trp-preview-iframe').contents().find( '[data-trpgettextoriginal]' ).each(function(){
-            trp_lister = new TRP_Lister( [] );
-            jQuery(this).mouseenter(function(){
-                if( gettext_dictionaries == null )
-                    return;//the strings haven't been loaded so don't do nothing yet
+        trp_lister = new TRP_Lister( [] );
+        jQuery(jQuery( '#trp-preview-iframe').contents()).on( 'mouseenter', '[data-trpgettextoriginal]', function(){
+            if( gettext_dictionaries == null )
+                return;//the strings haven't been loaded so don't do nothing yet
 
-                gettext_string = this;
+            gettext_string = this;
 
-                if ( ! trpEditor.edit_translation_button ){
-                    trpEditor.edit_translation_button = jQuery( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
-                }
+            if ( ! trpEditor.edit_translation_button ){
+                trpEditor.edit_translation_button = jQuery( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
+            }
 
-                if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' ) {
-                    if( jQuery(this).parent('trp-wrap').length == 0 )
-                        jQuery(this).wrap('<trp-wrap class="trpgettext-wrap"></trp-wrap>');
-                    jQuery(this).parent().prepend(trpEditor.edit_translation_button);
-                }
-                else {
-                    jQuery(this).prepend(trpEditor.edit_translation_button);
-                }
-                trpEditor.edit_translation_button.off( 'click' );
-                trpEditor.edit_translation_button.on( 'click', function(e){
-                    e.preventDefault();
-                    trp_lister.set_texts_select_to_gettext( jQuery(gettext_string) );
-                });
-                jQuery( this ).addClass( 'trp-highlight' );
-
+            if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' ) {
+                if( jQuery(this).parent('trp-wrap').length == 0 )
+                    jQuery(this).wrap('<trp-wrap class="trpgettext-wrap"></trp-wrap>');
+                jQuery(this).parent().prepend(trpEditor.edit_translation_button);
+            }
+            else {
+                jQuery(this).prepend(trpEditor.edit_translation_button);
+            }
+            trpEditor.edit_translation_button.off( 'click' );
+            trpEditor.edit_translation_button.on( 'click', function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                trp_lister.set_texts_select_to_gettext( jQuery(gettext_string) );
             });
+            jQuery( this ).addClass( 'trp-highlight' );
 
-            jQuery(this).mouseleave(function(){
-                jQuery( this ).removeClass( 'trp-highlight' );
-            });
+        });
 
-        })
+        jQuery(jQuery( '#trp-preview-iframe').contents()).on( 'mouseleave', '[data-trpgettextoriginal]', function(){
+            jQuery( this ).removeClass( 'trp-highlight' );
+        });
+
+
 
     });
 
     /* handle saving gettext strings */
     jQuery( '#trp-editor' ).on( 'click', '#trp-save-gettext', function(){
-        var strings_to_save = {};
-        var modified = false;
-        var original = jQuery('#trp-gettext-original-textarea').val();
+        strings_to_save = {};
+        modified = false;
+        original = jQuery('#trp-gettext-original-textarea').val();
         if ( original != "" ) {
 
             jQuery( '#trp-editor textarea[data-trp-translate-id]' ).each( function(){
-                id = jQuery(this).data('trp-translate-id');
-                language = jQuery(this).data('trp-language-code');
+                id = jQuery(this).attr('data-trp-translate-id');
+                language = jQuery(this).attr('data-trp-language-code');
+                if( trp_language == language ){
+                    gettext_id_in_dom = id;
+                }
                 translated = jQuery(this).val();
                 jQuery.each(gettext_dictionaries[language], function(i, string){
                     if( string.id == id ){
@@ -1114,7 +1117,10 @@ jQuery(function(){
                     gettext_strings: JSON.stringify( strings_to_save )
                 },
                 success: function (response) {
-                    trpEditor.saved_translation_ui();
+                    jQuery.get( document.getElementById('trp-preview-iframe').src, function( response ) {
+                        jQuery( '#trp-preview-iframe').contents().find( '[data-trpgettextoriginal="'+gettext_id_in_dom+'"]' ).replaceWith( jQuery(response).find( '[data-trpgettextoriginal="'+gettext_id_in_dom+'"]' ) );
+                        trpEditor.saved_translation_ui();
+                    });
                 },
                 error: function(errorThrown){
                     console.log( 'TranslatePress AJAX Request Error' );

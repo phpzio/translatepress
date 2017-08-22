@@ -252,11 +252,13 @@ class TRP_Translation_Render{
                         foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
                             $gettext_translation = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $gettext_translation );
-                            $row->setAttribute('data-no-translation', '');
-                            // we are in the editor
-                            if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
-                                $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
-                                $row->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
+                            if( !$row->has_child() ){// if the node doesn't have children set the needed attributes, else it means that there are other nodes inside so probably they are the ones displayed
+                                $row->setAttribute('data-no-translation', '');
+                                // we are in the editor
+                                if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                                    $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
+                                    $row->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
+                                }
                             }
                         }
                     }

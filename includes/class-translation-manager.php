@@ -283,7 +283,7 @@ class TRP_Translation_Manager{
                                     $translated = translate( $lang_original_string_detail['original'], $lang_original_string_detail['domain'] );
 
                                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $lang_original_string_detail['original'], 'translated' => $translated, 'domain' => $lang_original_string_detail['domain']) ), $language );
-                                    $dictionaries[$language][] = array('id' => $db_id, 'original' => $lang_original_string_detail['original'], 'translated' => $translated, 'domain' => $lang_original_string_detail['domain']);
+                                    $dictionaries[$language][] = array('id' => $db_id, 'original' => $lang_original_string_detail['original'], 'translated' => ( $translated != $lang_original_string_detail['original'] ) ? $translated : '', 'domain' => $lang_original_string_detail['domain']);
                                 }
                             }
                             restore_current_locale();
@@ -293,7 +293,16 @@ class TRP_Translation_Manager{
                         }
                     }
 
-                }                
+                }
+
+                /* html entity decode the strings so we display them properly in the textareas  */
+                foreach( $dictionaries as $lang => $dictionary ){
+                    foreach( $dictionary as $key => $string ){
+                        $string = array_map('html_entity_decode', $string );
+                        $dictionaries[$lang][$key] = $string;
+                    }
+                }
+
                 die( json_encode( $dictionaries ) );
 
             }
