@@ -882,6 +882,14 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
             jQuery ( '.trp-unsaved-changes textarea').css ( 'backgroundColor', 'red' ).animate({
                 backgroundColor: "#eee"
             }, 1000 );
+            jQuery ( '#trp-unsaved-changes-warning-message').css ( 'backgroundColor', 'red' ).animate({
+                backgroundColor: "#fff"
+            }, 1000 );
+
+            var unsaved_changes_warning_message = jQuery ( '#trp-unsaved-changes-warning-message')
+            unsaved_changes_warning_message.css("display","inline");
+            unsaved_changes_warning_message.delay(3000).fadeOut(400);
+
         }
         return !changes_saved;
     };

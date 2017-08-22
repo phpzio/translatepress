@@ -79,7 +79,8 @@
                     <?php } ?>
                 </div>
                 <div class="trp-controls-section">
-                    <div class="trp-controls-section-content">
+                    <div id="trp-translation-section" class="trp-controls-section-content">
+                        <div id="trp-unsaved-changes-warning-message" style="display:none"><?php _e( 'You have unsaved changes!', TRP_PLUGIN_SLUG );?></div>
                         <?php if ( count( $trp_settings['translation-languages'] ) > 1 ){ ?>
 
                             <?php //original strings for gettext textarea ?>
