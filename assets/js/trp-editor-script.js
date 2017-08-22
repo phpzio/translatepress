@@ -623,7 +623,7 @@ function TRP_String( language, array_index ){
                 if (new_settings.hasOwnProperty('status') && new_settings.status == 0) {
                     text_to_set = _this.original;
                 }
-
+                _this.wrap_special_html_elements();
                 if (text_to_set) {
                     var initial_value = jquery_object.text();
                     text_to_set = initial_value.replace(initial_value.trim(), text_to_set);
@@ -645,6 +645,20 @@ function TRP_String( language, array_index ){
     };
 
     /**
+     * Wrap buttons and placeholders so that we can display the pencil button and also replace with translation.
+     */
+    this.wrap_special_html_elements = function(){
+        if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
+            jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
+            jquery_object = jquery_object.parent();
+        }
+        if ( jquery_object.attr( 'type' ) == 'search' ) {
+            jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
+            jquery_object = jquery_object.parent();
+        }
+    };
+
+    /**
      * Show the pencil and border the viewable string in Preview window.
      */
     this.highlight = function (){
@@ -652,14 +666,7 @@ function TRP_String( language, array_index ){
             jquery_object.prepend( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
             trpEditor.edit_translation_button = jquery_object.children('.trp-edit-translation');
         }else{
-            if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
-                jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
-                jquery_object = jquery_object.parent();
-            }
-            if ( jquery_object.attr( 'type' ) == 'search' ) {
-                jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
-                jquery_object = jquery_object.parent();
-            }
+            _this.wrap_special_html_elements();
             jquery_object.prepend(trpEditor.edit_translation_button);
 
         }
@@ -882,6 +889,14 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
             jQuery ( '.trp-unsaved-changes textarea').css ( 'backgroundColor', 'red' ).animate({
                 backgroundColor: "#eee"
             }, 1000 );
+            jQuery ( '#trp-unsaved-changes-warning-message').css ( 'backgroundColor', 'red' ).animate({
+                backgroundColor: "#fff"
+            }, 1000 );
+
+            var unsaved_changes_warning_message = jQuery ( '#trp-unsaved-changes-warning-message')
+            unsaved_changes_warning_message.css("display","inline");
+            unsaved_changes_warning_message.delay(3000).fadeOut(400);
+
         }
         return !changes_saved;
     };

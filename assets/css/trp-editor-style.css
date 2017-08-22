@@ -46,6 +46,10 @@ body{
     padding: 12px;
 }
 
+#trp-unsaved-changes-warning-message{
+    color: #dc3232;
+}
+
 .ui-resizable-handle {
     position: absolute;
     font-size: 1px;
