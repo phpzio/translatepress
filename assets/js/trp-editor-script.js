@@ -512,14 +512,16 @@ function TRP_Dictionary( language_code ){
      * @param index
      */
     this.edit_string_index = function( index ){
-        /* start modifications of the editor screen */
-        jQuery('.trp-save-string').attr('id', 'trp-save');
-        jQuery( '.trp-language-name[data-trp-gettext-language-name]').text(jQuery( '.trp-language-name[data-trp-default-language-name]').attr('data-trp-default-language-name'));
-        jQuery( '#trp-gettext-original' ).hide();
-        jQuery( '.trp-discard-on-default-language' ).hide();
-        jQuery( '.trp-default-language textarea' ).attr('disabled', '');
-        /* end modifications of the editor screen */
-        _this.strings[index].edit_string();
+        if( index ) {
+            /* start modifications of the editor screen */
+            jQuery('.trp-save-string').attr('id', 'trp-save');
+            jQuery('.trp-language-name[data-trp-gettext-language-name]').text(jQuery('.trp-language-name[data-trp-default-language-name]').attr('data-trp-default-language-name'));
+            jQuery('#trp-gettext-original').hide();
+            jQuery('.trp-discard-on-default-language').hide();
+            jQuery('.trp-default-language textarea').attr('disabled', '');
+            /* end modifications of the editor screen */
+            _this.strings[index].edit_string();
+        }
     };
 
     /**

@@ -535,6 +535,12 @@ class TRP_Translation_Manager{
             $found_in_db = false;
             $db_id = '';
 
+            /* initiate trp query object */
+            if (!$this->trp_query) {
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $this->trp_query = $trp->get_component('query');;
+            }
+
             if( !isset( $trp_all_gettext_texts ) )
                 $trp_all_gettext_texts = array();
 
@@ -546,18 +552,17 @@ class TRP_Translation_Manager{
                         }
                         $db_id = $trp_translated_gettext_text['id'];
                         $found_in_db = true;
-                        /* @todo update the db if a translation appeared in the po file later */
+                        /* update the db if a translation appeared in the po file later */
+                        if( empty( $trp_translated_gettext_text['translated'] ) && $translation != $text ) {
+                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => TRP_Query::HUMAN_REVIEWED ), $TRP_LANGUAGE );
+                        }
+
                         break;
                     }
                 }
             }
 
             if( !$found_in_db ){
-                if (!$this->trp_query) {
-                    $trp = TRP_Translate_Press::get_trp_instance();
-                    $this->trp_query = $trp->get_component('query');;
-                }
-
                 if( !in_array( array('original' => $text, 'translated' => $translation, 'domain' => $domain), $trp_all_gettext_texts ) ) {
                     $trp_all_gettext_texts[] = array('original' => $text, 'translated' => $translation, 'domain' => $domain);
                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $text, 'translated' => $translation, 'domain' => $domain) ), $TRP_LANGUAGE );
