@@ -505,6 +505,10 @@ class TRP_Translation_Manager{
     public function process_gettext_strings( $translation, $text, $domain ){
         global $TRP_LANGUAGE;
 
+        /* don't do anything if we don't have extra languages on the site */
+        if( count( $this->settings['publish-languages'] ) <= 1 )
+            return $translation;
+
         if( ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
             return $translation;
 
