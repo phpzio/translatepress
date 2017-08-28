@@ -1116,7 +1116,11 @@ jQuery(function(){
                             if (typeof strings_to_save[language] == 'undefined') {
                                 strings_to_save[language] = [];
                             }
-                            strings_to_save[language].push({id: id, original: original, translated: translated, status: status});
+
+                            if( !domain )
+                                domain = 'default';
+
+                            strings_to_save[language].push({id: id, original: original, translated: translated, domain: domain, status: status});
                         }
                     }
                 });
@@ -1134,10 +1138,16 @@ jQuery(function(){
                     gettext_strings: JSON.stringify( strings_to_save )
                 },
                 success: function (response) {
-                    jQuery.get( document.getElementById('trp-preview-iframe').src, function( response ) {
-                        jQuery( '#trp-preview-iframe').contents().find( '[data-trpgettextoriginal="'+gettext_id_in_dom+'"]' ).replaceWith( jQuery(response).find( '[data-trpgettextoriginal="'+gettext_id_in_dom+'"]' ) );
+                    if(gettext_id_in_dom) {
+                        jQuery.get(document.getElementById("trp-preview-iframe").contentWindow.location.href, function (response) {
+                            replacement = jQuery(response).find('[data-trpgettextoriginal="' + gettext_id_in_dom + '"]').first();
+                            if( replacement.length != 0 )
+                                jQuery('#trp-preview-iframe').contents().find('[data-trpgettextoriginal="' + gettext_id_in_dom + '"]').replaceWith(replacement);
+                            trpEditor.saved_translation_ui();
+                        });
+                    }
+                    else
                         trpEditor.saved_translation_ui();
-                    });
                 },
                 error: function(errorThrown){
                     console.log( 'TranslatePress AJAX Request Error' );

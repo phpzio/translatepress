@@ -7,7 +7,7 @@ span.trp-edit-translation {
     height: 30px;
     display: inline-block;
     position: absolute;
-    margin-left: -30px;
+    margin-left: -30px !important;
     cursor: pointer;
     pointer-events: auto;
     color: #fff;

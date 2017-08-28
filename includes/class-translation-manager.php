@@ -489,8 +489,10 @@ class TRP_Translation_Manager{
 
     /* only apply the gettext filter from the wp_head hook down */
     public function apply_gettext_filter(){
-        if( !is_admin() )
-            add_filter( 'gettext', array( $this, 'process_gettext_strings' ), 100, 3 );
+        if( !is_admin() ) {
+            add_filter('gettext', array($this, 'process_gettext_strings'), 100, 3);
+            add_filter('gettext_with_context', array($this, 'process_gettext_strings_with_context'), 100, 4);
+        }
     }
 
 
@@ -566,6 +568,8 @@ class TRP_Translation_Manager{
                 if( !in_array( array('original' => $text, 'translated' => $translation, 'domain' => $domain), $trp_all_gettext_texts ) ) {
                     $trp_all_gettext_texts[] = array('original' => $text, 'translated' => $translation, 'domain' => $domain);
                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $text, 'translated' => $translation, 'domain' => $domain) ), $TRP_LANGUAGE );
+                    /* insert it in the global of translated because now it is in the database */
+                    $trp_translated_gettext_texts[] = array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain );
                 }
             }
 
@@ -586,6 +590,11 @@ class TRP_Translation_Manager{
                 $translation = '<trp-gettext data-trpgettextoriginal=\'' . $db_id . '\'>' . $translation . '</trp-gettext>';
         }
 
+        return $translation;
+    }
+
+    function process_gettext_strings_with_context( $translation, $text, $context, $domain ){
+        $translation = $this->process_gettext_strings( $translation, $text, $domain );
         return $translation;
     }
 
@@ -622,6 +631,18 @@ class TRP_Translation_Manager{
 
             }
         }
+    }
+
+    /* we need the esc_ functions for html and attributes not to escape our tags so we put them back */
+    function handle_esc_functions_for_gettext( $safe_text, $text ){
+        if( preg_match( '/(&lt;)trp-gettext (.*?)(&gt;)/', $safe_text, $matches ) ) {
+            if( !empty($matches[2]) ) {
+                $safe_text = preg_replace('/(&lt;)trp-gettext (.*?)(&gt;)/', "<trp-gettext " . htmlspecialchars_decode( $matches[2], ENT_QUOTES ) . ">", $safe_text);
+                $safe_text = preg_replace('/(&lt;)(.?)\/trp-gettext(&gt;)/', '</trp-gettext>', $safe_text);
+            }
+        }
+
+        return $safe_text;
     }
     
 }

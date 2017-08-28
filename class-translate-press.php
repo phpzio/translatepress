@@ -155,7 +155,11 @@ class TRP_Translate_Press{
         
         $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global', 11 );
         $this->loader->add_action( 'wp_head', $this->translation_manager, 'apply_gettext_filter', 100 );
-        $this->loader->add_action( 'shutdown', $this->translation_manager, 'machine_translate_gettext', 100 );        
+        $this->loader->add_action( 'shutdown', $this->translation_manager, 'machine_translate_gettext', 100 );
+
+        /* we need the esc_ functions for html and attributes not to escape our tags so we put them back */
+        $this->loader->add_filter( 'esc_html', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
+        $this->loader->add_filter( 'attribute_escape', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
 
         /* define an update hook here */
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );
