@@ -336,6 +336,31 @@ function TRP_Editor(){
     };
 
     /**
+     * Function that changes the value of a GET parameter
+     * @param link the url in which we make the change
+     * @param name the name of the parameter we want to change
+     * @param value the new value
+     * @returns {*}
+     */
+    this.set_url_param = function( link, name, value ){
+        /* check if wh have any get parameters */
+        if( link.search( "\\?" ) === -1 ){
+            link = link + '?'+ name + '=' + value;
+        }
+        else{
+            /* check to see if the parameter is already there */
+            thisParamValue = wppbGetUrlParam( name, link );
+            if( thisParamValue !== null ){
+                link = link.replace( name+'='+thisParamValue, name+'='+value );
+            }
+            else{
+                link = link + '&'+ name + '=' + value;
+            }
+        }
+        return link;
+    };
+
+    /**
      * Resizing preview window.
      *
      * @param event

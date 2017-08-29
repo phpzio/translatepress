@@ -97,6 +97,11 @@ function TRP_Translator(){
                             continue;
                         }
 
+                        /* if it is an anchor add the trp-edit-translation=preview parameter to it */
+                        if ( typeof parent.trpEditor !== 'undefined' ) {
+                            jQuery(mutation.addedNodes[i]).find('a').context.href = parent.trpEditor.set_url_param( jQuery(mutation.addedNodes[i]).find('a').context.href, 'trp-edit-translation', 'preview' );
+                        }
+
                         var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
                         var all_strings = all_nodes.contents().filter(function(){
                             if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
