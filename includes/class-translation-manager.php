@@ -580,16 +580,14 @@ class TRP_Translation_Manager{
                 $this->machine_translator = $trp->get_component('machine_translator');
             }
             if ( $this->machine_translator->is_available() ) {
-                if( !in_array( array('original' => $text, 'translated' => $translation, 'domain' => $domain), $trp_all_gettext_texts ) ) {
-                    global $trp_gettext_strings_for_machine_translation;
-                    if ($text == $translation) {
-                        foreach( $trp_translated_gettext_texts as $trp_translated_gettext_text ){
-                            if( $trp_translated_gettext_text['id'] == $db_id ){
-                                if( $trp_translated_gettext_text['translated'] == '' ){
-                                    $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => TRP_Query::MACHINE_TRANSLATED );
-                                }
-                                break;
+                global $trp_gettext_strings_for_machine_translation;
+                if ($text == $translation) {
+                    foreach( $trp_translated_gettext_texts as $trp_translated_gettext_text ){
+                        if( $trp_translated_gettext_text['id'] == $db_id ){
+                            if( $trp_translated_gettext_text['translated'] == '' ){
+                                $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => TRP_Query::MACHINE_TRANSLATED );
                             }
+                            break;
                         }
                     }
                 }
