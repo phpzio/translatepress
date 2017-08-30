@@ -571,7 +571,7 @@ class TRP_Translation_Manager{
                     $trp_all_gettext_texts[] = array('original' => $text, 'translated' => $translation, 'domain' => $domain);
                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $text, 'translated' => $translation, 'domain' => $domain) ), $TRP_LANGUAGE );
                     /* insert it in the global of translated because now it is in the database */
-                    $trp_translated_gettext_texts[] = array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain );
+                    $trp_translated_gettext_texts[] = array( 'id' => $db_id, 'original' => $text, 'translated' => ( $translation != $text ) ? $translation : '', 'domain' => $domain );
                 }
             }
 
@@ -583,7 +583,14 @@ class TRP_Translation_Manager{
                 if( !in_array( array('original' => $text, 'translated' => $translation, 'domain' => $domain), $trp_all_gettext_texts ) ) {
                     global $trp_gettext_strings_for_machine_translation;
                     if ($text == $translation) {
-                        $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => TRP_Query::MACHINE_TRANSLATED );
+                        foreach( $trp_translated_gettext_texts as $trp_translated_gettext_text ){
+                            if( $trp_translated_gettext_text['id'] == $db_id ){
+                                if( $trp_translated_gettext_text['translated'] == '' ){
+                                    $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => TRP_Query::MACHINE_TRANSLATED );
+                                }
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -627,14 +634,15 @@ class TRP_Translation_Manager{
             if ( $this->machine_translator->is_available() ) {
                 $new_strings = array();
                 foreach( $trp_gettext_strings_for_machine_translation as $trp_gettext_string_for_machine_translation ){
-                    $new_strings[] = $trp_gettext_string_for_machine_translation['original'];
+                    /* google has a problem translating this characters...for some reasons it puts spaces after them so we need to 'encode' them and decode them back. hopefully it won't break anything important */
+                    $new_strings[] = str_replace( array( '%', '$', '#' ), array( '1TP1', '1TP2', '1TP3' ), $trp_gettext_string_for_machine_translation['original'] );
                 }
 
                 $machine_strings = $this->machine_translator->translate_array( $new_strings, $TRP_LANGUAGE );
 
                 if( !empty( $machine_strings ) ){
                     foreach( $machine_strings as $key => $machine_string ){
-                        $trp_gettext_strings_for_machine_translation[$key]['translated'] = $machine_string;
+                        $trp_gettext_strings_for_machine_translation[$key]['translated'] = str_ireplace( array( '1TP1', '1TP2', '1TP3' ), array( '%', '$', '#' ), $machine_string );
                     }
                 }
 
