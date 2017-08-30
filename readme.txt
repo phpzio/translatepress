@@ -22,6 +22,7 @@ Built the WordPress way, TranslatePress is a GPL and self hosted plugin, meaning
 Translate your website directly from the front-end, in a friendly user interface.
 Live preview of your translated pages, as you edit your translations.
 Set up Automatic Translation using your own Google API key.
+Note: this plugin uses the Google Translation API to translate the strings on your site. This feature can be enabled or disabled according to your preferences.
 Place language switchers anywhere using shortcode **[language-switcher]**, WP menu item or as a floating dropdown.
 
 Users with administrator rights have access to the following features:
