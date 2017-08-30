@@ -160,6 +160,8 @@ class TRP_Translate_Press{
         /* we need the esc_ functions for html and attributes not to escape our tags so we put them back */
         $this->loader->add_filter( 'esc_html', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
         $this->loader->add_filter( 'attribute_escape', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
+        /* we need to allow the trp-gettext tag in ksses functions */
+        $this->loader->add_filter( 'wp_kses_allowed_html', $this->translation_manager, 'handle_kses_functions_for_gettext', 10 );
 
         /* define an update hook here */
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );

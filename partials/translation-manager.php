@@ -62,7 +62,7 @@
                         </form>
                         <div id="trp-string-list">
                             <select id="trp-string-categories" data-trp-placeholder="<?php _e( 'Select string to translate...', TRP_PLUGIN_SLUG ); ?>">
-                                <option value=""></option>
+                                <option value="" class="default-option"></option>
                                 <?php //add here an optiongroup so we know to add all the gettext strings below this and all the other strings above this ?>
                                 <optgroup id="trp-gettext-strings-optgroup" label="<?php _e( 'Gettext strings', TRP_PLUGIN_SLUG ); ?>"></optgroup>
                             </select>
@@ -86,7 +86,7 @@
                             <?php //original strings for gettext textarea ?>
                             <div id="trp-gettext-original" class="trp-language-text trp-gettext-original-language" style="display:none">
                                 <div class="trp-language-name"><?php _e( 'Original String', TRP_PLUGIN_SLUG );?></div>
-                                <textarea id="trp-gettext-original-textarea" disabled></textarea>
+                                <textarea id="trp-gettext-original-textarea" readonly="readonly"></textarea>
                             </div>
 
                             <div id="trp-language-<?php echo $trp_settings['default-language'];?>" class="trp-language-text trp-default-language">
@@ -94,7 +94,7 @@
                                 <div class="trp-language-name" data-trp-gettext-language-name="<?php echo sprintf( __( 'To %s', TRP_PLUGIN_SLUG ), $default_language_name ); ?>" data-trp-default-language-name="<?php echo sprintf( __( 'From %s', TRP_PLUGIN_SLUG ), $default_language_name ); ?>">
                                     <?php echo sprintf( __( 'From %s', TRP_PLUGIN_SLUG ), $default_language_name ); ?>
                                 </div>
-                                <textarea id="trp-original" data-trp-language-code="<?php echo esc_attr( $trp_settings['default-language'] ); ?>" disabled></textarea>
+                                <textarea id="trp-original" data-trp-language-code="<?php echo esc_attr( $trp_settings['default-language'] ); ?>" readonly="readonly"></textarea>
                                 <div class="trp-discard-changes trp-discard-on-default-language" style="display:none;"><?php _e( 'Discard changes', TRP_PLUGIN_SLUG );?></div>
                             </div>
                             <?php

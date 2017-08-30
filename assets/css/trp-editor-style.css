@@ -200,6 +200,12 @@ span.select2-container{
     width: 100%;
 }
 
+.trp-language-text textarea[readonly="readonly"]{
+    background: #EBEBE4;
+    border: 1px solid  #aaa;
+    outline-width: 0;
+}
+
 .trp-discard-changes{
     color: darkgrey;
     font-size: 11px;

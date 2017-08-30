@@ -343,6 +343,9 @@ function TRP_Editor(){
      * @returns {*}
      */
     this.set_url_param = function( link, name, value ){
+        if( typeof link == 'undefined' )
+            return;
+
         /* check if wh have any get parameters */
         if( link.search( "\\?" ) === -1 ){
             link = link + '?'+ name + '=' + value;
@@ -543,7 +546,7 @@ function TRP_Dictionary( language_code ){
             jQuery('.trp-language-name[data-trp-gettext-language-name]').text(jQuery('.trp-language-name[data-trp-default-language-name]').attr('data-trp-default-language-name'));
             jQuery('#trp-gettext-original').hide();
             jQuery('.trp-discard-on-default-language').hide();
-            jQuery('.trp-default-language textarea').attr('disabled', '');
+            jQuery('.trp-default-language textarea').attr('readonly', 'readonly');
             /* end modifications of the editor screen */
             _this.strings[index].edit_string();
         }
@@ -783,6 +786,7 @@ function TRP_Lister( current_dictionary ) {
      */
     this.reload_list = function (){
         category_array = dictionary.get_categories();
+        jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).prevAll(":not(.default-option)").remove();
         /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */        
         for ( var category in category_array ){
             jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).before( jQuery( '<optgroup></optgroup>' ).attr( 'label', _this.format_category_name( category ) ) );
@@ -804,6 +808,7 @@ function TRP_Lister( current_dictionary ) {
 
     this.add_gettext_strings = function (){
         gettext_category = dictionary;
+        jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).nextAll().remove();
         for ( var i in gettext_category){
             var original = gettext_category[i].original;
             jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).after(jQuery('<option></option>').attr( 'value', 'gettext-'+gettext_category[i].id ).text( _this.format_text( original )).attr( 'title', gettext_category[i].domain ).attr( 'data-trp-gettext-id', gettext_category[i].id ) );
@@ -857,7 +862,7 @@ function TRP_Lister( current_dictionary ) {
             textarea = this;
 
             if( jQuery(textarea).parent().hasClass('trp-default-language') ) {
-                jQuery(textarea).removeAttr('disabled');
+                jQuery(textarea).removeAttr('readonly');
             }
 
             if( jQuery(textarea).parent().hasClass('trp-gettext-original-language') ){

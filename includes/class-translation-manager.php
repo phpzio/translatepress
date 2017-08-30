@@ -492,6 +492,8 @@ class TRP_Translation_Manager{
         if( !is_admin() ) {
             add_filter('gettext', array($this, 'process_gettext_strings'), 100, 3);
             add_filter('gettext_with_context', array($this, 'process_gettext_strings_with_context'), 100, 4);
+            add_filter('ngettext', array($this, 'process_ngettext_strings'), 100, 5);
+            add_filter('ngettext_with_context', array($this, 'process_ngettext_strings_with_context'), 100, 6);
         }
     }
 
@@ -597,6 +599,20 @@ class TRP_Translation_Manager{
         $translation = $this->process_gettext_strings( $translation, $text, $domain );
         return $translation;
     }
+    
+    function process_ngettext_strings($translation, $single, $plural, $number, $domain){
+        if( $number == 1 )
+            $translation = $this->process_gettext_strings( $translation, $single, $domain );
+        else
+            $translation = $this->process_gettext_strings( $translation, $plural, $domain );
+
+        return $translation;
+    }
+
+    function process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain ){
+        $translation = $this->process_ngettext_strings( $translation, $single, $plural, $number, $domain );
+        return $translation;
+    }
 
     function machine_translate_gettext(){
         /* @todo  set the original language to detect and also decide if we automatically translate for the default language */
@@ -643,6 +659,13 @@ class TRP_Translation_Manager{
         }
 
         return $safe_text;
+    }
+
+    function handle_kses_functions_for_gettext( $tags ){
+        if( is_array($tags) ){
+            $tags['trp-gettext'] = array( 'data-trpgettextoriginal' => true );
+        }
+        return $tags;
     }
     
 }
