@@ -73,6 +73,12 @@ For more information please check out [TranslatePress documentation](https://tra
 
 
 == Screenshots ==
+1. Frontend translation editor: screenshot-1.png
+2. Frontend translation editor of a gettext string: screenshot-2.png
+3. Frontend translation editor of the Woocommerce shop page: screenshot-3.png
+4. Settings Page: screenshot-4.png
+5. Floating Language Switcher: screenshot-5.png
+6. Menu Language Switcher: screenshot-6.png
 
 == Changelog ==
 
