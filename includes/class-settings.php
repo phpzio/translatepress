@@ -426,15 +426,15 @@ class TRP_Settings{
                 'url'   => add_query_arg( 'trp-edit-translation', 'true', home_url() ),
                 'page'  => 'trp_translation_editor'
             )
-            /* Uncomment this after Beta
-            ,
-            array(
+        ));
+
+        if( class_exists('TRP_LICENSE_PAGE') ) {
+            $tabs[] = array(
                 'name'  => __( 'License', TRP_PLUGIN_SLUG ),
                 'url'   => admin_url( 'admin.php?page=trp_license_key' ),
                 'page'  => 'trp_license_key'
-            )
-            */
-        ));
+            );
+        }
 
         $active_tab = 'translate-press';
         if ( isset( $_GET['page'] ) ){
