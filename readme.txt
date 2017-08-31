@@ -1,6 +1,6 @@
-﻿=== TranslatePress ===
+﻿=== TranslatePress - Multilingual ===
 Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
-Donate link: https://www.cozmoslabs.com/wordpress-profile-builder/
+Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, automatic translation, front-end translation, multilingual
 Requires at least: 3.1.0
 Tested up to: 4.8.1
