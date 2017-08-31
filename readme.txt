@@ -44,15 +44,15 @@ Paid Member Subscriptions has a range of premium [Add-ons](https://translatepres
 
 = Website =
 
-https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree
+[translatepress.com](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree)
 
 = Documentation =
 
-https://translatepress.com/docs/translatepress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree
+[Visit our documentation page](https://translatepress.com/docs/translatepress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree)
 
 = Add-ons =
 
-https://translatepress.com/docs/translatepress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree
+[Add-ons](https://translatepress.com/docs/translatepress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree)
 
 == Installation ==
 
