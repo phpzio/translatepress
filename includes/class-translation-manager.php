@@ -405,20 +405,14 @@ class TRP_Translation_Manager{
             $title = __( 'Translate Site', TRP_PLUGIN_SLUG );
             $url_target = '_blank';
         } else {
-            global $post;
 
-            if( is_object( $post ) && ! is_archive() && ! is_home() && !is_front_page() && ! is_search() ) {
-                $url = get_permalink( $post );
-            } else {
-                if( ! $this->url_converter ) {
-                    $trp = TRP_Translate_Press::get_trp_instance();
-                    $this->url_converter = $trp->get_component( 'url_converter' );
-                }
+	        if( ! $this->url_converter ) {
+		        $trp = TRP_Translate_Press::get_trp_instance();
+		        $this->url_converter = $trp->get_component( 'url_converter' );
+	        }
 
-                $url = $this->url_converter->cur_page_url();
-            }
-
-            $url = add_query_arg( 'trp-edit-translation', 'true', $url );
+	        $url = $this->url_converter->cur_page_url();
+	        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
 
             $title = __( 'Translate Page', TRP_PLUGIN_SLUG );
             $url_target = '';
