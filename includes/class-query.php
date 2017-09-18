@@ -336,8 +336,8 @@ class TRP_Query{
     }
 
     protected function get_gettext_table_name( $language_code ){
-
-        return $this->db->prefix . 'trp_gettext_' . strtolower( $language_code );
+		global $wpdb;
+        return $wpdb->get_blog_prefix() . 'trp_gettext_' . strtolower( $language_code );
     }
 
      /**
