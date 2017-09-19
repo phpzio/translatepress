@@ -336,34 +336,6 @@ function TRP_Editor(){
     };
 
     /**
-     * Function that changes the value of a GET parameter
-     * @param link the url in which we make the change
-     * @param name the name of the parameter we want to change
-     * @param value the new value
-     * @returns {*}
-     */
-    this.set_url_param = function( link, name, value ){
-        if( typeof link == 'undefined' )
-            return;
-
-        /* check if wh have any get parameters */
-        if( link.search( "\\?" ) === -1 ){
-            link = link + '?'+ name + '=' + value;
-        }
-        else{
-            /* check to see if the parameter is already there */
-            thisParamValue = wppbGetUrlParam( name, link );
-            if( thisParamValue !== null ){
-                link = link.replace( name+'='+thisParamValue, name+'='+value );
-            }
-            else{
-                link = link + '&'+ name + '=' + value;
-            }
-        }
-        return link;
-    };
-
-    /**
      * Resizing preview window.
      *
      * @param event
@@ -452,8 +424,8 @@ function TRP_Editor(){
      */
     function format_option(option){
         option = jQuery(
-                '<div>' + option.text + '</div><div class="string-selector-description">' + option.title + '</div>'
-            );
+            '<div>' + option.text + '</div><div class="string-selector-description">' + option.title + '</div>'
+        );
         return option;
     }
 
@@ -787,7 +759,7 @@ function TRP_Lister( current_dictionary ) {
     this.reload_list = function (){
         category_array = dictionary.get_categories();
         jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).prevAll(":not(.default-option)").remove();
-        /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */        
+        /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */
         for ( var category in category_array ){
             jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).before( jQuery( '<optgroup></optgroup>' ).attr( 'label', _this.format_category_name( category ) ) );
             for ( var i in category_array[category] ) {
@@ -1053,7 +1025,7 @@ var gettext_dictionaries = null;
 jQuery(function(){
     /* initial load and populate the dropdown with gettext strings */
     jQuery( "#trp-preview-iframe" ).load(function(){
-        /* get the gettext texts ids from the page and pass them to a ajax call to construct the dictonaries */        
+        /* get the gettext texts ids from the page and pass them to a ajax call to construct the dictonaries */
         var gettext_strings = jQuery( '#trp-preview-iframe').contents().find( '[data-trpgettextoriginal]' );
         gettext_string_ids = [];
         gettext_strings.each( function(){
