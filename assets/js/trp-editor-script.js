@@ -533,6 +533,8 @@ function TRP_Dictionary( language_code ){
      */
     this.get_categories = function (){
         var categorized = [];
+        categorized[ 'Meta Information' ] = [];
+        categorized[ 'String List' ] = [];
         for ( var i in _this.strings ){
             if ( categorized[ _this.strings[i].node_type ] == undefined ) {
                 categorized[ _this.strings[i].node_type ] = [];
