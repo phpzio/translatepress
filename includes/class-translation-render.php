@@ -25,7 +25,9 @@ class TRP_Translation_Render{
      */
     public function start_output_buffer(){
         global $TRP_LANGUAGE;
-        if( is_admin() ||
+        if( TRP_Translation_Manager::is_ajax_on_frontend() ){
+            //in this case move forward
+        }else if( is_admin() ||
         ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
         ( isset( $_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'true' ) || defined( 'WC_DOING_AJAX' ) ) {
             return;
@@ -187,6 +189,29 @@ class TRP_Translation_Render{
         $language_code = $this->get_language();
         if ($language_code === false) {
             return $output;
+        }
+
+        if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
+            if (is_array($json_array = json_decode($output, true))) {
+                if (!empty($json_array)) {
+                    foreach ($json_array as $key => $value) {
+                        if (!empty($value)) {
+                            if (!is_array($value)) {
+                                if (html_entity_decode((string)$value) != strip_tags(html_entity_decode((string)$value)))
+                                    $json_array[$key] = $this->translate_page(stripslashes($value));
+                            } else {
+                                error_log(json_encode($value));
+                                /*foreach( $value as $k => $v ){
+                                    if( !empty( $value ) ) {
+                                    }
+                                }*/
+                                $json_array[$key] = $this->translate_page(json_encode($value));
+                            }
+                        }
+                    }
+                }
+                return json_encode($json_array);
+            }
         }
 
         $no_translate_attribute = 'data-no-translation';
@@ -624,14 +649,37 @@ class TRP_Translation_Render{
                 'trp_wp_ajax_url' => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
                 'trp_language_to_query' => $language_to_query,
                 'trp_original_language' => $this->settings['default-language'],
-                'trp_current_language' => $TRP_LANGUAGE
+                'trp_current_language' => $TRP_LANGUAGE,
+                $trp_data['trp_translation_editor'] = false
             );
             if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
+                $trp_data['trp_translation_editor'] = true;
             }
             wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery', 'trp-language-switcher'), TRP_PLUGIN_VERSION );
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
+    }
+
+
+    public function process_js_strings_in_translation_editor(){
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            if (isset($_POST['action']) && $_POST['action'] === 'trp_process_js_strings_in_translation_editor' && !empty($_POST['nodes_content']) && !empty($_POST['current_language']) && in_array($_POST['current_language'], $this->settings['translation-languages'])) {
+                $nodes = $_POST['nodes_content'];
+                $parsed_nodes = array();
+                $_GET['trp-edit-translation'] = 'preview';
+                global $TRP_LANGUAGE;
+                $TRP_LANGUAGE = $_POST['current_language'];
+                if( !empty( $nodes ) ){
+                    foreach( $nodes as $node ){
+                        $parsed_nodes[] = $this->translate_page( stripslashes($node) );
+                    }
+                }
+//error_log( $this->translate_page(  array('this is a string', 'another string')  ) );
+                echo json_encode( $parsed_nodes );
+            }
+        }
+        die();
     }
 
 }
