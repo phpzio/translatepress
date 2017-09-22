@@ -466,7 +466,7 @@ class TRP_Translation_Manager{
      * Create a global with the gettext strings that exist in the database
      */
     public function create_gettext_translated_global(){
-        if( !is_admin() ) {
+        if( !is_admin() || $this::is_ajax_on_frontend() ) {
             global $TRP_LANGUAGE;
 
             global $trp_translated_gettext_texts;
@@ -483,12 +483,38 @@ class TRP_Translation_Manager{
 
     /* only apply the gettext filter from the wp_head hook down */
     public function apply_gettext_filter(){
-        if( !is_admin() ) {
+        if( !is_admin() || $this::is_ajax_on_frontend() ) {
             add_filter('gettext', array($this, 'process_gettext_strings'), 100, 3);
             add_filter('gettext_with_context', array($this, 'process_gettext_strings_with_context'), 100, 4);
             add_filter('ngettext', array($this, 'process_ngettext_strings'), 100, 5);
             add_filter('ngettext_with_context', array($this, 'process_ngettext_strings_with_context'), 100, 6);
         }
+    }
+
+    static function is_ajax_on_frontend(){
+        $filename = isset($_SERVER['SCRIPT_FILENAME']) ? $_SERVER['SCRIPT_FILENAME'] : '';
+        if( ( defined('DOING_AJAX') && DOING_AJAX ) ){
+            $referer = '';
+            if ( ! empty( $_REQUEST['_wp_http_referer'] ) )
+                $referer = wp_unslash( $_REQUEST['_wp_http_referer'] );
+            elseif ( ! empty( $_SERVER['HTTP_REFERER'] ) )
+                $referer = wp_unslash( $_SERVER['HTTP_REFERER'] );
+
+            if( ( strpos( $referer, admin_url() ) === false ) && ( basename($filename) === 'admin-ajax.php' ) ){
+
+                if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && !isset( $_GET['trp-edit-translation'] ) )
+                    $_GET['trp-edit-translation'] = 'preview';
+
+                global $TRP_LANGUAGE;
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $url_converter = $trp->get_component( 'url_converter' );
+                $TRP_LANGUAGE = $url_converter ->get_lang_from_url_string($referer);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -511,23 +537,7 @@ class TRP_Translation_Manager{
             return $translation;
 
 
-        if ( !defined( 'DOING_AJAX' ) ) {
-            $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-            if( !empty( $callstack_functions ) ){
-                foreach( $callstack_functions as $callstack_function ){
-                    if( $callstack_function['function'] == 'wp_enqueue_script' ||
-                        $callstack_function['function'] == 'wp_enqueue_scripts' ||
-                        $callstack_function['function'] == 'wp_editor' ||
-                        $callstack_function['function'] == 'wp_enqueue_media' ||
-                        $callstack_function['function'] == 'wp_register_script' ||
-                        $callstack_function['function'] == 'wp_print_scripts'||
-                        $callstack_function['function'] == 'wp_localize_script'||
-                        $callstack_function['function'] == 'wp_print_media_templates'
-                    ) {
-                        return $translation;
-                    }
-                }
-            }
+        if ( !defined( 'DOING_AJAX' ) || $this::is_ajax_on_frontend() ) {
 
             global $trp_translated_gettext_texts, $trp_all_gettext_texts;
             $found_in_db = false;
@@ -583,6 +593,23 @@ class TRP_Translation_Manager{
                             }
                             break;
                         }
+                    }
+                }
+            }
+
+            $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            if( !empty( $callstack_functions ) ){
+                foreach( $callstack_functions as $callstack_function ){
+                    if( $callstack_function['function'] == 'wp_enqueue_script' ||
+                        $callstack_function['function'] == 'wp_enqueue_scripts' ||
+                        $callstack_function['function'] == 'wp_editor' ||
+                        $callstack_function['function'] == 'wp_enqueue_media' ||
+                        $callstack_function['function'] == 'wp_register_script' ||
+                        $callstack_function['function'] == 'wp_print_scripts'||
+                        $callstack_function['function'] == 'wp_localize_script'||
+                        $callstack_function['function'] == 'wp_print_media_templates'
+                    ) {
+                        return $translation;
                     }
                 }
             }
