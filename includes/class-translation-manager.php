@@ -509,6 +509,11 @@ class TRP_Translation_Manager{
                 $trp = TRP_Translate_Press::get_trp_instance();
                 $url_converter = $trp->get_component( 'url_converter' );
                 $TRP_LANGUAGE = $url_converter ->get_lang_from_url_string($referer);
+                if( empty( $TRP_LANGUAGE ) ) {
+                    $settings_obj = new TRP_Settings();
+                    $settings = $settings_obj->get_settings();
+                    $TRP_LANGUAGE = $settings["default-language"];
+                }
 
                 return true;
             }

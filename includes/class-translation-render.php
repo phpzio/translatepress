@@ -192,20 +192,29 @@ class TRP_Translation_Render{
         }
 
         if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
+error_log($_REQUEST['action']);
+            if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 ){
+                return $output;
+            }
+
             if (is_array($json_array = json_decode($output, true))) {
                 if (!empty($json_array)) {
                     foreach ($json_array as $key => $value) {
                         if (!empty($value)) {
                             if (!is_array($value)) {
-                                if (html_entity_decode((string)$value) != strip_tags(html_entity_decode((string)$value)))
+                                if (html_entity_decode((string)$value) != strip_tags(html_entity_decode((string)$value))) {
                                     $json_array[$key] = $this->translate_page(stripslashes($value));
+                                }
                             } else {
-                                error_log(json_encode($value));
-                                /*foreach( $value as $k => $v ){
-                                    if( !empty( $value ) ) {
+                                foreach( $value as $k => $v ){
+                                    if( !empty( $v ) ) {
+                                        if (!is_array($v)) {
+                                            if (html_entity_decode((string)$v) != strip_tags(html_entity_decode((string)$v))) {
+                                                $json_array[$key][$k] = $this->translate_page(stripslashes($v));
+                                            }
+                                        }
                                     }
-                                }*/
-                                $json_array[$key] = $this->translate_page(json_encode($value));
+                                }
                             }
                         }
                     }
@@ -649,12 +658,10 @@ class TRP_Translation_Render{
                 'trp_wp_ajax_url' => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
                 'trp_language_to_query' => $language_to_query,
                 'trp_original_language' => $this->settings['default-language'],
-                'trp_current_language' => $TRP_LANGUAGE,
-                $trp_data['trp_translation_editor'] = false
+                'trp_current_language' => $TRP_LANGUAGE
             );
             if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
-                $trp_data['trp_translation_editor'] = true;
             }
             wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery', 'trp-language-switcher'), TRP_PLUGIN_VERSION );
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);

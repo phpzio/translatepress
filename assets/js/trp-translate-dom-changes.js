@@ -9,7 +9,6 @@ function TRP_Translator(){
     var active = true;
     var ajax_url = trp_data.trp_ajax_url;
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
-    var trp_translation_editor = trp_data.trp_translation_editor;
     var language_to_query;
     var except_characters = " \t\n\r  �.,/`~!@#$€£%^&*():;-_=+[]{}\\|?/<>1234567890'";
 
@@ -81,51 +80,6 @@ function TRP_Translator(){
             for ( var j in strings_to_query ) {
                 strings_to_query[j].node.textContent = strings_to_query[j].original;
             }
-        }
-    };
-
-
-    this.detect_strings_in_translation_editor = function( mutations ){
-        //console.log(window.parent.jQuery('#trp-preview-iframe'));
-
-        if ( active ) {
-            var nodes = [];
-            var nodes_content = [];
-            mutations.forEach( function (mutation) {
-                if( JSON.stringify( mutation.addedNodes ) != JSON.stringify( mutation.removedNodes ) ) {
-                    for (var i = 0; i < mutation.addedNodes.length; i++) {
-                        if (mutation.addedNodes[i].innerText && mutation.addedNodes[i].innerText.trim() != '') {
-                            nodes.push(mutation.addedNodes[i]);
-                            nodes_content.push(mutation.addedNodes[i].outerHTML);
-                        }
-                    }
-                }
-            });
-
-            if ( nodes.length > 0 ) {
-                _this.pause_observer();
-                window.parent.jQuery('#trp-preview-iframe').trigger('load');
-                /*jQuery.ajax({
-                    url: wp_ajax_url,
-                    type: 'post',
-                    dataType: 'json',
-                    data: {
-                        action: 'trp_process_js_strings_in_translation_editor',
-                        current_language: current_language,
-                        original_language: original_language,
-                        nodes_content: nodes_content
-                    },
-                    success: function (processed_nodes) {
-                        nodes.forEach( function (node, index ) {
-                            jQuery(node).replaceWith(processed_nodes[index]);                            
-                        });
-
-                        _this.unpause_observer();
-                    }
-                });*/
-                _this.unpause_observer();
-            }
-
         }
     };
 
@@ -226,28 +180,23 @@ function TRP_Translator(){
         language_to_query = trp_data.trp_language_to_query;
 
         // create an observer instance
-        if( trp_translation_editor ){
-            observer = new MutationObserver( _this.detect_strings_in_translation_editor );
-            // configuration of the observer:
-            var config = {
-                attributes: false,
-                childList: true,
-                characterData: false,
-                subtree: true
-            };
-        }
-        else{
-            observer = new MutationObserver( _this.detect_new_strings );
-            // configuration of the observer:
-            var config = {
-                attributes: true,
-                childList: true,
-                characterData: true,
-                subtree: true
-            };
-        }
+        observer = new MutationObserver( _this.detect_new_strings );
+        // configuration of the observer:
+        var config = {
+            attributes: true,
+            childList: true,
+            characterData: true,
+            subtree: true
+        };
+
 
         observer.observe( document.body , config );
+
+        jQuery( document ).ajaxComplete(function() {
+            if( window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
+                window.parent.jQuery('#trp-preview-iframe').trigger('load');
+            }
+        });
 
         //try a final attempt at cleaning the gettext wrappers
         _this.cleanup_gettext_wrapper();
