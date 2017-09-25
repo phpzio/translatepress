@@ -29,7 +29,7 @@ class TRP_Translation_Render{
             //in this case move forward
         }else if( is_admin() ||
         ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
-        ( isset( $_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'true' ) || defined( 'WC_DOING_AJAX' ) ) {
+        ( isset( $_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'true' ) ) {
             return;
         }
 
@@ -191,8 +191,7 @@ class TRP_Translation_Render{
             return $output;
         }
 
-        if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
-error_log($_REQUEST['action']);
+        if( TRP_Translation_Manager::is_ajax_on_frontend() || defined( 'WC_DOING_AJAX' ) ) {
             if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 ){
                 return $output;
             }

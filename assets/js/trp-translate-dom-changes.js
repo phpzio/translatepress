@@ -93,8 +93,18 @@ function TRP_Translator(){
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     if ( mutation.addedNodes[i].innerText && _this.trim( mutation.addedNodes[i].innerText.trim(), except_characters ) != '' ) {
                         var node = jQuery( mutation.addedNodes[i] );
-                        var attribute = node.attr( 'data-no-translation' );
-                        if ( (typeof attribute !== typeof undefined && attribute !== false) || node.parents( '[data-no-translation]').length > 0 ){
+                        var noTranslation = node.attr( 'data-no-translation' );
+                        if ( (typeof noTranslation !== typeof undefined && noTranslation !== false) || node.parents( '[data-no-translation]').length > 0 ){
+                            continue;
+                        }
+
+                        var gettextString = node.attr( 'data-trpgettextoriginal' );
+                        if ( (typeof gettextString !== typeof undefined && gettextString !== false) || node.parents( '[data-trpgettextoriginal]').length > 0 ){
+                            continue;
+                        }
+
+                        var simpleString = node.attr( 'data-trp-translate-id' );
+                        if ( (typeof simpleString !== typeof undefined && simpleString !== false) || node.parents( '[data-trp-translate-id]').length > 0 ){
                             continue;
                         }
 
@@ -106,7 +116,9 @@ function TRP_Translator(){
                         var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
                         var all_strings = all_nodes.contents().filter(function(){
                             if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                return this
+                                if ( jQuery(this).parents( '[data-trpgettextoriginal]').length == 0 && jQuery(this).parents( '[data-trp-translate-id]').length == 0 ){
+                                    return this;
+                                }
                             }
                         });
                         if ( typeof parent.trpEditor !== 'undefined' ) {

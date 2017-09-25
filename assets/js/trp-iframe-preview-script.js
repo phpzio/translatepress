@@ -10,15 +10,17 @@ function TRP_Iframe_Preview(){
      */
     this.initialize = function() {
         jQuery('a').each(function () {
-            if (this.action != '' && this.href.indexOf('void(0)') === -1 ) {
-                if ( is_link_previewable ( this ) && !this.getAttribute('href').startsWith('#')) {
-                    this.href = update_query_string('trp-edit-translation', 'preview', this.getAttribute('href'));
-                }else {
-                    jQuery( this ).on( 'click',
-                        function(event) {
-                            event.preventDefault();
-                        }
-                    );
+            if( typeof this.href != "undefined" ) {
+                if (this.action != '' && this.href.indexOf('void(0)') === -1) {
+                    if (is_link_previewable(this) && !this.href.startsWith('#')) {
+                        this.href = update_query_string('trp-edit-translation', 'preview', this.getAttribute('href'));
+                    } else {
+                        jQuery(this).on('click',
+                            function (event) {
+                                event.preventDefault();
+                            }
+                        );
+                    }
                 }
             }
         });
