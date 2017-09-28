@@ -30,7 +30,7 @@ class TRP_Translation_Manager{
      * @return bool                 Whether current page is part of the Translation Editor.
      */
     protected function conditions_met( $mode = 'true' ){
-        if ( isset( $_GET['trp-edit-translation'] ) && esc_attr( $_GET['trp-edit-translation'] ) == $mode ) {
+        if ( isset( $_REQUEST['trp-edit-translation'] ) && esc_attr( $_REQUEST['trp-edit-translation'] ) == $mode ) {
             if ( current_user_can( 'manage_options' ) && ! is_admin() ) {
                 return true;
             }else{
@@ -481,6 +481,16 @@ class TRP_Translation_Manager{
         }
     }
 
+
+    public function apply_gettext_filter_on_frontend(){
+        if( $this::is_ajax_on_frontend() ){
+            add_action( 'init', array( $this, 'apply_gettext_filter' ), 100 );
+        }
+        else{
+            add_action( 'wp_head', array( $this, 'apply_gettext_filter' ), 100 );
+        }
+    }
+
     /* only apply the gettext filter from the wp_head hook down */
     public function apply_gettext_filter(){
         if( !is_admin() || $this::is_ajax_on_frontend() ) {
@@ -491,19 +501,18 @@ class TRP_Translation_Manager{
         }
     }
 
-    static function is_ajax_on_frontend(){
-        $filename = isset($_SERVER['SCRIPT_FILENAME']) ? $_SERVER['SCRIPT_FILENAME'] : '';
-        if( ( defined('DOING_AJAX') && DOING_AJAX ) ){
+    static function is_ajax_on_frontend(){        
+        if( ( defined('DOING_AJAX') && DOING_AJAX ) || ( defined('WC_DOING_AJAX') && WC_DOING_AJAX ) ){
             $referer = '';
             if ( ! empty( $_REQUEST['_wp_http_referer'] ) )
                 $referer = wp_unslash( $_REQUEST['_wp_http_referer'] );
             elseif ( ! empty( $_SERVER['HTTP_REFERER'] ) )
                 $referer = wp_unslash( $_SERVER['HTTP_REFERER'] );
 
-            if( ( strpos( $referer, admin_url() ) === false ) && ( basename($filename) === 'admin-ajax.php' ) ){
+            if( ( strpos( $referer, admin_url() ) === false ) ){
 
-                if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && !isset( $_GET['trp-edit-translation'] ) )
-                    $_GET['trp-edit-translation'] = 'preview';
+                if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && !isset( $_REQUEST['trp-edit-translation'] ) )
+                    $_REQUEST['trp-edit-translation'] = 'preview';
 
                 global $TRP_LANGUAGE;
                 $trp = TRP_Translate_Press::get_trp_instance();
@@ -538,7 +547,7 @@ class TRP_Translation_Manager{
         if( count( $this->settings['publish-languages'] ) <= 1 )
             return $translation;
 
-        if( ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
+        if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
             return $translation;
 
 
@@ -619,7 +628,7 @@ class TRP_Translation_Manager{
                 }
             }
 
-            if( ( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) )
+            if( ( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) )
                 $translation = '<trp-gettext data-trpgettextoriginal=\'' . $db_id . '\'>' . $translation . '</trp-gettext>';
         }
 

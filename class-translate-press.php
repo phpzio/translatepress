@@ -156,8 +156,9 @@ class TRP_Translate_Press{
         /* handle dynamic texts with gettext */
         $this->loader->add_filter( 'locale', $this->languages, 'change_locale' );        
         
-        $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global', 11 );
-        $this->loader->add_action( 'wp_head', $this->translation_manager, 'apply_gettext_filter', 100 );
+        $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global' );        
+        $this->loader->add_action( 'admin_init', $this->translation_manager, 'create_gettext_translated_global' );
+        $this->loader->add_action( 'init', $this->translation_manager, 'apply_gettext_filter_on_frontend' );
         $this->loader->add_action( 'admin_init', $this->translation_manager, 'apply_gettext_filter' );
         $this->loader->add_action( 'shutdown', $this->translation_manager, 'machine_translate_gettext', 100 );
 

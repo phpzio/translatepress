@@ -164,7 +164,7 @@ function TRP_Editor(){
                 }
             }
         }
-        _this.saved_translation_ui();
+        _this.saved_translation_ui(true);
     };
 
     /**
@@ -286,14 +286,17 @@ function TRP_Editor(){
     /**
      * Show UI for translation done saving.
      */
-    this.saved_translation_ui = function(){
+    this.saved_translation_ui = function( dontShowMessage ){
+        dontShowMessage = dontShowMessage || 0;
         save_button.removeAttr( 'disabled' );
         if( gettext_dictionaries != null )
             loading_animation.css('display', 'none');//don't hide the animation if the gettexts arent loaded
         if (  _this.change_tracker ) {
             _this.change_tracker.mark_changes_saved();
-            translation_saved.css("display","inline");
-            translation_saved.delay(3000).fadeOut(400);
+            if( !dontShowMessage ) {
+                translation_saved.css("display", "inline");
+                translation_saved.delay(3000).fadeOut(400);
+            }
         }
     };
 
@@ -680,7 +683,18 @@ function TRP_String( language, array_index ){
             if ( trpEditor.change_tracker.check_unsaved_changes() ) {
                 return;
             }
-            trpEditor.jquery_string_selector.val( _this.index ).trigger( 'change', true )
+
+            notDoingAjax = true;
+            if( typeof jQuery.active != 'undefined' ){
+                if( jQuery.active !== 0 )
+                    notDoingAjax = false;
+            }
+
+            if( jQuery( 'option[value="'+_this.index+'"]', trpEditor.jquery_string_selector ).length != 0 && !jQuery('.trp-ajax-loader', trpEditor).is(":visible")  && notDoingAjax ) {
+                trpEditor.jquery_string_selector.val( _this.index ).trigger( 'change', true )
+            }else{
+                trpEditor.jquery_string_selector.trigger('trpSelectorNotChanged');
+            }
         });
 
         jQuery( this ).addClass( 'trp-highlight' );
@@ -859,7 +873,17 @@ function TRP_Lister( current_dictionary ) {
             return;
         }
         string_id = jquery_object.attr('data-trpgettextoriginal');
-        trpEditor.jquery_string_selector.val('gettext-'+string_id).trigger( 'change', true );
+
+        notDoingAjax = true;
+        if( typeof jQuery.active != 'undefined' ){
+            if( jQuery.active !== 0 )
+                notDoingAjax = false;
+        }
+        if( jQuery( 'option[value="gettext-'+string_id+'"]', trpEditor.jquery_string_selector ).length != 0 && !jQuery('.trp-ajax-loader', trpEditor).is(":visible") && notDoingAjax ) {
+            trpEditor.jquery_string_selector.val('gettext-' + string_id).trigger('change', true);
+        }else{
+            trpEditor.jquery_string_selector.trigger('trpSelectorNotChanged');
+        }
     }
 
 }
@@ -1162,6 +1186,17 @@ jQuery(function(){
         }
     });
 
+});
+
+jQuery( function(){
+    trpEditor.jquery_string_selector.on('trpSelectorNotChanged', function(){
+        if( !jQuery('#trp-preview').hasClass('trp-still-loading-strings') ) {
+            jQuery('#trp-preview').addClass('trp-still-loading-strings');
+            setTimeout(function () {
+                jQuery('#trp-preview').removeClass('trp-still-loading-strings')
+            }, 2000 );
+        }
+    });
 });
 
 

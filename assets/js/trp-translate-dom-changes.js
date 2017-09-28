@@ -32,6 +32,7 @@ function TRP_Translator(){
                     _this.ajax_get_translation( strings_to_query, wp_ajax_url );
                 }else{
                     _this.update_strings( response, strings_to_query );
+                    //window.parent.jQuery('#trp-preview-iframe').trigger('load');
                 }
             },
             error: function( errorThrown ){
@@ -58,6 +59,10 @@ function TRP_Translator(){
                     var response_string = response[language_to_query][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
                         response[language_to_query][i].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
+                        if ( typeof parent.trpEditor !== 'undefined' ) {
+                            response[language_to_query][i].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
+                            response[language_to_query][i].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
+                        }
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
@@ -204,9 +209,11 @@ function TRP_Translator(){
 
         observer.observe( document.body , config );
 
-        jQuery( document ).ajaxComplete(function() {
+        jQuery( document ).ajaxComplete(function( event, request, settings ) {
             if( window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
-                window.parent.jQuery('#trp-preview-iframe').trigger('load');
+                if( typeof settings.data == 'undefined' || settings.data.indexOf('action=trp_') === -1 ) {
+                    window.parent.jQuery('#trp-preview-iframe').trigger('load');
+                }
             }
         });
 
