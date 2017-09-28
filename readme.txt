@@ -12,7 +12,7 @@ Easily translate your entire site and go multilingual, with full support for Woo
  
 == Description ==
 
-**Experience a better way to translate your WordPress site and go multilingual, directly from the front-end, using a friendly user interface.**
+**Experience a better way to translate your WordPress site and go multilingual, directly from the front-end using a friendly user interface.**
 
 The interface allows you to translate the entire page at once, including output from shortcodes, forms and page builders. It also works out of the box with WooCommerce.
 
@@ -62,7 +62,7 @@ TranslatePress - Multilingual has a range of premium [Add-ons](https://translate
 
 = Demo Site =
 
-Test out TranslatePress - Multilingual by visiting our [demo site](https://demo.translatepress.com/)
+You can test out TranslatePress - Multilingual by [visiting our demo site](https://demo.translatepress.com/)
 
 == Installation ==
 
