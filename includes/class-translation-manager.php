@@ -593,7 +593,7 @@ class TRP_Translation_Manager{
                         $found_in_db = true;
                         /* update the db if a translation appeared in the po file later */
                         if( empty( $trp_translated_gettext_text['translated'] ) && $translation != $text ) {
-                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => TRP_Query::HUMAN_REVIEWED ), $TRP_LANGUAGE );
+                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => TRP_Query::HUMAN_REVIEWED ), get_locale() );
                         }
 
                         break;
@@ -604,7 +604,7 @@ class TRP_Translation_Manager{
             if( !$found_in_db ){
                 if( !in_array( array('original' => $text, 'translated' => $translation, 'domain' => $domain), $trp_all_gettext_texts ) ) {
                     $trp_all_gettext_texts[] = array('original' => $text, 'translated' => $translation, 'domain' => $domain);
-                    $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $text, 'translated' => $translation, 'domain' => $domain) ), $TRP_LANGUAGE );
+                    $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $text, 'translated' => $translation, 'domain' => $domain) ), get_locale() );
                     /* insert it in the global of translated because now it is in the database */
                     $trp_translated_gettext_texts[] = array( 'id' => $db_id, 'original' => $text, 'translated' => ( $translation != $text ) ? $translation : '', 'domain' => $domain );
                 }
