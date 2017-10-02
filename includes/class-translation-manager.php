@@ -481,17 +481,20 @@ class TRP_Translation_Manager{
         }
     }
 
-
+    /**
+     * function that applies the gettext filter on frontend on different hooks depending on what we need
+     */
     public function apply_gettext_filter_on_frontend(){
+        /* on ajax hooks from frontend that have the init hook ( we found WooCommerce has it ) apply it earlier */
         if( $this::is_ajax_on_frontend() ){
             add_action( 'init', array( $this, 'apply_gettext_filter' ), 100 );
-        }
+        }//otherwise start from the wp_head hook
         else{
             add_action( 'wp_head', array( $this, 'apply_gettext_filter' ), 100 );
         }
     }
 
-    /* only apply the gettext filter from the wp_head hook down */
+    /* apply the gettext filter here */
     public function apply_gettext_filter(){
         if( !is_admin() || $this::is_ajax_on_frontend() ) {
             add_filter('gettext', array($this, 'process_gettext_strings'), 100, 3);
@@ -501,34 +504,48 @@ class TRP_Translation_Manager{
         }
     }
 
-    static function is_ajax_on_frontend(){        
+    /**
+     * Function that determines if an ajax request came from the frontend
+     * @return bool
+     */
+    static function is_ajax_on_frontend(){
+        //check here for wp ajax or woocommerce ajax
         if( ( defined('DOING_AJAX') && DOING_AJAX ) || ( defined('WC_DOING_AJAX') && WC_DOING_AJAX ) ){
             $referer = '';
             if ( ! empty( $_REQUEST['_wp_http_referer'] ) )
-                $referer = wp_unslash( $_REQUEST['_wp_http_referer'] );
+                $referer = wp_unslash( esc_url_raw( $_REQUEST['_wp_http_referer'] ) );
             elseif ( ! empty( $_SERVER['HTTP_REFERER'] ) )
-                $referer = wp_unslash( $_SERVER['HTTP_REFERER'] );
+                $referer = wp_unslash( esc_url_raw( $_SERVER['HTTP_REFERER'] ) );
 
+            //if the request did not come from the admin set propper variables for the request (being processed in ajax they got lost) and return true
             if( ( strpos( $referer, admin_url() ) === false ) ){
-
-                if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && !isset( $_REQUEST['trp-edit-translation'] ) )
-                    $_REQUEST['trp-edit-translation'] = 'preview';
-
-                global $TRP_LANGUAGE;
-                $trp = TRP_Translate_Press::get_trp_instance();
-                $url_converter = $trp->get_component( 'url_converter' );
-                $TRP_LANGUAGE = $url_converter ->get_lang_from_url_string($referer);
-                if( empty( $TRP_LANGUAGE ) ) {
-                    $settings_obj = new TRP_Settings();
-                    $settings = $settings_obj->get_settings();
-                    $TRP_LANGUAGE = $settings["default-language"];
-                }
-
+                TRP_Translation_Manager::set_vars_in_frontend_ajax_request( $referer );
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Function that sets the needed vars in the ajax request. Beeing ajax the globals got reset and also the REQUEST globals
+     * @param $referer
+     */
+    static function set_vars_in_frontend_ajax_request( $referer ){
+        /* if the request came from preview mode make sure to keep it */
+        if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && !isset( $_REQUEST['trp-edit-translation'] ) ) {
+            $_REQUEST['trp-edit-translation'] = 'preview';
+        }
+
+        global $TRP_LANGUAGE;
+        $trp = TRP_Translate_Press::get_trp_instance();
+        $url_converter = $trp->get_component( 'url_converter' );
+        $TRP_LANGUAGE = $url_converter ->get_lang_from_url_string($referer);
+        if( empty( $TRP_LANGUAGE ) ) {
+            $settings_obj = new TRP_Settings();
+            $settings = $settings_obj->get_settings();
+            $TRP_LANGUAGE = $settings["default-language"];
+        }
     }
 
 
@@ -635,11 +652,28 @@ class TRP_Translation_Manager{
         return $translation;
     }
 
+    /**
+     * Function that filters gettext strings with context _x
+     * @param $translation
+     * @param $text
+     * @param $context
+     * @param $domain
+     * @return string
+     */
     function process_gettext_strings_with_context( $translation, $text, $context, $domain ){
         $translation = $this->process_gettext_strings( $translation, $text, $domain );
         return $translation;
     }
-    
+
+    /**
+     * function that filters the _n translations
+     * @param $translation
+     * @param $single
+     * @param $plural
+     * @param $number
+     * @param $domain
+     * @return string
+     */
     function process_ngettext_strings($translation, $single, $plural, $number, $domain){
         if( $number == 1 )
             $translation = $this->process_gettext_strings( $translation, $single, $domain );
@@ -649,11 +683,24 @@ class TRP_Translation_Manager{
         return $translation;
     }
 
+    /**
+     * function that filters the _nx translations
+     * @param $translation
+     * @param $single
+     * @param $plural
+     * @param $number
+     * @param $context
+     * @param $domain
+     * @return string
+     */
     function process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain ){
         $translation = $this->process_ngettext_strings( $translation, $single, $plural, $number, $domain );
         return $translation;
     }
 
+    /**
+     * function that machine translates gettext strings
+     */
     function machine_translate_gettext(){
         /* @todo  set the original language to detect and also decide if we automatically translate for the default language */
         global $TRP_LANGUAGE, $trp_gettext_strings_for_machine_translation;
@@ -702,6 +749,7 @@ class TRP_Translation_Manager{
         return $safe_text;
     }
 
+    /* let the trp-gettext wrap and data-trpgettextoriginal pass through kses filters */
     function handle_kses_functions_for_gettext( $tags ){
         if( is_array($tags) ){
             $tags['trp-gettext'] = array( 'data-trpgettextoriginal' => true );

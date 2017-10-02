@@ -191,20 +191,25 @@ class TRP_Translation_Render{
             return $output;
         }
 
+
+        /* if there is an ajax request and we have a json response we need to parse it and only translate the nodes that contain html  */
         if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
+
+            /* if it's one of our own ajax calls don't do nothing */
             if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 ){
                 return $output;
             }
 
+            //check if we have a json response
             if (is_array($json_array = json_decode($output, true))) {
                 if (!empty($json_array)) {
                     foreach ($json_array as $key => $value) {
                         if (!empty($value)) {
-                            if (!is_array($value)) {
+                            if (!is_array($value)) { //if the current element is not an array check if it a html text and translate
                                 if (html_entity_decode((string)$value) != strip_tags(html_entity_decode((string)$value))) {
                                     $json_array[$key] = $this->translate_page(stripslashes($value));
                                 }
-                            } else {
+                            } else {//look for the html elements
                                 foreach( $value as $k => $v ){
                                     if( !empty( $v ) ) {
                                         if (!is_array($v)) {
