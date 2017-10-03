@@ -280,7 +280,8 @@ class TRP_Translation_Manager{
                             if( !empty( $lang_original_string_details ) ){
                                 foreach( $lang_original_string_details as $lang_original_string_detail ){
 
-                                    $translated = translate( $lang_original_string_detail['original'], $lang_original_string_detail['domain'] );
+                                    $translations = get_translations_for_domain( $lang_original_string_detail['domain'] );
+                                    $translated  = $translations->translate( $lang_original_string_detail['original'] );                                                                      
 
                                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $lang_original_string_detail['original'], 'translated' => $translated, 'domain' => $lang_original_string_detail['domain']) ), $language );
                                     $dictionaries[$language][] = array('id' => $db_id, 'original' => $lang_original_string_detail['original'], 'translated' => ( $translated != $lang_original_string_detail['original'] ) ? $translated : '', 'domain' => $lang_original_string_detail['domain']);
@@ -532,6 +533,11 @@ class TRP_Translation_Manager{
      * @param $referer
      */
     static function set_vars_in_frontend_ajax_request( $referer ){
+
+        /* for our own actions don't do nothing */
+        if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
+            return;
+
         /* if the request came from preview mode make sure to keep it */
         if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && !isset( $_REQUEST['trp-edit-translation'] ) ) {
             $_REQUEST['trp-edit-translation'] = 'preview';
