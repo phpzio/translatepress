@@ -573,6 +573,10 @@ class TRP_Translation_Manager{
         if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
             return $translation;
 
+        /* for our own actions don't do nothing */
+        if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
+            return $translation;
+
 
         if ( !defined( 'DOING_AJAX' ) || $this::is_ajax_on_frontend() ) {
 
