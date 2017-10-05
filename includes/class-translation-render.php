@@ -25,9 +25,11 @@ class TRP_Translation_Render{
      */
     public function start_output_buffer(){
         global $TRP_LANGUAGE;
-        if( is_admin() ||
-        ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_GET['trp-edit-translation'] ) || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] != 'preview' ) ) )  ||
-        ( isset( $_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'true' ) || defined( 'WC_DOING_AJAX' ) ) {
+        if( TRP_Translation_Manager::is_ajax_on_frontend() ){
+            //in this case move forward
+        }else if( is_admin() ||
+        ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_REQUEST['trp-edit-translation'] ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] != 'preview' ) ) )  ||
+        ( isset( $_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'true' ) ) {
             return;
         }
 
@@ -44,7 +46,7 @@ class TRP_Translation_Render{
         global $TRP_LANGUAGE;
         if ( in_array( $TRP_LANGUAGE, $this->settings['translation-languages'] ) ) {
             if ( $TRP_LANGUAGE == $this->settings['default-language']  ){
-                if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' )  {
+                if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' )  {
                     foreach ($this->settings['translation-languages'] as $language) {
                         if ($language != $TRP_LANGUAGE) {
                             // return the first language not default. only used for preview mode
@@ -189,6 +191,42 @@ class TRP_Translation_Render{
             return $output;
         }
 
+
+        /* if there is an ajax request and we have a json response we need to parse it and only translate the nodes that contain html  */
+        if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
+
+            /* if it's one of our own ajax calls don't do nothing */
+            if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 ){
+                return $output;
+            }
+
+            //check if we have a json response
+            if (is_array($json_array = json_decode($output, true))) {
+                if (!empty($json_array)) {
+                    foreach ($json_array as $key => $value) {
+                        if (!empty($value)) {
+                            if (!is_array($value)) { //if the current element is not an array check if it a html text and translate
+                                if (html_entity_decode((string)$value) != strip_tags(html_entity_decode((string)$value))) {
+                                    $json_array[$key] = $this->translate_page(stripslashes($value));
+                                }
+                            } else {//look for the html elements
+                                foreach( $value as $k => $v ){
+                                    if( !empty( $v ) ) {
+                                        if (!is_array($v)) {
+                                            if (html_entity_decode((string)$v) != strip_tags(html_entity_decode((string)$v))) {
+                                                $json_array[$key][$k] = $this->translate_page(stripslashes($v));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return json_encode($json_array);
+            }
+        }
+
         $no_translate_attribute = 'data-no-translation';
 
         $translateable_strings = array();
@@ -228,14 +266,14 @@ class TRP_Translation_Render{
                     $row->outertext = $row->innertext();
                     $row->parent()->setAttribute('data-no-translation', '');
                     // we are in the editor
-                    if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                    if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
                         //move up the data-trpgettextoriginal attribute
                         $row->parent()->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
                     }
                 }
                 else{
                     $row->outertext = '<trp-wrap class="trp-wrap" data-no-translation';
-                    if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                    if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
                         $row->outertext .= ' data-trpgettextoriginal="'. $original_gettext_translation_id .'"';
                     }
                     $row->outertext .= '>'.$row->innertext().'</trp-wrap>';
@@ -256,7 +294,7 @@ class TRP_Translation_Render{
                             if( !$row->has_child() ){// if the node doesn't have children set the needed attributes, else it means that there are other nodes inside so probably they are the ones displayed
                                 $row->setAttribute('data-no-translation', '');
                                 // we are in the editor
-                                if (isset($_GET['trp-edit-translation']) && $_GET['trp-edit-translation'] == 'preview') {
+                                if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
                                     $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
                                     $row->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
                                 }
@@ -319,7 +357,7 @@ class TRP_Translation_Render{
 
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
 
-        $preview_mode = isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview';
+        $preview_mode = isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview';
         if ( $preview_mode ) {
             $translated_string_ids = $this->trp_query->get_string_ids($translateable_strings, $language_code);
         }
@@ -610,7 +648,7 @@ class TRP_Translation_Render{
 
         global $TRP_LANGUAGE;
 
-        if ( $TRP_LANGUAGE != $this->settings['default-language'] || ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ) {
+        if ( $TRP_LANGUAGE != $this->settings['default-language'] || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) ) {
             $language_to_query = $TRP_LANGUAGE;
             if ( $TRP_LANGUAGE == $this->settings['default-language']  ) {
                 foreach ($this->settings['translation-languages'] as $language) {
@@ -627,7 +665,7 @@ class TRP_Translation_Render{
                 'trp_original_language' => $this->settings['default-language'],
                 'trp_current_language' => $TRP_LANGUAGE
             );
-            if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
+            if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) {
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
             }
             wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery', 'trp-language-switcher'), TRP_PLUGIN_VERSION );

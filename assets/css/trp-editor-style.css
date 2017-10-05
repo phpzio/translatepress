@@ -411,6 +411,21 @@ spin {
     }
 }
 
+#trp-preview.trp-still-loading-strings:before{
+    position: absolute; /* Sit on top of the page content */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 30px; /* Full height (cover the whole page) */
+    line-height:30px;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(40,177,255,0.8); /* Black background with opacity */
+    z-index: 200; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    content:'The strings are not yet ready for translation. Try again in a moment...';
+    color:#fff;
+    text-align:center;
+}
 /*
  * Select 2 Overlay in front-end
  */

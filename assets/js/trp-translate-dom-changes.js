@@ -32,6 +32,7 @@ function TRP_Translator(){
                     _this.ajax_get_translation( strings_to_query, wp_ajax_url );
                 }else{
                     _this.update_strings( response, strings_to_query );
+                    //window.parent.jQuery('#trp-preview-iframe').trigger('load');
                 }
             },
             error: function( errorThrown ){
@@ -58,6 +59,10 @@ function TRP_Translator(){
                     var response_string = response[language_to_query][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
                         response[language_to_query][i].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
+                        if ( typeof parent.trpEditor !== 'undefined' ) {
+                            response[language_to_query][i].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
+                            response[language_to_query][i].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
+                        }
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
@@ -93,8 +98,18 @@ function TRP_Translator(){
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     if ( mutation.addedNodes[i].innerText && _this.trim( mutation.addedNodes[i].innerText.trim(), except_characters ) != '' ) {
                         var node = jQuery( mutation.addedNodes[i] );
-                        var attribute = node.attr( 'data-no-translation' );
-                        if ( (typeof attribute !== typeof undefined && attribute !== false) || node.parents( '[data-no-translation]').length > 0 ){
+                        var noTranslation = node.attr( 'data-no-translation' );
+                        if ( (typeof noTranslation !== typeof undefined && noTranslation !== false) || node.parents( '[data-no-translation]').length > 0 ){
+                            continue;
+                        }
+
+                        var gettextString = node.attr( 'data-trpgettextoriginal' );
+                        if ( (typeof gettextString !== typeof undefined && gettextString !== false) || node.parents( '[data-trpgettextoriginal]').length > 0 ){
+                            continue;
+                        }
+
+                        var simpleString = node.attr( 'data-trp-translate-id' );
+                        if ( (typeof simpleString !== typeof undefined && simpleString !== false) || node.parents( '[data-trp-translate-id]').length > 0 ){
                             continue;
                         }
 
@@ -106,7 +121,9 @@ function TRP_Translator(){
                         var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
                         var all_strings = all_nodes.contents().filter(function(){
                             if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                return this
+                                if ( jQuery(this).parents( '[data-trpgettextoriginal]').length == 0 && jQuery(this).parents( '[data-trp-translate-id]').length == 0 ){
+                                    return this;
+                                }
                             }
                         });
                         if ( typeof parent.trpEditor !== 'undefined' ) {
@@ -178,9 +195,9 @@ function TRP_Translator(){
         current_language = trp_data.trp_current_language;
         original_language = trp_data.trp_original_language;
         language_to_query = trp_data.trp_language_to_query;
+
         // create an observer instance
         observer = new MutationObserver( _this.detect_new_strings );
-
         // configuration of the observer:
         var config = {
             attributes: true,
@@ -189,7 +206,16 @@ function TRP_Translator(){
             subtree: true
         };
 
+
         observer.observe( document.body , config );
+
+        jQuery( document ).ajaxComplete(function( event, request, settings ) {
+            if( window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
+                if( typeof settings.data == 'undefined' || settings.data.indexOf('action=trp_') === -1 ) {
+                    window.parent.jQuery('#trp-preview-iframe').trigger('load');
+                }
+            }
+        });
 
         //try a final attempt at cleaning the gettext wrappers
         _this.cleanup_gettext_wrapper();

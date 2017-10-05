@@ -110,6 +110,8 @@ class TRP_Translate_Press{
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations', $this->translation_manager, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->translation_manager, 'save_translations' );
+
+        $this->loader->add_action( 'wp_ajax_trp_process_js_strings_in_translation_editor', $this->translation_render, 'process_js_strings_in_translation_editor' );
         
         $this->loader->add_action( 'wp_ajax_trp_gettext_get_translations', $this->translation_manager, 'gettext_get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_gettext_save_translations', $this->translation_manager, 'gettext_save_translations' );
@@ -123,6 +125,7 @@ class TRP_Translate_Press{
      */
     protected function define_frontend_hooks(){
         $this->loader->add_action( 'wp', $this->translation_render, 'start_output_buffer' );
+        $this->loader->add_action( 'admin_init', $this->translation_render, 'start_output_buffer' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );
 
 
@@ -153,8 +156,10 @@ class TRP_Translate_Press{
         /* handle dynamic texts with gettext */
         $this->loader->add_filter( 'locale', $this->languages, 'change_locale' );        
         
-        $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global', 11 );
-        $this->loader->add_action( 'wp_head', $this->translation_manager, 'apply_gettext_filter', 100 );
+        $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global' );        
+        $this->loader->add_action( 'admin_init', $this->translation_manager, 'create_gettext_translated_global' );
+        $this->loader->add_action( 'init', $this->translation_manager, 'apply_gettext_filter_on_frontend' );
+        $this->loader->add_action( 'admin_init', $this->translation_manager, 'apply_gettext_filter' );
         $this->loader->add_action( 'shutdown', $this->translation_manager, 'machine_translate_gettext', 100 );
 
         /* we need the esc_ functions for html and attributes not to escape our tags so we put them back */
