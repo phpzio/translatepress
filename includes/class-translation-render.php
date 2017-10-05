@@ -223,7 +223,8 @@ class TRP_Translation_Render{
         foreach( $trp_rows as $level ){
             foreach( $level as $row ){
                 $original_gettext_translation_id = $row->getAttribute('data-trpgettextoriginal');
-                if( count( $row->parent()->children ) == 1 ){
+	            /* Parent node has no other children and no other innertext besides the current node */
+	            if( count( $row->parent()->children ) == 1 && $row->parent()->innertext == $row->outertext ){
                     $row->outertext = $row->innertext();
                     $row->parent()->setAttribute('data-no-translation', '');
                     // we are in the editor
