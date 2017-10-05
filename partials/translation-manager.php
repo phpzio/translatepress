@@ -41,7 +41,7 @@
         <div id="trp-controls">
             <div class="trp-controls-container">
                 <div id="trp-close-save">
-                    <a id="trp-controls-close" href="#">&times;</a>
+                    <a id="trp-controls-close" href="#"></a>
                     <div id="trp-save-container">
                         <span id="trp-translation-saved" style="display: none"><?php _e( 'Saved!', TRP_PLUGIN_SLUG ); ?></span>
                         <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
@@ -122,6 +122,7 @@
                 <iframe id="trp-preview-iframe" onload="trpEditor.initialize();" src="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>" width="100%" height="100%"></iframe>
         </div>
     </div>
+
 </body>
 </html>
 
