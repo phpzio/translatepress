@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate
 Requires at least: 3.1.0
 Tested up to: 4.8.2
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,12 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.0.2 =
+* Translation interface improvements
+* Fixed issues with strings loaded with ajax
+* Added an addon page
+* Fixed bug with gettext node accidentally wrapping another string too.
 
 = 1.0.1 =
 * Fixed incorrect blog prefix name for Multisite subsites on admin_bar gettext hook.
