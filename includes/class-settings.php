@@ -66,6 +66,7 @@ class TRP_Settings{
      */
     public function register_menu_page(){
         add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Addons', 'TRPHidden', 'manage_options', 'trp_addons_page', array($this, 'addons_page_content') );
     }
 
     /**
@@ -78,6 +79,13 @@ class TRP_Settings{
         }
         $languages = $this->trp_languages->get_languages( 'english_name' );
         require_once TRP_PLUGIN_DIR . 'partials/main-settings-page.php';
+    }
+
+    /**
+     * Addons page content.
+     */
+    public function addons_page_content(){
+        require_once TRP_PLUGIN_DIR . 'partials/addons-settings-page.php';
     }
 
     /**
@@ -433,6 +441,13 @@ class TRP_Settings{
                 'name'  => __( 'License', TRP_PLUGIN_SLUG ),
                 'url'   => admin_url( 'admin.php?page=trp_license_key' ),
                 'page'  => 'trp_license_key'
+            );
+        }
+        else{
+            $tabs[] = array(
+                'name'  => __( 'Addons', TRP_PLUGIN_SLUG ),
+                'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
+                'page'  => 'trp_addons_page'
             );
         }
 
