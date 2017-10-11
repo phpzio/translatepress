@@ -1,26 +1,27 @@
 ﻿=== TranslatePress - Translate Multilingual sites ===
 Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
-Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate
+Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.8.2
 Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easily translate your entire site and go multilingual, with full support for WooCommerce, complex themes and site builders. Integrates with Google Translate.
+Easily translate your entire site directly from the front-end and go multilingual, with full support for WooCommerce, complex themes and site builders. Integrates with Google Translate.
  
 == Description ==
 
 **Experience a better way to translate your WordPress site and go multilingual, directly from the front-end using a friendly user interface.**
 
-The interface allows you to translate the entire page at once, including output from shortcodes, forms and page builders. It also works out of the box with WooCommerce.
+The interface allows you to easily translate the entire page at once, including output from shortcodes, forms and page builders. It also works out of the box with WooCommerce.
 
-Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted plugin, meaning you'll own all your translations, forever.
+Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted translation plugin, meaning you'll own all your translations, forever.
 
-= Multilingual Features =
+= Multilingual & Translation Features =
 
-* Translate all your website content directly from the front-end, in a friendly user interface.
+* Translate all your website content directly from the front-end, in a friendly user interface (translation displayed in real-time).
+* Fully compatible with all themes and plugins
 * Live preview of your translated pages, as you edit your translations.
 * Support for both manual and automatic translation (via Google Translate)
 * Ability to translate dynamic strings (gettext) added by WordPress, plugins and themes.
@@ -38,7 +39,7 @@ Users with administrator rights have access to the following translate settings:
 * enable or disable url subdirectory for the default language
 * enable automatic translation via Google Translate
 
-= Powerful Add-ons =
+= Powerful Translation Add-ons =
 
 TranslatePress - Multilingual has a range of premium [Add-ons](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) that allow you to extend the power of the translation plugin:
 
@@ -81,7 +82,7 @@ All the translation are stored locally in your server's database.
 
 TranslatePress - Multilingual works out of the box with WooCommerce, custom post types, complex themes and site builders, so you'll be able to translate any type of content.
 
-= How is it different from other multilingual plugins? =
+= How is it different from other multilingual & translation plugins? =
 
 TranslatePress is easier to use and more intuitive altogether. No more switching between the editor, string translation interfaces or badly translated plugins. You can now translate the full page content directly from the front-end.
 
