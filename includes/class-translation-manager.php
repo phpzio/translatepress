@@ -487,10 +487,13 @@ class TRP_Translation_Manager{
     /**
      * function that applies the gettext filter on frontend on different hooks depending on what we need
      */
-    public function apply_gettext_filter_on_frontend(){
+    public function apply_gettext_filter_on_frontend(){global $wp_query;error_log( json_encode($wp_query ) );
         /* on ajax hooks from frontend that have the init hook ( we found WooCommerce has it ) apply it earlier */
         if( $this::is_ajax_on_frontend() ){
-            add_action( 'init', array( $this, 'apply_gettext_filter' ), 100 );
+            add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ) );
+        }
+        elseif( class_exists( 'WooCommerce' ) ){
+            add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ), 19 );
         }//otherwise start from the wp_head hook
         else{
             add_action( 'wp_head', array( $this, 'apply_gettext_filter' ), 100 );
