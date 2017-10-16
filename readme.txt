@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.8.2
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -104,6 +104,13 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.0.3 =
+* Added a conditional language shortcode: [trp_language language="en_US"] English only content [/trp_language]
+* Create link to test out Google API key.
+* Improvements to Woocommerce compatibility
+* Fixed json_encode error that was causing js errors
+* Changed 'template_include' hook priority to improve compatibility with some themes
 
 = 1.0.2 =
 * Translation interface improvements
