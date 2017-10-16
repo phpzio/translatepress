@@ -67,6 +67,7 @@ class TRP_Settings{
     public function register_menu_page(){
         add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
         add_submenu_page( 'TRPHidden', 'TranslatePress Addons', 'TRPHidden', 'manage_options', 'trp_addons_page', array($this, 'addons_page_content') );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array($this, 'test_google_key_page_content') );
     }
 
     /**
@@ -86,6 +87,13 @@ class TRP_Settings{
      */
     public function addons_page_content(){
         require_once TRP_PLUGIN_DIR . 'partials/addons-settings-page.php';
+    }
+
+    /**
+     * Addons page content.
+     */
+    public function test_google_key_page_content(){
+        require_once TRP_PLUGIN_DIR . 'partials/test-google-key-settings-page.php';
     }
 
     /**

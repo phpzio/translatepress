@@ -81,7 +81,7 @@
                 <th scope="row"><?php _e( 'Google Translate API Key', TRP_PLUGIN_SLUG ); ?> </th>
                 <td>
                     <input type="text" id="trp-g-translate-key" class="trp-text-input" name="trp_settings[g-translate-key]" value="<?php if( !empty( $this->settings['g-translate-key'] ) ) echo esc_attr( $this->settings['g-translate-key']);?>"/>
-                    <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="https://www.googleapis.com/language/translate/v2?key='.$this->settings['g-translate-key'].'&source=en&target=es&q=something" target="_blank">'._e( "Test api key.", TRP_PLUGIN_SLUG );'.</a>'; ?>
+                    <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="'.admin_url( 'admin.php?page=trp_test_google_key_page' ).'">'.__( "Test api key.", TRP_PLUGIN_SLUG );'.</a>'; ?>
                     <p class="description">
                         <?php _e( 'Visit this <a href="https://support.google.com/cloud/answer/6158862" target="_blank">link</a> to see how you can set up an API key. ', TRP_PLUGIN_SLUG ); ?>
                     </p>
