@@ -223,7 +223,7 @@ class TRP_Translation_Render{
                         }
                     }
                 }
-                return json_encode($json_array);
+                return trp_safe_json_encode($json_array);
             }
         }
 
@@ -352,7 +352,7 @@ class TRP_Translation_Render{
 
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_query = $trp->get_component( 'query' );;
+            $this->trp_query = $trp->get_component( 'query' );
         }
 
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
@@ -547,7 +547,7 @@ class TRP_Translation_Render{
 
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_query = $trp->get_component( 'query' );;
+            $this->trp_query = $trp->get_component( 'query' );
         }
 
         // get existing translations

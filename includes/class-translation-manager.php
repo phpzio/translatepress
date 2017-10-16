@@ -152,7 +152,7 @@ class TRP_Translation_Manager{
 
                     $trp = TRP_Translate_Press::get_trp_instance();
                     if ( ! $this->trp_query ) {
-                        $this->trp_query = $trp->get_component( 'query' );;
+                        $this->trp_query = $trp->get_component( 'query' );
                     }
                     if ( ! $this->slug_manager ) {
                         $this->slug_manager = $trp->get_component('slug_manager');
@@ -206,7 +206,7 @@ class TRP_Translation_Manager{
                         }
                     }
 
-                    echo json_encode( $dictionaries );
+                    echo trp_safe_json_encode( $dictionaries );
                 }
 
             }
@@ -231,7 +231,7 @@ class TRP_Translation_Manager{
 
                     $trp = TRP_Translate_Press::get_trp_instance();
                     if ( ! $this->trp_query ) {
-                        $this->trp_query = $trp->get_component( 'query' );;
+                        $this->trp_query = $trp->get_component( 'query' );
                     }
 
                     /* build the current language dictionary */
@@ -306,7 +306,7 @@ class TRP_Translation_Manager{
                     }
                 }
 
-                die( json_encode( $dictionaries ) );
+                die( trp_safe_json_encode( $dictionaries ) );
 
             }
         }
@@ -342,7 +342,7 @@ class TRP_Translation_Manager{
 
                 if ( ! $this->trp_query ) {
                     $trp = TRP_Translate_Press::get_trp_instance();
-                    $this->trp_query = $trp->get_component( 'query' );;
+                    $this->trp_query = $trp->get_component( 'query' );
                 }
 
                 foreach( $update_strings as $language => $update_string_array ) {
@@ -378,7 +378,7 @@ class TRP_Translation_Manager{
 
                 if ( ! $this->trp_query ) {
                     $trp = TRP_Translate_Press::get_trp_instance();
-                    $this->trp_query = $trp->get_component( 'query' );;
+                    $this->trp_query = $trp->get_component( 'query' );
                 }
 
                 foreach( $update_strings as $language => $update_string_array ) {
@@ -475,7 +475,7 @@ class TRP_Translation_Manager{
             global $trp_translated_gettext_texts;
             if (!$this->trp_query) {
                 $trp = TRP_Translate_Press::get_trp_instance();
-                $this->trp_query = $trp->get_component('query');;
+                $this->trp_query = $trp->get_component('query');
             }
 
             $strings = $this->trp_query->get_all_gettext_strings($TRP_LANGUAGE);
@@ -487,7 +487,7 @@ class TRP_Translation_Manager{
     /**
      * function that applies the gettext filter on frontend on different hooks depending on what we need
      */
-    public function apply_gettext_filter_on_frontend(){global $wp_query;error_log( json_encode($wp_query ) );
+    public function apply_gettext_filter_on_frontend(){
         /* on ajax hooks from frontend that have the init hook ( we found WooCommerce has it ) apply it earlier */
         if( $this::is_ajax_on_frontend() ){
             add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ) );
@@ -592,7 +592,7 @@ class TRP_Translation_Manager{
             /* initiate trp query object */
             if (!$this->trp_query) {
                 $trp = TRP_Translate_Press::get_trp_instance();
-                $this->trp_query = $trp->get_component('query');;
+                $this->trp_query = $trp->get_component('query');
             }
 
             if( !isset( $trp_all_gettext_texts ) )
@@ -743,7 +743,7 @@ class TRP_Translation_Manager{
 
                 if (!$this->trp_query) {
                     $trp = TRP_Translate_Press::get_trp_instance();
-                    $this->trp_query = $trp->get_component('query');;
+                    $this->trp_query = $trp->get_component('query');
                 }
 
                 $this->trp_query->update_gettext_strings( $trp_gettext_strings_for_machine_translation, $TRP_LANGUAGE );

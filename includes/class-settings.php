@@ -106,7 +106,7 @@ class TRP_Settings{
     public function sanitize_settings( $settings ){
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_query = $trp->get_component( 'query' );;
+            $this->trp_query = $trp->get_component( 'query' );
         }
         if ( ! $this->trp_languages ){
             $trp = TRP_Translate_Press::get_trp_instance();
