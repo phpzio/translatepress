@@ -28,6 +28,7 @@ Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted 
 * Integrates with Google Translate, allowing you to set up Automatic Translation using your own Google API key.
 * Place language switchers anywhere using shortcode **[language-switcher]**, WP menu item or as a floating dropdown.
 * Editorial control allowing you to publish your language only when all your translations are done
+* Conditional display content shortcode based on language [trp_language language="en_EN"] English content only [/trp_language]
 
 Note: this plugin uses the Google Translation API to translate the strings on your site. This feature can be enabled or disabled according to your preferences.
 
