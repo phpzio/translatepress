@@ -58,3 +58,7 @@ span.trp-edit-translation svg {
 *[data-trpgettextoriginal] span.trp-edit-translation:hover, .trpgettext-wrap span.trp-edit-translation:hover{
     background: #00ce44 !important;
 }
+
+translate-press{
+    pointer-events: all;
+}
