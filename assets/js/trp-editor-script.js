@@ -636,6 +636,8 @@ function TRP_String( language, array_index ){
                     text_to_set = initial_value.replace(initial_value.trim(), text_to_set);
                     if ( jquery_object.attr( 'data-trp-attr' ) ){
                         jquery_object.children().attr( jquery_object.attr('data-trp-attr'), text_to_set );
+                    }else if( jquery_object.attr( 'data-trp-button' ) ){
+                        jquery_object.children('button').text(text_to_set);
                     }else {
                         jquery_object.text(text_to_set);
                     }
@@ -655,11 +657,15 @@ function TRP_String( language, array_index ){
      * Wrap buttons and placeholders so that we can display the pencil button and also replace with translation.
      */
     this.wrap_special_html_elements = function(){
-        if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
+        if( jquery_object.is('button') ){
+            jquery_object.wrap('<trp-highlight data-trp-button="true"></trp-highlight>');
+            jquery_object = jquery_object.parent();
+        }
+        else if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
             jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
             jquery_object = jquery_object.parent();
         }
-        if ( jquery_object.attr( 'type' ) == 'search' ) {
+        else if ( jquery_object.attr( 'type' ) == 'search' ) {
             jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
             jquery_object = jquery_object.parent();
         }

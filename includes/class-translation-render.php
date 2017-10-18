@@ -325,7 +325,11 @@ class TRP_Translation_Render{
             if($this->full_trim($row->outertext)!="" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric($this->full_trim($row->outertext)) && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute ) && $row->parent()->tag != 'title' && strpos($row->outertext,'[vc_') === false ){
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
-                    array_push($nodes, array('node' => $row, 'type' => 'text'));
+                    if( $row->parent()->tag == 'button') {
+                        array_push($nodes, array('node' => $row, 'type' => 'button'));
+                    }else{
+                        array_push($nodes, array('node' => $row, 'type' => 'text'));
+                    }
             }
         }
 
@@ -389,6 +393,10 @@ class TRP_Translation_Render{
             'placeholder' => array(
                 'accessor' => 'placeholder',
                 'attribute' => true
+            ),
+            'button' => array(
+                'accessor' => 'outertext',
+                'attribute' => false
             )
         ));
 
@@ -422,7 +430,7 @@ class TRP_Translation_Render{
             }
 
             if ( $preview_mode ) {
-                if ( $accessor == 'outertext' ) {
+                if ( $accessor == 'outertext' && $nodes[$i]['type'] != 'button' ) {
                     $outertext_details = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-type="' . $this->get_node_type_category( $nodes[$i]['type'] ) . '"';
                     if ( $this->get_node_description( $nodes[$i] ) ) {
                         $outertext_details .= ' data-trp-node-description="' . $this->get_node_description($nodes[$i] ) . '"';
@@ -430,6 +438,9 @@ class TRP_Translation_Render{
                     $outertext_details .= '>' . $nodes[$i]['node']->outertext . '</translate-press>';
                     $nodes[$i]['node']->outertext = $outertext_details;
                 } else {
+                    if( $nodes[$i]['type'] == 'button' ){
+                        $nodes[$i]['node'] = $nodes[$i]['node']->parent();
+                    }
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
 
