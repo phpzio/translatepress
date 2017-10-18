@@ -426,7 +426,7 @@ function TRP_Editor(){
     this.maybe_overflow_fix = function( icon ){
         icon.removeClass('trp-in-overflow-hidden');
         if( icon.parents().filter( function(){ var overflow = jQuery(this).css('overflow'); var position = jQuery(this).css('position');
-                return overflow == 'hidden' && position == 'relative'; } ).length != 0 ) {
+                return overflow == 'hidden' && position == 'relative' && !jQuery(this).is('body'); } ).length != 0 ) {
             icon.addClass('trp-in-overflow-hidden');
         }
     };
