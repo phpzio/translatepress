@@ -428,12 +428,14 @@ function TRP_Editor(){
             icon.parents().filter( function(){ var overflow = jQuery(this).css('overflow');
                 return overflow == 'hidden' && !jQuery(this).is('body'); } ).each( function(){
                 jQuery(this).parent().addClass('trp-overflow-transform-fixer');
+                return false;
             });
         }
         else{
             icon.parents().filter( function(){ var overflow = jQuery(this).css('overflow');
                 return overflow == 'hidden' && !jQuery(this).is('body'); } ).each( function(){
                 jQuery(this).addClass('trp-overflow-inside-fixer');
+                return false;
             });
         }
     };
