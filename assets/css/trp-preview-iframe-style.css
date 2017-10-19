@@ -3,8 +3,8 @@
 */
 
 span.trp-edit-translation {
-    width: 30px;
-    height: 30px;
+    width: 30px !important;
+    height: 30px !important;
     display: inline-block;
     position: absolute;
     margin-left: -30px !important;
