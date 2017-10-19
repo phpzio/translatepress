@@ -21,6 +21,7 @@ function TRP_Editor(){
     var trp_lister = null;
     this.jquery_string_selector = jQuery( '#trp-string-categories' );
     this.change_tracker  = null;
+    this.maybe_overflow_fix  = null;
 
     /**
      * Change the language in the Editor from the dropdown.
@@ -420,6 +421,17 @@ function TRP_Editor(){
     };
 
     /**
+     * if the edit icon button has a parent with overflow hidden and position relative it won't show so we want to change it's margin to 0 so it will appear inside the element
+     */
+    this.maybe_overflow_fix = function( icon ){
+        icon.removeClass('trp-in-overflow-hidden');
+        if( icon.parents().filter( function(){ var overflow = jQuery(this).css('overflow'); var position = jQuery(this).css('position');
+                return overflow == 'hidden' && position == 'relative' && !jQuery(this).is('body'); } ).length != 0 ) {
+            icon.addClass('trp-in-overflow-hidden');
+        }
+    };
+
+    /**
      * Make string selection dropdown to have options with descriptions below.
      *
      * @param option
@@ -636,6 +648,8 @@ function TRP_String( language, array_index ){
                     text_to_set = initial_value.replace(initial_value.trim(), text_to_set);
                     if ( jquery_object.attr( 'data-trp-attr' ) ){
                         jquery_object.children().attr( jquery_object.attr('data-trp-attr'), text_to_set );
+                    }else if( jquery_object.attr( 'data-trp-button' ) ){
+                        jquery_object.children('button').text(text_to_set);
                     }else {
                         jquery_object.text(text_to_set);
                     }
@@ -655,11 +669,15 @@ function TRP_String( language, array_index ){
      * Wrap buttons and placeholders so that we can display the pencil button and also replace with translation.
      */
     this.wrap_special_html_elements = function(){
-        if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
+        if( jquery_object.is('button') ){
+            jquery_object.wrap('<trp-highlight data-trp-button="true"></trp-highlight>');
+            jquery_object = jquery_object.parent();
+        }
+        else if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
             jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
             jquery_object = jquery_object.parent();
         }
-        if ( jquery_object.attr( 'type' ) == 'search' ) {
+        else if ( jquery_object.attr( 'type' ) == 'search' ) {
             jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
             jquery_object = jquery_object.parent();
         }
@@ -674,6 +692,7 @@ function TRP_String( language, array_index ){
             trpEditor.edit_translation_button = jquery_object.children('.trp-edit-translation');
         }else{
             _this.wrap_special_html_elements();
+            trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
             jquery_object.prepend(trpEditor.edit_translation_button);
 
         }
@@ -1091,6 +1110,8 @@ jQuery(function(){
             if ( ! trpEditor.edit_translation_button ){
                 trpEditor.edit_translation_button = jQuery( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
             }
+
+            trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
 
             if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' ) {
                 if( jQuery(this).parent('trp-wrap').length == 0 )

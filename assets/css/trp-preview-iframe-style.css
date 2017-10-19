@@ -47,6 +47,10 @@ span.trp-edit-translation svg {
     cursor: not-allowed !important;
 }
 
+span.trp-edit-translation.trp-in-overflow-hidden{
+    margin-left:0 !important;
+}
+
 .trp-highlight{
     outline: 2px solid #e2e4e7;
 }
