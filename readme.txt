@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.8.2
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,11 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.0.4 =
+* Fixed issues with the pencil select icon in the translation editor not showing up in certain cases on the button element
+* Fixed issues with the pencil select icon in the translation editor not showing up in certain cases because of overflow hidden
+* Fixed a issue that was sometimes causing javascript errors with certain plugins
 
 = 1.0.3 =
 * Added a conditional language shortcode: [trp_language language="en_US"] English only content [/trp_language]
