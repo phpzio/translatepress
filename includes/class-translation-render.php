@@ -684,4 +684,22 @@ class TRP_Translation_Render{
         }
     }
 
+
+    /**
+     * Add a filter on the wp_mail function so we allow shortcode usage and run it through our translate function so it cleans it up nice and maybe even replace some strings
+     * @param $args
+     * @return array
+     */
+    public function wp_mail_filter( $args ){
+        $trp_wp_mail = array(
+            'to'          => $args['to'],
+            'subject'     => $this->translate_page( do_shortcode( $args['subject'] ) ),
+            'message'     => $this->translate_page( do_shortcode( $args['message'] ) ),
+            'headers'     => $args['headers'],
+            'attachments' => $args['attachments'],
+        );
+
+        return $trp_wp_mail;
+    }
+
 }

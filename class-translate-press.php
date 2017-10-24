@@ -173,6 +173,9 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );
 
         $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 3 );
+        
+        /* set up wp_mail hooks */
+        $this->loader->add_filter( 'wp_mail', $this->translation_render, 'wp_mail_filter', 200 );
     }
 
     /**

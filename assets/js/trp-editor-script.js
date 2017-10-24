@@ -679,14 +679,17 @@ function TRP_String( language, array_index ){
      */
     this.wrap_special_html_elements = function(){
         if( jquery_object.is('button') ){
+            jquery_object.unwrap('trp-highlight');
             jquery_object.wrap('<trp-highlight data-trp-button="true"></trp-highlight>');
             jquery_object = jquery_object.parent();
         }
         else if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
+            jquery_object.unwrap('trp-highlight');
             jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
             jquery_object = jquery_object.parent();
         }
-        else if ( jquery_object.attr( 'type' ) == 'search' ) {
+        else if ( ( jquery_object.attr( 'type' ) == 'text' || jquery_object.attr( 'type' ) == 'search' ) && ( typeof jquery_object.attr( 'placeholder' ) != 'undefined' ) ) {
+            jquery_object.unwrap('trp-highlight');
             jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
             jquery_object = jquery_object.parent();
         }
