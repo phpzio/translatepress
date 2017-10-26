@@ -424,20 +424,20 @@ function TRP_Editor(){
      * if the edit icon button has a parent with overflow hidden and position relative it won't show so we want to change it's margin to 0 so it will appear inside the element
      */
     this.maybe_overflow_fix = function( icon ){
-        if (navigator.userAgent.search("Chrome") >= 0 || navigator.userAgent.search("Firefox") >= 0 || navigator.userAgent.search("Edge") >= 0 ) {
+        /*if (navigator.userAgent.search("Chrome") >= 0 || navigator.userAgent.search("Firefox") >= 0 || navigator.userAgent.search("Edge") >= 0 ) {
             icon.parents().filter( function(){ var overflow = jQuery(this).css('overflow');
                 return overflow == 'hidden' && !jQuery(this).is('body'); } ).each( function(){
                 jQuery(this).parent().addClass('trp-overflow-transform-fixer');
                 return false;
             });
         }
-        else{
-            icon.parents().filter( function(){ var overflow = jQuery(this).css('overflow');
+        else{*/
+            icon.parents().filter( function(index){ if( index > 6 ) return false;var overflow = jQuery(this).css('overflow');
                 return overflow == 'hidden' && !jQuery(this).is('body'); } ).each( function(){
                 jQuery(this).addClass('trp-overflow-inside-fixer');
                 return false;
             });
-        }
+        //}
     };
 
     /**

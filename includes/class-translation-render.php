@@ -68,6 +68,7 @@ class TRP_Translation_Render{
      * @return string           Trimmed string.
      */
     public function full_trim( $word ) {
+        $word = str_replace( chr( 194 ) . chr( 160 ), ' ', $word );
         $word = trim($word," \t\n\r\0\x0B\xA0�" );
         if ( htmlentities( $word ) == "" || strip_tags( $word ) == "" || trim ($word, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
             $word = '';

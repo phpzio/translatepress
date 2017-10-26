@@ -121,7 +121,7 @@ function TRP_Translator(){
                         var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
                         var all_strings = all_nodes.contents().filter(function(){
                             if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                if ( jQuery(this).parents( '[data-trpgettextoriginal]').length == 0 && jQuery(this).parents( '[data-trp-translate-id]').length == 0 ){
+                                if ( jQuery(this).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(this).closest( '[data-trp-translate-id]').length == 0 ){
                                     return this;
                                 }
                             }
@@ -132,7 +132,7 @@ function TRP_Translator(){
                         var all_strings_length = all_strings.length;
                         for (var j = 0; j < all_strings_length; j++ ) {
                             if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                                strings.push({node: all_strings[j], original: all_strings[j].textContent});
+                                strings.push({node: all_strings[j], original: _this.trim( all_strings[j].textContent, except_characters )});
                                 all_strings[j].textContent = '';
                             }
                         }
