@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.8.2
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,7 @@ Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted 
 * Place language switchers anywhere using shortcode **[language-switcher]**, WP menu item or as a floating dropdown.
 * Editorial control allowing you to publish your language only when all your translations are done
 * Conditional display content shortcode based on language [trp_language language="en_EN"] English content only [/trp_language]
+* Possibility to edit gettext strings from themes and plugins from english to english, without adding another language. Basically a string-replace functionality.
 
 Note: this plugin uses the Google Translation API to translate the strings on your site. This feature can be enabled or disabled according to your preferences.
 
@@ -105,6 +106,12 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.0.5 =
+* Added possibility to edit gettext strings from themes and plugins from english to english, without adding another language. Basically, string-replace functionality.
+* We now can translate text input placeholders
+* We have a way of translating emails using the conditional language shortcode [trp_language language="en_US"] English only content [/trp_language]
+* Fixed issues with some elements that contained new lines and \u00a0 at the start of the strings
 
 = 1.0.4 =
 * Fixed issues with the pencil select icon in the translation editor not showing up in certain cases on the button element
