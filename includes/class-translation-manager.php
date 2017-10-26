@@ -68,7 +68,7 @@ class TRP_Translation_Manager{
         wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
 
         wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
-        wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array(), TRP_PLUGIN_VERSION );
+        wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
 
         wp_enqueue_script( 'trp-translation-overlay',  TRP_PLUGIN_URL . 'assets/js/trp-editor-overlay.js', array(), TRP_PLUGIN_VERSION );
 

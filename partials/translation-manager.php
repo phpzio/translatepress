@@ -123,7 +123,26 @@
                     </div>
                 </div>
                 <?php } ?>
-
+                <?php
+                    // upsell to PRO from Translation Editor.
+                    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+                    if ( !( is_plugin_active('tp-add-on-extra-languages/index.php') || is_plugin_active('tp-add-on-seo-pack/index.php') ) ) :
+                ?>
+                <div class="trp-controls-section wp-core-ui">
+                    <div id="trp-upsell-section" class="trp-controls-section-content">
+                        <h3><?php _e('Your Website <br/> Multiple Languages', TRP_PLUGIN_SLUG ); ?></h3>
+                        <ul>
+                            <li><?php _e('Support for 221 Languages', TRP_PLUGIN_SLUG ); ?></li>
+                            <li><?php _e('Publish languages when the translation is done', TRP_PLUGIN_SLUG ); ?></li>
+                            <li><?php _e('Translate SEO Title and Description', TRP_PLUGIN_SLUG ); ?></li>
+                            <li><?php _e('Translate SEO Slug', TRP_PLUGIN_SLUG ); ?></li>
+                            <li><?php _e('Translate Facebook Tags', TRP_PLUGIN_SLUG ); ?></li>
+                        </ul>
+                        <p><span style="background: #f5fb9d;"><?php _e('Supported By Real People', TRP_PLUGIN_SLUG ); ?></span></p>
+                        <p><a class="button-primary" target="_blank" href="https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree"><?php _e('Learn More', TRP_PLUGIN_SLUG ); ?></a></p>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
         <div id="trp-preview">
