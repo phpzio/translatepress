@@ -572,7 +572,7 @@ class TRP_Translation_Manager{
         global $TRP_LANGUAGE;
 
         /* don't do anything if we don't have extra languages on the site */
-        if( count( $this->settings['publish-languages'] ) <= 1 )
+        if( count( $this->settings['publish-languages'] ) < 1 )
             return $translation;
 
         if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
