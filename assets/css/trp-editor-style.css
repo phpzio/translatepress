@@ -46,6 +46,16 @@ body{
     padding: 12px;
 }
 
+#trp-upsell-section h3,
+#trp-upsell-section p{
+    text-align: center;
+}
+
+#trp-upsell-section .button-primary{
+    min-width:200px;
+}
+
+
 #trp-unsaved-changes-warning-message{
     color: #dc3232;
 }
