@@ -47,11 +47,16 @@ class TRP_Translation_Render{
         if ( in_array( $TRP_LANGUAGE, $this->settings['translation-languages'] ) ) {
             if ( $TRP_LANGUAGE == $this->settings['default-language']  ){
                 if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' )  {
-                    foreach ($this->settings['translation-languages'] as $language) {
-                        if ($language != $TRP_LANGUAGE) {
-                            // return the first language not default. only used for preview mode
-                            return $language;
+                    if( count( $this->settings['publish-languages'] ) > 1 ){
+                        foreach ($this->settings['translation-languages'] as $language) {
+                            if ($language != $TRP_LANGUAGE) {
+                                // return the first language not default. only used for preview mode
+                                return $language;
+                            }
                         }
+                    }
+                    else{
+                        return $TRP_LANGUAGE;
                     }
                 }
             }else {
