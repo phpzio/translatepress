@@ -292,6 +292,11 @@ class TRP_Translation_Render{
             if( !empty( $all_attributes ) ) {
                 foreach ($all_attributes as $attr_name => $attr_value) {
                     if (strpos($attr_value, 'trp-gettext ') !== false) {
+                        //if we have json content in the value of the attribute, we don't do anything. The trp-wrap will be removed later in the code
+                        if (is_array($json_array = json_decode( html_entity_decode( $attr_value, ENT_QUOTES ), true ) ) ) {
+                            continue;
+                        }
+
                         // convert to a node
 	                    $node_from_value = trp_str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
 	                    foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
