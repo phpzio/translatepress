@@ -6,7 +6,7 @@
     <div class="grid feat-header">
         <div class="grid-cell">
             <h2>Advanced Addons</h2>
-            <p>These addons extend your translation plugin and are available in the Personal, Plus and Professional plans.</p>
+            <p>These addons extend your translation plugin and are available in the Developer, Business and Personal plans.</p>
         </div>
     </div>
 
