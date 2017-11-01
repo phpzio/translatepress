@@ -31,7 +31,7 @@ class TRP_Translation_Manager{
      */
     protected function conditions_met( $mode = 'true' ){
         if ( isset( $_REQUEST['trp-edit-translation'] ) && esc_attr( $_REQUEST['trp-edit-translation'] ) == $mode ) {
-            if ( current_user_can( 'manage_options' ) && ! is_admin() ) {
+            if ( current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) && ! is_admin() ) {
                 return true;
             }else{
                 wp_die(
@@ -163,7 +163,7 @@ class TRP_Translation_Manager{
 
                     // necessary in order to obtain all the original strings
                     if ( $this->settings['default-language'] != $current_language ) {
-                        if ( current_user_can ( 'manage_options' ) ) {
+                        if ( current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
                             $this->translation_render->process_strings($original_array, $current_language);
                         }
                         $dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
@@ -192,7 +192,7 @@ class TRP_Translation_Manager{
                             if (empty($original_strings)) {
                                 $original_strings = $this->extract_original_strings($dictionaries[$current_language], $original_array, $id_array);
                             }
-                            if (current_user_can('manage_options')) {
+                            if (current_user_can(apply_filters( 'trp_translating_capability', 'manage_options' ))) {
                                 $this->translation_render->process_strings($original_strings, $language);
                             }
                             $dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
@@ -319,7 +319,7 @@ class TRP_Translation_Manager{
      */
     public function save_translations(){
 
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
                 $update_strings = array();
@@ -355,7 +355,7 @@ class TRP_Translation_Manager{
     }
 
     public function gettext_save_translations(){
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_save_translations' && !empty($_POST['gettext_strings'])) {
                 $strings = json_decode(stripslashes($_POST['gettext_strings']));
                 $update_strings = array();
@@ -397,8 +397,7 @@ class TRP_Translation_Manager{
      * @param $wp_admin_bar
      */
     public function add_shortcut_to_translation_editor( $wp_admin_bar ) {
-
-        if( ! current_user_can( 'manage_options' ) ) {
+        if( ! current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             return;
         }
 
