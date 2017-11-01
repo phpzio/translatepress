@@ -176,6 +176,9 @@ class TRP_Translate_Press{
         
         /* set up wp_mail hooks */
         $this->loader->add_filter( 'wp_mail', $this->translation_render, 'wp_mail_filter', 200 );
+
+        /* hide php errors and notice when we are storing strings in db */
+        $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
     }
 
     /**
