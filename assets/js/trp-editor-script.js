@@ -355,7 +355,7 @@ function TRP_Editor(){
         }
 
         preview_container.css('right', width );
-        preview_container.css('left', ( width - 298 ) );
+        preview_container.css('left', ( width - 348 ) );
         preview_container.css('width', (total_width - width));
     }
 
