@@ -179,6 +179,13 @@ class TRP_Translate_Press{
 
         /* hide php errors and notice when we are storing strings in db */
         $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
+        
+        /** 
+         * we need to modify the permalinks structure for woocommerce when we switch languages
+         * when woo registers post_types and taxonomies in the rewrite parameter of the function they change the slugs of the items (they are localized with _x )
+         * we can't flush the permalinks on every page load so we filter the rewrite_rules option 
+         */
+        $this->loader->add_filter( "option_rewrite_rules", $this->url_converter, 'woocommerce_filter_permalinks_on_other_languages' );
     }
 
     /**

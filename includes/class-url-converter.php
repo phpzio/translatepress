@@ -281,4 +281,43 @@ class TRP_Url_Converter {
         return $pageURL;
     }
 
+    /**
+     * we need to modify the permalinks structure for woocommerce when we switch languages
+     * when woo registers post_types and taxonomies in the rewrite parameter of the function they change the slugs of the items (they are localized with _x )
+     * we can't flush the permalinks on every page load so we filter the rewrite_rules option
+     */
+    public function woocommerce_filter_permalinks_on_other_languages( $rewrite_rules ){
+        if( class_exists( 'WooCommerce' ) ){
+            global $TRP_LANGUAGE;
+            if( $TRP_LANGUAGE != $this->settings['default-language'] ){
+                global $default_language_wc_permalink_structure; //we use a global because apparently you can't do switch to locale and restore multiple times. I should keep an eye on this
+                /* get rewrite rules from original language */
+                if( empty($default_language_wc_permalink_structure) ) {
+                    switch_to_locale($this->settings['default-language']);
+                    $default_language_wc_permalink_structure = wc_get_permalink_structure();
+                    restore_previous_locale();
+                }
+
+                $current_language_permalink_structure = wc_get_permalink_structure();
+
+                $new_rewrite_rules = array();
+
+                $search = array( '/^'.$default_language_wc_permalink_structure['product_rewrite_slug'].'\//', '/^'.$default_language_wc_permalink_structure['category_rewrite_slug'].'\//', '/^'.$default_language_wc_permalink_structure['tag_rewrite_slug'].'\//' );
+                $replace = array( $current_language_permalink_structure['product_rewrite_slug'].'/', $current_language_permalink_structure['category_rewrite_slug'].'/', $current_language_permalink_structure['tag_rewrite_slug'].'/' );
+
+                foreach( $rewrite_rules as $rewrite_key => $rewrite_values ){
+                    $new_rewrite_rules[preg_replace( $search, $replace, $rewrite_key )] = preg_replace( $search, $replace, $rewrite_values );
+                }
+
+            }
+        }
+
+        if( !empty($new_rewrite_rules) ) {
+            return $new_rewrite_rules;
+        }
+        else
+            return $rewrite_rules;
+    }
+    
+
 }

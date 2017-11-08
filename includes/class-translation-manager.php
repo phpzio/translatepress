@@ -658,6 +658,12 @@ class TRP_Translation_Manager{
                     ) {
                         return $translation;
                     }
+                    
+                    /* make sure we don't touch the woocommerce permalink rewrite slugs that are translated */
+                    if( $callstack_function['function'] == 'wc_get_permalink_structure' ){
+                        return $translation;
+                    }
+
                 }
             }
 
