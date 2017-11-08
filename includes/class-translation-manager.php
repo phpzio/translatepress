@@ -331,7 +331,7 @@ class TRP_Translation_Manager{
                                 array_push($update_strings[ $language ], array(
                                     'id' => (int)$string->id,
                                     'original' => sanitize_text_field($string->original),
-                                    'translated' => sanitize_text_field($string->translated),
+                                    'translated' => preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $string->translated ),
                                     'status' => (int)$string->status
                                 ));
 
