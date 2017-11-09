@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.8.3
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -107,12 +107,18 @@ For more information please check out [TranslatePress documentation](https://tra
 
 == Changelog ==
 
+= 1.0.7 =
+* Fixed a small bug in js regarding the translation editor sidebar with
+* Fixed Language Switcher for Woocommerce product categories and product tags going to 404 pages
+* Fixed issues with Woocommerce and permalinks when the default language was not english
+* Excluded more functions from getting gettext wraps
+
 = 1.0.6 =
-Added filter on capabilities to allow other roles to edit translations:'trp_translating_capability'
-Don't show php errors and notices when we are storing strings in the database
-Fixed issues with attributes that contain json content, for instance in woocommerce variations
-We no longer wrap gettext inside the wptexturize function
-We no longer wrap gettexts that appear in the bloginfo function
+* Added filter on capabilities to allow other roles to edit translations:'trp_translating_capability'
+* Don't show php errors and notices when we are storing strings in the database
+* Fixed issues with attributes that contain json content, for instance in woocommerce variations
+* We no longer wrap gettext inside the wptexturize function
+* We no longer wrap gettexts that appear in the bloginfo function
 
 = 1.0.5 =
 * Added possibility to edit gettext strings from themes and plugins from english to english, without adding another language. Basically, string-replace functionality.
