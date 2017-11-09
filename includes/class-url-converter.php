@@ -136,6 +136,19 @@ class TRP_Url_Converter {
                 }
             }
         }
+        
+        /* fix links for woocommerce on language switcher for product categories and product tags */
+        if( class_exists( 'WooCommerce' ) ){
+            if ( is_product_category() ) {
+                $current_cat_slug = trp_x( 'product-category', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                $translated_cat_slug = trp_x( 'product-category', 'slug', 'woocommerce', $language );
+                $new_url = str_replace( '/'.$current_cat_slug.'/', '/'.$translated_cat_slug.'/', $new_url );
+            }elseif( is_product_tag() ){
+                $current_tag_slug = trp_x( 'product-tag', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                $translated_tag_slug = trp_x( 'product-tag', 'slug', 'woocommerce', $language );
+                $new_url = str_replace( '/'.$current_tag_slug.'/', '/'.$translated_tag_slug.'/', $new_url );
+            }
+        }
 
         if ( empty( $new_url ) ) {
             $new_url = $url;
