@@ -654,7 +654,9 @@ class TRP_Translation_Manager{
                         $callstack_function['function'] == 'wp_localize_script'||
                         $callstack_function['function'] == 'wp_print_media_templates' ||
                         $callstack_function['function'] == 'get_bloginfo' ||
-                        $callstack_function['function'] == 'wptexturize' 
+                        $callstack_function['function'] == 'wp_get_document_title' ||
+                        $callstack_function['function'] == 'wp_title' ||
+                        $callstack_function['function'] == 'wptexturize'
                     ) {
                         return $translation;
                     }
