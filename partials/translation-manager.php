@@ -126,7 +126,7 @@
                 <?php
                     // upsell to PRO from Translation Editor.
                     include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-                    if ( !( is_plugin_active('tp-add-on-extra-languages/index.php') || is_plugin_active('tp-add-on-seo-pack/index.php') || is_plugin_active('tp-add-on-translator-accounts/index.php') ) ) :
+                    if ( !( is_plugin_active('tp-add-on-extra-languages/tp-extra-languages.php') || is_plugin_active('tp-add-on-seo-pack/tp-seo-pack.php') || is_plugin_active('tp-add-on-translator-accounts/index.php') ) ) :
                 ?>
                 <div class="trp-controls-section wp-core-ui">
                     <div id="trp-upsell-section" class="trp-controls-section-content">
