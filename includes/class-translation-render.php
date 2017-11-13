@@ -225,6 +225,8 @@ class TRP_Translation_Render{
                 return $output;
             }
 
+            $output = apply_filters('trp_before_translate_content', $output);
+
             //check if we have a json response
             if (is_array($json_array = json_decode($output, true))) {
                 if (!empty($json_array)) {
