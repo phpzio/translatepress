@@ -306,9 +306,10 @@ class TRP_Url_Converter {
                 global $default_language_wc_permalink_structure; //we use a global because apparently you can't do switch to locale and restore multiple times. I should keep an eye on this
                 /* get rewrite rules from original language */
                 if( empty($default_language_wc_permalink_structure) ) {
-                    switch_to_locale($this->settings['default-language']);
-                    $default_language_wc_permalink_structure = wc_get_permalink_structure();
-                    restore_previous_locale();
+                    $default_language_wc_permalink_structure = array();
+                    $default_language_wc_permalink_structure['product_rewrite_slug'] = trp_x( 'product', 'slug', 'woocommerce', $this->settings['default-language'] );
+                    $default_language_wc_permalink_structure['category_rewrite_slug'] = trp_x( 'product-category', 'slug', 'woocommerce', $this->settings['default-language'] );
+                    $default_language_wc_permalink_structure['tag_rewrite_slug'] = trp_x( 'product-tag', 'slug', 'woocommerce', $this->settings['default-language'] );
                 }
 
                 $current_language_permalink_structure = wc_get_permalink_structure();
