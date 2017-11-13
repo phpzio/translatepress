@@ -34,3 +34,12 @@ function trp_run_translatepress_hooks(){
 }
 /* make sure we execute our plugin before other plugins so the changes we make apply across the board */
 add_action( 'plugins_loaded', 'trp_run_translatepress_hooks', 1 );
+
+
+function add_tp_param($location, $status){
+    if( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ){
+        $location = add_query_arg( 'trp-edit-translation', 'preview', $location );
+    }
+    return $location;
+}
+add_filter('wp_redirect', 'add_tp_param', 999, 2);
