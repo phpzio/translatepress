@@ -168,6 +168,8 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'attribute_escape', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
         /* we need to allow the trp-gettext tag in ksses functions */
         $this->loader->add_filter( 'wp_kses_allowed_html', $this->translation_manager, 'handle_kses_functions_for_gettext', 10 );
+        /* we need to treat the date_i18n function differently so we remove the gettext wraps */
+        $this->loader->add_filter( 'date_i18n', $this->translation_manager, 'handle_date_i18n_function_for_gettext', 1, 4 );
 
         /* define an update hook here */
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );
@@ -177,7 +179,7 @@ class TRP_Translate_Press{
         /* set up wp_mail hooks */
         $this->loader->add_filter( 'wp_mail', $this->translation_render, 'wp_mail_filter', 200 );
 
-        /* hide php errors and notice when we are storing strings in db */
+        /* hide php ors and notice when we are storing strings in db */
         $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
         
         /** 

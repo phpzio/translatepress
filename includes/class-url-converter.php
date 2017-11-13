@@ -318,8 +318,10 @@ class TRP_Url_Converter {
                 $search = array( '/^'.$default_language_wc_permalink_structure['product_rewrite_slug'].'\//', '/^'.$default_language_wc_permalink_structure['category_rewrite_slug'].'\//', '/^'.$default_language_wc_permalink_structure['tag_rewrite_slug'].'\//' );
                 $replace = array( $current_language_permalink_structure['product_rewrite_slug'].'/', $current_language_permalink_structure['category_rewrite_slug'].'/', $current_language_permalink_structure['tag_rewrite_slug'].'/' );
 
-                foreach( $rewrite_rules as $rewrite_key => $rewrite_values ){
-                    $new_rewrite_rules[preg_replace( $search, $replace, $rewrite_key )] = preg_replace( $search, $replace, $rewrite_values );
+                if( !empty( $rewrite_rules ) && is_array($rewrite_rules) ) {
+                    foreach ($rewrite_rules as $rewrite_key => $rewrite_values) {
+                        $new_rewrite_rules[preg_replace($search, $replace, $rewrite_key)] = preg_replace($search, $replace, $rewrite_values);
+                    }
                 }
 
             }
