@@ -128,6 +128,8 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp', $this->translation_render, 'start_output_buffer' );
         $this->loader->add_action( 'admin_init', $this->translation_render, 'start_output_buffer' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );
+        $this->loader->add_filter( 'wp_redirect', $this->translation_render, 'force_preview_on_url_redirect', 99, 2 );
+        $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_preview_on_url_in_ajax' );
 
 
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );

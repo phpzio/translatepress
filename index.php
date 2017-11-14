@@ -34,30 +34,3 @@ function trp_run_translatepress_hooks(){
 }
 /* make sure we execute our plugin before other plugins so the changes we make apply across the board */
 add_action( 'plugins_loaded', 'trp_run_translatepress_hooks', 1 );
-
-
-function add_tp_param($location, $status){
-    if( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ){
-        $location = add_query_arg( 'trp-edit-translation', 'preview', $location );
-    }
-    return $location;
-}
-add_filter('wp_redirect', 'add_tp_param', 999, 2);
-
-add_filter('trp_before_translate_content', 'add_preview_to_url');
-function add_preview_to_url($output) {
-    if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] === 'preview' ) {
-        $result = json_decode($output, TRUE);
-        if ( json_last_error() === JSON_ERROR_NONE ) {
-            array_walk_recursive($result, 'test_modify_url');
-        } //endif
-        $output = json_encode($result);
-    } //endif
-    return $output;
-}
-
-function test_modify_url(&$item, $key){
-    if ( filter_var($item, FILTER_VALIDATE_URL) !== FALSE ) {
-        $item = add_query_arg( 'trp-edit-translation', 'preview', $item );
-    }
-}

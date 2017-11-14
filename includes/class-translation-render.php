@@ -734,4 +734,48 @@ class TRP_Translation_Render{
         return $trp_wp_mail;
     }
 
+    /**
+     * Filters the location redirect to add the preview parameter to the next page
+     * @param $location
+     * @param $status
+     * @return string
+     * @since 1.0.8
+     */
+    public function force_preview_on_url_redirect( $location, $status ){
+        if( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ){
+            $location = add_query_arg( 'trp-edit-translation', 'preview', $location );
+        }
+        return $location;
+    }
+
+    /**
+     * Filters the output buffer of ajax calls that return json and adds the preview arg to urls
+     * @param $output
+     * @return string
+     * @since 1.0.8
+     */
+    public function force_preview_on_url_in_ajax( $output ){
+        if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] === 'preview' ) {
+            $result = json_decode($output, TRUE);
+            if ( json_last_error() === JSON_ERROR_NONE ) {
+                array_walk_recursive($result, array($this, 'myCallbackMethod'));
+            } //endif
+            $output = json_encode($result);
+        } //endif
+        return $output;
+    }
+
+    /**
+     * Adds preview query arg to links that are url's
+     * @param $item
+     * @param $key
+     * @return string
+     * @internal param $output
+     * @since 1.0.8
+     */
+    function add_preview_arg(&$item, $key){
+        if ( filter_var($item, FILTER_VALIDATE_URL) !== FALSE ) {
+            $item = add_query_arg( 'trp-edit-translation', 'preview', $item );
+        }
+    }
 }
