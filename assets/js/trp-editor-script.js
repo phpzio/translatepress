@@ -660,7 +660,7 @@ function TRP_String( language, array_index ){
                     }else if( jquery_object.attr( 'data-trp-button' ) ){
                         jquery_object.children('button').text(text_to_set);
                     }else {
-                        jquery_object.val(text_to_set);
+                        jquery_object.html( text_to_set );
                     }
                 }
             }
