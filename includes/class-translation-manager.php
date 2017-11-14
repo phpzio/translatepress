@@ -20,10 +20,6 @@ class TRP_Translation_Manager{
      */
     public function __construct( $settings ){
         $this->settings = $settings;
-
-        if( isset( $_POST['trp-edit-translation'] ) && $_POST['trp-edit-translation'] == 'preview' ){
-            $_GET['trp-edit-translation'] = 'preview';
-        }
     }
 
     // mode == true, mode == preview
