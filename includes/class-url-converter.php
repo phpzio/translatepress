@@ -269,29 +269,24 @@ class TRP_Url_Converter {
     /**
      * Return current page url.
      *
-     * @return string       Current page url.
+     * @return string
      */
     public function cur_page_url() {
-        $pageURL = 'http';
 
-        if ((isset($_SERVER["HTTPS"])) && ($_SERVER["HTTPS"] == "on"))
-            $pageURL .= "s";
+        $req_uri = $_SERVER['REQUEST_URI'];
 
-        $pageURL .= "://";
+        $home_path = trim( parse_url( home_url(), PHP_URL_PATH ), '/' );
+        $home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
-        if( strpos( $_SERVER["HTTP_HOST"], $_SERVER["SERVER_NAME"] ) !== false ){
-            $pageURL .=$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-        }
-        else {
-            if ($_SERVER["SERVER_PORT"] != "80")
-                $pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
-            else
-                $pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-        }
+        // Trim path info from the end and the leading home path from the front.
+        $req_uri = trim($req_uri, '/');
+        $req_uri = preg_replace( $home_path_regex, '', $req_uri );
+        $req_uri = trim($req_uri, '/');
+        $req_uri = home_url($req_uri);
 
-        if ( function_exists('apply_filters') ) $pageURL = apply_filters('trp_curpageurl', $pageURL);
+        if ( function_exists('apply_filters') ) $pageURL = apply_filters('trp_curpageurl', $req_uri);
 
-        return $pageURL;
+        return $req_uri;
     }
 
     /**
