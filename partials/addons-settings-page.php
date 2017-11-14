@@ -27,4 +27,11 @@
         </div>
     </div>
 
+    <div class="grid">
+        <div class="grid-cell" style="overflow:hidden;">
+            <a href="https://translatepress.com/pricing/" target="_blank"><img src="<?php echo plugins_url('../assets/images/translator-accounts-addon.png', __FILE__) ?>" alt="Translator Account" style="float: left; margin: 0 1.5rem 1.5rem 0;"></a>
+            <h3><a href="https://translatepress.com/pricing/" target="_blank">Translator Accounts</a></h3>
+            <p>Create translator accounts for new users or allow existing users <br/>that are not administrators to translate your website.</p>
+        </div>
+    </div>
 </div>

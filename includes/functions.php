@@ -57,3 +57,21 @@ function trp_utf8ize($mixed) {
     }
     return $mixed;
 }
+
+/**
+ * function that gets the translation for a string with context directly from a .mo file
+ * @TODO this was developped firstly for woocommerce so it needs further development. It only works for plugins at the moment
+*/
+function trp_x( $text, $context, $domain, $language ){
+    $mo_file = new MO();
+
+    if( file_exists( WP_LANG_DIR . '/plugins/'. $domain .'-' . $language . '.mo') ) {
+        if (!$mo_file->import_from_file(WP_LANG_DIR . '/plugins/' . $domain . '-' . $language . '.mo')) return $text;
+
+
+        if (!empty($mo_file->entries[$context . '' . $text]))
+            $text = $mo_file->entries[$context . '' . $text]->translations[0];
+    }
+
+    return $text;
+}

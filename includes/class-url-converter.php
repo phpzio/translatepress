@@ -136,6 +136,19 @@ class TRP_Url_Converter {
                 }
             }
         }
+        
+        /* fix links for woocommerce on language switcher for product categories and product tags */
+        if( class_exists( 'WooCommerce' ) ){
+            if ( is_product_category() ) {
+                $current_cat_slug = trp_x( 'product-category', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                $translated_cat_slug = trp_x( 'product-category', 'slug', 'woocommerce', $language );
+                $new_url = str_replace( '/'.$current_cat_slug.'/', '/'.$translated_cat_slug.'/', $new_url );
+            }elseif( is_product_tag() ){
+                $current_tag_slug = trp_x( 'product-tag', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                $translated_tag_slug = trp_x( 'product-tag', 'slug', 'woocommerce', $language );
+                $new_url = str_replace( '/'.$current_tag_slug.'/', '/'.$translated_tag_slug.'/', $new_url );
+            }
+        }
 
         if ( empty( $new_url ) ) {
             $new_url = $url;
@@ -256,29 +269,66 @@ class TRP_Url_Converter {
     /**
      * Return current page url.
      *
-     * @return string       Current page url.
+     * @return string
      */
     public function cur_page_url() {
-        $pageURL = 'http';
 
-        if ((isset($_SERVER["HTTPS"])) && ($_SERVER["HTTPS"] == "on"))
-            $pageURL .= "s";
+        $req_uri = $_SERVER['REQUEST_URI'];
 
-        $pageURL .= "://";
+        $home_path = trim( parse_url( home_url(), PHP_URL_PATH ), '/' );
+        $home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
-        if( strpos( $_SERVER["HTTP_HOST"], $_SERVER["SERVER_NAME"] ) !== false ){
-            $pageURL .=$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-        }
-        else {
-            if ($_SERVER["SERVER_PORT"] != "80")
-                $pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
-            else
-                $pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-        }
+        // Trim path info from the end and the leading home path from the front.
+        $req_uri = trim($req_uri, '/');
+        $req_uri = preg_replace( $home_path_regex, '', $req_uri );
+        $req_uri = trim($req_uri, '/');
+        $req_uri = home_url($req_uri);
 
-        if ( function_exists('apply_filters') ) $pageURL = apply_filters('trp_curpageurl', $pageURL);
+        if ( function_exists('apply_filters') ) $pageURL = apply_filters('trp_curpageurl', $req_uri);
 
-        return $pageURL;
+        return $req_uri;
     }
+
+    /**
+     * we need to modify the permalinks structure for woocommerce when we switch languages
+     * when woo registers post_types and taxonomies in the rewrite parameter of the function they change the slugs of the items (they are localized with _x )
+     * we can't flush the permalinks on every page load so we filter the rewrite_rules option
+     */
+    public function woocommerce_filter_permalinks_on_other_languages( $rewrite_rules ){
+        if( class_exists( 'WooCommerce' ) ){
+            global $TRP_LANGUAGE;
+            if( $TRP_LANGUAGE != $this->settings['default-language'] ){
+                global $default_language_wc_permalink_structure; //we use a global because apparently you can't do switch to locale and restore multiple times. I should keep an eye on this
+                /* get rewrite rules from original language */
+                if( empty($default_language_wc_permalink_structure) ) {
+                    $default_language_wc_permalink_structure = array();
+                    $default_language_wc_permalink_structure['product_rewrite_slug'] = trp_x( 'product', 'slug', 'woocommerce', $this->settings['default-language'] );
+                    $default_language_wc_permalink_structure['category_rewrite_slug'] = trp_x( 'product-category', 'slug', 'woocommerce', $this->settings['default-language'] );
+                    $default_language_wc_permalink_structure['tag_rewrite_slug'] = trp_x( 'product-tag', 'slug', 'woocommerce', $this->settings['default-language'] );
+                }
+
+                $current_language_permalink_structure = wc_get_permalink_structure();
+
+                $new_rewrite_rules = array();
+
+                $search = array( '/^'.$default_language_wc_permalink_structure['product_rewrite_slug'].'\//', '/^'.$default_language_wc_permalink_structure['category_rewrite_slug'].'\//', '/^'.$default_language_wc_permalink_structure['tag_rewrite_slug'].'\//' );
+                $replace = array( $current_language_permalink_structure['product_rewrite_slug'].'/', $current_language_permalink_structure['category_rewrite_slug'].'/', $current_language_permalink_structure['tag_rewrite_slug'].'/' );
+
+                if( !empty( $rewrite_rules ) && is_array($rewrite_rules) ) {
+                    foreach ($rewrite_rules as $rewrite_key => $rewrite_values) {
+                        $new_rewrite_rules[preg_replace($search, $replace, $rewrite_key)] = preg_replace($search, $replace, $rewrite_values);
+                    }
+                }
+
+            }
+        }
+
+        if( !empty($new_rewrite_rules) ) {
+            return $new_rewrite_rules;
+        }
+        else
+            return $rewrite_rules;
+    }
+    
 
 }
