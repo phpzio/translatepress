@@ -758,7 +758,7 @@ class TRP_Translation_Render{
         if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] === 'preview' ) {
             $result = json_decode($output, TRUE);
             if ( json_last_error() === JSON_ERROR_NONE ) {
-                array_walk_recursive($result, array($this, 'myCallbackMethod'));
+                array_walk_recursive($result, array($this, 'callback_add_preview_arg'));
             } //endif
             $output = json_encode($result);
         } //endif
@@ -766,14 +766,14 @@ class TRP_Translation_Render{
     }
 
     /**
-     * Adds preview query arg to links that are url's
+     * Adds preview query arg to links that are url's. callback specifically for the array_walk_recursive function
      * @param $item
      * @param $key
      * @return string
      * @internal param $output
      * @since 1.0.8
      */
-    function add_preview_arg(&$item, $key){
+    function callback_add_preview_arg(&$item, $key){
         if ( filter_var($item, FILTER_VALIDATE_URL) !== FALSE ) {
             $item = add_query_arg( 'trp-edit-translation', 'preview', $item );
         }
