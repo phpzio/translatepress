@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
-Tested up to: 4.8.3
-Stable tag: 1.0.7
+Tested up to: 4.9.0
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,15 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.0.8 =
+* We now allow HTML in normal strings translations.
+* Changed the way we get the default language permalinks in Woocommerce rewrites
+* Fixed issues with date_i18n function
+* Fixed a warning generated when there are no rewrite rules
+* Fixed dynamic strings not updating the translation dropdown list.
+* Fixed issues with hidden space characters that were breaking some translations
+* Make sure we don't loose the trp-edit-translation=preview from url after a WordPress redirect
 
 = 1.0.7 =
 * Fixed a small bug in js regarding the translation editor sidebar with
