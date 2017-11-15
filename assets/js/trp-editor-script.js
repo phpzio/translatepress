@@ -18,7 +18,7 @@ function TRP_Editor(){
     var translated_textareas = [];
     this.edit_translation_button = null;
     var categories;
-    var trp_lister = null;
+    this.trp_lister = null;
     this.jquery_string_selector = jQuery( '#trp-string-categories' );
     this.change_tracker  = null;
     this.maybe_overflow_fix  = null;
@@ -49,10 +49,10 @@ function TRP_Editor(){
 
         _this.iframe_strings_lookup();
 
-        if ( trp_lister != null ) {
-            _this.jquery_string_selector.off( 'change', trp_lister.select_string );
+        if ( _this.trp_lister != null ) {
+            _this.jquery_string_selector.off( 'change', _this.trp_lister.select_string );
         }
-        trp_lister = new TRP_Lister( dictionaries[trp_on_screen_language] );
+        _this.trp_lister = new TRP_Lister( dictionaries[trp_on_screen_language] );
 
         if (  _this.change_tracker != null ) {
             _this.change_tracker.destroy();
@@ -133,7 +133,7 @@ function TRP_Editor(){
             },
             success: function (response) {
                 _this.populate_strings( response );
-                trp_lister.reload_list();
+                _this.trp_lister.reload_list();
                 _this.change_tracker = new TRP_Change_Tracker( _this.original_textarea, translated_textareas );
             },
             error: function(errorThrown){
