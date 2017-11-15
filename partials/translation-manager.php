@@ -43,11 +43,11 @@
                 <div id="trp-close-save">
                     <a id="trp-controls-close" href="#"></a>
                     <div id="trp-save-container">
-                        <span id="trp-translation-saved" style="display: none"><?php _e( 'Saved!', TRP_PLUGIN_SLUG ); ?></span>
+                        <span id="trp-translation-saved" style="display: none"><?php _e( 'Saved!', 'translatepress-multilingual' ); ?></span>
                         <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
                             <div class="trp-spinner"></div>
                         </span>
-                        <button id="trp-save" type="submit" class="button-primary trp-save-string"><?php _e( 'Save translation', TRP_PLUGIN_SLUG ); ?></button>
+                        <button id="trp-save" type="submit" class="button-primary trp-save-string"><?php _e( 'Save translation', 'translatepress-multilingual' ); ?></button>
                     </div>
                 </div>
                 <div class="trp-controls-section">
@@ -61,16 +61,16 @@
                             <input type="hidden" name="trp-edit-translation" value="true">
                         </form>
                         <div id="trp-string-list">
-                            <select id="trp-string-categories" data-trp-placeholder="<?php _e( 'Select string to translate...', TRP_PLUGIN_SLUG ); ?>">
+                            <select id="trp-string-categories" data-trp-placeholder="<?php _e( 'Select string to translate...', 'translatepress-multilingual' ); ?>">
                                 <option value="" class="default-option"></option>
                                 <?php //add here an optiongroup so we know to add all the gettext strings below this and all the other strings above this ?>
-                                <optgroup id="trp-gettext-strings-optgroup" label="<?php _e( 'Gettext strings', TRP_PLUGIN_SLUG ); ?>"></optgroup>
+                                <optgroup id="trp-gettext-strings-optgroup" label="<?php _e( 'Gettext strings', 'translatepress-multilingual' ); ?>"></optgroup>
                             </select>
                         </div>
 
                         <div id="trp-next-previous">
-                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> <?php _e( 'Previous', TRP_PLUGIN_SLUG ); ?></button>
-                            <button type="button" id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', TRP_PLUGIN_SLUG ); ?> <span>&raquo;</span></button>
+                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> <?php _e( 'Previous', 'translatepress-multilingual' ); ?></button>
+                            <button type="button" id="trp-next" class="trp-next-previous-buttons"><?php _e( 'Next', 'translatepress-multilingual' ); ?> <span>&raquo;</span></button>
                         </div>
 
                     </div>
@@ -79,32 +79,32 @@
                 </div>
                 <div class="trp-controls-section">
                     <div id="trp-translation-section" class="trp-controls-section-content">
-                        <div id="trp-unsaved-changes-warning-message" style="display:none"><?php _e( 'You have unsaved changes!', TRP_PLUGIN_SLUG );?></div>
+                        <div id="trp-unsaved-changes-warning-message" style="display:none"><?php _e( 'You have unsaved changes!', 'translatepress-multilingual' );?></div>
 
 
                             <?php //original strings for gettext textarea ?>
                             <div id="trp-gettext-original" class="trp-language-text trp-gettext-original-language" style="display:none">
-                                <div class="trp-language-name"><?php _e( 'Original String', TRP_PLUGIN_SLUG );?></div>
+                                <div class="trp-language-name"><?php _e( 'Original String', 'translatepress-multilingual' );?></div>
                                 <textarea id="trp-gettext-original-textarea" readonly="readonly"></textarea>
                             </div>
 
                             <div id="trp-language-<?php echo $trp_settings['default-language'];?>" class="trp-language-text trp-default-language">
                                 <?php $default_language_name =  $available_languages[ $trp_settings['default-language'] ];?>
-                                <div class="trp-language-name" data-trp-gettext-language-name="<?php echo sprintf( __( 'To %s', TRP_PLUGIN_SLUG ), $default_language_name ); ?>" data-trp-default-language-name="<?php echo sprintf( __( 'From %s', TRP_PLUGIN_SLUG ), $default_language_name ); ?>">
-                                    <?php echo sprintf( __( 'From %s', TRP_PLUGIN_SLUG ), $default_language_name ); ?>
+                                <div class="trp-language-name" data-trp-gettext-language-name="<?php echo sprintf( __( 'To %s', 'translatepress-multilingual' ), $default_language_name ); ?>" data-trp-default-language-name="<?php echo sprintf( __( 'From %s', 'translatepress-multilingual' ), $default_language_name ); ?>">
+                                    <?php echo sprintf( __( 'From %s', 'translatepress-multilingual' ), $default_language_name ); ?>
                                 </div>
                                 <textarea id="trp-original" data-trp-language-code="<?php echo esc_attr( $trp_settings['default-language'] ); ?>" readonly="readonly"></textarea>
-                                <div class="trp-discard-changes trp-discard-on-default-language" style="display:none;"><?php _e( 'Discard changes', TRP_PLUGIN_SLUG );?></div>
+                                <div class="trp-discard-changes trp-discard-on-default-language" style="display:none;"><?php _e( 'Discard changes', 'translatepress-multilingual' );?></div>
                             </div>
                             <?php
                             foreach( $translation_languages as $language ){?>
                                 <div id="trp-language-<?php echo $language;?>" class="trp-language-text <?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
-                                    <div class="trp-language-name"><?php echo sprintf( __( 'To %s', TRP_PLUGIN_SLUG ), $available_languages[ $language ] ); ?></div>
+                                    <div class="trp-language-name"><?php echo sprintf( __( 'To %s', 'translatepress-multilingual' ), $available_languages[ $language ] ); ?></div>
                                     <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id="" data-trp-language-code="<?php echo esc_attr( $language ); ?>"></textarea>
-                                    <div class="trp-discard-changes"><?php _e( 'Discard changes', TRP_PLUGIN_SLUG );?></div>
+                                    <div class="trp-discard-changes"><?php _e( 'Discard changes', 'translatepress-multilingual' );?></div>
                                 </div>
                                 <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
-                                    $other_languages = __( 'Other languages', TRP_PLUGIN_SLUG );
+                                    $other_languages = __( 'Other languages', 'translatepress-multilingual' );
                                     ?>
                                     <div id="trp-show-all-languages" class="trp-toggle-languages"><span>&#11208; <?php echo $other_languages ?></span></div>
                                     <div id="trp-hide-all-languages" class="trp-toggle-languages trp-toggle-languages-active"><span>&#11206; <?php echo $other_languages ?></span></div>
@@ -117,9 +117,9 @@
                 <?php if( count( $trp_settings['translation-languages'] ) == 1 ) { ?>
                 <div class="trp-controls-section">
                     <div id="trp-translation-section" class="trp-controls-section-content">
-                        <p><?php printf( __( 'You can add a new language from <a href="%s">Settings->TranslatePress</a>', TRP_PLUGIN_SLUG ), admin_url( 'options-general.php?page=translate-press' ) );?></p>
-                        <p><?php _e( 'However, you can still use TranslatePress to <strong style="background: #f5fb9d;">modify gettext strings</strong> available in your page.', TRP_PLUGIN_SLUG );?></p>
-                        <p><?php _e( 'Strings that are user created can\'t be modified, only those from themes and plugins.', TRP_PLUGIN_SLUG );?></p>
+                        <p><?php printf( __( 'You can add a new language from <a href="%s">Settings->TranslatePress</a>', 'translatepress-multilingual' ), admin_url( 'options-general.php?page=translate-press' ) );?></p>
+                        <p><?php _e( 'However, you can still use TranslatePress to <strong style="background: #f5fb9d;">modify gettext strings</strong> available in your page.', 'translatepress-multilingual' );?></p>
+                        <p><?php _e( 'Strings that are user created can\'t be modified, only those from themes and plugins.', 'translatepress-multilingual' );?></p>
                     </div>
                 </div>
                 <?php } ?>
@@ -130,16 +130,16 @@
                 ?>
                 <div class="trp-controls-section wp-core-ui">
                     <div id="trp-upsell-section" class="trp-controls-section-content">
-                        <h3><?php _e('Your Website <br/> Multiple Languages', TRP_PLUGIN_SLUG ); ?></h3>
+                        <h3><?php _e('Your Website <br/> Multiple Languages', 'translatepress-multilingual' ); ?></h3>
                         <ul>
-                            <li><?php _e('Support for 221 Languages', TRP_PLUGIN_SLUG ); ?></li>
-                            <li><?php _e('Translate SEO Title, Description, Slug', TRP_PLUGIN_SLUG ); ?></li>
-                            <li><?php _e('Translate Facebook Tags', TRP_PLUGIN_SLUG ); ?></li>
-                            <li><?php _e('Create Translator Accounts', TRP_PLUGIN_SLUG ); ?></li>
-                            <li><?php _e('Publish when the translation is done', TRP_PLUGIN_SLUG ); ?></li>
+                            <li><?php _e('Support for 221 Languages', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Translate SEO Title, Description, Slug', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Translate Facebook Tags', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Create Translator Accounts', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Publish when the translation is done', 'translatepress-multilingual' ); ?></li>
                         </ul>
-                        <p><span style="background: #f5fb9d;"><?php _e('Supported By Real People', TRP_PLUGIN_SLUG ); ?></span></p>
-                        <p><a class="button-primary" target="_blank" href="https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree"><?php _e('Learn More', TRP_PLUGIN_SLUG ); ?></a></p>
+                        <p><span style="background: #f5fb9d;"><?php _e('Supported By Real People', 'translatepress-multilingual' ); ?></span></p>
+                        <p><a class="button-primary" target="_blank" href="https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree"><?php _e('Learn More', 'translatepress-multilingual' ); ?></a></p>
                     </div>
                 </div>
                 <?php endif; ?>
