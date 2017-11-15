@@ -14,23 +14,23 @@ $response = wp_remote_post( "https://www.googleapis.com/language/translate/v2", 
 ?>
 <div id="trp-addons-page" class="wrap">
 
-    <h1> <?php _e( 'TranslatePress Settings', TRP_PLUGIN_SLUG );?></h1>
+    <h1> <?php _e( 'TranslatePress Settings', 'translatepress-multilingual' );?></h1>
     <?php do_action ( 'trp_settings_navigation_tabs' ); ?>
 
     <div class="grid feat-header">
         <div class="grid-cell">
-            <h2><?php _e('Google API Key from settings page:', TRP_PLUGIN_SLUG);?> <span style="font-family:monospace"><?php echo $this->settings['g-translate-key']; ?></span></h2>
+            <h2><?php _e('Google API Key from settings page:', 'translatepress-multilingual');?> <span style="font-family:monospace"><?php echo $this->settings['g-translate-key']; ?></span></h2>
 
-            <h3><?php _e('Response:', TRP_PLUGIN_SLUG);?></h3>
+            <h3><?php _e('Response:', 'translatepress-multilingual');?></h3>
             <pre>
                 <?php print_r( $response["response"] ); ?>
             </pre>
-            <h3><?php _e('Response Body:', TRP_PLUGIN_SLUG);?></h3>
+            <h3><?php _e('Response Body:', 'translatepress-multilingual');?></h3>
             <pre>
                 <?php print_r( $response["body"] ); ?>
             </pre>
 
-            <h3><?php _e('Entire Response From wp_remote_get():', TRP_PLUGIN_SLUG);?></h3>
+            <h3><?php _e('Entire Response From wp_remote_get():', 'translatepress-multilingual');?></h3>
             <pre>
                 <?php print_r( $response ); ?>
             </pre>
