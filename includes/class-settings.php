@@ -22,11 +22,11 @@ class TRP_Settings{
      */
     public function get_language_switcher_options(){
         $ls_options = apply_filters( 'trp_language_switcher_output', array(
-            'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', TRP_PLUGIN_SLUG ) ),
-            'short-names'       => array( 'full_names'  => false, 'short_names'  => true, 'flags' => false, 'label' => __( 'Short Language Names', TRP_PLUGIN_SLUG ) ),
-            'flags-full-names'  => array( 'full_names'  => true, 'short_names'  => false, 'flags' => true, 'label' => __( 'Flags with Full Language Names', TRP_PLUGIN_SLUG ) ),
-            'flags-short-names' => array( 'full_names'  => false, 'short_names'  => true, 'flags' => true, 'label' => __( 'Flags with Short Language Names', TRP_PLUGIN_SLUG ) ),
-            'only-flags'        => array( 'full_names'  => false, 'short_names'  => false, 'flags' => true, 'label' => __( 'Only Flags', TRP_PLUGIN_SLUG ) ),
+            'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', 'translatepress-multilingual' ) ),
+            'short-names'       => array( 'full_names'  => false, 'short_names'  => true, 'flags' => false, 'label' => __( 'Short Language Names', 'translatepress-multilingual' ) ),
+            'flags-full-names'  => array( 'full_names'  => true, 'short_names'  => false, 'flags' => true, 'label' => __( 'Flags with Full Language Names', 'translatepress-multilingual' ) ),
+            'flags-short-names' => array( 'full_names'  => false, 'short_names'  => true, 'flags' => true, 'label' => __( 'Flags with Short Language Names', 'translatepress-multilingual' ) ),
+            'only-flags'        => array( 'full_names'  => false, 'short_names'  => false, 'flags' => true, 'label' => __( 'Only Flags', 'translatepress-multilingual' ) ),
         ) );
         return $ls_options;
     }
@@ -321,10 +321,10 @@ class TRP_Settings{
         $selected_language_code = '';
         ?>
         <tr>
-            <th scope="row"> <?php _e( 'Translation Language', TRP_PLUGIN_SLUG ) ?> </th>
+            <th scope="row"> <?php _e( 'Translation Language', 'translatepress-multilingual' ) ?> </th>
             <td>
                 <select id="trp-translation-language" name="trp_settings[translation-languages][]" class="trp-select2">
-                    <option value=""><?php _e( 'Choose...', TRP_PLUGIN_SLUG );?></option>
+                    <option value=""><?php _e( 'Choose...', 'translatepress-multilingual' );?></option>
                     <?php foreach( $languages as $language_code => $language_name ){ ?>
                     <option value="<?php echo $language_code; ?>" <?php if ( in_array( $language_code, $this->settings['translation-languages'] ) && $language_code != $this->settings['default-language'] ) { echo 'selected'; $selected_language_code = $language_code; } ?>>
                         <?php echo $language_name; ?>
@@ -332,12 +332,12 @@ class TRP_Settings{
                 <?php }?>
                 </select>
                 <label>
-                    <span id="trp-published-language"><b><?php _e( 'Slug', TRP_PLUGIN_SLUG ); ?></b></span>
+                    <span id="trp-published-language"><b><?php _e( 'Slug', 'translatepress-multilingual' ); ?></b></span>
                     <input id="trp-url-slug" class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" style="text-transform: lowercase;" value="<?php echo $this->url_converter->get_url_slug( $selected_language_code, false ); ?>">
                     <input id="trp-active-checkbox" type="hidden" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" >
                 </label>
                 <p class="description">
-                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', TRP_PLUGIN_SLUG ); ?>
+                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', 'translatepress-multilingual' ); ?>
                 </p>
             </td>
         </tr>
@@ -392,7 +392,7 @@ class TRP_Settings{
             $this->trp_languages = $trp->get_component( 'languages' );
         }
         $published_languages = $this->trp_languages->get_language_names( $languages, 'english_name' );
-        $published_languages['current_language'] = __( 'Current Language', TRP_PLUGIN_SLUG );
+        $published_languages['current_language'] = __( 'Current Language', 'translatepress-multilingual' );
         $languages[] = 'current_language';
         $posts = get_posts( array( 'post_type' =>'language_switcher',  'posts_per_page'   => -1  ) );
 
@@ -433,12 +433,12 @@ class TRP_Settings{
     public function add_navigation_tabs(){
         $tabs = apply_filters( 'trp_settings_tabs', array(
             array(
-                'name'  => __( 'General', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'General', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'options-general.php?page=translate-press' ),
                 'page'  => 'translate-press'
             ),
             array(
-                'name'  => __( 'Translate Site', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'Translate Site', 'translatepress-multilingual' ),
                 'url'   => add_query_arg( 'trp-edit-translation', 'true', home_url() ),
                 'page'  => 'trp_translation_editor'
             )
@@ -446,14 +446,14 @@ class TRP_Settings{
 
         if( class_exists('TRP_LICENSE_PAGE') ) {
             $tabs[] = array(
-                'name'  => __( 'License', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'License', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'admin.php?page=trp_license_key' ),
                 'page'  => 'trp_license_key'
             );
         }
         else{
             $tabs[] = array(
-                'name'  => __( 'Addons', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'Addons', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
                 'page'  => 'trp_addons_page'
             );
