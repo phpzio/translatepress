@@ -108,7 +108,7 @@ class TRP_Translation_Render{
      */
     protected function get_node_type_category( $current_node_type ){
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-            __( 'Meta Information', TRP_PLUGIN_SLUG ) => array( 'meta_desc', 'post_slug', 'page_title' ),
+            __( 'Meta Information', 'translatepress-multilingual' ) => array( 'meta_desc', 'post_slug', 'page_title' ),
         ));
 
         foreach( $node_type_categories as $category_name => $node_types ){
@@ -117,7 +117,7 @@ class TRP_Translation_Render{
             }
         }
 
-        return __( 'String List', TRP_PLUGIN_SLUG );
+        return __( 'String List', 'translatepress-multilingual' );
 
     }
 
@@ -134,47 +134,47 @@ class TRP_Translation_Render{
                     'type'          => 'meta_desc',
                     'attribute'     => 'name',
                     'value'         => 'description',
-                    'description'   => __( 'Description', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'Description', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'meta_desc',
                     'attribute'     => 'property',
                     'value'         => 'og:title',
-                    'description'   => __( 'OG Title', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'OG Title', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'meta_desc',
                     'attribute'     => 'property',
                     'value'         => 'og:site_name',
-                    'description'   => __( 'OG Site Name', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'OG Site Name', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'meta_desc',
                     'attribute'     => 'property',
                     'value'         => 'og:description',
-                    'description'   => __( 'OG Description', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'OG Description', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'meta_desc',
                     'attribute'     => 'name',
                     'value'         => 'twitter:title',
-                    'description'   => __( 'Twitter Title', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'Twitter Title', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'meta_desc',
                     'attribute'     => 'name',
                     'value'         => 'twitter:description',
-                    'description'   => __( 'Twitter Description', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'Twitter Description', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'post_slug',
                     'attribute'     => 'name',
                     'value'         => 'trp-slug',
-                    'description'   => __( 'Post Slug', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'Post Slug', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'page_title',
-                    'description'   => __( 'Page Title', TRP_PLUGIN_SLUG )
+                    'description'   => __( 'Page Title', 'translatepress-multilingual' )
                 ),
 
             ));

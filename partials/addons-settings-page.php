@@ -1,6 +1,6 @@
 <div id="trp-addons-page" class="wrap">
 
-    <h1> <?php _e( 'TranslatePress Settings', TRP_PLUGIN_SLUG );?></h1>
+    <h1> <?php _e( 'TranslatePress Settings', 'translatepress-multilingual' );?></h1>
     <?php do_action ( 'trp_settings_navigation_tabs' ); ?>
 
     <div class="grid feat-header">

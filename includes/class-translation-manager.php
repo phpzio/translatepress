@@ -404,7 +404,7 @@ class TRP_Translation_Manager{
         if( is_admin () ) {
             $url = add_query_arg( 'trp-edit-translation', 'true', home_url() );
 
-            $title = __( 'Translate Site', TRP_PLUGIN_SLUG );
+            $title = __( 'Translate Site', 'translatepress-multilingual' );
             $url_target = '_blank';
         } else {
 
@@ -416,7 +416,7 @@ class TRP_Translation_Manager{
 	        $url = $this->url_converter->cur_page_url();
 	        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
 
-            $title = __( 'Translate Page', TRP_PLUGIN_SLUG );
+            $title = __( 'Translate Page', 'translatepress-multilingual' );
             $url_target = '';
         }
 
@@ -435,7 +435,7 @@ class TRP_Translation_Manager{
         $wp_admin_bar->add_node(
             array(
                 'id'        => 'trp_settings_page',
-                'title'     => __( 'Settings', TRP_PLUGIN_SLUG ),
+                'title'     => __( 'Settings', 'translatepress-multilingual' ),
                 'href'      => admin_url( 'options-general.php?page=translate-press' ),
                 'parent'    => 'trp_edit_translation',
                 'meta'      => array(
@@ -574,7 +574,7 @@ class TRP_Translation_Manager{
         if( count( $this->settings['publish-languages'] ) < 1 )
             return $translation;
 
-        if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
+        if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == 'translatepress-multilingual' )
             return $translation;
 
         /* for our own actions don't do nothing */
