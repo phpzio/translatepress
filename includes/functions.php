@@ -109,3 +109,21 @@ function trp_find_translation_location_for_domain( $domain, $language ){
 
     return $path;
 }
+
+/**
+ * Function that appends the affiliate_id to a given url
+ * @param $link string the given url to append
+ * @return string url with the added affiliate_id
+ */
+function trp_add_affiliate_id_to_link( $link ){
+
+    $affiliate_id = get_option('translatepress_affiliate_id');
+
+    if  ( !empty( $affiliate_id ) ) {
+
+        return esc_url( add_query_arg( 'ref', $affiliate_id, $link ) );
+
+    }
+
+    return esc_url( $link );
+}
