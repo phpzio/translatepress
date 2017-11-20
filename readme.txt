@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.9.0
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,12 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.0.9 =
+* We now flush permalinks when saving the settings page to avoid getting 404 and 500 errors
+* Added support for changing the language slug
+* Added the current language as a class on the body tag. Ex: translatepress-en_US
+* Small readme changes
 
 = 1.0.8 =
 * We now allow HTML in normal strings translations.
