@@ -321,13 +321,13 @@ class TRP_Settings{
         $selected_language_code = '';
         ?>
         <tr>
-            <th scope="row"> <?php _e( 'Translation Languages', TRP_PLUGIN_SLUG ) ?> </th>
+            <th scope="row"> <?php _e( 'Translation Languages', translatepress-multilingual ) ?> </th>
             <td>
                 <table id="trp-languages-table">
                     <thead>
                     <tr>
-                        <th colspan="2"><?php _e( 'Language', TRP_PLUGIN_SLUG ); ?></th>
-                        <th><?php _e( 'Slug', TRP_PLUGIN_SLUG ); ?></th>
+                        <th colspan="2"><?php _e( 'Language', translatepress-multilingual ); ?></th>
+                        <th><?php _e( 'Slug', translatepress-multilingual ); ?></th>
                     </tr>
                     </thead>
                     <tbody id="trp-sortable-languages">
@@ -355,14 +355,14 @@ class TRP_Settings{
                 </table>
                 <div id="trp-new-language">
                     <select id="trp-select-language" class="trp-select2 trp-translation-language" >
-                        <option value=""><?php _e( 'Choose...', TRP_PLUGIN_SLUG );?></option>
+                        <option value=""><?php _e( 'Choose...', translatepress-multilingual );?></option>
                         <?php foreach( $languages as $language_code => $language_name ){ ?>
                             <option title="<?php echo $language_code; ?>" value="<?php echo $language_code; ?>">
                                 <?php echo $language_name; ?>
                             </option>
                         <?php }?>
                     </select>
-                    <button type="button" id="trp-add-language" class="button-secondary"><?php _e( 'Add', TRP_PLUGIN_SLUG );?></button>
+                    <button type="button" id="trp-add-language" class="button-secondary"><?php _e( 'Add', translatepress-multilingual );?></button>
                     <script>
                         jQuery(document).ready(function() {
                             jQuery('#trp-add-language').on("click", function(){
