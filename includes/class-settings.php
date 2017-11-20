@@ -337,7 +337,11 @@ class TRP_Settings{
                     <input id="trp-active-checkbox" type="hidden" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" >
                 </label>
                 <p class="description">
-                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', 'translatepress-multilingual' ); ?>
+                    <?php
+                    $url = trp_add_affiliate_id_to_link('https://translatepress.com/?utm_source=wpbackend&utm_medium=clientsite&utm_content=multiple_languages&utm_campaign=tpfree');
+                    $link = sprintf( wp_kses( __( 'Select the language you wish to make your website available in.<br/>To add multiple languages, consider <a href="%s" target="_blank" title="TranslatePress Pro">upgrading to TranslatePress PRO</a>.', 'translatepress-multilingual' ), array(  'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target'=> array() ) ) ), esc_url( $url ) );
+                    echo $link;
+                    ?>
                 </p>
             </td>
         </tr>
