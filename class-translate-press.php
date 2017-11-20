@@ -190,6 +190,9 @@ class TRP_Translate_Press{
          * we can't flush the permalinks on every page load so we filter the rewrite_rules option 
          */
         $this->loader->add_filter( "option_rewrite_rules", $this->url_converter, 'woocommerce_filter_permalinks_on_other_languages' );
+
+        /* add to the body class the current language */
+        $this->loader->add_filter( "body_class", $this->translation_manager, 'add_language_to_body_class' );
     }
 
     /**
