@@ -139,7 +139,7 @@
                             <li><?php _e('Publish when the translation is done', 'translatepress-multilingual' ); ?></li>
                         </ul>
                         <p><span style="background: #f5fb9d;"><?php _e('Supported By Real People', 'translatepress-multilingual' ); ?></span></p>
-                        <p><a class="button-primary" target="_blank" href="https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree"><?php _e('Learn More', 'translatepress-multilingual' ); ?></a></p>
+                        <p><a class="button-primary" target="_blank" href=" <?php echo trp_add_affiliate_id_to_link('https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree')?> "><?php _e('Learn More', 'translatepress-multilingual' ); ?></a></p>
                     </div>
                 </div>
                 <?php endif; ?>
