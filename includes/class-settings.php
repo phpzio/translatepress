@@ -328,6 +328,7 @@ class TRP_Settings{
     /**
      * Validate settings option.
      *
+     * @deprecated
      * @param array $settings               Settings option.
      * @param array $default_settings       Default settings option.
      * @return array                        Validated settings option.
