@@ -109,7 +109,6 @@ For more information please check out [TranslatePress documentation](https://tra
 
 = 1.0.9 =
 * We now flush permalinks when saving the settings page to avoid getting 404 and 500 errors
-* Added support for changing the language slug
 * Added the current language as a class on the body tag. Ex: translatepress-en_US
 * Small readme changes
 
