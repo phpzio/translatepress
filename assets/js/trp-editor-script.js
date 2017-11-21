@@ -411,6 +411,13 @@ function TRP_Editor(){
         }
         _this.jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option });
         jQuery( '#trp-language-select' ).select2();
+
+        /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
+        _this.jquery_string_selector.on('select2:opening', function (e) {
+            if ( trpEditor.change_tracker.check_unsaved_changes() ) {
+                e.preventDefault();
+            }
+        });
     }
 
     /**
