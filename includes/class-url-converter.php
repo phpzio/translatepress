@@ -307,7 +307,15 @@ class TRP_Url_Converter {
                     $default_language_wc_permalink_structure['tag_rewrite_slug'] = trp_x( 'product-tag', 'slug', 'woocommerce', $this->settings['default-language'] );
                 }
 
-                $current_language_permalink_structure = wc_get_permalink_structure();
+                if( function_exists( 'wc_get_permalink_structure' ) ){
+                    $current_language_permalink_structure = wc_get_permalink_structure();
+                }
+                else{
+                    $current_language_permalink_structure = array();
+                    $current_language_permalink_structure['product_rewrite_slug'] = trp_x( 'product', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                    $current_language_permalink_structure['category_rewrite_slug'] = trp_x( 'product-category', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                    $current_language_permalink_structure['tag_rewrite_slug'] = trp_x( 'product-tag', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                }
 
                 $new_rewrite_rules = array();
 

@@ -838,5 +838,18 @@ class TRP_Translation_Manager{
         return $j;
         
     }
+
+    /**
+     * Add the current language as a class to the body
+     * @param $classes
+     * @return array
+     */
+    public function add_language_to_body_class( $classes ){
+        global $TRP_LANGUAGE;
+        if( !empty( $TRP_LANGUAGE ) ){
+            $classes[] = 'translatepress-'.$TRP_LANGUAGE;
+        }
+        return $classes;
+    }
     
 }

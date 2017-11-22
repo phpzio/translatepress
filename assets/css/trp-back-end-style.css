@@ -121,3 +121,9 @@ input.trp-translation-published{
 .trp-ls-select-option{
     margin-top: 10px;
 }
+
+.trp-upsell-multiple-languages{
+    border: 1px solid #a00;
+    padding: 1rem;
+    background: #fff;
+}

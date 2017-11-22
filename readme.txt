@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
-Tested up to: 4.8.3
-Stable tag: 1.0.7
+Tested up to: 4.9.0
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,7 +28,7 @@ Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted 
 * Integrates with Google Translate, allowing you to set up Automatic Translation using your own Google API key.
 * Place language switchers anywhere using shortcode **[language-switcher]**, WP menu item or as a floating dropdown.
 * Editorial control allowing you to publish your language only when all your translations are done
-* Conditional display content shortcode based on language [trp_language language="en_EN"] English content only [/trp_language]
+* Conditional display content shortcode based on language [trp_language language="en_US"] English content only [/trp_language]
 * Possibility to edit gettext strings from themes and plugins from english to english, without adding another language. Basically a string-replace functionality.
 
 Note: this plugin uses the Google Translation API to translate the strings on your site. This feature can be enabled or disabled according to your preferences.
@@ -106,6 +106,20 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.0.9 =
+* We now flush permalinks when saving the settings page to avoid getting 404 and 500 errors
+* Added the current language as a class on the body tag. Ex: translatepress-en_US
+* Small readme changes
+
+= 1.0.8 =
+* We now allow HTML in normal strings translations.
+* Changed the way we get the default language permalinks in Woocommerce rewrites
+* Fixed issues with date_i18n function
+* Fixed a warning generated when there are no rewrite rules
+* Fixed dynamic strings not updating the translation dropdown list.
+* Fixed issues with hidden space characters that were breaking some translations
+* Make sure we don't loose the trp-edit-translation=preview from url after a WordPress redirect
 
 = 1.0.7 =
 * Fixed a small bug in js regarding the translation editor sidebar with

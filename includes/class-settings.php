@@ -223,6 +223,9 @@ class TRP_Settings{
 
         $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );
 
+        // regenerate permalinks in case something changed
+        flush_rewrite_rules();
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -248,8 +251,8 @@ class TRP_Settings{
         }
         $default_settings = array(
             'default-language'                      => $default,
-            'translation-languages'                 => array( $default ),
-            'publish-languages'                     => array( $default ),
+            'translation-languages'                 => array( $default, '' ),
+            'publish-languages'                     => array( $default, '' ),
             'native_or_english_name'                => 'english_name',
             'add-subdirectory-to-default-language'  => 'no',
             'force-language-to-custom-links'        => 'no',
@@ -258,7 +261,7 @@ class TRP_Settings{
             'shortcode-options'                     => 'flags-full-names',
             'menu-options'                          => 'flags-full-names',
             'floater-options'                       => 'flags-full-names',
-            'url-slugs'                             => array( 'en_US' => 'en' ),
+            'url-slugs'                             => array( 'en_US' => 'en', '' ),
         );
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
@@ -270,9 +273,7 @@ class TRP_Settings{
                 }
             }
             $settings_option = $this->check_settings_option( $settings_option, $default_settings );
-
         }
-
         $this->settings = $settings_option;
     }
 
@@ -299,10 +300,11 @@ class TRP_Settings{
             }
             $all_language_codes = $this->trp_languages->get_all_language_codes();
             $iso_codes = $this->trp_languages->get_iso_codes( $all_language_codes, false );
-            wp_localize_script( 'trp-settings-script', 'trp_iso_codes', $iso_codes );
+            wp_localize_script( 'trp-settings-script', 'trp_url_slugs_info', array( 'iso_codes' => $iso_codes, 'error_message_duplicate_slugs' => __( 'Error! Duplicate Url slug values.', TRP_PLUGIN_SLUG ) ) );
 
             wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
             wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
+
         }
     }
 
@@ -319,66 +321,20 @@ class TRP_Settings{
             $this->url_converter = $trp->get_component('url_converter');
         }
         $selected_language_code = '';
-        ?>
-        <tr>
-            <th scope="row"> <?php _e( 'Translation Language', 'translatepress-multilingual' ) ?> </th>
-            <td>
-                <select id="trp-translation-language" name="trp_settings[translation-languages][]" class="trp-select2">
-                    <option value=""><?php _e( 'Choose...', 'translatepress-multilingual' );?></option>
-                    <?php foreach( $languages as $language_code => $language_name ){ ?>
-                    <option value="<?php echo $language_code; ?>" <?php if ( in_array( $language_code, $this->settings['translation-languages'] ) && $language_code != $this->settings['default-language'] ) { echo 'selected'; $selected_language_code = $language_code; } ?>>
-                        <?php echo $language_name; ?>
-                    </option>
-                <?php }?>
-                </select>
-                <label>
-                    <span id="trp-published-language"><b><?php _e( 'Slug', 'translatepress-multilingual' ); ?></b></span>
-                    <input id="trp-url-slug" class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" style="text-transform: lowercase;" value="<?php echo $this->url_converter->get_url_slug( $selected_language_code, false ); ?>">
-                    <input id="trp-active-checkbox" type="hidden" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" >
-                </label>
-                <p class="description">
-                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', 'translatepress-multilingual' ); ?>
-                </p>
-            </td>
-        </tr>
-        <?php
+
+        require_once TRP_PLUGIN_DIR . 'partials/main-settings-language-selector.php';
     }
 
     /**
      * Validate settings option.
      *
+     * @deprecated
      * @param array $settings               Settings option.
      * @param array $default_settings       Default settings option.
      * @return array                        Validated settings option.
      */
     public function check_settings_option( $settings, $default_settings ){
-        if ( class_exists( 'TRP_Extra_Languages' ) ){
-            // checks are made in the Add-on later
             return $settings;
-        }
-        foreach ( $settings['translation-languages'] as $language_code ) {
-            if ( $settings['default-language'] != $language_code ) {
-                $translation_language = $language_code;
-                break;
-            }
-        }
-        $settings['translation-languages'] = array( $settings['default-language'] );
-        if ( !empty( $translation_language ) ){
-            $settings['translation-languages'][] = $translation_language;
-        }
-
-        foreach ( $settings['publish-languages'] as $language_code ) {
-            if ( $settings['default-language'] != $language_code ) {
-                $translation_language = $language_code;
-                break;
-            }
-        }
-        $settings['publish-languages'] = array( $settings['default-language'] );
-        if ( !empty( $translation_language ) ){
-            $settings['publish-languages'][] = $translation_language;
-        }
-
-        return $settings;
     }
 
     /**

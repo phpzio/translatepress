@@ -39,7 +39,7 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.0.7' );
+        define( 'TRP_PLUGIN_VERSION', '1.0.9' );
 
         $this->load_dependencies();
         $this->initialize_components();
@@ -190,6 +190,9 @@ class TRP_Translate_Press{
          * we can't flush the permalinks on every page load so we filter the rewrite_rules option 
          */
         $this->loader->add_filter( "option_rewrite_rules", $this->url_converter, 'woocommerce_filter_permalinks_on_other_languages' );
+
+        /* add to the body class the current language */
+        $this->loader->add_filter( "body_class", $this->translation_manager, 'add_language_to_body_class' );
     }
 
     /**

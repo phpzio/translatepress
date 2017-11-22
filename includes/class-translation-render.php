@@ -756,10 +756,10 @@ class TRP_Translation_Render{
     public function force_preview_on_url_in_ajax( $output ){
         if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] === 'preview' ) {
             $result = json_decode($output, TRUE);
-            if ( json_last_error() === JSON_ERROR_NONE ) {
+            if ( json_last_error() === JSON_ERROR_NONE) {
                 array_walk_recursive($result, array($this, 'callback_add_preview_arg'));
+                $output = trp_safe_json_encode($result);
             } //endif
-            $output = json_encode($result);
         } //endif
         return $output;
     }
