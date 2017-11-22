@@ -33,6 +33,8 @@ class TRP_Translation_Manager{
         if ( isset( $_REQUEST['trp-edit-translation'] ) && esc_attr( $_REQUEST['trp-edit-translation'] ) == $mode ) {
             if ( current_user_can( 'manage_options' ) && ! is_admin() ) {
                 return true;
+            }elseif ( esc_attr( $_REQUEST['trp-edit-translation'] ) == "preview" ){
+                return true;
             }else{
                 wp_die(
                     '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
@@ -772,6 +774,44 @@ class TRP_Translation_Manager{
             $tags['trp-gettext'] = array( 'data-trpgettextoriginal' => true );
         }
         return $tags;
+    }
+    
+    
+    public function trp_view_as_user(){
+        if( !is_admin() ) {
+            /* TODO CHECK WHAT HAPPENS IN AJAX CALLS, I THINK WE NEED TO SEND THE PARAMETERS THERE TOO */
+            if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] === 'preview' && isset($_REQUEST['trp-view-as']) && isset($_REQUEST['trp-view-as-nonce'])) {
+
+                /* @TODO MAKE SURE TO NOT DISSALOW ADMINS WHEN TE FILTER IS APPLIED */
+                if( apply_filters( 'trp_allow_translator_role_to_view_page_as_other_roles', false ) ){
+                    $current_user_can_change_roles = current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) );
+                }
+                else{
+                    $current_user_can_change_roles = current_user_can( 'manage_options' );
+                }
+
+                if ( $current_user_can_change_roles ) {
+                    if ( ! wp_verify_nonce( $_REQUEST['trp-view-as-nonce'], 'trp_view_as'. sanitize_text_field( $_REQUEST['trp-view-as'] ) . get_current_user_id() ) ) {
+                        wp_die( __( 'Security check', 'translatepress-multilingual' ) );
+                    } else {
+                        global $current_user;
+                        $view_as = sanitize_text_field( $_REQUEST['trp-view-as'] );
+                        if( $view_as === 'current_user' ){
+                            return;
+                        }
+                        elseif ( $view_as === 'logged_out' ){
+                            $current_user = new WP_User(0, 'trp_logged_out');
+                        }
+                        else{
+                            $current_user = apply_filters( 'trp_temporary_change_current_user_role', $current_user, $view_as );
+                        }
+                        /*die(var_dump($current_user));*/
+                        //$current_user = new WP_User(0, 'frontend_uploader');
+                        //$current_user->allcaps = array("upload_files" => true, "edit_posts" => true, "edit_others_posts" => true, "edit_pages" => true, "edit_others_pages" => true);
+                    }
+                }
+            }
+        }
     }
     
 }

@@ -38,6 +38,28 @@ function TRP_Editor(){
     };
 
     /**
+     * Change view as iframe source
+     *
+     * @param select           HTML Element Select with languages
+     */
+    this.change_view_as = function( select ){
+        var view_as = select.value;
+        var view_nonce = jQuery('option:selected', select).attr('data-view-as-nonce');
+        var current_link = jQuery( '#trp-preview-iframe' ).attr('src');
+
+        /* remove maybe previously selected values */
+        current_link = _this.remove_url_parameter( current_link, 'trp-view-as' );
+        current_link = _this.remove_url_parameter( current_link, 'trp-view-as-nonce' );
+
+        if ( current_link != undefined ){
+            if( view_as == 'current_user' )
+                jQuery( '#trp-preview-iframe' ).attr('src', current_link );
+            else
+                jQuery( '#trp-preview-iframe' ).attr('src', current_link + '&trp-view-as=' + view_as + '&trp-view-as-nonce=' + view_nonce );
+        }
+    };
+
+    /**
      * Initialize string finding, string select dropdown and change tracker.
      */
     this.initialize = function(){

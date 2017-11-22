@@ -179,6 +179,9 @@ class TRP_Translate_Press{
 
         /* hide php errors and notice when we are storing strings in db */
         $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
+
+        /* ?or init ? */
+        $this->loader->add_action( 'parse_request', $this->translation_manager, 'trp_view_as_user' );
     }
 
     /**
