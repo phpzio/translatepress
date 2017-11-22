@@ -386,7 +386,7 @@ function TRP_Editor(){
             if (  _this.change_tracker.check_unsaved_changes() ) {
                 return;
             }
-            next_option_value = jQuery( 'option:selected', _this.jquery_string_selector ).nextAll('option').first().attr('value');
+            next_option_value = jQuery('option:selected', _this.jquery_string_selector).nextAll('option').first().attr('value');
             if( typeof next_option_value != "undefined" && next_option_value != '' ) {
                 _this.jquery_string_selector.val(next_option_value).trigger('change');
             }
@@ -801,6 +801,24 @@ function TRP_Lister( current_dictionary ) {
     var dictionary = current_dictionary;
     var category_array;
 
+    /*
+     * Save current selected option in the dropdown. Should be called before we make changes in the dropdown.
+     */
+    this.cache_selected_option = function(){
+        var selected_option = jQuery( 'option:selected', jquery_string_selector ).val();
+        if ( typeof selected_option != "undefined" && selected_option != "" ) {
+            cached_selected_option = selected_option;
+        }
+    };
+
+    /*
+     * Restore saved cached option. Should be called after we make changes in the dropdown. Otherwise the selected option will be changed to default.
+     */
+    this.set_cached_option = function(){
+        if ( typeof cached_selected_option != "undefined" && cached_selected_option != "" ){
+            jquery_string_selector.val( cached_selected_option );
+        }
+    };
 
     /**
      * A string has been selected from the list.
@@ -823,6 +841,8 @@ function TRP_Lister( current_dictionary ) {
      * Refresh list with new strings.
      */
     this.reload_list = function (){
+        _this.cache_selected_option();
+
         category_array = dictionary.get_categories();
         jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).prevAll(":not(.default-option)").remove();
         /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */
@@ -839,18 +859,23 @@ function TRP_Lister( current_dictionary ) {
                 }
             }
         }
-
         jquery_string_selector.on( 'change', _this.select_string );
+
+        _this.set_cached_option();
     };
 
 
     this.add_gettext_strings = function (){
+        _this.cache_selected_option();
+
         gettext_category = dictionary;
         jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).nextAll().remove();
         for ( var i in gettext_category){
             var original = gettext_category[i].original;
             jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).after(jQuery('<option></option>').attr( 'value', 'gettext-'+gettext_category[i].id ).text( _this.format_text( original )).attr( 'title', gettext_category[i].domain ).attr( 'data-trp-gettext-id', gettext_category[i].id ) );
         }
+
+        _this.set_cached_option();
     };
 
     /**
