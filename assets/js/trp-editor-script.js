@@ -460,6 +460,17 @@ function TRP_Editor(){
         return option;
     }
 
+    this.make_sure_pencil_icon_is_inside_view = function( jquery_object_highlighted ){
+        var rect = jquery_object_highlighted.getBoundingClientRect();
+        console.log(rect);
+        if (rect.left < 30 ){
+            var margin = rect.left;
+            trpEditor.edit_translation_button[0].setAttribute( 'style', 'margin-left: -' + margin + 'px !important' );
+        }else{
+            trpEditor.edit_translation_button[0].removeAttribute( 'style' );
+        }
+    };
+
     add_event_handlers();
 }
 
@@ -713,8 +724,10 @@ function TRP_String( language, array_index ){
             _this.wrap_special_html_elements();
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
             jquery_object.prepend(trpEditor.edit_translation_button);
-
         }
+
+        trpEditor.make_sure_pencil_icon_is_inside_view( jquery_object[0] );
+
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click',  function(e){
             e.preventDefault();
@@ -1140,6 +1153,7 @@ jQuery(function(){
             else {
                 jQuery(this).prepend(trpEditor.edit_translation_button);
             }
+            trpEditor.make_sure_pencil_icon_is_inside_view ( jQuery(this)[0] );
             trpEditor.edit_translation_button.off( 'click' );
             trpEditor.edit_translation_button.on( 'click', function(e){
                 e.preventDefault();
