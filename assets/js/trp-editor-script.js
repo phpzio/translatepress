@@ -462,10 +462,9 @@ function TRP_Editor(){
 
     this.make_sure_pencil_icon_is_inside_view = function( jquery_object_highlighted ){
         var rect = jquery_object_highlighted.getBoundingClientRect();
-        console.log(rect);
         if (rect.left < 30 ){
-            var margin = rect.left;
-            trpEditor.edit_translation_button[0].setAttribute( 'style', 'margin-left: -' + margin + 'px !important' );
+            var margin = - rect.left;
+            trpEditor.edit_translation_button[0].setAttribute( 'style', 'margin-left: ' + margin + 'px !important' );
         }else{
             trpEditor.edit_translation_button[0].removeAttribute( 'style' );
         }
