@@ -142,12 +142,30 @@ iframe#trp-preview-iframe {
     font-size: 14px;
     padding: 3px;
 }
-#trp-language-select {
-
-}
 
 .string-selector-description{
     font-size: 12px;
+}
+
+
+/*
+    View as Dropdown
+ */
+#trp-view-as{
+    clear:both;
+    padding-top:15px;
+}
+
+#trp-view-as-description{
+    padding-bottom: 10px;
+    color: black;
+}
+
+#trp-view-as-select{
+    width: 100%;
+    margin-bottom: 30px;
+    font-size: 14px;
+    padding: 3px;
 }
 
 

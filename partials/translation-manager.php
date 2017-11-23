@@ -74,7 +74,7 @@
                         </div>
 
                         <div id="trp-view-as">
-                            <p><?php _e( 'View as', 'translatepress-multilingual' ); ?></p>
+                            <div id="trp-view-as-description"><?php _e( 'View as', 'translatepress-multilingual' ); ?></div>
                             <select id="trp-view-as-select" onchange='trpEditor.change_view_as( this )'>
                                 <?php 
                                 $trp_view_as_values = array( __('Current User', 'translatepress-multilingual') => 'current_user', __('Logged Out', 'translatepress-multilingual') => 'logged_out' );
@@ -88,7 +88,7 @@
                                 
                                 ?>
                                 <?php foreach ( $trp_view_as_values as $trp_view_as_label => $trp_view_as_value ) { ?>
-                                    <option value="<?php echo $trp_view_as_value; ?>" data-view-as-nonce="<?php echo wp_create_nonce( 'trp_view_as'.$trp_view_as_value.get_current_user_id() ); ?>"> <?php echo $trp_view_as_label; ?> </option>
+                                    <option value="<?php echo $trp_view_as_value; ?>" <?php if( empty( $trp_view_as_value ) ){ echo 'disabled="disabled" title="'. __( 'Available in our Pro Versions', 'translatepress-multilingual' ) .'"'; }?> data-view-as-nonce="<?php echo wp_create_nonce( 'trp_view_as'.$trp_view_as_value.get_current_user_id() ); ?>" <?php if( isset($_REQUEST['trp-view-as']) ){ echo ( sanitize_text_field( $_REQUEST['trp-view-as'] ) == $trp_view_as_value ) ? 'selected' : ''; } ?>> <?php echo $trp_view_as_label; ?> </option>
                                 <?php } ?>
                             </select>
                         </div>

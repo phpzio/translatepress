@@ -45,7 +45,8 @@ function TRP_Editor(){
     this.change_view_as = function( select ){
         var view_as = select.value;
         var view_nonce = jQuery('option:selected', select).attr('data-view-as-nonce');
-        var current_link = jQuery( '#trp-preview-iframe' ).attr('src');
+        var current_link = document.getElementById("trp-preview-iframe").contentWindow.location.href;
+        current_link = current_link.replace( 'trp-edit-translation=true', 'trp-edit-translation=preview' );
 
         /* remove maybe previously selected values */
         current_link = _this.remove_url_parameter( current_link, 'trp-view-as' );
@@ -433,6 +434,7 @@ function TRP_Editor(){
         }
         _this.jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option });
         jQuery( '#trp-language-select' ).select2();
+        jQuery( '#trp-view-as-select' ).select2();
     }
 
     /**
