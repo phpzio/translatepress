@@ -883,9 +883,6 @@ class TRP_Translation_Manager{
                         else{
                             $current_user = apply_filters( 'trp_temporary_change_current_user_role', $current_user, $view_as );
                         }
-                        /*die(var_dump($current_user));*/
-                        //$current_user = new WP_User(0, 'frontend_uploader');
-                        //$current_user->allcaps = array("upload_files" => true, "edit_posts" => true, "edit_others_posts" => true, "edit_pages" => true, "edit_others_pages" => true);
                     }
                 }
             }

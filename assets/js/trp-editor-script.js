@@ -96,6 +96,8 @@ function TRP_Editor(){
 
         /* remove the lang atribute from url. TODO maybe use this same method for trp-edit-translation ? */
         close_url = _this.remove_url_parameter( close_url, 'lang' );
+        close_url = _this.remove_url_parameter( close_url, 'trp-view-as' );
+        close_url = _this.remove_url_parameter( close_url, 'trp-view-as-nonce' );
 
         close_button.attr( 'href', close_url );
         location = location.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' );
