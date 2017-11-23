@@ -18,7 +18,7 @@ function TRP_Editor(){
     var translated_textareas = [];
     this.edit_translation_button = null;
     var categories;
-    var trp_lister = null;
+    this.trp_lister = null;
     this.jquery_string_selector = jQuery( '#trp-string-categories' );
     this.change_tracker  = null;
     this.maybe_overflow_fix  = null;
@@ -72,10 +72,10 @@ function TRP_Editor(){
 
         _this.iframe_strings_lookup();
 
-        if ( trp_lister != null ) {
-            _this.jquery_string_selector.off( 'change', trp_lister.select_string );
+        if ( _this.trp_lister != null ) {
+            _this.jquery_string_selector.off( 'change', _this.trp_lister.select_string );
         }
-        trp_lister = new TRP_Lister( dictionaries[trp_on_screen_language] );
+        _this.trp_lister = new TRP_Lister( dictionaries[trp_on_screen_language] );
 
         if (  _this.change_tracker != null ) {
             _this.change_tracker.destroy();
@@ -156,7 +156,7 @@ function TRP_Editor(){
             },
             success: function (response) {
                 _this.populate_strings( response );
-                trp_lister.reload_list();
+                _this.trp_lister.reload_list();
                 _this.change_tracker = new TRP_Change_Tracker( _this.original_textarea, translated_textareas );
             },
             error: function(errorThrown){
@@ -378,7 +378,7 @@ function TRP_Editor(){
         }
 
         preview_container.css('right', width );
-        preview_container.css('left', ( width - 298 ) );
+        preview_container.css('left', ( width - 348 ) );
         preview_container.css('width', (total_width - width));
     }
 
@@ -409,7 +409,7 @@ function TRP_Editor(){
             if (  _this.change_tracker.check_unsaved_changes() ) {
                 return;
             }
-            next_option_value = jQuery( 'option:selected', _this.jquery_string_selector ).nextAll('option').first().attr('value');
+            next_option_value = jQuery('option:selected', _this.jquery_string_selector).nextAll('option').first().attr('value');
             if( typeof next_option_value != "undefined" && next_option_value != '' ) {
                 _this.jquery_string_selector.val(next_option_value).trigger('change');
             }
@@ -435,6 +435,13 @@ function TRP_Editor(){
         _this.jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option });
         jQuery( '#trp-language-select' ).select2();
         jQuery( '#trp-view-as-select' ).select2();
+
+        /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
+        _this.jquery_string_selector.on('select2:opening', function (e) {
+            if ( trpEditor.change_tracker.check_unsaved_changes() ) {
+                e.preventDefault();
+            }
+        });
     }
 
     /**
@@ -476,6 +483,16 @@ function TRP_Editor(){
         );
         return option;
     }
+
+    this.make_sure_pencil_icon_is_inside_view = function( jquery_object_highlighted ){
+        var rect = jquery_object_highlighted.getBoundingClientRect();
+        if (rect.left < 30 ){
+            var margin = - rect.left;
+            trpEditor.edit_translation_button[0].setAttribute( 'style', 'margin-left: ' + margin + 'px !important' );
+        }else{
+            trpEditor.edit_translation_button[0].removeAttribute( 'style' );
+        }
+    };
 
     add_event_handlers();
 }
@@ -684,7 +701,7 @@ function TRP_String( language, array_index ){
                     }else if( jquery_object.attr( 'data-trp-button' ) ){
                         jquery_object.children('button').text(text_to_set);
                     }else {
-                        jquery_object.text(text_to_set);
+                        jquery_object.html( text_to_set );
                     }
                 }
             }
@@ -730,8 +747,10 @@ function TRP_String( language, array_index ){
             _this.wrap_special_html_elements();
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
             jquery_object.prepend(trpEditor.edit_translation_button);
-
         }
+
+        trpEditor.make_sure_pencil_icon_is_inside_view( jquery_object[0] );
+
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click',  function(e){
             e.preventDefault();
@@ -806,6 +825,24 @@ function TRP_Lister( current_dictionary ) {
     var dictionary = current_dictionary;
     var category_array;
 
+    /*
+     * Save current selected option in the dropdown. Should be called before we make changes in the dropdown.
+     */
+    this.cache_selected_option = function(){
+        var selected_option = jQuery( 'option:selected', jquery_string_selector ).val();
+        if ( typeof selected_option != "undefined" && selected_option != "" ) {
+            cached_selected_option = selected_option;
+        }
+    };
+
+    /*
+     * Restore saved cached option. Should be called after we make changes in the dropdown. Otherwise the selected option will be changed to default.
+     */
+    this.set_cached_option = function(){
+        if ( typeof cached_selected_option != "undefined" && cached_selected_option != "" ){
+            jquery_string_selector.val( cached_selected_option );
+        }
+    };
 
     /**
      * A string has been selected from the list.
@@ -828,6 +865,8 @@ function TRP_Lister( current_dictionary ) {
      * Refresh list with new strings.
      */
     this.reload_list = function (){
+        _this.cache_selected_option();
+
         category_array = dictionary.get_categories();
         jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).prevAll(":not(.default-option)").remove();
         /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */
@@ -844,18 +883,23 @@ function TRP_Lister( current_dictionary ) {
                 }
             }
         }
-
         jquery_string_selector.on( 'change', _this.select_string );
+
+        _this.set_cached_option();
     };
 
 
     this.add_gettext_strings = function (){
+        _this.cache_selected_option();
+
         gettext_category = dictionary;
         jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).nextAll().remove();
         for ( var i in gettext_category){
             var original = gettext_category[i].original;
             jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).after(jQuery('<option></option>').attr( 'value', 'gettext-'+gettext_category[i].id ).text( _this.format_text( original )).attr( 'title', gettext_category[i].domain ).attr( 'data-trp-gettext-id', gettext_category[i].id ) );
         }
+
+        _this.set_cached_option();
     };
 
     /**
@@ -1157,6 +1201,7 @@ jQuery(function(){
             else {
                 jQuery(this).prepend(trpEditor.edit_translation_button);
             }
+            trpEditor.make_sure_pencil_icon_is_inside_view ( jQuery(this)[0] );
             trpEditor.edit_translation_button.off( 'click' );
             trpEditor.edit_translation_button.on( 'click', function(e){
                 e.preventDefault();

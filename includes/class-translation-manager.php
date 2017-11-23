@@ -31,7 +31,7 @@ class TRP_Translation_Manager{
      */
     protected function conditions_met( $mode = 'true' ){
         if ( isset( $_REQUEST['trp-edit-translation'] ) && esc_attr( $_REQUEST['trp-edit-translation'] ) == $mode ) {
-            if ( current_user_can( 'manage_options' ) && ! is_admin() ) {
+            if ( current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) && ! is_admin() ) {
                 return true;
             }elseif ( esc_attr( $_REQUEST['trp-edit-translation'] ) == "preview" ){
                 return true;
@@ -165,7 +165,7 @@ class TRP_Translation_Manager{
 
                     // necessary in order to obtain all the original strings
                     if ( $this->settings['default-language'] != $current_language ) {
-                        if ( current_user_can ( 'manage_options' ) ) {
+                        if ( current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
                             $this->translation_render->process_strings($original_array, $current_language);
                         }
                         $dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
@@ -194,7 +194,7 @@ class TRP_Translation_Manager{
                             if (empty($original_strings)) {
                                 $original_strings = $this->extract_original_strings($dictionaries[$current_language], $original_array, $id_array);
                             }
-                            if (current_user_can('manage_options')) {
+                            if (current_user_can(apply_filters( 'trp_translating_capability', 'manage_options' ))) {
                                 $this->translation_render->process_strings($original_strings, $language);
                             }
                             $dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
@@ -321,7 +321,7 @@ class TRP_Translation_Manager{
      */
     public function save_translations(){
 
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
                 $update_strings = array();
@@ -333,7 +333,7 @@ class TRP_Translation_Manager{
                                 array_push($update_strings[ $language ], array(
                                     'id' => (int)$string->id,
                                     'original' => sanitize_text_field($string->original),
-                                    'translated' => sanitize_text_field($string->translated),
+                                    'translated' => preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $string->translated ),
                                     'status' => (int)$string->status
                                 ));
 
@@ -357,7 +357,7 @@ class TRP_Translation_Manager{
     }
 
     public function gettext_save_translations(){
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_save_translations' && !empty($_POST['gettext_strings'])) {
                 $strings = json_decode(stripslashes($_POST['gettext_strings']));
                 $update_strings = array();
@@ -399,15 +399,14 @@ class TRP_Translation_Manager{
      * @param $wp_admin_bar
      */
     public function add_shortcut_to_translation_editor( $wp_admin_bar ) {
-
-        if( ! current_user_can( 'manage_options' ) ) {
+        if( ! current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             return;
         }
 
         if( is_admin () ) {
             $url = add_query_arg( 'trp-edit-translation', 'true', home_url() );
 
-            $title = __( 'Translate Site', TRP_PLUGIN_SLUG );
+            $title = __( 'Translate Site', 'translatepress-multilingual' );
             $url_target = '_blank';
         } else {
 
@@ -419,7 +418,7 @@ class TRP_Translation_Manager{
 	        $url = $this->url_converter->cur_page_url();
 	        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
 
-            $title = __( 'Translate Page', TRP_PLUGIN_SLUG );
+            $title = __( 'Translate Page', 'translatepress-multilingual' );
             $url_target = '';
         }
 
@@ -438,7 +437,7 @@ class TRP_Translation_Manager{
         $wp_admin_bar->add_node(
             array(
                 'id'        => 'trp_settings_page',
-                'title'     => __( 'Settings', TRP_PLUGIN_SLUG ),
+                'title'     => __( 'Settings', 'translatepress-multilingual' ),
                 'href'      => admin_url( 'options-general.php?page=translate-press' ),
                 'parent'    => 'trp_edit_translation',
                 'meta'      => array(
@@ -577,7 +576,7 @@ class TRP_Translation_Manager{
         if( count( $this->settings['publish-languages'] ) < 1 )
             return $translation;
 
-        if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
+        if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == 'translatepress-multilingual' )
             return $translation;
 
         /* for our own actions don't do nothing */
@@ -657,10 +656,18 @@ class TRP_Translation_Manager{
                         $callstack_function['function'] == 'wp_localize_script'||
                         $callstack_function['function'] == 'wp_print_media_templates' ||
                         $callstack_function['function'] == 'get_bloginfo' ||
-                        $callstack_function['function'] == 'wptexturize' 
+                        $callstack_function['function'] == 'wp_get_document_title' ||
+                        $callstack_function['function'] == 'wp_title' ||
+                        $callstack_function['function'] == 'wptexturize'
                     ) {
                         return $translation;
                     }
+                    
+                    /* make sure we don't touch the woocommerce permalink rewrite slugs that are translated */
+                    if( $callstack_function['function'] == 'wc_get_permalink_structure' ){
+                        return $translation;
+                    }
+
                 }
             }
 
@@ -774,6 +781,77 @@ class TRP_Translation_Manager{
             $tags['trp-gettext'] = array( 'data-trpgettextoriginal' => true );
         }
         return $tags;
+    }
+
+    /**
+     * make sure we remove the trp-gettext wrap from the format the date_i18n receives
+     * ideally if in the gettext filter we would know 100% that a string is a valid date format then we would not wrap it but it seems that it is not easy to determine that ( explore further in the future $d = DateTime::createFromFormat('Y', date('y a') method); )
+     */
+    function handle_date_i18n_function_for_gettext( $j, $dateformatstring, $unixtimestamp, $gmt ){
+
+        /* remove trp-gettext wrap */
+        $dateformatstring = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $dateformatstring );
+        $dateformatstring = preg_replace( '/(<|&lt;)(.?)\/trp-gettext(>|&gt;)/', '', $dateformatstring );
+
+
+        global $wp_locale;
+        $i = $unixtimestamp;
+
+        if ( false === $i ) {
+            $i = current_time( 'timestamp', $gmt );
+        }
+
+        if ( ( !empty( $wp_locale->month ) ) && ( !empty( $wp_locale->weekday ) ) ) {
+            $datemonth = $wp_locale->get_month( date( 'm', $i ) );
+            $datemonth_abbrev = $wp_locale->get_month_abbrev( $datemonth );
+            $dateweekday = $wp_locale->get_weekday( date( 'w', $i ) );
+            $dateweekday_abbrev = $wp_locale->get_weekday_abbrev( $dateweekday );
+            $datemeridiem = $wp_locale->get_meridiem( date( 'a', $i ) );
+            $datemeridiem_capital = $wp_locale->get_meridiem( date( 'A', $i ) );
+            $dateformatstring = ' '.$dateformatstring;
+            $dateformatstring = preg_replace( "/([^\\\])D/", "\\1" . backslashit( $dateweekday_abbrev ), $dateformatstring );
+            $dateformatstring = preg_replace( "/([^\\\])F/", "\\1" . backslashit( $datemonth ), $dateformatstring );
+            $dateformatstring = preg_replace( "/([^\\\])l/", "\\1" . backslashit( $dateweekday ), $dateformatstring );
+            $dateformatstring = preg_replace( "/([^\\\])M/", "\\1" . backslashit( $datemonth_abbrev ), $dateformatstring );
+            $dateformatstring = preg_replace( "/([^\\\])a/", "\\1" . backslashit( $datemeridiem ), $dateformatstring );
+            $dateformatstring = preg_replace( "/([^\\\])A/", "\\1" . backslashit( $datemeridiem_capital ), $dateformatstring );
+
+            $dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
+        }
+        $timezone_formats = array( 'P', 'I', 'O', 'T', 'Z', 'e' );
+        $timezone_formats_re = implode( '|', $timezone_formats );
+        if ( preg_match( "/$timezone_formats_re/", $dateformatstring ) ) {
+            $timezone_string = get_option( 'timezone_string' );
+            if ( $timezone_string ) {
+                $timezone_object = timezone_open( $timezone_string );
+                $date_object = date_create( null, $timezone_object );
+                foreach ( $timezone_formats as $timezone_format ) {
+                    if ( false !== strpos( $dateformatstring, $timezone_format ) ) {
+                        $formatted = date_format( $date_object, $timezone_format );
+                        $dateformatstring = ' '.$dateformatstring;
+                        $dateformatstring = preg_replace( "/([^\\\])$timezone_format/", "\\1" . backslashit( $formatted ), $dateformatstring );
+                        $dateformatstring = substr( $dateformatstring, 1, strlen( $dateformatstring ) -1 );
+                    }
+                }
+            }
+        }
+        $j = @date( $dateformatstring, $i );
+
+        return $j;
+        
+    }
+
+    /**
+     * Add the current language as a class to the body
+     * @param $classes
+     * @return array
+     */
+    public function add_language_to_body_class( $classes ){
+        global $TRP_LANGUAGE;
+        if( !empty( $TRP_LANGUAGE ) ){
+            $classes[] = 'translatepress-'.$TRP_LANGUAGE;
+        }
+        return $classes;
     }
     
     

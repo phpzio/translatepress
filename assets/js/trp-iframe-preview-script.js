@@ -10,6 +10,9 @@ function TRP_Iframe_Preview(){
      */
     this.initialize = function() {
         jQuery('a').each(function () {
+            // target parent brakes from the iframe so we're removing it entirely
+            jQuery(this).removeAttr('target');
+
             if( typeof this.href != "undefined" && this.href != '' ) {
                 if (this.action != '' && this.href.indexOf('void(0)') === -1) {
                     if (is_link_previewable(this) && !this.getAttribute('href').startsWith('#')) {

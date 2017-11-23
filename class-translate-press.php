@@ -38,8 +38,8 @@ class TRP_Translate_Press{
     public function __construct() {
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-        define( 'TRP_PLUGIN_SLUG', 'translatepress' );
-        define( 'TRP_PLUGIN_VERSION', '1.0.5' );
+        define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
+        define( 'TRP_PLUGIN_VERSION', '1.0.9' );
 
         $this->load_dependencies();
         $this->initialize_components();
@@ -128,6 +128,8 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp', $this->translation_render, 'start_output_buffer' );
         $this->loader->add_action( 'admin_init', $this->translation_render, 'start_output_buffer' );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );
+        $this->loader->add_filter( 'wp_redirect', $this->translation_render, 'force_preview_on_url_redirect', 99, 2 );
+        $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_preview_on_url_in_ajax' );
 
 
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
@@ -168,6 +170,8 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'attribute_escape', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
         /* we need to allow the trp-gettext tag in ksses functions */
         $this->loader->add_filter( 'wp_kses_allowed_html', $this->translation_manager, 'handle_kses_functions_for_gettext', 10 );
+        /* we need to treat the date_i18n function differently so we remove the gettext wraps */
+        $this->loader->add_filter( 'date_i18n', $this->translation_manager, 'handle_date_i18n_function_for_gettext', 1, 4 );
 
         /* define an update hook here */
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );
@@ -177,11 +181,24 @@ class TRP_Translate_Press{
         /* set up wp_mail hooks */
         $this->loader->add_filter( 'wp_mail', $this->translation_render, 'wp_mail_filter', 200 );
 
-        /* hide php errors and notice when we are storing strings in db */
+        /* hide php ors and notice when we are storing strings in db */
         $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
+<<<<<<< HEAD
 
         /* ?or init ? */
         $this->loader->add_action( 'parse_request', $this->translation_manager, 'trp_view_as_user' );
+=======
+        
+        /** 
+         * we need to modify the permalinks structure for woocommerce when we switch languages
+         * when woo registers post_types and taxonomies in the rewrite parameter of the function they change the slugs of the items (they are localized with _x )
+         * we can't flush the permalinks on every page load so we filter the rewrite_rules option 
+         */
+        $this->loader->add_filter( "option_rewrite_rules", $this->url_converter, 'woocommerce_filter_permalinks_on_other_languages' );
+
+        /* add to the body class the current language */
+        $this->loader->add_filter( "body_class", $this->translation_manager, 'add_language_to_body_class' );
+>>>>>>> bc3a7d6d974d83a24f92f8f6662981c5c61afff8
     }
 
     /**

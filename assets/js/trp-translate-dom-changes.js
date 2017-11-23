@@ -79,6 +79,7 @@ function TRP_Translator(){
                 }
                 if ( typeof parent.trpEditor !== 'undefined' ) {
                     parent.trpEditor.populate_strings( response );
+                    parent.trpEditor.trp_lister.reload_list();
                 }
             }
         }else{
