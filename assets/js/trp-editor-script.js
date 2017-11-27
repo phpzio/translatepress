@@ -32,8 +32,39 @@ function TRP_Editor(){
         var language = select.value;
         var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language + ']').first().attr('href');
         if ( link != undefined ){
+
+            /* pass on trp-view-as parameters to all links that also have preview parameter */
+            if( typeof URL == 'function' && window.location.href.search("trp-view-as=") >= 0 && window.location.href.search("trp-view-as-nonce=") >= 0 ){
+                var currentUrl = new URL(window.location.href);
+                jQuery(select.form).append('<input type="hidden" name="trp-view-as" value="'+currentUrl.searchParams.get("trp-view-as")+'"/>');
+                jQuery(select.form).append('<input type="hidden" name="trp-view-as-nonce" value="'+currentUrl.searchParams.get("trp-view-as-nonce")+'"/>');
+            }
+
             select.form.action = link;
             select.form.submit();
+        }
+    };
+
+    /**
+     * Change view as iframe source
+     *
+     * @param select           HTML Element Select with languages
+     */
+    this.change_view_as = function( select ){
+        var view_as = select.value;
+        var view_nonce = jQuery('option:selected', select).attr('data-view-as-nonce');
+        var current_link = document.getElementById("trp-preview-iframe").contentWindow.location.href;
+        current_link = current_link.replace( 'trp-edit-translation=true', 'trp-edit-translation=preview' );
+
+        /* remove maybe previously selected values */
+        current_link = _this.remove_url_parameter( current_link, 'trp-view-as' );
+        current_link = _this.remove_url_parameter( current_link, 'trp-view-as-nonce' );
+
+        if ( current_link != undefined ){
+            if( view_as == 'current_user' )
+                jQuery( '#trp-preview-iframe' ).attr('src', current_link );
+            else
+                jQuery( '#trp-preview-iframe' ).attr('src', current_link + '&trp-view-as=' + view_as + '&trp-view-as-nonce=' + view_nonce );
         }
     };
 
@@ -67,12 +98,15 @@ function TRP_Editor(){
         var location = document.getElementById("trp-preview-iframe").contentWindow.location.href;
         var close_url = location.replace( '&trp-edit-translation=preview', '' );
         close_url = close_url.replace( '?trp-edit-translation=preview', '?' );
-        if ( close_url[close_url.length -1] == '?' ){
-            close_url = close_url.slice(0, -1);
-        }
 
         /* remove the lang atribute from url. TODO maybe use this same method for trp-edit-translation ? */
         close_url = _this.remove_url_parameter( close_url, 'lang' );
+        close_url = _this.remove_url_parameter( close_url, 'trp-view-as' );
+        close_url = _this.remove_url_parameter( close_url, 'trp-view-as-nonce' );
+
+        if ( close_url[close_url.length -1] == '?' ){
+            close_url = close_url.slice(0, -1);
+        }
 
         close_button.attr( 'href', close_url );
         location = location.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' );
@@ -340,6 +374,40 @@ function TRP_Editor(){
     };
 
     /**
+     * Update url with query string.
+     *
+     */
+    this.update_query_string = function(key, value, url) {
+        if (!url) url = window.location.href;
+        var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+            hash;
+
+        if (re.test(url)) {
+            if (typeof value !== 'undefined' && value !== null)
+                return url.replace(re, '$1' + key + "=" + value + '$2$3');
+            else {
+                hash = url.split('#');
+                url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
+                if (typeof hash[1] !== 'undefined' && hash[1] !== null)
+                    url += '#' + hash[1];
+                return url;
+            }
+        }
+        else {
+            if (typeof value !== 'undefined' && value !== null ) {
+                var separator = url.indexOf('?') !== -1 ? '&' : '?';
+                hash = url.split('#');
+                url = hash[0] + separator + key + '=' + value;
+                if (typeof hash[1] !== 'undefined' && hash[1] !== null)
+                    url += '#' + hash[1];
+                return url;
+            }
+            else
+                return url;
+        }
+    };
+
+    /**
      * Resizing preview window.
      *
      * @param event
@@ -411,6 +479,7 @@ function TRP_Editor(){
         }
         _this.jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option });
         jQuery( '#trp-language-select' ).select2();
+        jQuery( '#trp-view-as-select' ).select2();
 
         /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
         _this.jquery_string_selector.on('select2:opening', function (e) {
