@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.9.0
-Stable tag: 1.0.9
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,14 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.1.0 =
+* Implemented View As "Logged out user" functionality so you can translate strings that show only for logged out users
+* Allow slug edit for default language
+* Fixed an issue with the dropdown of translation strings when there were unsaved changes and the dropdown disconected from the textarea
+* Prevent translate editor icon pencil to exit the translation iframe
+* Fixed translating via the next/prev buttons that reset the position in the translation string list
+* Refactor the way we are generating the language url for the language switcher when we don't have a variable available
 
 = 1.0.9 =
 * We now flush permalinks when saving the settings page to avoid getting 404 and 500 errors
