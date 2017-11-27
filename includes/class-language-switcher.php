@@ -324,7 +324,7 @@ class TRP_Language_Switcher{
                 $language_name = $language_names[$language_code];
 
 
-                //$items[$key]->url = $this->url_converter->get_url_for_language( $language_code );
+                $items[$key]->url = $this->url_converter->get_url_for_language( $language_code );
                 $items[$key]->title = '<span data-no-translation>';
                 if ( $menu_settings['flags'] ) {
                     $items[$key]->title .= $this->add_flag( $language_code, $language_name );
