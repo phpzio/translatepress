@@ -549,6 +549,13 @@ class TRP_Translation_Manager{
             $_REQUEST['trp-edit-translation'] = 'preview';
         }
 
+        if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && strpos( $referer, 'trp-view-as=' ) !== false && strpos( $referer, 'trp-view-as-nonce=' ) !== false ) {
+            $parts = parse_url($referer);
+            parse_str($parts['query'], $query);
+            $_REQUEST['trp-view-as'] = $query['trp-view-as'];
+            $_REQUEST['trp-view-as-nonce'] = $query['trp-view-as-nonce'];
+        }
+
         global $TRP_LANGUAGE;
         $trp = TRP_Translate_Press::get_trp_instance();
         $url_converter = $trp->get_component( 'url_converter' );
@@ -856,13 +863,11 @@ class TRP_Translation_Manager{
     
     
     public function trp_view_as_user(){
-        if( !is_admin() ) {
-            /* TODO CHECK WHAT HAPPENS IN AJAX CALLS, I THINK WE NEED TO SEND THE PARAMETERS THERE TOO */
+        if( !is_admin() || $this::is_ajax_on_frontend() ) {
             if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] === 'preview' && isset($_REQUEST['trp-view-as']) && isset($_REQUEST['trp-view-as-nonce'])) {
 
-                /* @TODO MAKE SURE TO NOT DISSALOW ADMINS WHEN TE FILTER IS APPLIED */
-                if( apply_filters( 'trp_allow_translator_role_to_view_page_as_other_roles', false ) ){
-                    $current_user_can_change_roles = current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) );
+                if( apply_filters( 'trp_allow_translator_role_to_view_page_as_other_roles', true ) ){
+                    $current_user_can_change_roles = current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) || current_user_can( 'manage_options' );
                 }
                 else{
                     $current_user_can_change_roles = current_user_can( 'manage_options' );

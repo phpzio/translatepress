@@ -185,7 +185,7 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
 
         /* ?or init ? hook here where you can change the $current_user global */
-        $this->loader->add_action( 'parse_request', $this->translation_manager, 'trp_view_as_user' );
+        $this->loader->add_action( 'init', $this->translation_manager, 'trp_view_as_user' );
         
         /** 
          * we need to modify the permalinks structure for woocommerce when we switch languages
