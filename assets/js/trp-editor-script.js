@@ -98,14 +98,15 @@ function TRP_Editor(){
         var location = document.getElementById("trp-preview-iframe").contentWindow.location.href;
         var close_url = location.replace( '&trp-edit-translation=preview', '' );
         close_url = close_url.replace( '?trp-edit-translation=preview', '?' );
-        if ( close_url[close_url.length -1] == '?' ){
-            close_url = close_url.slice(0, -1);
-        }
 
         /* remove the lang atribute from url. TODO maybe use this same method for trp-edit-translation ? */
         close_url = _this.remove_url_parameter( close_url, 'lang' );
         close_url = _this.remove_url_parameter( close_url, 'trp-view-as' );
         close_url = _this.remove_url_parameter( close_url, 'trp-view-as-nonce' );
+
+        if ( close_url[close_url.length -1] == '?' ){
+            close_url = close_url.slice(0, -1);
+        }
 
         close_button.attr( 'href', close_url );
         location = location.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' );
