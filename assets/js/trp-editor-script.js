@@ -477,9 +477,9 @@ function TRP_Editor(){
         if (placeholder_text != '') {
             placeholder_text = 'Select string to translate...';
         }
-        _this.jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option });
-        jQuery( '#trp-language-select' ).select2();
-        jQuery( '#trp-view-as-select' ).select2();
+        _this.jquery_string_selector.select2({ placeholder: placeholder_text, templateResult: format_option, width: '100%' });
+        jQuery( '#trp-language-select' ).select2({ width: '100%' });
+        jQuery( '#trp-view-as-select' ).select2({ width: '100%' });
 
         /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
         _this.jquery_string_selector.on('select2:opening', function (e) {
