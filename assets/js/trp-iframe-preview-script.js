@@ -93,3 +93,13 @@ var trp_preview_iframe;
 jQuery( function(){
     trp_preview_iframe = new TRP_Iframe_Preview();
 });
+
+/**
+ *   the startsWith method is not supported in IE so in that case we need to implement it
+ */
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position) {
+        position = position || 0;
+        return this.indexOf(searchString, position) === position;
+    };
+}
