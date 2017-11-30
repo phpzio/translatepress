@@ -489,10 +489,17 @@ class TRP_Translation_Render{
             $this->url_converter = $trp->get_component('url_converter');
         }
 
-        foreach( $html->find('a[href!="#"]') as $a_href)  {
+        // forcing links to have a proper URL slug doesn't work because we're applying the rules twice.
+        // since we use get_url_for_language() before outputing the actual HTML, this means we're doing twice. Once internally and then again in the dom parser.
+        // due to this, we can transform a URL twice, like for example in the language Switcher, where we are supposed to have url's without a language in them that point to the default
+        // in it's current form, we can not just ignore links from the switcher as we might be doing this in other places as well.
+        // so we need to rethink it. Best to comment this out until we refactor / rething this piece of code.
+
+        /*foreach( $html->find('a[href!="#"]') as $a_href)  {
             $url = $a_href->href;
             $is_external_link = $this->is_external_link( $url );
             $is_admin_link = $this->is_admin_link($url);
+
             if ( $this->settings['force-language-to-custom-links'] == 'yes' && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$is_admin_link ){
                 $a_href->href = apply_filters( 'trp_force_custom_links', $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $url ), $url, $TRP_LANGUAGE, $a_href );
                 $url = $a_href->href;
@@ -501,7 +508,7 @@ class TRP_Translation_Render{
             if( $preview_mode && ( $is_external_link || $this->is_different_language( $url ) || $is_admin_link ) ) {
                 $a_href->setAttribute( 'data-trp-unpreviewable', 'trp-unpreviewable' );
             }
-        }
+        }*/
 
 
         return $html->save();

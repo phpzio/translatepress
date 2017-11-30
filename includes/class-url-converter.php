@@ -123,10 +123,13 @@ class TRP_Url_Converter {
 
         // if we have the homepage, we replace it with the filtered homepage that contains the language url.
         if( $url == trailingslashit($this->get_abs_home()) ){
-            return home_url();
+            $TRP_LANGUAGE = $language;
+            $new_url = home_url();
+            $TRP_LANGUAGE = $trp_language_copy;
+            return $new_url;
         }
 
-        $url_slug = $this->get_url_slug( $language );
+
         if ( empty( $url ) && is_object( $post ) && is_singular() ) {
             // if we have a $post we need to run the language switcher through get_permalink so we apply the correct slug that can be different.
             $TRP_LANGUAGE = $language;
@@ -135,10 +138,17 @@ class TRP_Url_Converter {
         }else{
             // If no $post is set we simply replace the current language root with the new language root.
             $abs_home = trailingslashit( $this->get_abs_home() );
-            $current_language_root =  trailingslashit($abs_home . $this->get_url_slug( $TRP_LANGUAGE ));
-            $new_language_root =  trailingslashit($abs_home . $url_slug);
-            $new_url = trailingslashit( str_replace($current_language_root, $new_language_root, $url) );
+
+            $current_lang_root =  trailingslashit($abs_home . $this->get_url_slug( $TRP_LANGUAGE ));
+            $new_language_root =  trailingslashit($abs_home . $this->get_url_slug( $language ) );
+
+            if( $this->get_lang_from_url_string($url) === null ){
+                $new_url = trailingslashit( str_replace($abs_home, $new_language_root, $url) );
+            } else {
+                $new_url = trailingslashit(str_replace($current_lang_root, $new_language_root, $url));
+            }
         }
+
         
         /* fix links for woocommerce on language switcher for product categories and product tags */
         if( class_exists( 'WooCommerce' ) ){
