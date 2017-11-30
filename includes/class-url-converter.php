@@ -210,26 +210,6 @@ class TRP_Url_Converter {
     }
 
     /**
-     * Get first subdirectory of url.
-     *
-     * @param string $url           Url to find subdirectory from.
-     * @return string               Subdirectory found.
-     */
-    protected function strip_subdir_from_url( $url ) {
-        $subdir       = parse_url( $this->get_abs_home(), PHP_URL_PATH );
-        $subdir_slugs = array_values( array_filter( explode( '/', $subdir ) ) );
-
-        $url_path_expl = explode( '/', preg_replace( '#^(http|https)://#', '', $url ) );
-        array_shift( $url_path_expl );
-        $url_slugs        = array_values( array_filter( $url_path_expl ) );
-        $url_slugs_before = $url_slugs;
-        $url_slugs        = array_diff_assoc( $url_slugs, $subdir_slugs );
-        $url              = str_replace( '/' . join( '/', $url_slugs_before ), '/' . join( '/', $url_slugs ), $url );
-
-        return untrailingslashit( $url );
-    }
-
-    /**
      * Return the language code from the url.
      *
      * Uses current url if none given.
