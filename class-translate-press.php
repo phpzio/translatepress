@@ -182,7 +182,7 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'wp_mail', $this->translation_render, 'wp_mail_filter', 200 );
 
         /* hide php ors and notice when we are storing strings in db */
-        $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
+        //$this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
 
         /* ?or init ? hook here where you can change the $current_user global */
         $this->loader->add_action( 'init', $this->translation_manager, 'trp_view_as_user' );
