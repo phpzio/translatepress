@@ -222,6 +222,8 @@ class TRP_Url_Converter {
             $url = $this->cur_page_url();
         }
 
+        // we remove http or https
+        // if the user links to a http link but the abs_home_url is https, we're serving the https one so we don't brake cookies if he doesn't have proper redirects
         $lang = preg_replace( '#^(http|https)://#', '', $url );
         $abs_home = preg_replace( '#^(http|https)://#', '', $this->get_abs_home() );
 
@@ -238,7 +240,7 @@ class TRP_Url_Converter {
         $lang = $lang[0];
 
         // the lang slug != actual lang. So we need to do array_search so we don't end up with en instead of en_US
-        if( in_array($lang, $this->settings['url-slugs']) ){
+        if( isset($this->settings['url-slugs']) && in_array($lang, $this->settings['url-slugs']) ){
             return array_search($lang, $this->settings['url-slugs']);
         } else {
             return null;
