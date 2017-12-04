@@ -109,17 +109,24 @@ class TRP_Url_Converter {
      * @param string $url           Url to encode.
      * @return string
      */
-    public function get_url_for_language ( $language = null, $url = null ) {
+    public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
         global $post, $TRP_LANGUAGE;
-        // we're appending this string to the end of each processed link so we don't process them again in the render class.
+
+        // we're appending $trp_link_is_processed string to the end of each processed link so we don't process them again in the render class.
         // we're stripping this from each url in the render class
-        $trp_link_is_processed = '#TRPLINKPROCESSED';
+        // $trp_link_is_processed is part of the function params so we can pass an empty link in case we need get_url_for_language() in other places that don't go through the render.
+        // since the render doesn't work on the default language, we're striping the processed tag.
+        if( $TRP_LANGUAGE == $this->settings['default-language'] ){
+            $trp_link_is_processed = '';
+        }
 
         $trp_language_copy = $TRP_LANGUAGE;
 
         if ( empty( $language ) ) {
             $language = $TRP_LANGUAGE;
         }
+
+
 
         if ( empty( $url ) ) {
             $url = trailingslashit($this->cur_page_url());
