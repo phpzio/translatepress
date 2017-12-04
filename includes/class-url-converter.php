@@ -111,6 +111,10 @@ class TRP_Url_Converter {
      */
     public function get_url_for_language ( $language = null, $url = null ) {
         global $post, $TRP_LANGUAGE;
+        // we're appending this string to the end of each processed link so we don't process them again in the render class.
+        // we're stripping this from each url in the render class
+        $trp_link_is_processed = '#TRPLINKPROCESSED';
+
         $trp_language_copy = $TRP_LANGUAGE;
 
         if ( empty( $language ) ) {
@@ -126,7 +130,7 @@ class TRP_Url_Converter {
             $TRP_LANGUAGE = $language;
             $new_url = home_url();
             $TRP_LANGUAGE = $trp_language_copy;
-            return $new_url;
+            return $new_url . $trp_link_is_processed;
         }
 
 
@@ -167,7 +171,7 @@ class TRP_Url_Converter {
             $new_url = $url;
         }
 
-        return untrailingslashit( $new_url );
+        return untrailingslashit( $new_url . $trp_link_is_processed );
     }
 
     /**
