@@ -178,7 +178,7 @@ class TRP_Url_Converter {
             $new_url = $url;
         }
 
-        return untrailingslashit( $new_url . $trp_link_is_processed );
+        return untrailingslashit( $new_url ) . $trp_link_is_processed ;
     }
 
     /**
