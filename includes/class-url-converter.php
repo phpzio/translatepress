@@ -127,13 +127,12 @@ class TRP_Url_Converter {
         }
 
 
-
         if ( empty( $url ) ) {
-            $url = trailingslashit($this->cur_page_url());
+            $url = $this->cur_page_url();
         }
 
         // if we have the homepage, we replace it with the filtered homepage that contains the language url.
-        if( $url == trailingslashit($this->get_abs_home()) ){
+        if( trailingslashit($url)== trailingslashit($this->get_abs_home()) ){
             $TRP_LANGUAGE = $language;
             $new_url = home_url();
             $TRP_LANGUAGE = $trp_language_copy;
