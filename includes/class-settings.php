@@ -22,11 +22,11 @@ class TRP_Settings{
      */
     public function get_language_switcher_options(){
         $ls_options = apply_filters( 'trp_language_switcher_output', array(
-            'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', TRP_PLUGIN_SLUG ) ),
-            'short-names'       => array( 'full_names'  => false, 'short_names'  => true, 'flags' => false, 'label' => __( 'Short Language Names', TRP_PLUGIN_SLUG ) ),
-            'flags-full-names'  => array( 'full_names'  => true, 'short_names'  => false, 'flags' => true, 'label' => __( 'Flags with Full Language Names', TRP_PLUGIN_SLUG ) ),
-            'flags-short-names' => array( 'full_names'  => false, 'short_names'  => true, 'flags' => true, 'label' => __( 'Flags with Short Language Names', TRP_PLUGIN_SLUG ) ),
-            'only-flags'        => array( 'full_names'  => false, 'short_names'  => false, 'flags' => true, 'label' => __( 'Only Flags', TRP_PLUGIN_SLUG ) ),
+            'full-names'        => array( 'full_names'  => true, 'short_names'  => false, 'flags' => false, 'label' => __( 'Full Language Names', 'translatepress-multilingual' ) ),
+            'short-names'       => array( 'full_names'  => false, 'short_names'  => true, 'flags' => false, 'label' => __( 'Short Language Names', 'translatepress-multilingual' ) ),
+            'flags-full-names'  => array( 'full_names'  => true, 'short_names'  => false, 'flags' => true, 'label' => __( 'Flags with Full Language Names', 'translatepress-multilingual' ) ),
+            'flags-short-names' => array( 'full_names'  => false, 'short_names'  => true, 'flags' => true, 'label' => __( 'Flags with Short Language Names', 'translatepress-multilingual' ) ),
+            'only-flags'        => array( 'full_names'  => false, 'short_names'  => false, 'flags' => true, 'label' => __( 'Only Flags', 'translatepress-multilingual' ) ),
         ) );
         return $ls_options;
     }
@@ -223,6 +223,9 @@ class TRP_Settings{
 
         $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );
 
+        // regenerate permalinks in case something changed
+        flush_rewrite_rules();
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -248,8 +251,8 @@ class TRP_Settings{
         }
         $default_settings = array(
             'default-language'                      => $default,
-            'translation-languages'                 => array( $default ),
-            'publish-languages'                     => array( $default ),
+            'translation-languages'                 => array( $default, '' ),
+            'publish-languages'                     => array( $default, '' ),
             'native_or_english_name'                => 'english_name',
             'add-subdirectory-to-default-language'  => 'no',
             'force-language-to-custom-links'        => 'no',
@@ -258,7 +261,7 @@ class TRP_Settings{
             'shortcode-options'                     => 'flags-full-names',
             'menu-options'                          => 'flags-full-names',
             'floater-options'                       => 'flags-full-names',
-            'url-slugs'                             => array( 'en_US' => 'en' ),
+            'url-slugs'                             => array( 'en_US' => 'en', '' ),
         );
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
@@ -270,9 +273,7 @@ class TRP_Settings{
                 }
             }
             $settings_option = $this->check_settings_option( $settings_option, $default_settings );
-
         }
-
         $this->settings = $settings_option;
     }
 
@@ -292,17 +293,18 @@ class TRP_Settings{
         }
 
         if ( $hook == 'settings_page_translate-press' ) {
-            wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
+            wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery', 'jquery-ui-sortable' ), TRP_PLUGIN_VERSION );
             if ( ! $this->trp_languages ){
                 $trp = TRP_Translate_Press::get_trp_instance();
                 $this->trp_languages = $trp->get_component( 'languages' );
             }
             $all_language_codes = $this->trp_languages->get_all_language_codes();
             $iso_codes = $this->trp_languages->get_iso_codes( $all_language_codes, false );
-            wp_localize_script( 'trp-settings-script', 'trp_iso_codes', $iso_codes );
+            wp_localize_script( 'trp-settings-script', 'trp_url_slugs_info', array( 'iso_codes' => $iso_codes, 'error_message_duplicate_slugs' => __( 'Error! Duplicate Url slug values.', TRP_PLUGIN_SLUG ) ) );
 
             wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
             wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
+
         }
     }
 
@@ -319,66 +321,20 @@ class TRP_Settings{
             $this->url_converter = $trp->get_component('url_converter');
         }
         $selected_language_code = '';
-        ?>
-        <tr>
-            <th scope="row"> <?php _e( 'Translation Language', TRP_PLUGIN_SLUG ) ?> </th>
-            <td>
-                <select id="trp-translation-language" name="trp_settings[translation-languages][]" class="trp-select2">
-                    <option value=""><?php _e( 'Choose...', TRP_PLUGIN_SLUG );?></option>
-                    <?php foreach( $languages as $language_code => $language_name ){ ?>
-                    <option value="<?php echo $language_code; ?>" <?php if ( in_array( $language_code, $this->settings['translation-languages'] ) && $language_code != $this->settings['default-language'] ) { echo 'selected'; $selected_language_code = $language_code; } ?>>
-                        <?php echo $language_name; ?>
-                    </option>
-                <?php }?>
-                </select>
-                <label>
-                    <span id="trp-published-language"><b><?php _e( 'Slug', TRP_PLUGIN_SLUG ); ?></b></span>
-                    <input id="trp-url-slug" class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" style="text-transform: lowercase;" value="<?php echo $this->url_converter->get_url_slug( $selected_language_code, false ); ?>">
-                    <input id="trp-active-checkbox" type="hidden" class="trp-translation-published " name="trp_settings[publish-languages][]" value="<?php echo $selected_language_code; ?>" >
-                </label>
-                <p class="description">
-                    <?php _e( 'Select the language you wish to make your website available in.<br>To select multiple languages, consider upgrading to <a href="https://translatepress.com/" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>.', TRP_PLUGIN_SLUG ); ?>
-                </p>
-            </td>
-        </tr>
-        <?php
+
+        require_once TRP_PLUGIN_DIR . 'partials/main-settings-language-selector.php';
     }
 
     /**
      * Validate settings option.
      *
+     * @deprecated
      * @param array $settings               Settings option.
      * @param array $default_settings       Default settings option.
      * @return array                        Validated settings option.
      */
     public function check_settings_option( $settings, $default_settings ){
-        if ( class_exists( 'TRP_Extra_Languages' ) ){
-            // checks are made in the Add-on later
             return $settings;
-        }
-        foreach ( $settings['translation-languages'] as $language_code ) {
-            if ( $settings['default-language'] != $language_code ) {
-                $translation_language = $language_code;
-                break;
-            }
-        }
-        $settings['translation-languages'] = array( $settings['default-language'] );
-        if ( !empty( $translation_language ) ){
-            $settings['translation-languages'][] = $translation_language;
-        }
-
-        foreach ( $settings['publish-languages'] as $language_code ) {
-            if ( $settings['default-language'] != $language_code ) {
-                $translation_language = $language_code;
-                break;
-            }
-        }
-        $settings['publish-languages'] = array( $settings['default-language'] );
-        if ( !empty( $translation_language ) ){
-            $settings['publish-languages'][] = $translation_language;
-        }
-
-        return $settings;
     }
 
     /**
@@ -392,7 +348,7 @@ class TRP_Settings{
             $this->trp_languages = $trp->get_component( 'languages' );
         }
         $published_languages = $this->trp_languages->get_language_names( $languages, 'english_name' );
-        $published_languages['current_language'] = __( 'Current Language', TRP_PLUGIN_SLUG );
+        $published_languages['current_language'] = __( 'Current Language', 'translatepress-multilingual' );
         $languages[] = 'current_language';
         $posts = get_posts( array( 'post_type' =>'language_switcher',  'posts_per_page'   => -1  ) );
 
@@ -433,12 +389,12 @@ class TRP_Settings{
     public function add_navigation_tabs(){
         $tabs = apply_filters( 'trp_settings_tabs', array(
             array(
-                'name'  => __( 'General', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'General', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'options-general.php?page=translate-press' ),
                 'page'  => 'translate-press'
             ),
             array(
-                'name'  => __( 'Translate Site', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'Translate Site', 'translatepress-multilingual' ),
                 'url'   => add_query_arg( 'trp-edit-translation', 'true', home_url() ),
                 'page'  => 'trp_translation_editor'
             )
@@ -446,14 +402,14 @@ class TRP_Settings{
 
         if( class_exists('TRP_LICENSE_PAGE') ) {
             $tabs[] = array(
-                'name'  => __( 'License', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'License', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'admin.php?page=trp_license_key' ),
                 'page'  => 'trp_license_key'
             );
         }
         else{
             $tabs[] = array(
-                'name'  => __( 'Addons', TRP_PLUGIN_SLUG ),
+                'name'  => __( 'Addons', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
                 'page'  => 'trp_addons_page'
             );

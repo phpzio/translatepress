@@ -33,6 +33,8 @@ class TRP_Translation_Manager{
         if ( isset( $_REQUEST['trp-edit-translation'] ) && esc_attr( $_REQUEST['trp-edit-translation'] ) == $mode ) {
             if ( current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) && ! is_admin() ) {
                 return true;
+            }elseif ( esc_attr( $_REQUEST['trp-edit-translation'] ) == "preview" ){
+                return true;
             }else{
                 wp_die(
                     '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
@@ -402,9 +404,9 @@ class TRP_Translation_Manager{
         }
 
         if( is_admin () ) {
-            $url = add_query_arg( 'trp-edit-translation', 'true', home_url() );
+            $url = add_query_arg( 'trp-edit-translation', 'true', trailingslashit( home_url() ) );
 
-            $title = __( 'Translate Site', TRP_PLUGIN_SLUG );
+            $title = __( 'Translate Site', 'translatepress-multilingual' );
             $url_target = '_blank';
         } else {
 
@@ -414,9 +416,9 @@ class TRP_Translation_Manager{
 	        }
 
 	        $url = $this->url_converter->cur_page_url();
-	        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
+	        $url = add_query_arg( 'trp-edit-translation', 'true', trailingslashit( $url ) );
 
-            $title = __( 'Translate Page', TRP_PLUGIN_SLUG );
+            $title = __( 'Translate Page', 'translatepress-multilingual' );
             $url_target = '';
         }
 
@@ -435,7 +437,7 @@ class TRP_Translation_Manager{
         $wp_admin_bar->add_node(
             array(
                 'id'        => 'trp_settings_page',
-                'title'     => __( 'Settings', TRP_PLUGIN_SLUG ),
+                'title'     => __( 'Settings', 'translatepress-multilingual' ),
                 'href'      => admin_url( 'options-general.php?page=translate-press' ),
                 'parent'    => 'trp_edit_translation',
                 'meta'      => array(
@@ -547,6 +549,13 @@ class TRP_Translation_Manager{
             $_REQUEST['trp-edit-translation'] = 'preview';
         }
 
+        if( strpos( $referer, 'trp-edit-translation=preview' ) !== false && strpos( $referer, 'trp-view-as=' ) !== false && strpos( $referer, 'trp-view-as-nonce=' ) !== false ) {
+            $parts = parse_url($referer);
+            parse_str($parts['query'], $query);
+            $_REQUEST['trp-view-as'] = $query['trp-view-as'];
+            $_REQUEST['trp-view-as-nonce'] = $query['trp-view-as-nonce'];
+        }
+
         global $TRP_LANGUAGE;
         $trp = TRP_Translate_Press::get_trp_instance();
         $url_converter = $trp->get_component( 'url_converter' );
@@ -574,7 +583,7 @@ class TRP_Translation_Manager{
         if( count( $this->settings['publish-languages'] ) < 1 )
             return $translation;
 
-        if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == TRP_PLUGIN_SLUG )
+        if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == 'translatepress-multilingual' )
             return $translation;
 
         /* for our own actions don't do nothing */
@@ -837,6 +846,52 @@ class TRP_Translation_Manager{
 
         return $j;
         
+    }
+
+    /**
+     * Add the current language as a class to the body
+     * @param $classes
+     * @return array
+     */
+    public function add_language_to_body_class( $classes ){
+        global $TRP_LANGUAGE;
+        if( !empty( $TRP_LANGUAGE ) ){
+            $classes[] = 'translatepress-'.$TRP_LANGUAGE;
+        }
+        return $classes;
+    }
+    
+    
+    public function trp_view_as_user(){
+        if( !is_admin() || $this::is_ajax_on_frontend() ) {
+            if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] === 'preview' && isset($_REQUEST['trp-view-as']) && isset($_REQUEST['trp-view-as-nonce'])) {
+
+                if( apply_filters( 'trp_allow_translator_role_to_view_page_as_other_roles', true ) ){
+                    $current_user_can_change_roles = current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) || current_user_can( 'manage_options' );
+                }
+                else{
+                    $current_user_can_change_roles = current_user_can( 'manage_options' );
+                }
+
+                if ( $current_user_can_change_roles ) {
+                    if ( ! wp_verify_nonce( $_REQUEST['trp-view-as-nonce'], 'trp_view_as'. sanitize_text_field( $_REQUEST['trp-view-as'] ) . get_current_user_id() ) ) {
+                        wp_die( __( 'Security check', 'translatepress-multilingual' ) );
+                    } else {
+                        global $current_user;
+                        $view_as = sanitize_text_field( $_REQUEST['trp-view-as'] );
+                        if( $view_as === 'current_user' ){
+                            return;
+                        }
+                        elseif ( $view_as === 'logged_out' ){
+                            $current_user = new WP_User(0, 'trp_logged_out');
+                        }
+                        else{
+                            $current_user = apply_filters( 'trp_temporary_change_current_user_role', $current_user, $view_as );
+                        }
+                    }
+                }
+            }
+        }
     }
     
 }

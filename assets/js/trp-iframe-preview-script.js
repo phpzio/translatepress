@@ -17,6 +17,13 @@ function TRP_Iframe_Preview(){
                 if (this.action != '' && this.href.indexOf('void(0)') === -1) {
                     if (is_link_previewable(this) && !this.getAttribute('href').startsWith('#')) {
                         this.href = update_query_string('trp-edit-translation', 'preview', this.getAttribute('href'));
+                        /* pass on trp-view-as parameters to all links that also have preview parameter */
+                        if( typeof URL == 'function' && window.location.href.search("trp-view-as=") >= 0 && window.location.href.search("trp-view-as-nonce=") >= 0 ){
+                            var currentUrl = new URL(window.location.href);
+                            this.href = update_query_string('trp-view-as', currentUrl.searchParams.get("trp-view-as"), this.href);
+                            this.href = update_query_string('trp-view-as-nonce', currentUrl.searchParams.get("trp-view-as-nonce"), this.href);
+                        }
+
                     } else {
                         jQuery(this).on('click',
                             function (event) {
@@ -86,3 +93,13 @@ var trp_preview_iframe;
 jQuery( function(){
     trp_preview_iframe = new TRP_Iframe_Preview();
 });
+
+/**
+ *   the startsWith method is not supported in IE so in that case we need to implement it
+ */
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position) {
+        position = position || 0;
+        return this.indexOf(searchString, position) === position;
+    };
+}

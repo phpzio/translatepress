@@ -91,7 +91,6 @@ class TRP_Language_Switcher{
         wp_enqueue_script('trp-language-switcher', TRP_PLUGIN_URL . 'assets/js/trp-language-switcher.js', array('jquery'), TRP_PLUGIN_VERSION );
 
         if ( isset( $this->settings['trp-ls-floater'] ) && $this->settings['trp-ls-floater'] == 'yes' ) {
-            wp_enqueue_script('trp-floater-language-switcher-script', TRP_PLUGIN_URL . 'assets/js/trp-floater-language-switcher.js', array('jquery'), TRP_PLUGIN_VERSION );
             wp_enqueue_style('trp-floater-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-floater-language-switcher.css', array(), TRP_PLUGIN_VERSION );
         }
 
@@ -216,7 +215,7 @@ class TRP_Language_Switcher{
                     }
 
                     ?>
-                    <a href="javascript:void(0)" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?> title="<?php echo $name; ?>" onclick="trp_floater_change_language( '<?php echo $code; ?>' )"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
+                    <a href="<?php echo $this->url_converter->get_url_for_language($code, false); ?>" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?> title="<?php echo $name; ?>"><?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo $language_label; ?></a>
                 <?php
                 }
                 ?>

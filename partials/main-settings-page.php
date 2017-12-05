@@ -2,12 +2,12 @@
 <div id="trp-main-settings" class="wrap">
     <form method="post" action="options.php">
         <?php settings_fields( 'trp_settings' ); ?>
-        <h1> <?php _e( 'TranslatePress Settings', TRP_PLUGIN_SLUG );?></h1>
+        <h1> <?php _e( 'TranslatePress Settings', 'translatepress-multilingual' );?></h1>
         <?php do_action ( 'trp_settings_navigation_tabs' ); ?>
 
         <table id="trp-options" class="form-table">
             <tr>
-                <th scope="row"><?php _e( 'Default Language', TRP_PLUGIN_SLUG ); ?> </th>
+                <th scope="row"><?php _e( 'Default Language', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <select id="trp-default-language" name="trp_settings[default-language]" class="trp-select2">
                         <?php
@@ -18,7 +18,7 @@
                         <?php }?>
                     </select>
                     <p class="description">
-                        <?php _e( 'Select the original language your website was written in. ', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Select the original language your website was written in. ', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
@@ -26,97 +26,97 @@
             <?php do_action( 'trp_language_selector', $languages ); ?>
 
             <tr>
-                <th scope="row"><?php _e( 'Native language name', TRP_PLUGIN_SLUG ); ?> </th>
+                <th scope="row"><?php _e( 'Native language name', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[native_or_english_name]" class="trp-select">
-                        <option value="english_name" <?php selected( $this->settings['native_or_english_name'], 'english_name' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
-                        <option value="native_name" <?php selected( $this->settings['native_or_english_name'], 'native_name' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="english_name" <?php selected( $this->settings['native_or_english_name'], 'english_name' ); ?>><?php _e( 'No', 'translatepress-multilingual') ?></option>
+                        <option value="native_name" <?php selected( $this->settings['native_or_english_name'], 'native_name' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Select Yes if you want languages to display in their native names. Otherwise, they will be displayed in English.', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Select Yes if you want languages to display in their native names. Otherwise, they will be displayed in English.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
 
             <tr>
-                <th scope="row"><?php _e( 'Use subdirectory for default language', TRP_PLUGIN_SLUG ); ?> </th>
+                <th scope="row"><?php _e( 'Use subdirectory for default language', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[add-subdirectory-to-default-language]" class="trp-select">
-                        <option value="no" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
-                        <option value="yes" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="no" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'no' ); ?>><?php _e( 'No', 'translatepress-multilingual') ?></option>
+                        <option value="yes" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Select Yes if you want to add the subdirectory in the url for the default language.', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Select Yes if you want to add the subdirectory in the url for the default language.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
 
             <tr>
-                <th scope="row"><?php _e( 'Force language in custom links', TRP_PLUGIN_SLUG ); ?> </th>
+                <th scope="row"><?php _e( 'Force language in custom links', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[force-language-to-custom-links]" class="trp-select">
-                        <option value="no" <?php selected( $this->settings['force-language-to-custom-links'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
-                        <option value="yes" <?php selected( $this->settings['force-language-to-custom-links'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="no" <?php selected( $this->settings['force-language-to-custom-links'], 'no' ); ?>><?php _e( 'No', 'translatepress-multilingual') ?></option>
+                        <option value="yes" <?php selected( $this->settings['force-language-to-custom-links'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Select Yes if you want to force custom links without language encoding to  add the subdirectory in the url for the default language.', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Select Yes if you want to force custom links without language encoding to  add the subdirectory in the url for the default language.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
 
             <tr>
-                <th scope="row"><?php _e( 'Google Translate', TRP_PLUGIN_SLUG ); ?> </th>
+                <th scope="row"><?php _e( 'Google Translate', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <select id="trp-g-translate" name="trp_settings[g-translate]" class="trp-select">
-                        <option value="no" <?php selected( $this->settings['g-translate'], 'no' ); ?>><?php _e( 'No', TRP_PLUGIN_SLUG) ?></option>
-                        <option value="yes" <?php selected( $this->settings['g-translate'], 'yes' ); ?>><?php _e( 'Yes', TRP_PLUGIN_SLUG) ?></option>
+                        <option value="no" <?php selected( $this->settings['g-translate'], 'no' ); ?>><?php _e( 'No', 'translatepress-multilingual') ?></option>
+                        <option value="yes" <?php selected( $this->settings['g-translate'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Enable or disable the automatic translation of the site with Google Translate. Only untranslated strings will receive a translation.<br>You can later edit these automatic translations.<br>Note: Not all languages support automatic translation. Please consult the <a href="https://cloud.google.com/translate/docs/languages" target="_blank" title="Automatic translation supported languages.">supported languages list</a>. ', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Enable or disable the automatic translation of the site with Google Translate. Only untranslated strings will receive a translation.<br>You can later edit these automatic translations.<br>Note: Not all languages support automatic translation. Please consult the <a href="https://cloud.google.com/translate/docs/languages" target="_blank" title="Automatic translation supported languages.">supported languages list</a>. ', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
 
             <tr>
-                <th scope="row"><?php _e( 'Google Translate API Key', TRP_PLUGIN_SLUG ); ?> </th>
+                <th scope="row"><?php _e( 'Google Translate API Key', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <input type="text" id="trp-g-translate-key" class="trp-text-input" name="trp_settings[g-translate-key]" value="<?php if( !empty( $this->settings['g-translate-key'] ) ) echo esc_attr( $this->settings['g-translate-key']);?>"/>
-                    <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="'.admin_url( 'admin.php?page=trp_test_google_key_page' ).'">'.__( "Test api key.", TRP_PLUGIN_SLUG );'.</a>'; ?>
+                    <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="'.admin_url( 'admin.php?page=trp_test_google_key_page' ).'">'.__( "Test api key.", 'translatepress-multilingual' );'.</a>'; ?>
                     <p class="description">
-                        <?php _e( 'Visit this <a href="https://support.google.com/cloud/answer/6158862" target="_blank">link</a> to see how you can set up an API key. ', TRP_PLUGIN_SLUG ); ?>
+                        <?php _e( 'Visit this <a href="https://support.google.com/cloud/answer/6158862" target="_blank">link</a> to see how you can set up an API key. ', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
 
             </tr>
 
             <tr>
-                <th scope="row"><?php _e( 'Language Switcher', TRP_PLUGIN_SLUG ); ?> </th>
+                <th scope="row"><?php _e( 'Language Switcher', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <div class="trp-ls-type">
-                        <input type="checkbox" disabled checked id="trp-ls-shortcode" ><b><?php _e( 'Shortcode ', TRP_PLUGIN_SLUG ); ?>[language-switcher] </b>
+                        <input type="checkbox" disabled checked id="trp-ls-shortcode" ><b><?php _e( 'Shortcode ', 'translatepress-multilingual' ); ?>[language-switcher] </b>
                         <div>
                             <?php $this->output_language_switcher_select( 'shortcode-options', $this->settings['shortcode-options'] ); ?>
                         </div>
                         <p class="description">
-                            <?php _e( 'Use shortcode on any page or widget.', TRP_PLUGIN_SLUG ); ?>
+                            <?php _e( 'Use shortcode on any page or widget.', 'translatepress-multilingual' ); ?>
                         </p>
                     </div>
                     <div class="trp-ls-type">
-                        <label><input type="checkbox" id="trp-ls-menu" disabled checked ><b><?php _e( 'Menu item', TRP_PLUGIN_SLUG ); ?></b></label>
+                        <label><input type="checkbox" id="trp-ls-menu" disabled checked ><b><?php _e( 'Menu item', 'translatepress-multilingual' ); ?></b></label>
                         <div>
                             <?php $this->output_language_switcher_select( 'menu-options', $this->settings['menu-options'] ); ?>
                         </div>
                         <p class="description">
-                            <?php _e( 'Go to Appearance -> Menus to add Language Switcher Languages in any menu.', TRP_PLUGIN_SLUG ); ?>
+                            <?php _e( 'Go to Appearance -> Menus to add Language Switcher Languages in any menu.', 'translatepress-multilingual' ); ?>
                         </p>
                     </div>
                     <div class="trp-ls-type">
-                        <label><input type="checkbox" id="trp-ls-floater" name="trp_settings[trp-ls-floater]"  value="yes"  <?php if ( isset($this->settings['trp-ls-floater']) && ( $this->settings['trp-ls-floater'] == 'yes' ) ){ echo 'checked'; }  ?>><b><?php _e( 'Floating language selection', TRP_PLUGIN_SLUG ); ?></b></label>
+                        <label><input type="checkbox" id="trp-ls-floater" name="trp_settings[trp-ls-floater]"  value="yes"  <?php if ( isset($this->settings['trp-ls-floater']) && ( $this->settings['trp-ls-floater'] == 'yes' ) ){ echo 'checked'; }  ?>><b><?php _e( 'Floating language selection', 'translatepress-multilingual' ); ?></b></label>
                         <div>
                             <?php $this->output_language_switcher_select( 'floater-options', $this->settings['floater-options'] ); ?>
                         </div>
                         <p class="description">
-                            <?php _e( 'Have a floating dropdown following the user on every page.', TRP_PLUGIN_SLUG ); ?>
+                            <?php _e( 'Have a floating dropdown following the user on every page.', 'translatepress-multilingual' ); ?>
                         </p>
                     </div>
                 </td>

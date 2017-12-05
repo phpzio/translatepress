@@ -24,6 +24,6 @@ if( $shortcode_settings['flags'] && ! $shortcode_settings['full_names'] && ! $sh
             </option>
             <?php } ?>
         </select>
-        <noscript><input type="submit" value="<?php _e( 'Change', TRP_PLUGIN_SLUG );?>"></noscript>
+        <noscript><input type="submit" value="<?php _e( 'Change', 'translatepress-multilingual' );?>"></noscript>
     </form>
 </div>
