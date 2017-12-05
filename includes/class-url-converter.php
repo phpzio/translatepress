@@ -148,16 +148,18 @@ class TRP_Url_Converter {
             $TRP_LANGUAGE = $trp_language_copy;
         }else{
             // If no $post is set we simply replace the current language root with the new language root.
-            $abs_home = trailingslashit( $this->get_abs_home() );
+	        // we can't assume the URL's have / at the end so we need to untrailingslashit both $abs_home and $new_language_root
+	        $abs_home = trailingslashit( $this->get_abs_home() );
 
-            $current_lang_root =  trailingslashit($abs_home . $this->get_url_slug( $TRP_LANGUAGE ));
-            $new_language_root =  trailingslashit($abs_home . $this->get_url_slug( $language ) );
+            $current_lang_root =  untrailingslashit($abs_home . $this->get_url_slug( $TRP_LANGUAGE ));
+            $new_language_root =  untrailingslashit($abs_home . $this->get_url_slug( $language ) );
 
             if( $this->get_lang_from_url_string($url) === null ){
-                $new_url = trailingslashit( str_replace($abs_home, $new_language_root, $url) );
-            } else {
-                $new_url = trailingslashit(str_replace($current_lang_root, $new_language_root, $url));
-            }
+                // this is for forcing the custom url's. We expect them to not have a language in them.
+	            $new_url = str_replace(untrailingslashit($abs_home), $new_language_root, $url);
+			} else {
+                $new_url = str_replace($current_lang_root, $new_language_root, $url);
+	        }
         }
 
         
@@ -178,7 +180,7 @@ class TRP_Url_Converter {
             $new_url = $url;
         }
 
-        return untrailingslashit( $new_url ) . $trp_link_is_processed ;
+        return $new_url . $trp_link_is_processed ;
     }
 
     /**
