@@ -404,7 +404,7 @@ class TRP_Translation_Manager{
         }
 
         if( is_admin () ) {
-            $url = add_query_arg( 'trp-edit-translation', 'true', home_url() );
+            $url = add_query_arg( 'trp-edit-translation', 'true', trailingslashit( home_url() ) );
 
             $title = __( 'Translate Site', 'translatepress-multilingual' );
             $url_target = '_blank';
@@ -416,7 +416,7 @@ class TRP_Translation_Manager{
 	        }
 
 	        $url = $this->url_converter->cur_page_url();
-	        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
+	        $url = add_query_arg( 'trp-edit-translation', 'true', trailingslashit( $url ) );
 
             $title = __( 'Translate Page', 'translatepress-multilingual' );
             $url_target = '';
