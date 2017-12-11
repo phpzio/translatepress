@@ -92,7 +92,9 @@ class TRP_Translation_Render{
      * @return string           Trimmed string.
      */
     public function full_trim( $word ) {
-        $word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
+        /* apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely */
+        //$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
+        $word = trim($word," \t\n\r\0\x0B\xA0".chr( 194 ) . chr( 160 ) );
         if ( htmlentities( $word ) == "" || strip_tags( $word ) == "" || trim ($word, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
             $word = '';
         }

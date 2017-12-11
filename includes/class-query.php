@@ -33,8 +33,9 @@ class TRP_Query{
      * @return string           Trimmed string.
      */
     protected function full_trim( $word ) {
-
-        $word = trim($word," \t\n\r\0\x0B\xA0�" );
+        /* apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely */
+        //$word = trim($word," \t\n\r\0\x0B\xA0�" );
+        $word = trim($word," \t\n\r\0\x0B\xA0" );
 
         // make sure to skip weird characters
         if ( htmlentities( $word ) == "" ){
