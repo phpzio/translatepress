@@ -507,6 +507,12 @@ class TRP_Translation_Render{
             $a_href->href = str_replace('#TRPLINKPROCESSED', '', $a_href->href);
         }
 
+        // pass the current language in forms where the action does not contain the language
+        // based on this we're filtering wp_redirect to include the proper URL when returing to the current page.
+        foreach ( $html->find('form') as $k => $row ){
+            $row->innertext .= '<input type="hidden" name="trp-form-language" value="'. $TRP_LANGUAGE .'"/>';
+        }
+
 
         return $html->save();
     }
@@ -747,6 +753,26 @@ class TRP_Translation_Render{
     public function force_preview_on_url_redirect( $location, $status ){
         if( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ){
             $location = add_query_arg( 'trp-edit-translation', 'preview', $location );
+        }
+        return $location;
+    }
+
+    /**
+     * Filters the location redirect to add the current language based on the trp-form-language parameter
+     * @param $location
+     * @param $status
+     * @return string
+     * @since 1.1.2
+     */
+    public function force_language_on_form_url_redirect( $location, $status ){
+        if( isset( $_REQUEST['trp-form-language'] ) && !empty($_REQUEST['trp-form-language']) ){
+            $form_language = esc_attr($_REQUEST['trp-form-language']);
+            if ( ! $this->url_converter ) {
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $this->url_converter = $trp->get_component('url_converter');
+            }
+
+            $location = $this->url_converter->get_url_for_language( $form_language, $location );
         }
         return $location;
     }
