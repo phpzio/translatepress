@@ -407,7 +407,7 @@ class TRP_Translation_Render{
             ),
             'meta_desc' => array(
                 'accessor' => 'content',
-                'attribute' => false
+                'attribute' => true
             ),
             'post_slug' => array(
                 'accessor' => 'content',
@@ -447,7 +447,7 @@ class TRP_Translation_Render{
                     if ( strpos ( $nodes[$i]['node']->getAttribute( $accessor ), $translateable_string ) === false ){
                         $translateable_string = $alternate_translateable_string;
                     }
-                    $nodes[$i]['node']->setAttribute( $accessor, str_replace( $translateable_string, $translated_strings[$i], $nodes[$i]['node']->getAttribute( $accessor ) ) );
+                    $nodes[$i]['node']->setAttribute( $accessor, str_replace( $translateable_string, esc_attr( $translated_strings[$i] ), $nodes[$i]['node']->getAttribute( $accessor ) ) );
                 }else{
                     if ( strpos ( $nodes[$i]['node']->$accessor, $translateable_string ) === false ){
                         $translateable_string = $alternate_translateable_string;
