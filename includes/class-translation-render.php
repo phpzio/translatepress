@@ -57,14 +57,18 @@ class TRP_Translation_Render{
     }
 
     /**
-     * Language to translate into.
+     * Forces the language to be the first non default one in the preview translation editor.
+     * We're doing this because we need the ID's.
+     * Otherwise we're just returning the global $TRP_LANGUAGE
      *
      * @return string       Language code.
      */
-    protected function get_language(){
+    protected function force_language_in_preview(){
         global $TRP_LANGUAGE;
         if ( in_array( $TRP_LANGUAGE, $this->settings['translation-languages'] ) ) {
             if ( $TRP_LANGUAGE == $this->settings['default-language']  ){
+                // in the translation editor we need a different language then the default because we need string ID's.
+                // so we're forcing it to the first translation language because if it's the default, we're just returning the $output
                 if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' )  {
                     if( count( $this->settings['publish-languages'] ) > 1 ){
                         foreach ($this->settings['translation-languages'] as $language) {
@@ -208,11 +212,14 @@ class TRP_Translation_Render{
      * @return string               Translated HTML page.
      */
     public function translate_page( $output ){
+        $output = apply_filters('trp_before_translate_content', $output);
+
         if ( strlen( $output ) < 1 ){
             return $output;
         }
+
         global $TRP_LANGUAGE;
-        $language_code = $this->get_language();
+        $language_code = $this->force_language_in_preview();
         if ($language_code === false) {
             return $output;
         }
@@ -225,8 +232,6 @@ class TRP_Translation_Render{
             if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 ){
                 return $output;
             }
-
-            $output = apply_filters('trp_before_translate_content', $output);
 
             //check if we have a json response
             if (is_array($json_array = json_decode($output, true))) {
@@ -509,6 +514,12 @@ class TRP_Translation_Render{
             $a_href->href = str_replace('#TRPLINKPROCESSED', '', $a_href->href);
         }
 
+        // pass the current language in forms where the action does not contain the language
+        // based on this we're filtering wp_redirect to include the proper URL when returing to the current page.
+        foreach ( $html->find('form') as $k => $row ){
+            $row->innertext .= '<input type="hidden" name="trp-form-language" value="'. $TRP_LANGUAGE .'"/>';
+        }
+
 
         return $html->save();
     }
@@ -754,6 +765,26 @@ class TRP_Translation_Render{
     }
 
     /**
+     * Filters the location redirect to add the current language based on the trp-form-language parameter
+     * @param $location
+     * @param $status
+     * @return string
+     * @since 1.1.2
+     */
+    public function force_language_on_form_url_redirect( $location, $status ){
+        if( isset( $_REQUEST['trp-form-language'] ) && !empty($_REQUEST['trp-form-language']) ){
+            $form_language = esc_attr($_REQUEST['trp-form-language']);
+            if ( ! $this->url_converter ) {
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $this->url_converter = $trp->get_component('url_converter');
+            }
+
+            $location = $this->url_converter->get_url_for_language( $form_language, $location );
+        }
+        return $location;
+    }
+
+    /**
      * Filters the output buffer of ajax calls that return json and adds the preview arg to urls
      * @param $output
      * @return string
@@ -781,6 +812,43 @@ class TRP_Translation_Render{
     function callback_add_preview_arg(&$item, $key){
         if ( filter_var($item, FILTER_VALIDATE_URL) !== FALSE ) {
             $item = add_query_arg( 'trp-edit-translation', 'preview', $item );
+        }
+    }
+
+    /**
+     * Filters the output buffer of ajax calls that return json and adds the preview arg to urls
+     * @param $output
+     * @return string
+     * @since 1.1.2
+     */
+    public function force_form_language_on_url_in_ajax( $output ){
+        if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-form-language'] ) && !empty( $_REQUEST['trp-form-language'] ) ) {
+            $result = json_decode($output, TRUE);
+            if ( json_last_error() === JSON_ERROR_NONE) {
+                array_walk_recursive($result, array($this, 'callback_add_language_to_url'));
+                $output = trp_safe_json_encode($result);
+            } //endif
+        } //endif
+        return $output;
+    }
+
+    /**
+     * Adds preview query arg to links that are url's. callback specifically for the array_walk_recursive function
+     * @param $item
+     * @param $key
+     * @return string
+     * @internal param $output
+     * @since 1.1.2
+     */
+    function callback_add_language_to_url(&$item, $key){
+        if ( filter_var($item, FILTER_VALIDATE_URL) !== FALSE ) {
+            $form_language = esc_attr($_REQUEST['trp-form-language']);
+            if ( ! $this->url_converter ) {
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $this->url_converter = $trp->get_component('url_converter');
+            }
+
+            $item = $this->url_converter->get_url_for_language( $form_language, $item );
         }
     }
 }
