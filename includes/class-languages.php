@@ -125,7 +125,9 @@ class TRP_Languages{
 		$return = array();
         $languages = $this->get_languages( $english_or_native_name );
 		foreach ( $language_codes as $language_code ){
-			$return[$language_code] = $languages[$language_code];
+			if( isset( $languages[$language_code] ) ) {
+				$return[$language_code] = $languages[$language_code];
+			}
 		}
 
 		return $return;
