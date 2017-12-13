@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.9.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,14 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+
+= 1.1.2 =
+We now make sure that all forms when submitted redirect to the correct language
+Fixed an issue with missing slash from language switcher
+Fixed an issue where we were not redirecting to the correct url slug when switching languages
+Fixed a possible notice inside the get_language_names function
+Fixed html breaking because of unescaped quotes in translated meta content
+Removed a special character from the full_trim function that was causing some strings to not be selectable for translation
 
 = 1.1.1 =
 * Fixed js error with startsWith method not being supported in IE
