@@ -278,9 +278,8 @@ class TRP_Url_Converter {
         $home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
         // Trim path info from the end and the leading home path from the front.
-        $req_uri = trim($req_uri, '/');
+        $req_uri = ltrim($req_uri, '/');
         $req_uri = preg_replace( $home_path_regex, '', $req_uri );
-        $req_uri = trim($req_uri, '/');
         $req_uri = trim($this->get_abs_home(), '/') . '/' . ltrim( $req_uri, '/' );
 
 
