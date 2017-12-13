@@ -141,7 +141,9 @@ class TRP_Url_Converter {
             $new_url = get_permalink( $post->ID );
             $TRP_LANGUAGE = $trp_language_copy;
         }else{
-            $url = $this->cur_page_url();
+            if( empty( $url ) ){
+                $url = $this->cur_page_url();
+            }
             // If no $post is set we simply replace the current language root with the new language root.
 	        // we can't assume the URL's have / at the end so we need to untrailingslashit both $abs_home and $new_language_root
 	        $abs_home = trailingslashit( $this->get_abs_home() );
