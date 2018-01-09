@@ -141,7 +141,6 @@ class TRP_Url_Converter {
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post->ID );
             $TRP_LANGUAGE = $trp_language_copy;
-            error_log($language .' - '. $post->ID);
         }else{
             if( empty( $url ) ){
                 $url = $this->cur_page_url();
