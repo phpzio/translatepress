@@ -133,6 +133,8 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_preview_on_url_in_ajax', 10 );
         $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_form_language_on_url_in_ajax', 20 );
         $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'add_space_between_html_attr', 30 );
+        /* handle CDATA str replacement from the content as it is messing up the renderer */
+        $this->loader->add_filter( "trp_before_translate_content", $this->translation_render, 'handle_cdata', 1000 );
 
 
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );
@@ -199,9 +201,6 @@ class TRP_Translate_Press{
 
         /* add to the body class the current language */
         $this->loader->add_filter( "body_class", $this->translation_manager, 'add_language_to_body_class' );
-        
-        /* remove CDATA from the content as it is messing up the renderer */
-        $this->loader->add_filter( "the_content", $this->translation_manager, 'remove_cdata_from_the_content', 1000 );
     }
 
     /**

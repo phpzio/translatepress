@@ -863,4 +863,14 @@ class TRP_Translation_Render{
         $replacement = '=$1$2$3 $4';
         return preg_replace($pattern, $replacement, $output);
     }
+
+    /**
+     * Function that reverses CDATA string replacement from the content because it breaks the renderer
+     * @param $content
+     * @return mixed
+     */
+    public function handle_cdata( $output ){
+        $output = str_replace( ']]&gt;', ']]>', $output );
+        return $output;
+    }
 }

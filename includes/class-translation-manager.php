@@ -862,17 +862,6 @@ class TRP_Translation_Manager{
     }
 
     /**
-     * Function that filters the_content to remove CDATA info from it because it breaks the renderer
-     * @param $content
-     * @return mixed
-     */
-
-    public function remove_cdata_from_the_content( $content ){
-        $content = preg_replace( '/(<|&lt;)\!\[CDATA\[(.*?)\]\](>|&gt;)/s', '', $content );
-        return $content;
-    }
-
-    /**
      * Function that switches the view of the user to other roles
      */
     public function trp_view_as_user(){
