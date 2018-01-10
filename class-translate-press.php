@@ -198,6 +198,9 @@ class TRP_Translate_Press{
 
         /* add to the body class the current language */
         $this->loader->add_filter( "body_class", $this->translation_manager, 'add_language_to_body_class' );
+        
+        /* remove CDATA from the content as it is messing up the renderer */
+        $this->loader->add_filter( "the_content", $this->translation_manager, 'remove_cdata_from_the_content', 1000 );
     }
 
     /**
