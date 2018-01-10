@@ -859,8 +859,8 @@ class TRP_Translation_Render{
      * @since 1.1.3
      */
     public function add_space_between_html_attr( $output ){
-        $pattern = '(([a-z0-9])"([a-z]))';
-        $replacement = '$1" $2';
+        $pattern = '(=([\'"])(.*?)([\'"])([a-z]))';
+        $replacement = '=$1$2$3 $4';
         return preg_replace($pattern, $replacement, $output);
     }
 }
