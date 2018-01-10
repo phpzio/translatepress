@@ -851,4 +851,16 @@ class TRP_Translation_Render{
             $item = $this->url_converter->get_url_for_language( $form_language, $item );
         }
     }
+
+    /**
+     * Filters the output buffer and adds spaces between html attributes. While that html is invalid, some themes don't respect this rule and brake the dom parser.
+     * @param $output
+     * @return string
+     * @since 1.1.3
+     */
+    public function add_space_between_html_attr( $output ){
+        $pattern = '(([a-z0-9])"([a-z]))';
+        $replacement = '$1" $2';
+        return preg_replace($pattern, $replacement, $output);
+    }
 }
