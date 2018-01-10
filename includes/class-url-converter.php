@@ -126,6 +126,7 @@ class TRP_Url_Converter {
             $language = $TRP_LANGUAGE;
         }
 
+
         // if we have the homepage, we replace it with the filtered homepage that contains the language url.
         if( trailingslashit( $this->cur_page_url() ) == trailingslashit($this->get_abs_home()) ){
             $TRP_LANGUAGE = $language;
@@ -135,7 +136,7 @@ class TRP_Url_Converter {
         }
 
 
-        if ( empty( $url ) && is_object( $post ) && is_singular() ) {
+        if ( empty( $url ) && is_object( $post ) && ( $post->ID != '0' ) && is_singular() ) {
             // if we have a $post we need to run the language switcher through get_permalink so we apply the correct slug that can be different.
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post->ID );
