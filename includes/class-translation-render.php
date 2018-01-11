@@ -260,6 +260,18 @@ class TRP_Translation_Render{
             }
         }
 
+        /**
+         * tries to fix the html document. It is off by default. use at own risk
+         * */
+        if( apply_filters( 'trp_try_fixing_invalid_html', false ) ) {
+            if( class_exists('DOMDocument') ) {
+                $dom = new DOMDocument();
+                libxml_use_internal_errors(true);//so no warnings will show up for invalid html
+                $dom->loadHTML($output, LIBXML_NOWARNING);
+                $output = $dom->saveHTML();
+            }
+        }
+
         $no_translate_attribute = 'data-no-translation';
 
         $translateable_strings = array();
@@ -850,18 +862,6 @@ class TRP_Translation_Render{
 
             $item = $this->url_converter->get_url_for_language( $form_language, $item );
         }
-    }
-
-    /**
-     * Filters the output buffer and adds spaces between html attributes. While that html is invalid, some themes don't respect this rule and brake the dom parser.
-     * @param $output
-     * @return string
-     * @since 1.1.3
-     */
-    public function add_space_between_html_attr( $output ){
-        $pattern = '(=([\'"])(.*?)([\'"])([a-z]))';
-        $replacement = '=$1$2$3 $4';
-        return preg_replace($pattern, $replacement, $output);
     }
 
     /**
