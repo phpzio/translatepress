@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.9.1
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -107,13 +107,18 @@ For more information please check out [TranslatePress documentation](https://tra
 
 == Changelog ==
 
+= 1.1.3 =
+* Fix issue where the language switcher didn't work for BuddyPress pages
+* Fixed issue with CDATA in post content that was breaking the translation
+* Added a filter that can be activated and that tries to fix invalid html: trp_try_fixing_invalid_html
+
 = 1.1.2 =
-We now make sure that all forms when submitted redirect to the correct language
-Fixed an issue with missing slash from language switcher
-Fixed an issue where we were not redirecting to the correct url slug when switching languages
-Fixed a possible notice inside the get_language_names function
-Fixed html breaking because of unescaped quotes in translated meta content
-Removed a special character from the full_trim function that was causing some strings to not be selectable for translation
+* We now make sure that all forms when submitted redirect to the correct language
+* Fixed an issue with missing slash from language switcher
+* Fixed an issue where we were not redirecting to the correct url slug when switching languages
+* Fixed a possible notice inside the get_language_names function
+* Fixed html breaking because of unescaped quotes in translated meta content
+* Removed a special character from the full_trim function that was causing some strings to not be selectable for translation
 
 = 1.1.1 =
 * Fixed js error with startsWith method not being supported in IE
