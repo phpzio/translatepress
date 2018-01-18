@@ -57,6 +57,7 @@ class TRP_Url_Converter {
         }
 
         if( is_customize_preview() || $this->is_admin_request()  )
+        //if( is_customize_preview() || is_admin()  )
             return $url;
 
 
@@ -78,7 +79,15 @@ class TRP_Url_Converter {
     public function is_admin_request() {
         $current_url = $this->cur_page_url();
         $admin_url = strtolower( admin_url() );
-        $referrer  = strtolower( wp_get_referer() );
+
+        // we can't use wp_get_referer() It looks like it creates an infinite loop because it calls home_url() and we're filtering that
+        $referrer = '';
+        if ( ! empty( $_REQUEST['_wp_http_referer'] ) ) {
+            $referrer = wp_unslash( $_REQUEST['_wp_http_referer'] );
+        } else if ( ! empty( $_SERVER['HTTP_REFERER'] ) ) {
+            $referrer = wp_unslash( $_SERVER['HTTP_REFERER'] );
+        }
+
 
         /**
          * Check if this is a admin request. If true, it
