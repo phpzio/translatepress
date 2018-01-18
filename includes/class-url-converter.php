@@ -56,7 +56,7 @@ class TRP_Url_Converter {
             return $url;
         }
 
-        if( is_customize_preview() || is_admin() )
+        if( is_customize_preview() || $this->is_admin_request()  )
             return $url;
 
 
@@ -68,6 +68,38 @@ class TRP_Url_Converter {
         }
 
         return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
+    }
+
+    /**
+     * Check if this is a request at the backend.
+     *
+     * @return bool true if is admin request, otherwise false.
+     */
+    public function is_admin_request() {
+        $current_url = $this->cur_page_url();
+        $admin_url = strtolower( admin_url() );
+        $referrer  = strtolower( wp_get_referer() );
+
+        /**
+         * Check if this is a admin request. If true, it
+         * could also be a AJAX request from the frontend.
+         */
+        if ( 0 === strpos( $current_url, $admin_url ) ) {
+            /**
+             * Check if the user comes from a admin page.
+             */
+            if ( 0 === strpos( $referrer, $admin_url ) ) {
+                return true;
+            } else {
+                if ( function_exists( 'wp_doing_ajax' ) ) {
+                    return ! wp_doing_ajax();
+                } else {
+                    return ! ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+                }
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
