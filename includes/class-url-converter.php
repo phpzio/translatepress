@@ -57,7 +57,6 @@ class TRP_Url_Converter {
         }
 
         if( is_customize_preview() || $this->is_admin_request()  )
-        //if( is_customize_preview() || is_admin()  )
             return $url;
 
 
