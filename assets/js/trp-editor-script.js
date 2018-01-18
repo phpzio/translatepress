@@ -36,12 +36,14 @@ function TRP_Editor(){
             /* pass on trp-view-as parameters to all links that also have preview parameter */
             if( typeof URL == 'function' && window.location.href.search("trp-view-as=") >= 0 && window.location.href.search("trp-view-as-nonce=") >= 0 ){
                 var currentUrl = new URL(window.location.href);
-                jQuery(select.form).append('<input type="hidden" name="trp-view-as" value="'+currentUrl.searchParams.get("trp-view-as")+'"/>');
-                jQuery(select.form).append('<input type="hidden" name="trp-view-as-nonce" value="'+currentUrl.searchParams.get("trp-view-as-nonce")+'"/>');
-            }
+                var trp_view_as = currentUrl.searchParams.get("trp-view-as");
+                link = _this.update_query_string('trp-view-as', trp_view_as, link );
 
-            select.form.action = link;
-            select.form.submit();
+                var trp_view_as_nonce = currentUrl.searchParams.get("trp-view-as-nonce");
+                link = _this.update_query_string('trp-view-as-nonce', trp_view_as, link );
+            }
+            link = _this.update_query_string('trp-edit-translation', 'true', link );
+            window.location.href = link;
         }
     };
 

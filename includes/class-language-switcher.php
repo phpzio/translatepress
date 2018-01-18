@@ -65,16 +65,9 @@ class TRP_Language_Switcher{
      * @return string           Current language code.
      */
     private function get_current_language(){
-        if ( isset( $_REQUEST['lang'] ) ){
-            $language_code = sanitize_text_field( $_REQUEST['lang'] );
-            if ( in_array( $language_code, $this->settings['translation-languages'] ) ) {
-                return $language_code;
-            }
-        }else{
-            $lang_from_url = $this->url_converter->get_lang_from_url_string( );
-            if ( $lang_from_url != null ){
-                return $lang_from_url;
-            }
+        $lang_from_url = $this->url_converter->get_lang_from_url_string();
+        if ( $lang_from_url != null ){
+            return $lang_from_url;
         }
 
         return $this->settings['default-language'];

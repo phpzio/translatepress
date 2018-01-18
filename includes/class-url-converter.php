@@ -67,13 +67,14 @@ class TRP_Url_Converter {
             $new_url .= '/' . ltrim( $path, '/' );
         }
 
-        return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path );
+        return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path, $url );
     }
 
     /**
      * Add Hreflang entries for each language to Header.
      */
     public function add_hreflang_to_head(){
+
         $languages = $this->settings['publish-languages'];
         if ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) {
             $languages = $this->settings['translation-languages'];
@@ -157,6 +158,7 @@ class TRP_Url_Converter {
 			} else {
                 $new_url = str_replace($current_lang_root, $new_language_root, $url);
 	        }
+	        $new_url =apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
         }
 
         
@@ -253,17 +255,19 @@ class TRP_Url_Converter {
 
         // We now have to see if the first part of the string is actually a language slug
         $lang = explode('/', $lang);
-        if( $lang == false ){
-            return null;
-        }
-        // If we have a language in the URL, the first element of the array should be it.
-        $lang = $lang[0];
+	    if( $lang == false ){
+		    return null;
+	    }
+	    // If we have a language in the URL, the first element of the array should be it.
+	    $lang = $lang[0];
 
-        // the lang slug != actual lang. So we need to do array_search so we don't end up with en instead of en_US
+	    $lang = apply_filters( 'trp_get_lang_from_url_string', $lang, $url );
+
+	    // the lang slug != actual lang. So we need to do array_search so we don't end up with en instead of en_US
         if( isset($this->settings['url-slugs']) && in_array($lang, $this->settings['url-slugs']) ){
-            return array_search($lang, $this->settings['url-slugs']);
+	        return array_search($lang, $this->settings['url-slugs']);
         } else {
-            return null;
+	        return null;
         }
     }
 
