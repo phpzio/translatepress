@@ -90,7 +90,6 @@ class TRP_Translate_Press{
         $this->query = new TRP_Query( $this->settings->get_settings() );
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings() );
         $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
-
     }
 
     /**

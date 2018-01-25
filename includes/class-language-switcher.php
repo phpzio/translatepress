@@ -25,6 +25,7 @@ class TRP_Language_Switcher{
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
         $this->add_cookie( $TRP_LANGUAGE );
+        add_filter( 'get_user_option_metaboxhidden_nav-menus', array( $this, 'cpt_always_visible_in_menus' ), 10, 3 );
     }
 
     /**
@@ -272,6 +273,18 @@ class TRP_Language_Switcher{
             'label'                 => 'Language Switcher'
         );
         register_post_type( 'language_switcher', $args );
+    }
+
+    /**
+     * Makes the Language Switcher CPT always visible in Menus interface.
+     *
+     */
+    function cpt_always_visible_in_menus( $result, $option, $user )
+    {
+        if( in_array( 'add-post-type-language_switcher', $result ) )
+            $result = array_diff( $result, array( 'add-post-type-language_switcher' ) );
+
+        return $result;
     }
 
     /**
