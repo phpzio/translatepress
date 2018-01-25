@@ -527,9 +527,9 @@ class TRP_Translation_Render{
         }
 
         // pass the current language in forms where the action does not contain the language
-        // based on this we're filtering wp_redirect to include the proper URL when returing to the current page.
+        // based on this we're filtering wp_redirect to include the proper URL when returning to the current page.
         foreach ( $html->find('form') as $k => $row ){
-            $row->innertext .= '<input type="hidden" name="trp-form-language" value="'. $TRP_LANGUAGE .'"/>';
+            $row->innertext .= apply_filters( 'trp_form_inputs', '<input type="hidden" name="trp-form-language" value="'. $this->settings['url-slugs'][$TRP_LANGUAGE] .'"/>', $TRP_LANGUAGE, $this->settings['url-slugs'][$TRP_LANGUAGE] );
         }
 
 
@@ -784,8 +784,9 @@ class TRP_Translation_Render{
      * @since 1.1.2
      */
     public function force_language_on_form_url_redirect( $location, $status ){
-        if( isset( $_REQUEST['trp-form-language'] ) && !empty($_REQUEST['trp-form-language']) ){
-            $form_language = esc_attr($_REQUEST['trp-form-language']);
+        if( isset( $_REQUEST[ 'trp-form-language' ] ) && !empty($_REQUEST[ 'trp-form-language' ]) ){
+            $form_language_slug = esc_attr($_REQUEST[ 'trp-form-language' ]);
+            $form_language = array_search($form_language_slug, $this->settings['url-slugs']);
             if ( ! $this->url_converter ) {
                 $trp = TRP_Translate_Press::get_trp_instance();
                 $this->url_converter = $trp->get_component('url_converter');
@@ -834,7 +835,7 @@ class TRP_Translation_Render{
      * @since 1.1.2
      */
     public function force_form_language_on_url_in_ajax( $output ){
-        if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-form-language'] ) && !empty( $_REQUEST['trp-form-language'] ) ) {
+        if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST[ 'trp-form-language' ] ) && !empty( $_REQUEST[ 'trp-form-language' ] ) ) {
             $result = json_decode($output, TRUE);
             if ( json_last_error() === JSON_ERROR_NONE) {
                 array_walk_recursive($result, array($this, 'callback_add_language_to_url'));
@@ -854,7 +855,8 @@ class TRP_Translation_Render{
      */
     function callback_add_language_to_url(&$item, $key){
         if ( filter_var($item, FILTER_VALIDATE_URL) !== FALSE ) {
-            $form_language = esc_attr($_REQUEST['trp-form-language']);
+	        $form_language_slug = esc_attr($_REQUEST[ 'trp-form-language' ]);
+	        $form_language = array_search($form_language_slug, $this->settings['url-slugs']);
             if ( ! $this->url_converter ) {
                 $trp = TRP_Translate_Press::get_trp_instance();
                 $this->url_converter = $trp->get_component('url_converter');
