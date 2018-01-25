@@ -133,7 +133,7 @@ function TRP_Translator(){
                         var all_strings_length = all_strings.length;
                         for (var j = 0; j < all_strings_length; j++ ) {
                             if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                                strings.push({node: all_strings[j], original: _this.trim( all_strings[j].textContent, except_characters )});
+                                strings.push({node: all_strings[j], original: all_strings[j].textContent});
                                 all_strings[j].textContent = '';
                             }
                         }
