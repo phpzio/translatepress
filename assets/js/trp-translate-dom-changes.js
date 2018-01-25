@@ -11,6 +11,7 @@ function TRP_Translator(){
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
     var language_to_query;
     var except_characters = " \t\n\r  �.,/`~!@#$€£%^&*():;-_=+[]{}\\|?/<>1234567890'";
+    var trim_characters = " \t\n\r  �\x0A\x0B" + "\302" + "\240";
 
     /**
      * Ajax request to get translations for strings
@@ -133,7 +134,7 @@ function TRP_Translator(){
                         var all_strings_length = all_strings.length;
                         for (var j = 0; j < all_strings_length; j++ ) {
                             if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                                strings.push({node: all_strings[j], original: all_strings[j].textContent});
+                                strings.push({node: all_strings[j], original: _this.trim( all_strings[j].textContent, trim_characters )});
                                 all_strings[j].textContent = '';
                             }
                         }
