@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.9.1
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,11 +45,13 @@ Users with administrator rights have access to the following translate settings:
 
 TranslatePress - Multilingual has a range of premium [Add-ons](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) that allow you to extend the power of the translation plugin:
 
-**Pro Add-ons** (available in the [PRO version](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) only)
+**Pro Add-ons** (available in the [premium versions](https://translatepress.com/pricing/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) only)
 
-* [Extra Languages](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - allows you to add an unlimited number of translation languages, with the possibility to publish languages later after you complete the translation
-* [SEO Pack](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - allows you to translate meta information (like page title, description, url slug, image alt tag, Twitter and Facebook Social Graph tags & more) for boosting your website's SEO and increase traffic
-
+* [Extra Languages](https://translatepress.com/docs/addons/seo-pack/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - allows you to add an unlimited number of translation languages, with the possibility to publish languages later after you complete the translation
+* [SEO Pack](https://translatepress.com/docs/addons/multiple-languages/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - allows you to translate meta information (like page title, description, url slug, image alt tag, Twitter and Facebook Social Graph tags & more) for boosting your website's SEO and increase traffic
+* [Translator Accounts](https://translatepress.com/docs/addons/translator-accounts/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - create or allow existing users to translate the site without admin rights
+* [Browse as User Role](https://translatepress.com/docs/addons/browse-as-role/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - view and translate content that is visible only to a particular user role
+* [Navigation Based on Language](https://translatepress.com/docs/addons/navigate-based-language/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - configure and display different menu items for different languages
 
 = Website =
 
@@ -107,13 +109,18 @@ For more information please check out [TranslatePress documentation](https://tra
 
 == Changelog ==
 
+= 1.1.3 =
+* Fix issue where the language switcher didn't work for BuddyPress pages
+* Fixed issue with CDATA in post content that was breaking the translation
+* Added a filter that can be activated and that tries to fix invalid html: trp_try_fixing_invalid_html
+
 = 1.1.2 =
-We now make sure that all forms when submitted redirect to the correct language
-Fixed an issue with missing slash from language switcher
-Fixed an issue where we were not redirecting to the correct url slug when switching languages
-Fixed a possible notice inside the get_language_names function
-Fixed html breaking because of unescaped quotes in translated meta content
-Removed a special character from the full_trim function that was causing some strings to not be selectable for translation
+* We now make sure that all forms when submitted redirect to the correct language
+* Fixed an issue with missing slash from language switcher
+* Fixed an issue where we were not redirecting to the correct url slug when switching languages
+* Fixed a possible notice inside the get_language_names function
+* Fixed html breaking because of unescaped quotes in translated meta content
+* Removed a special character from the full_trim function that was causing some strings to not be selectable for translation
 
 = 1.1.1 =
 * Fixed js error with startsWith method not being supported in IE

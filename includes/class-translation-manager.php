@@ -860,8 +860,10 @@ class TRP_Translation_Manager{
         }
         return $classes;
     }
-    
-    
+
+    /**
+     * Function that switches the view of the user to other roles
+     */
     public function trp_view_as_user(){
         if( !is_admin() || $this::is_ajax_on_frontend() ) {
             if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] === 'preview' && isset($_REQUEST['trp-view-as']) && isset($_REQUEST['trp-view-as-nonce'])) {

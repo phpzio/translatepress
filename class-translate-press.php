@@ -39,7 +39,7 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.1.2' );
+        define( 'TRP_PLUGIN_VERSION', '1.1.3' );
 
         $this->load_dependencies();
         $this->initialize_components();
@@ -132,6 +132,8 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'wp_redirect', $this->translation_render, 'force_language_on_form_url_redirect', 99, 2 );
         $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_preview_on_url_in_ajax', 10 );
         $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_form_language_on_url_in_ajax', 20 );
+        /* handle CDATA str replacement from the content as it is messing up the renderer */
+        $this->loader->add_filter( "trp_before_translate_content", $this->translation_render, 'handle_cdata', 1000 );
 
 
         $this->loader->add_action( 'wp_enqueue_scripts', $this->language_switcher, 'enqueue_language_switcher_scripts' );

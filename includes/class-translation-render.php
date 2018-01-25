@@ -260,6 +260,18 @@ class TRP_Translation_Render{
             }
         }
 
+        /**
+         * tries to fix the html document. It is off by default. use at own risk
+         * */
+        if( apply_filters( 'trp_try_fixing_invalid_html', false ) ) {
+            if( class_exists('DOMDocument') ) {
+                $dom = new DOMDocument();
+                libxml_use_internal_errors(true);//so no warnings will show up for invalid html
+                $dom->loadHTML($output, LIBXML_NOWARNING);
+                $output = $dom->saveHTML();
+            }
+        }
+
         $no_translate_attribute = 'data-no-translation';
 
         $translateable_strings = array();
@@ -852,5 +864,15 @@ class TRP_Translation_Render{
 
             $item = $this->url_converter->get_url_for_language( $form_language, $item );
         }
+    }
+
+    /**
+     * Function that reverses CDATA string replacement from the content because it breaks the renderer
+     * @param $content
+     * @return mixed
+     */
+    public function handle_cdata( $output ){
+        $output = str_replace( ']]&gt;', ']]>', $output );
+        return $output;
     }
 }
