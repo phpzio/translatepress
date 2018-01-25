@@ -25,7 +25,6 @@ class TRP_Language_Switcher{
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
         $this->add_cookie( $TRP_LANGUAGE );
-
         add_filter( 'get_user_option_metaboxhidden_nav-menus', array( $this, 'cpt_always_visible_in_menus' ), 10, 3 );
     }
 
