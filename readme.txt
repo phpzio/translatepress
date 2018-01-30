@@ -53,6 +53,10 @@ TranslatePress - Multilingual has a range of premium [Add-ons](https://translate
 * [Browse as User Role](https://translatepress.com/docs/addons/browse-as-role/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - view and translate content that is visible only to a particular user role
 * [Navigation Based on Language](https://translatepress.com/docs/addons/navigate-based-language/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - configure and display different menu items for different languages
 
+**Free Add-ons**
+
+* [Language by GET parameter](https://translatepress.com/docs/addons/language-get-parameter/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) -  enables the language in the URL to be encoded as a GET Parameter
+
 = Website =
 
 [translatepress.com](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree)
