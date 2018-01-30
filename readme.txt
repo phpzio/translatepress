@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
-Tested up to: 4.9.1
-Stable tag: 1.1.3
+Tested up to: 4.9.2
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,12 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.1.4 =
+* Filter to allow adding new language: 'trp_wp_languages'
+* Fixed issue with get_permalink() in ajax calls that was not returning the propper language
+* Adapted code to allow language based on a GET parameter
+* Fix some issues with language switcher and custom queries as well as take into account if subdirectory for default language is on
+* Fixed issue with js translation that was trimming numbers and other characters from strings when it shouldn't
 
 = 1.1.3 =
 * Fix issue where the language switcher didn't work for BuddyPress pages

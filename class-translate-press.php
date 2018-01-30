@@ -39,7 +39,7 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.1.3' );
+        define( 'TRP_PLUGIN_VERSION', '1.1.4' );
 
         $this->load_dependencies();
         $this->initialize_components();
@@ -90,7 +90,6 @@ class TRP_Translate_Press{
         $this->query = new TRP_Query( $this->settings->get_settings() );
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings() );
         $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
-
     }
 
     /**
