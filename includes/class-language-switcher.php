@@ -49,6 +49,10 @@ class TRP_Language_Switcher{
         }
         $published_languages = $this->trp_languages->get_language_names( $this->settings['publish-languages'] );
 
+	    if( ! $this->trp_settings_object ) {
+		    $trp = TRP_Translate_Press::get_trp_instance();
+		    $this->trp_settings_object = $trp->get_component( 'settings' );
+	    }
         $ls_options = $this->trp_settings_object->get_language_switcher_options();
         $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
 
