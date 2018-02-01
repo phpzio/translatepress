@@ -420,6 +420,5 @@ class TRP_Settings{
 
         require ( TRP_PLUGIN_DIR . 'partials/settings-navigation-tabs.php');
     }
-
 }
 

@@ -34,7 +34,12 @@ class TRP_Url_Converter {
         $lang_from_url = $this->get_lang_from_url_string( $this->cur_page_url() );
 
         if ( $lang_from_url == null ) {
-            header( 'Location: ' . $this->get_url_for_language( $this->settings['default-language'] ) );
+        	$language_to_redirect = $this->settings['default-language'];
+	        if ( isset( $this->settings['translation-languages'][0] ) ) {
+		        $language_to_redirect = $this->settings['translation-languages'][0];
+	        }
+	        $TRP_LANGUAGE = $this->settings['default-language'];
+            header( 'Location: ' . $this->get_url_for_language( $language_to_redirect ) );
             exit;
         }
     }
