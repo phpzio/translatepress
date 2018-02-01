@@ -46,7 +46,7 @@
                         <option value="yes" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Select Yes if you want to add the subdirectory in the url for the default language.</br>Selecting Yes will also use the first language from the Translation Languages instead of the Default Language when accessing a URL without language encoding.', 'translatepress-multilingual' ); ?>
+                        <?php _e( 'Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the "Translation Languages" list.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
