@@ -7,6 +7,8 @@ Version: 1.1.4
 Author: Cozmoslabs, Razvan Mocanu, Madalin Ungureanu, Cristophor Hurduban
 Author URI: https://cozmoslabs.com/
 License: GPL2
+WC requires at least: 2.5.0
+WC tested up to: 3.3
 
 == Copyright ==
 Copyright 2017 Cozmoslabs (www.cozmoslabs.com)
