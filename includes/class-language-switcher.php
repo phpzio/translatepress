@@ -74,8 +74,11 @@ class TRP_Language_Switcher{
         if ( $lang_from_url != null ){
             return $lang_from_url;
         }
-
-        return $this->settings['default-language'];
+	    if ( $this->settings['add-subdirectory-to-default-language'] == 'yes' && isset( $this->settings['translation-languages'][0] ) ) {
+		    return $this->settings['translation-languages'][0];
+	    }else{
+		    return $this->settings['default-language'];
+        }
     }
 
     /**
