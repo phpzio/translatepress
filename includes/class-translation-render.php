@@ -514,10 +514,6 @@ class TRP_Translation_Render{
                     $nodes[$i]['node']->$accessor = str_replace( $translateable_string, $translated_strings[$i], $nodes[$i]['node']->$accessor );
                 }
 
-                //TODO ? what does this button do??
-                if ( $nodes[$i]['type'] == 'image_src' && $nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i] != $translateable_strings[$i]) {
-                    $nodes[$i]['node']->srcset = "";
-                }
             }
 
             if ( $preview_mode ) {

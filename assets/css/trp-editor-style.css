@@ -478,6 +478,10 @@ spin {
     z-index: 1051;
 }
 
+#trp-view-as .select2-container{
+    z-index: 999;
+}
+
 .select2-container--default .select2-results > .select2-results__options,
 .select2-container--default .select2-results > .select2-results__options,
 .select2-results{
