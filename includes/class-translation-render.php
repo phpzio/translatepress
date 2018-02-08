@@ -28,8 +28,8 @@ class TRP_Translation_Render{
         if( TRP_Translation_Manager::is_ajax_on_frontend() ){
             //in this case move forward
         }else if( is_admin() ||
-        ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_REQUEST['trp-edit-translation'] ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] != 'preview' ) ) )  ||
-        ( isset( $_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'true' ) ) {
+            ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_REQUEST['trp-edit-translation'] ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] != 'preview' ) ) )  ||
+            ( isset( $_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'true' ) ) {
             return;
         }
 
@@ -302,12 +302,13 @@ class TRP_Translation_Render{
         }
 
         /* sort them here ascending by key where the key is the number of children */
+        /* here we add support for gettext inside gettext */
         ksort($trp_rows);
         foreach( $trp_rows as $level ){
             foreach( $level as $row ){
                 $original_gettext_translation_id = $row->getAttribute('data-trpgettextoriginal');
-	            /* Parent node has no other children and no other innertext besides the current node */
-	            if( count( $row->parent()->children ) == 1 && $row->parent()->innertext == $row->outertext ){
+                /* Parent node has no other children and no other innertext besides the current node */
+                if( count( $row->parent()->children ) == 1 && $row->parent()->innertext == $row->outertext ){
                     $row->outertext = $row->innertext();
                     $row->parent()->setAttribute('data-no-translation', '');
                     // we are in the editor
@@ -337,9 +338,9 @@ class TRP_Translation_Render{
                         }
 
                         // convert to a node
-	                    $node_from_value = trp_str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
-	                    foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
-		                    $nfv_row->outertext = $nfv_row->innertext();
+                        $node_from_value = trp_str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
+                        foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
+                            $nfv_row->outertext = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $node_from_value->save() );
                             if( !$row->has_child() ){// if the node doesn't have children set the needed attributes, else it means that there are other nodes inside so probably they are the ones displayed
                                 $row->setAttribute('data-no-translation', '');
@@ -365,15 +366,42 @@ class TRP_Translation_Render{
 
         $no_translate_selectors = apply_filters( 'trp_no_translate_selectors', array( '#wpadminbar' ), $TRP_LANGUAGE );
 
+        /*
+         * process the types of strings we can currently have: no-translate, translation-block, text, input, textarea, etc.
+         */
+
         foreach ( $no_translate_selectors as $no_translate_selector ){
             foreach ( $html->find( $no_translate_selector ) as $k => $row ){
                 $row->setAttribute( $no_translate_attribute, '' );
             }
         }
 
+        foreach ( $html->find('.translation-block') as $k => $row ){
+            if( $this->full_trim($row->outertext)!=""
+                && $row->parent()->tag!="script"
+                && $row->parent()->tag!="style"
+                && !is_numeric($this->full_trim($row->outertext))
+                && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+                && $row->parent()->tag != 'title'
+                && strpos($row->outertext,'[vc_') === false )
+            {
+                    array_push( $translateable_strings, $this->full_trim( $row->innertext ) );
+                    array_push( $nodes, array('node' => $row, 'type' => 'block'));
+            }
+        }
+
         foreach ( $html->find('text') as $k => $row ){
-            if($this->full_trim($row->outertext)!="" && $row->parent()->tag!="script" && $row->parent()->tag!="style" && !is_numeric($this->full_trim($row->outertext)) && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute ) && $row->parent()->tag != 'title' && strpos($row->outertext,'[vc_') === false ){
+            if( $this->full_trim($row->outertext)!=""
+                && $row->parent()->tag!="script"
+                && $row->parent()->tag!="style"
+                && !is_numeric($this->full_trim($row->outertext))
+                && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+                && !$this->has_ancestor_class( $row, 'translation-block')
+                && $row->parent()->tag != 'title'
+                && strpos($row->outertext,'[vc_') === false )
+            {
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     if( $row->parent()->tag == 'button') {
                         array_push($nodes, array('node' => $row, 'type' => 'button'));
@@ -384,17 +412,25 @@ class TRP_Translation_Render{
         }
 
         foreach ( $html->find('input[type=\'submit\'],input[type=\'button\']') as $k => $row ){
-            if($this->full_trim($row->value)!="" && !is_numeric($this->full_trim($row->value)) && !preg_match('/^\d+%$/',$this->full_trim($row->value))
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )) {
-                array_push( $translateable_strings, html_entity_decode( $row->value ) );
-                array_push( $nodes, array('node'=>$row,'type'=>'submit') );
+            if( $this->full_trim($row->value)!=""
+                && !is_numeric($this->full_trim($row->value))
+                && !preg_match('/^\d+%$/',$this->full_trim($row->value))
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+                && !$this->has_ancestor_class( $row, 'translation-block') )
+            {
+                    array_push( $translateable_strings, html_entity_decode( $row->value ) );
+                    array_push( $nodes, array('node'=>$row,'type'=>'submit') );
             }
         }
         foreach ( $html->find('input[type=\'text\'],input[type=\'password\'],input[type=\'search\'],input[type=\'email\'],input:not([type]),textarea') as $k => $row ){
-            if($this->full_trim($row->placeholder)!="" && !is_numeric($this->full_trim($row->placeholder)) && !preg_match('/^\d+%$/',$this->full_trim($row->placeholder))
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )){
-                array_push( $translateable_strings, html_entity_decode ( $row->placeholder ) );
-                array_push( $nodes, array('node'=>$row,'type'=>'placeholder') );
+            if( $this->full_trim($row->placeholder)!=""
+                && !is_numeric($this->full_trim($row->placeholder))
+                && !preg_match('/^\d+%$/',$this->full_trim($row->placeholder))
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+                && !$this->has_ancestor_class( $row, 'translation-block') )
+            {
+                    array_push( $translateable_strings, html_entity_decode ( $row->placeholder ) );
+                    array_push( $nodes, array('node'=>$row,'type'=>'placeholder') );
             }
         }
 
@@ -418,6 +454,10 @@ class TRP_Translation_Render{
         $node_accessor = apply_filters( 'trp_node_accessors', array(
             'text' => array(
                 'accessor' => 'outertext',
+                'attribute' => false
+            ),
+            'block' => array(
+                'accessor' => 'innertext',
                 'attribute' => false
             ),
             'page_title' => array(
@@ -453,7 +493,7 @@ class TRP_Translation_Render{
         foreach ( $nodes as $i => $node ) {
             $translation_available = isset( $translated_strings[$i] );
             if ( ! ( $translation_available || $preview_mode ) ){
-                    continue;
+                continue;
             }
             $current_node_accessor = $node_accessor[ $nodes[$i]['type'] ];
             $accessor = $current_node_accessor[ 'accessor' ];
@@ -474,9 +514,6 @@ class TRP_Translation_Render{
                     $nodes[$i]['node']->$accessor = str_replace( $translateable_string, $translated_strings[$i], $nodes[$i]['node']->$accessor );
                 }
 
-                if ( $nodes[$i]['type'] == 'image_src' && $nodes[$i]['node']->hasAttribute("srcset") && $nodes[$i]['node']->srcset !=  "" && $translated_strings[$i] != $translateable_strings[$i]) {
-                    $nodes[$i]['node']->srcset = "";
-                }
             }
 
             if ( $preview_mode ) {
@@ -709,6 +746,26 @@ class TRP_Translation_Render{
     }
 
     /**
+     * Whether given node has ancestor with given class.
+     *
+     * @param object $node           Html Node.
+     * @param string $class     class to search for
+     * @return bool                 Whether given node has ancestor with given class.
+     */
+    public function has_ancestor_class($node, $class) {
+        $currentNode = $node;
+
+        while($currentNode->parent() && $currentNode->parent()->tag!="html") {
+            if(isset($currentNode->parent()->class) && strpos($currentNode->parent()->class, $class) !== false) {
+                return true;
+            } else {
+                $currentNode = $currentNode->parent();
+            }
+        }
+        return false;
+    }
+
+    /**
      * Enqueue dynamic translation script.
      */
     public function enqueue_dynamic_translation(){
@@ -855,8 +912,8 @@ class TRP_Translation_Render{
      */
     function callback_add_language_to_url(&$item, $key){
         if ( filter_var($item, FILTER_VALIDATE_URL) !== FALSE ) {
-	        $form_language_slug = esc_attr($_REQUEST[ 'trp-form-language' ]);
-	        $form_language = array_search($form_language_slug, $this->settings['url-slugs']);
+            $form_language_slug = esc_attr($_REQUEST[ 'trp-form-language' ]);
+            $form_language = array_search($form_language_slug, $this->settings['url-slugs']);
             if ( ! $this->url_converter ) {
                 $trp = TRP_Translate_Press::get_trp_instance();
                 $this->url_converter = $trp->get_component('url_converter');
@@ -868,7 +925,7 @@ class TRP_Translation_Render{
 
     /**
      * Function that reverses CDATA string replacement from the content because it breaks the renderer
-     * @param $content
+     * @param $output
      * @return mixed
      */
     public function handle_cdata( $output ){
