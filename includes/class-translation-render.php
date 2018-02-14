@@ -92,18 +92,34 @@ class TRP_Translation_Render{
     /**
      * Trim strings.
      *
-     * @param string $word      Raw string.
+     * @param string $string      Raw string.
      * @return string           Trimmed string.
      */
-    public function full_trim( $word ) {
-        /* apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely */
+    public function full_trim( $string ) {
+        /* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
+        Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
+        Also removed \xA0 (the same as chr(160) for altering special characters */
         //$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
-        $word = trim($word," \t\n\r\0\x0B\xA0".chr( 194 ) . chr( 160 ) );
-        if ( htmlentities( $word ) == "" || strip_tags( $word ) == "" || trim ($word, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
-            $word = '';
+
+        /* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
+	    $prefix = "\xc2\xa0";
+	    $prefix_length = strlen($prefix);
+	    do{
+		    $previous_iteration_string = $string;
+		    $string = trim( $string," \t\n\r\0\x0B");
+		    if ( substr( $string, 0, $prefix_length ) == $prefix ) {
+			    $string = substr( $string, $prefix_length );
+		    }
+		    if ( substr( $string, - $prefix_length, $prefix_length ) == $prefix ) {
+			    $string = substr( $string, 0, - $prefix_length );
+		    }
+	    }while( $string != $previous_iteration_string );
+
+        if ( strip_tags( $string ) == "" || trim ($string, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
+	        $string = '';
         }
 
-        return $word;
+        return $string;
     }
 
     /**
