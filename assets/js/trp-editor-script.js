@@ -185,6 +185,9 @@ function TRP_Editor(){
      * @param response       The Ajax response message.
      */
     this.populate_strings = function( response ){
+        if ( typeof dictionaries == 'undefined' ){
+            dictionaries = [];
+        }
         for ( var key in response ) {
             if ( response.hasOwnProperty( key ) ) {
                 if ( response[key]['default-language'] == true ){
