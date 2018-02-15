@@ -11,6 +11,7 @@ class TRP_Query{
     protected $table_name;
     protected $db;
     protected $settings;
+    protected $translation_render;
 
     const NOT_TRANSLATED = 0;
     const MACHINE_TRANSLATED = 1;
@@ -29,19 +30,16 @@ class TRP_Query{
     /**
      * Trim unwanted characters from string.
      *
-     * @param string $word      String to trim.
+     * @param string $string      String to trim.
      * @return string           Trimmed string.
      */
-    protected function full_trim( $word ) {
-        /* apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely */
-        //$word = trim($word," \t\n\r\0\x0B\xA0�" );
-        $word = trim($word," \t\n\r\0\x0B\xA0" );
-
-        // make sure to skip weird characters
-        if ( htmlentities( $word ) == "" ){
-            $word = '';
-        }
-        return $word;
+    protected function full_trim( $string ) {
+	    $trp = TRP_Translate_Press::get_trp_instance();
+	    if ( ! $this->translation_render ) {
+		    $this->translation_render = $trp->get_component( 'translation_render' );
+	    }
+	    
+	    return $this->translation_render->full_trim( $string );
     }
 
     /**
