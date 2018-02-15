@@ -11,6 +11,7 @@ class TRP_Query{
     protected $table_name;
     protected $db;
     protected $settings;
+    protected $translation_render;
 
     const NOT_TRANSLATED = 0;
     const MACHINE_TRANSLATED = 1;
@@ -33,27 +34,12 @@ class TRP_Query{
      * @return string           Trimmed string.
      */
     protected function full_trim( $string ) {
-	    /* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
-		Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
-		Also removed \xA0 (the same as chr(160) for altering special characters */
-	    //$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
-
-	    /* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
-	    $prefix = "\xc2\xa0";
-	    $prefix_length = strlen($prefix);
-	    do{
-		    $previous_iteration_string = $string;
-		    $string = trim( $string," \t\n\r\0\x0B");
-		    if ( substr( $string, 0, $prefix_length ) == $prefix ) {
-			    $string = substr( $string, $prefix_length );
-		    }
-		    if ( substr( $string, - $prefix_length, $prefix_length ) == $prefix ) {
-			    $string = substr( $string, 0, - $prefix_length );
-		    }
-	    }while( $string != $previous_iteration_string );
-
-
-        return $string;
+	    $trp = TRP_Translate_Press::get_trp_instance();
+	    if ( ! $this->translation_render ) {
+		    $this->translation_render = $trp->get_component( 'translation_render' );
+	    }
+	    
+	    return $this->translation_render->full_trim( $string );
     }
 
     /**
