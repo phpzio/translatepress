@@ -40,7 +40,7 @@ function TRP_Editor(){
                 link = _this.update_query_string('trp-view-as', trp_view_as, link );
 
                 var trp_view_as_nonce = currentUrl.searchParams.get("trp-view-as-nonce");
-                link = _this.update_query_string('trp-view-as-nonce', trp_view_as, link );
+                link = _this.update_query_string('trp-view-as-nonce', trp_view_as_nonce, link );
             }
             link = _this.update_query_string('trp-edit-translation', 'true', link );
             window.location.href = link;
