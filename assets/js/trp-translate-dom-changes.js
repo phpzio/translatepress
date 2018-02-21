@@ -122,23 +122,20 @@ function TRP_Translator(){
                         }
                         var direct_string = get_string_from_node( mutation.addedNodes[i] );
                         if ( direct_string ) {
-                            strings.push({
-                                node: mutation.addedNodes[i],
-                                original: _this.trim(direct_string.textContent, trim_characters)
-                            });
-                            direct_string.textContent = '';
-                            if (typeof parent.trpEditor !== 'undefined') {
-                                jQuery ( mutation.addedNodes[i] ).wrap('<translate-press></translate-press>');
+                            if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
+                                strings.push({
+                                    node: mutation.addedNodes[i],
+                                    original: _this.trim(direct_string.textContent, trim_characters)
+                                });
+
+                                direct_string.textContent = '';
+                                if (typeof parent.trpEditor !== 'undefined') {
+                                    jQuery(mutation.addedNodes[i]).wrap('<translate-press></translate-press>');
+                                }
                             }
                         }else{
                             var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
-                            var all_strings = all_nodes.contents().filter(function(){
-                                if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                    if ( jQuery(this).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(this).closest( '[data-trp-translate-id]').length == 0 ){
-                                        return this;
-                                    }
-                                }
-                            });
+                            var all_strings = all_nodes.contents().filter(get_string_from_node);
                             if ( typeof parent.trpEditor !== 'undefined' ) {
                                 all_strings.wrap('<translate-press></translate-press>');
                             }
