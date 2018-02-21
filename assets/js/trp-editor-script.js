@@ -185,6 +185,9 @@ function TRP_Editor(){
      * @param response       The Ajax response message.
      */
     this.populate_strings = function( response ){
+        if ( typeof dictionaries == 'undefined' ){
+            dictionaries = [];
+        }
         for ( var key in response ) {
             if ( response.hasOwnProperty( key ) ) {
                 if ( response[key]['default-language'] == true ){
@@ -576,10 +579,19 @@ function TRP_Dictionary( language_code ){
     this.set_strings = function( strings_object ){
         for ( var s in _this.strings ){
             for ( var i in strings_object ){
-                if ( _this.strings[s].id == strings_object[i].id  || ( ( _this.strings[s].original ) && _this.strings[s].original.trim() == strings_object[i].original.trim() ) ){
+                if ( ( _this.strings[s].id == strings_object[i].id  || ( ( _this.strings[s].original ) && _this.strings[s].original.trim() == strings_object[i].original.trim() ) )
+                    && (
+                        ( _this.strings[s].jquery_object == null ) ||
+                        ( typeof _this.strings[s].jquery_object == 'undefined' ) ||
+                        ( _this.strings[s].jquery_object != null && strings_object[i].jquery_object == null ) ||
+                        ( strings_object[i].jquery_object ==_this.strings[s].jquery_object )
+                    )
+                ) {
                     strings_object[i].set = true;
                     _this.strings[s].set_string( strings_object[i] );
                     break;
+                }else{
+                    strings_object[i].set = false;
                 }
             }
         }
@@ -681,7 +693,7 @@ function TRP_String( language, array_index ){
     this.status = null;
     this.node_type = 'Dynamic Added Strings';
     this.node_description = '';
-    var jquery_object = null;
+    this.jquery_object = null;
     this.language = language;
     this.index = array_index;
     this.slug = false;
@@ -728,9 +740,9 @@ function TRP_String( language, array_index ){
         _this.id = ( new_settings.hasOwnProperty ( 'id' ) ) ? new_settings.id : _this.id;
         _this.original = ( new_settings.hasOwnProperty ( 'original' ) ) ? new_settings.original : _this.original;
         _this.original = decode_html( _this.original );
-        jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : jquery_object;
+        _this.jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : _this.jquery_object;
 
-        if ( jquery_object ){
+        if ( _this.jquery_object ){
             if ( trp_language == trp_on_screen_language ) {
                 var text_to_set = null;
                 if (new_settings.hasOwnProperty('translated') && new_settings.translated != _this.translated) {
@@ -741,22 +753,21 @@ function TRP_String( language, array_index ){
                 }
                 _this.wrap_special_html_elements();
                 if (text_to_set) {
-                    var initial_value = jquery_object.text();
+                    var initial_value = _this.jquery_object.text();
                     text_to_set = initial_value.replace(initial_value.trim(), text_to_set);
-                    if ( jquery_object.attr( 'data-trp-attr' ) ){
-                        jquery_object.children().attr( jquery_object.attr('data-trp-attr'), text_to_set );
-                    }else if( jquery_object.attr( 'data-trp-button' ) ){
-                        jquery_object.children('button').text(text_to_set);
+                    if ( _this.jquery_object.attr( 'data-trp-attr' ) ){
+                        _this.jquery_object.children().attr( _this.jquery_object.attr('data-trp-attr'), text_to_set );
+                    }else if( _this.jquery_object.attr( 'data-trp-button' ) ){
+                        _this.jquery_object.children('button').text(text_to_set);
                     }else {
-                        jquery_object.html( text_to_set );
+                        _this.jquery_object.html( text_to_set );
                     }
                 }
             }
 
-            jquery_object.on( 'mouseenter', '', _this.highlight );
-            jquery_object.on( 'mouseleave', '', _this.unhighlight );
+            _this.jquery_object.on( 'mouseenter', '', _this.highlight );
+            _this.jquery_object.on( 'mouseleave', '', _this.unhighlight );
         }
-
 
         _this.status = ( new_settings.hasOwnProperty( 'status' ) ) ? new_settings.status : _this.status;
         _this.translated = ( new_settings.hasOwnProperty( 'translated' ) ) ? decode_html ( new_settings.translated ) : _this.translated;
@@ -766,20 +777,20 @@ function TRP_String( language, array_index ){
      * Wrap buttons and placeholders so that we can display the pencil button and also replace with translation.
      */
     this.wrap_special_html_elements = function(){
-        if( jquery_object.is('button') ){
-            jquery_object.unwrap('trp-highlight');
-            jquery_object.wrap('<trp-highlight data-trp-button="true"></trp-highlight>');
-            jquery_object = jquery_object.parent();
+        if( _this.jquery_object.is('button') ){
+            _this.jquery_object.unwrap('trp-highlight');
+            _this.jquery_object.wrap('<trp-highlight data-trp-button="true"></trp-highlight>');
+            _this.jquery_object = _this.jquery_object.parent();
         }
-        else if ( jquery_object.attr( 'type' ) == 'submit' || jquery_object.attr( 'type' ) == 'button'  ) {
-            jquery_object.unwrap('trp-highlight');
-            jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
-            jquery_object = jquery_object.parent();
+        else if ( _this.jquery_object.attr( 'type' ) == 'submit' || _this.jquery_object.attr( 'type' ) == 'button'  ) {
+            _this.jquery_object.unwrap('trp-highlight');
+            _this.jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
+            _this.jquery_object = _this.jquery_object.parent();
         }
-        else if ( ( jquery_object.attr( 'type' ) == 'text' || jquery_object.attr( 'type' ) == 'search' ) && ( typeof jquery_object.attr( 'placeholder' ) != 'undefined' ) ) {
-            jquery_object.unwrap('trp-highlight');
-            jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
-            jquery_object = jquery_object.parent();
+        else if ( ( _this.jquery_object.attr( 'type' ) == 'text' || _this.jquery_object.attr( 'type' ) == 'search' ) && ( typeof _this.jquery_object.attr( 'placeholder' ) != 'undefined' ) ) {
+            _this.jquery_object.unwrap('trp-highlight');
+            _this.jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
+            _this.jquery_object = _this.jquery_object.parent();
         }
     };
 
@@ -788,15 +799,15 @@ function TRP_String( language, array_index ){
      */
     this.highlight = function (){
         if ( ! trpEditor.edit_translation_button ){
-            jquery_object.prepend( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
-            trpEditor.edit_translation_button = jquery_object.children('.trp-edit-translation');
+            _this.jquery_object.prepend( '<span class="trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></span>' );
+            trpEditor.edit_translation_button = _this.jquery_object.children('.trp-edit-translation');
         }else{
             _this.wrap_special_html_elements();
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
-            jquery_object.prepend(trpEditor.edit_translation_button);
+            _this.jquery_object.prepend(trpEditor.edit_translation_button);
         }
 
-        trpEditor.make_sure_pencil_icon_is_inside_view( jquery_object[0] );
+        trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );
 
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click',  function(e){
@@ -844,19 +855,19 @@ function TRP_String( language, array_index ){
      * @param raw_string
      */
     this.set_raw_string = function( raw_string ){
-        jquery_object = jQuery( raw_string );
-        var translation_id_attribute = jquery_object.attr( TRP_TRANSLATION_ID );
+        _this.jquery_object = jQuery( raw_string );
+        var translation_id_attribute = _this.jquery_object.attr( TRP_TRANSLATION_ID );
         if ( translation_id_attribute ){
             _this.id = translation_id_attribute;
-            _this.node_type = jquery_object.attr( TRP_NODE_TYPE );
-            _this.node_description = jquery_object.attr( TRP_NODE_DESCRIPTION );
-            if ( jquery_object.attr( 'name' ) == 'trp-slug' ){
+            _this.node_type = _this.jquery_object.attr( TRP_NODE_TYPE );
+            _this.node_description = _this.jquery_object.attr( TRP_NODE_DESCRIPTION );
+            if ( _this.jquery_object.attr( 'name' ) == 'trp-slug' ){
                 _this.slug = true;
-                _this.slug_post_id = jquery_object.attr( 'post-id' );
-                _this.original = jquery_object.attr( 'content' );
+                _this.slug_post_id = _this.jquery_object.attr( 'post-id' );
+                _this.original = _this.jquery_object.attr( 'content' );
             }
         }else{
-            _this.original = jquery_object.text();
+            _this.original = _this.jquery_object.text();
         }
     };
 
