@@ -59,7 +59,7 @@
                         <option value="yes" <?php selected( $this->settings['force-language-to-custom-links'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Select Yes if you want to force custom links without language encoding to  add the subdirectory in the url for the default language.', 'translatepress-multilingual' ); ?>
+                        <?php _e( 'Select Yes if you want to force custom links without language encoding to keep the currently selected language.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
