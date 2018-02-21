@@ -125,6 +125,11 @@ body{
     height: 100%;
 }
 
+html[dir="rtl"] #trp-preview{
+    left: 350px !important;
+    right: 0px !important;
+}
+
 iframe#trp-preview-iframe {
     position: absolute;
     height: 100%;
@@ -219,7 +224,7 @@ span.select2-container{
 
 .trp-language-text{
     padding-right: 9px;
-    padding-bottom: 12px;
+    padding-bottom: 15px;
 }
 
 .trp-language-text textarea{
