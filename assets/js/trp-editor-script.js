@@ -40,7 +40,7 @@ function TRP_Editor(){
                 link = _this.update_query_string('trp-view-as', trp_view_as, link );
 
                 var trp_view_as_nonce = currentUrl.searchParams.get("trp-view-as-nonce");
-                link = _this.update_query_string('trp-view-as-nonce', trp_view_as, link );
+                link = _this.update_query_string('trp-view-as-nonce', trp_view_as_nonce, link );
             }
             link = _this.update_query_string('trp-edit-translation', 'true', link );
             window.location.href = link;
@@ -579,35 +579,6 @@ function TRP_Dictionary( language_code ){
     this.set_strings = function( strings_object ){
         for ( var s in _this.strings ){
             for ( var i in strings_object ){
-                //if (  strings_object[i].original.trim() == 'Pinnnna colllada') {
-                   /* if (!strings_object[i].jquery_object) {
-                        console.log(strings_object[i].original.trim());
-                        console.log('object nu exista');
-                    }
-                    if (strings_object[i].jquery_object && ( strings_object[i].jquery_object == _this.strings[s].jquery_object )) {
-                        console.log('obiectul exista si e si egal');
-                    }*/
-                //}
-                if ( 218 == strings_object[i].id && strings_object[i].jquery_object){
-
-                    //console.log('set_string pe one or more fields');
-                }
-                if ( ( ! strings_object[i].jquery_object  || ( strings_object[i].jquery_object && ( strings_object[i].jquery_object ==_this.strings[s].jquery_object ) ))){
-
-                }else{
-                 //   console.log(strings_object[i].original.trim());
-                   // console.log('---intreaga expresie');
-
-                }
-                if ( 220 == strings_object[i].id && _this.strings[s].id == strings_object[i].id){
-                    var a_gasit_unul_la_fel = strings_object[i];
-                    console.log('a gasit unul la fel');
-                    console.log(strings_object[i].jquery_object);
-                    console.log(_this.strings[s].jquery_object);
-                    console.log(strings_object[i].jquery_object ==_this.strings[s].jquery_object );
-
-                }
-                console.log();
                 if ( ( _this.strings[s].id == strings_object[i].id  || ( ( _this.strings[s].original ) && _this.strings[s].original.trim() == strings_object[i].original.trim() ) )
                     && (
                         ( _this.strings[s].jquery_object == null ) ||
@@ -616,13 +587,7 @@ function TRP_Dictionary( language_code ){
                         ( strings_object[i].jquery_object ==_this.strings[s].jquery_object )
                     )
                 ) {
-                    //( ( ! strings_object[i].jquery_object && ! _this.strings[s].jquery_object )  || ( _this.strings[s].jquery_object && strings_object[i].jquery_object && ( strings_object[i].jquery_object ==_this.strings[s].jquery_object ) ) ) ){
-                    if ( 220 == strings_object[i].id ) {
-                        console.log('a modificat unul existent');
-                    }
-                //if ( _this.strings[s].id == strings_object[i].id  || ( ( _this.strings[s].original ) && _this.strings[s].original.trim() == strings_object[i].original.trim() ) ){
                     strings_object[i].set = true;
-
                     _this.strings[s].set_string( strings_object[i] );
                     break;
                 }else{
@@ -635,14 +600,6 @@ function TRP_Dictionary( language_code ){
                 continue;
             }
             var string = new TRP_String( _this.language, _this.strings.length );
-            if ( 220 == strings_object[i].id ){
-                var adaugat_inca_unul = strings_object[i];
-                console.log('adaugat unul nou');
-                console.log(strings_object[i].jquery_object);
-                //console.log(strings_object[i].jquery_object ==_this.strings[s].jquery_object );
-
-            }
-            //console.log('**' + strings_object[i].original );
             string.set_string( strings_object[i] );
             _this.strings.push(string);
         }
@@ -785,10 +742,7 @@ function TRP_String( language, array_index ){
         _this.original = decode_html( _this.original );
         _this.jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : _this.jquery_object;
 
-        if ( "One or more fields have an error. Please check and try again." == _this.original ){
-            //console.log('set_string pe one or more fields');
-        }
-            if ( _this.jquery_object ){
+        if ( _this.jquery_object ){
             if ( trp_language == trp_on_screen_language ) {
                 var text_to_set = null;
                 if (new_settings.hasOwnProperty('translated') && new_settings.translated != _this.translated) {
@@ -814,7 +768,6 @@ function TRP_String( language, array_index ){
             _this.jquery_object.on( 'mouseenter', '', _this.highlight );
             _this.jquery_object.on( 'mouseleave', '', _this.unhighlight );
         }
-
 
         _this.status = ( new_settings.hasOwnProperty( 'status' ) ) ? new_settings.status : _this.status;
         _this.translated = ( new_settings.hasOwnProperty( 'translated' ) ) ? decode_html ( new_settings.translated ) : _this.translated;
