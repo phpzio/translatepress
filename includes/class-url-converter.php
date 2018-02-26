@@ -33,6 +33,12 @@ class TRP_Url_Converter {
         }
         $lang_from_url = $this->get_lang_from_url_string( $this->cur_page_url() );
 
+        // compatibility with Elementor preview. Do not redirect to subdir language when elementor preview is present.
+        // TODO: move to compatibility file in the future.
+        if( isset( $_GET['elementor-preview'] ) ){
+            return;
+        }
+
         if ( $lang_from_url == null ) {
         	$language_to_redirect = $this->settings['default-language'];
 	        if ( isset( $this->settings['translation-languages'][0] ) ) {
