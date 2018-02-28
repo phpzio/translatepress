@@ -46,7 +46,7 @@
         <div class="grid-cell" style="overflow:hidden;">
             <a href="https://translatepress.com/pricing/" target="_blank"><img src="<?php echo plugins_url('../assets/images/view-as-addon.png', __FILE__) ?>" alt="Browse As User Role" style="float: left; margin: 0 1.5rem 1.5rem 0;"></a>
             <h3><a href=" <?php echo trp_add_affiliate_id_to_link('https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=addons_tab&utm_campaign=tpfree') ?> " target="_blank"> Browse As User Role</a></h3>
-            <p>Navigate your website just like a particular user role would. Really useful for dynamic content or hidden content that appears for particular users.</p>
+            <p>Navigate your website just like a particular user role would. <br/>Really useful for dynamic content or hidden content that appears for particular users.</p>
         </div>
     </div>
 
