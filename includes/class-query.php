@@ -114,6 +114,7 @@ class TRP_Query{
                                     original  longtext NOT NULL,
                                     translated  longtext,
                                     status int(20),
+                                    type int(20),
                                     UNIQUE KEY id (id) )
                                      $charset_collate;";
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -121,9 +122,18 @@ class TRP_Query{
 
             $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
             $this->db->query( $sql_index );
-        } 
+        }else{
+	        $this->check_for_type_column( $language_code, $default_language );
+        }
     }
-    
+
+	/**
+	 * Check if gettext table for specific language exists.
+	 *
+	 * If the table does not exists it is created.
+	 *
+	 * @param string $language_code
+	 */
     public function check_gettext_table( $language_code ){
         $table_name = sanitize_text_field( $this->get_gettext_table_name($language_code) );
         if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
@@ -146,14 +156,23 @@ class TRP_Query{
         }
     }
 
+	/**
+	 * When changing plugin version, call certain database upgrade functions.
+	 *
+	 */
     public function check_for_necessary_updates(){
         $stored_database_version = get_option('trp_plugin_version');
         if( empty($stored_database_version) || version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '>' ) ){
             $this->check_if_gettext_tables_exist();
+            $this->check_for_type_column();
         }
+
         update_option( 'trp_plugin_version', TRP_PLUGIN_VERSION );
     }
 
+	/**
+	 * Iterates over all languages to call gettext table checking
+	 */
     public function check_if_gettext_tables_exist(){
         if( !empty( $this->settings['translation-languages'] ) ){
             foreach( $this->settings['translation-languages'] as $site_language_code ){
@@ -161,6 +180,52 @@ class TRP_Query{
             }
         }
     }
+
+	/**
+	 * Add type column to dictionary tables, if it doesn't exist.
+	 *
+	 * @param null $language_code
+	 * @param null $default_language
+	 */
+    public function check_for_type_column( $language_code = null, $default_language = null ){
+    	if ( $language_code ){
+    		// check only this language
+    		$array_of_languages = array( $language_code );
+	    }else {
+		    // check all languages
+			$array_of_languages = $this->settings['translation-languages'];
+	    }
+
+	    if ( ! empty( $array_of_languages ) ) {
+		    foreach ( $array_of_languages as $site_language_code ) {
+			    if ( $site_language_code != $this->settings['default-language'] && ! $this->table_column_exists( $this->get_table_name( $site_language_code, $default_language ), 'type' ) ) {
+				    $this->db->query("ALTER TABLE " . $this->get_table_name( $language_code ) . " ADD type INT(20) DEFAULT 0");
+			    }
+		    }
+	    }
+    }
+
+	/**
+	 * Returns true if a database table column exists. Otherwise returns false.
+	 *
+	 * @link http://stackoverflow.com/a/5943905/2489248
+	 * @global wpdb $wpdb
+	 *
+	 * @param string $table_name Name of table we will check for column existence.
+	 * @param string $column_name Name of column we are checking for.
+	 *
+	 * @return boolean True if column exists. Else returns false.
+	 */
+	public function table_column_exists( $table_name, $column_name ) {
+		$column = $this->db->get_results( $this->db->prepare(
+			"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
+			DB_NAME, $table_name, $column_name
+		) );
+		if ( ! empty( $column ) ) {
+			return true;
+		}
+		return false;
+	}
 
     /**
      * Insert translations and new strings in DB.

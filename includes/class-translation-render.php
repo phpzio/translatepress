@@ -41,6 +41,7 @@ class TRP_Translation_Render{
      * Function to hide php errors and notice and instead log them in debug.log so we don't store the notice strings inside the db if WP_DEBUG is on
      */
     public function trp_debug_mode_off(){
+    	return;
         if ( WP_DEBUG ) {
             global $TRP_LANGUAGE;
             if (is_admin() ||
