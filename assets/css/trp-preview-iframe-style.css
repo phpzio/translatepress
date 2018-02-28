@@ -2,7 +2,7 @@
     String editor button
 */
 
-span.trp-edit-translation {
+.trp-icon {
     width: 30px !important;
     height: 30px !important;
     display: inline-block;
@@ -30,11 +30,11 @@ span.trp-edit-translation {
     text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;
 }
 
-span.trp-edit-translation:hover {
+.trp-icon:hover {
     background: #008ec2!important;
 }
 
-span.trp-edit-translation svg {
+.trp-icon svg {
     fill: #fff;
     min-width: 20px;
     min-height: 20px;
@@ -51,11 +51,11 @@ span.trp-edit-translation svg {
     outline: 2px solid #e2e4e7;
 }
 
-*[data-trpgettextoriginal] span.trp-edit-translation, .trpgettext-wrap span.trp-edit-translation{
+*[data-trpgettextoriginal] .trp-icon, .trpgettext-wrap .trp-icon{
     background: #00ba3f !important;
 }
 
-*[data-trpgettextoriginal] span.trp-edit-translation:hover, .trpgettext-wrap span.trp-edit-translation:hover{
+*[data-trpgettextoriginal] .trp-icon:hover, .trpgettext-wrap .trp-icon:hover{
     background: #00ce44 !important;
 }
 
@@ -69,10 +69,19 @@ translate-press{
     -webkit-transform: translate3d(0,0,0);
 }
 
-.trp-overflow-transform-fixer span.trp-edit-translation{
+.trp-overflow-transform-fixer trp-edit.trp-edit-translation{
     position:fixed;
 }
 
-.trp-overflow-inside-fixer span.trp-edit-translation{
+.trp-overflow-inside-fixer trp-edit.trp-edit-translation{
     margin-left:0 !important;
+}
+
+/*
+ * Merge icon
+ */
+
+.trp-icon.trp-merge{
+    margin-left: -60px !important;
+    background: #3CB371!important;
 }
