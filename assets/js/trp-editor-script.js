@@ -760,7 +760,9 @@ function TRP_String( language, array_index ){
                     }else if( _this.jquery_object.attr( 'data-trp-button' ) ){
                         _this.jquery_object.children('button').text(text_to_set);
                     }else {
+                        _this.pause_observer();
                         _this.jquery_object.html( text_to_set );
+                        _this.unpause_observer();
                     }
                 }
             }
@@ -794,22 +796,40 @@ function TRP_String( language, array_index ){
         }
     };
 
-    this.get_merge_or_split_button = function(){
-        return '<trp-merge class="trp-icon trp-merge"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" xmlns:xlink="http://www.w3.org/1999/xlink" ><metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata><path d="M10,798.1V673c131.3,0,196.9-65.1,260.4-128c15.4-15.3,31.1-30.8,47.5-45.1c-16.4-14.3-32.1-29.7-47.5-45.1C206.9,392,141.3,327,10,327V201.9c182.8,0,278.5,94.9,348.4,164.3c41.4,41.1,68.1,66.2,96.5,71c3.4-0.2,6.7-0.4,10.2-0.4v1.3l0,0h300.7l-51.4-130c-1.7-4.4-0.3-9.3,3.4-12.2c3.7-2.8,8.9-2.8,12.6,0.1L986,492.4c2.6,2,4,5,4,8.3s-1.5,6.3-4,8.3L730.5,705.4c-1.9,1.4-4.1,2.2-6.3,2.2c-2.2,0-4.4-0.7-6.3-2.1c-3.8-2.8-5.1-7.8-3.4-12.2l51.4-130.1H464.7c-0.1,0-0.2,0-0.3,0c-3.2,0-6.4-0.2-9.5-0.4c-28.4,4.8-55,29.9-96.5,71C288.5,703.2,192.8,798.1,10,798.1z"/></svg></trp-merge>';
+    /**
+     * Return 'merge', 'split' or 'none' for the jquery_object received based on rules.
+     */
+    this.decide_if_merge_or_split = function ( jquery_object ){
+        console.log(jquery_object);
+        console.log(jquery_object.parent());
+        // if type is block, then return 'split'
+        if ( typeof trp_merge_rules != 'undefined' && trp_merge_rules.top_parents ) {
+            for ( var i in trp_merge_rules.top_parents ) {
+                if ( jquery_object.is( 'translate-press' ) ){ /* jquery_object.parents().is( trp_merge_rules.top_parents[i] */{ // mergi pana la primul parinte de tip TOP parent si verifica daca mai are alti copii ce pot fi merge-uiti
+                    console.log( 'este' );
+                    return 'merge';
+                }
+            }
+        }
+        return null;
     };
 
     /**
      * Show the pencil and border the viewable string in Preview window.
      */
     this.highlight = function (){
-        merge_or_split = _this.get_merge_or_split_button();
         if ( ! trpEditor.edit_translation_button ){
-            _this.jquery_object.prepend( '<trp-span>' + merge_or_split + '<trp-edit class="trp-icon trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></trp-edit></trp-span>' );
+            _this.jquery_object.prepend( '<trp-span><trp-merge class="trp-icon trp-merge"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" xmlns:xlink="http://www.w3.org/1999/xlink" ><metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata><path d="M10,798.1V673c131.3,0,196.9-65.1,260.4-128c15.4-15.3,31.1-30.8,47.5-45.1c-16.4-14.3-32.1-29.7-47.5-45.1C206.9,392,141.3,327,10,327V201.9c182.8,0,278.5,94.9,348.4,164.3c41.4,41.1,68.1,66.2,96.5,71c3.4-0.2,6.7-0.4,10.2-0.4v1.3l0,0h300.7l-51.4-130c-1.7-4.4-0.3-9.3,3.4-12.2c3.7-2.8,8.9-2.8,12.6,0.1L986,492.4c2.6,2,4,5,4,8.3s-1.5,6.3-4,8.3L730.5,705.4c-1.9,1.4-4.1,2.2-6.3,2.2c-2.2,0-4.4-0.7-6.3-2.1c-3.8-2.8-5.1-7.8-3.4-12.2l51.4-130.1H464.7c-0.1,0-0.2,0-0.3,0c-3.2,0-6.4-0.2-9.5-0.4c-28.4,4.8-55,29.9-96.5,71C288.5,703.2,192.8,798.1,10,798.1z"/></svg></trp-merge><trp-edit class="trp-icon trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></trp-edit></trp-span>' );
             trpEditor.edit_translation_button = _this.jquery_object.children('trp-span');
         }else{
             _this.wrap_special_html_elements();
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
             _this.jquery_object.prepend(trpEditor.edit_translation_button);
+        }
+        trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
+        var merge_or_split = _this.decide_if_merge_or_split( _this.jquery_object );
+        if ( merge_or_split ) {
+            trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
         }
 
         trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );

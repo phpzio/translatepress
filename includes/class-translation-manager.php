@@ -62,6 +62,11 @@ class TRP_Translation_Manager{
         return TRP_PLUGIN_DIR . 'partials/translation-manager.php' ;
     }
 
+	public function get_merge_rules(){
+    	$merge_rules = array ( 'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body' ) );
+    	return apply_filters( 'trp_merge_rules', $merge_rules );
+	}
+
     /**
      * Enqueue scripts and styles for translation Editor parent window.
      */
@@ -70,6 +75,8 @@ class TRP_Translation_Manager{
         wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
 
         wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
+	    $trp_merge_rules = $this->get_merge_rules();
+	    wp_localize_script('trp-translation-manager-script', 'trp_merge_rules', $trp_merge_rules);
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
 
         wp_enqueue_script( 'trp-translation-overlay',  TRP_PLUGIN_URL . 'assets/js/trp-editor-overlay.js', array(), TRP_PLUGIN_VERSION );

@@ -77,11 +77,22 @@ translate-press{
     margin-left:0 !important;
 }
 
+
 /*
  * Merge icon
  */
 
 .trp-icon.trp-merge{
+    display: none;
     margin-left: -60px !important;
     background: #3CB371!important;
+}
+
+.trp-icon.trp-merge:hover {
+    display: none;
+    background: #40bf79!important;
+}
+
+.trp-icon.trp-merge.trp-active-icon, .trp-icon.trp-merge.trp-active-icon:hover{
+    display: inline;
 }
