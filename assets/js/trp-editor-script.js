@@ -238,6 +238,13 @@ function TRP_Editor(){
         }
     };
 
+    this.update_textareas = function ( original ){
+        _this.original_textarea.val( original );
+        for ( var key in translated_textareas ){
+            translated_textareas[key].val( '' );
+        }
+    };
+
     /**
      * Prepare modified translation and send it via Ajax for saving in db.
      *
@@ -796,22 +803,88 @@ function TRP_String( language, array_index ){
         }
     };
 
+    /*
+     * Construct a string version for the top_parents_array
+     */
+    this.get_parent_block = function (jquery_object){
+        if ( typeof trp_merge_rules.top_parents_selector == 'undefined' ) {
+            var t = 0;
+            var top_parents_string = trp_merge_rules.top_parents[t];
+            while (t + 1 < trp_merge_rules.top_parents.length) {
+                t = t + 1;
+                top_parents_string = top_parents_string + ', ' + trp_merge_rules.top_parents[t];
+            }
+            trp_merge_rules.top_parents_selector = top_parents_string;
+        }
+
+        return jquery_object.closest( trp_merge_rules.top_parents_selector );
+    };
+
     /**
      * Return 'merge', 'split' or 'none' for the jquery_object received based on rules.
      */
     this.decide_if_merge_or_split = function ( jquery_object ){
-        console.log(jquery_object);
-        console.log(jquery_object.parent());
         // if type is block, then return 'split'
-        if ( typeof trp_merge_rules != 'undefined' && trp_merge_rules.top_parents ) {
-            for ( var i in trp_merge_rules.top_parents ) {
-                if ( jquery_object.is( 'translate-press' ) ){ /* jquery_object.parents().is( trp_merge_rules.top_parents[i] */{ // mergi pana la primul parinte de tip TOP parent si verifica daca mai are alti copii ce pot fi merge-uiti
-                    console.log( 'este' );
-                    return 'merge';
+        if ( typeof trp_merge_rules == 'undefined' ) {
+            return 'none';
+        }
+
+        // check if object is of correct type
+        for ( var s in trp_merge_rules.self_object_type ) {
+            if ( jquery_object.is( trp_merge_rules.self_object_type[s] ) ) {
+                if ( typeof trp_merge_rules.top_parents != 'undefined' && trp_merge_rules.top_parents.length > 0 ) {
+                    // closest element which is of type like
+                    var block_parent = _this.get_parent_block(jquery_object);
+                    if ( block_parent.length > 0 ){
+                        for ( var sl in trp_merge_rules.self_object_type ) {
+                            mergeable_children_count = block_parent.find( trp_merge_rules.self_object_type[sl] ).length;
+                            if ( mergeable_children_count > 1 ) {
+                                for( var i in trp_merge_rules.incompatible_siblings ){
+                                    var incompatible_children = block.parent.find( trp_merge_rules.incompatible_siblings[i] ).length;
+                                    if ( incompatible_children > 0 ) {
+                                        return 'none';
+                                    }
+                                }
+                                return 'merge';
+                            }
+                        }
+                    }
                 }
             }
         }
-        return null;
+        return 'none';
+    };
+
+    this.strip_editor_meta_data = function ( html ) {
+        var stripped_html = jQuery( html );
+        // doesn't work
+        /*var stripped_html = jQuery( html ).contents().filter( function (object ) {
+            if( jQuery(object).is('trp-span')) {
+                return false;
+            }
+        });*/
+        var tp_array = stripped_html.find( 'translate-press' );
+
+      /*  for(var i in tp_array ){
+            tp_array[i] = tp_array.innerHTML;
+        }*/
+        return stripped_html.html();
+    };
+
+    /**
+     *
+     */
+    this.prepare_merging = function( e ){
+        // check again
+        if ( _this.decide_if_merge_or_split( _this.jquery_object ) != 'merge' ) {
+            return;
+        }
+
+        var parent = _this.get_parent_block( _this.jquery_object );
+        parent.addClass( 'trp-highlight' );
+        var stripped_innerhtml = _this.strip_editor_meta_data(  parent.html() );
+        console.log(stripped_innerhtml);
+        trpEditor.update_textareas( stripped_innerhtml );
     };
 
     /**
@@ -828,8 +901,9 @@ function TRP_String( language, array_index ){
         }
         trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
         var merge_or_split = _this.decide_if_merge_or_split( _this.jquery_object );
-        if ( merge_or_split ) {
+        if ( merge_or_split != 'none' ) {
             trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
+            //trpEditor.edit_translation_button.children('trp-merge' ).on( 'click', _this.prepare_merging );
         }
 
         trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );
@@ -851,6 +925,10 @@ function TRP_String( language, array_index ){
                 trpEditor.jquery_string_selector.val( _this.index ).trigger( 'change', true )
             }else{
                 trpEditor.jquery_string_selector.trigger('trpSelectorNotChanged');
+            }
+
+            if( jQuery( e.target ).closest( 'trp-merge' ).length > 0 ){
+                _this.prepare_merging();
             }
         });
 
@@ -1273,7 +1351,7 @@ jQuery(function(){
             if ( ! trpEditor.edit_translation_button ){
                 trpEditor.edit_translation_button = jQuery( '<trp-span><trp-edit> class="trp-icon trp-edit-translation"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></trp-edit></trp-span>' );
             }
-
+            trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
 
             if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' ) {

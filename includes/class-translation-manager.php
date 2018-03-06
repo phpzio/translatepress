@@ -63,7 +63,15 @@ class TRP_Translation_Manager{
     }
 
 	public function get_merge_rules(){
-    	$merge_rules = array ( 'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body' ) );
+    	$merge_rules = array (
+    		'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body' ),
+		    /*
+		     * footer? apare in partea de jos a unui post.
+		     */
+
+		    'self_object_type' => array( 'translate-press' ),
+		    'incompatible_children' => array( '[data-trpgettextoriginal]' ) // translated data-attributes from inputs
+	    );
     	return apply_filters( 'trp_merge_rules', $merge_rules );
 	}
 
