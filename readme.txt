@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
 Requires at least: 3.1.0
 Tested up to: 4.9.4
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,13 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.1.7 =
+Compatibility fix with Elementor Page Builder
+Added translation .pot file
+Add proper encoding for mysqli connection in our trp-ajax.php file so we fixed some translation
+Fixed infinite loop related to mutation observer on javascript strings by not re-adding detected strings again if they are similar to existing ones
+Aligned text from add-ons tab.
+
 = 1.1.6 =
 * Added support for translating Contact Form 7 alert messages
 * Fixed issue with some strings containing special characters not being translated (i.e. "¿¡")
