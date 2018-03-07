@@ -114,11 +114,11 @@ For more information please check out [TranslatePress documentation](https://tra
 
 == Changelog ==
 = 1.1.7 =
-Compatibility fix with Elementor Page Builder
-Added translation .pot file
-Add proper encoding for mysqli connection in our trp-ajax.php file so we fixed some translation
-Fixed infinite loop related to mutation observer on javascript strings by not re-adding detected strings again if they are similar to existing ones
-Aligned text from add-ons tab.
+* Compatibility fix with Elementor Page Builder
+* Added translation .pot file
+* Add proper encoding for mysqli connection in our trp-ajax.php file so we fixed some translation
+* Fixed infinite loop related to mutation observer on javascript strings by not re-adding detected strings again if they are similar to existing ones
+* Aligned text from add-ons tab.
 
 = 1.1.6 =
 * Added support for translating Contact Form 7 alert messages
