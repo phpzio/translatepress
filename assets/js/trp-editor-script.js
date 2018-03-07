@@ -855,20 +855,13 @@ function TRP_String( language, array_index ){
         return 'none';
     };
 
-    this.strip_editor_meta_data = function ( html ) {
-        var stripped_html = jQuery( html );
-        // doesn't work
-        /*var stripped_html = jQuery( html ).contents().filter( function (object ) {
-            if( jQuery(object).is('trp-span')) {
-                return false;
-            }
-        });*/
-        var tp_array = stripped_html.find( 'translate-press' );
-
-      /*  for(var i in tp_array ){
-            tp_array[i] = tp_array.innerHTML;
-        }*/
-        return stripped_html.html();
+    this.strip_editor_meta_data = function ( parent ) {
+        var clone = parent.clone();
+        clone.find('trp-span').remove();
+        clone.find('translate-press').contents().unwrap();
+        clone.find('a').removeAttr( 'data-trp-unpreviewable');
+        stripped_html = clone.html();
+        return stripped_html;
     };
 
     /**
@@ -882,9 +875,8 @@ function TRP_String( language, array_index ){
 
         var parent = _this.get_parent_block( _this.jquery_object );
         parent.addClass( 'trp-highlight' );
-        var stripped_innerhtml = _this.strip_editor_meta_data(  parent.html() );
-        console.log(stripped_innerhtml);
-        trpEditor.update_textareas( stripped_innerhtml );
+
+        trpEditor.update_textareas( _this.strip_editor_meta_data(  parent ) );
     };
 
     /**
