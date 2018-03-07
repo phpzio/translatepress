@@ -760,7 +760,9 @@ function TRP_String( language, array_index ){
                     }else if( _this.jquery_object.attr( 'data-trp-button' ) ){
                         _this.jquery_object.children('button').text(text_to_set);
                     }else {
-                        _this.jquery_object.html( text_to_set );
+                        if (_this.jquery_object.text().trim() !== text_to_set.trim() ){
+                            _this.jquery_object.html( text_to_set );
+                        }
                     }
                 }
             }
