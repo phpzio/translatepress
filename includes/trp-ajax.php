@@ -41,7 +41,7 @@ class TRP_Ajax{
      * @return array                    Sanitized array of strings.
      */
     protected function sanitize_strings( $posted_strings){
-        $strings = json_decode(stripslashes( $posted_strings ));
+        $strings = json_decode( $posted_strings );
         $original_array = array();
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
