@@ -242,6 +242,7 @@ function TRP_Editor(){
         _this.original_textarea.val( original );
         for ( var key in translated_textareas ){
             translated_textareas[key].val( '' );
+            translated_textareas[key].attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
         }
     };
 
@@ -259,8 +260,17 @@ function TRP_Editor(){
         if ( original != "" ) {
             for ( var key in translated_textareas ) {
                 var translated = translated_textareas[key].val();
-                var string = dictionaries[key].get_string_by_original(original);
-                if ( string.slug == true ){
+                var id = translated_textareas[key].attr( TRP_TRANSLATION_ID );
+                var string = {};
+                if ( id == 'trp_translation_block_draft' ){
+                    string.translated = 'trp_translation_block_draft';
+                    string.slug = false;
+                    string.type = 1;
+                    action  = 'trp_save_translation_block_draft';
+                }else {
+                    string = dictionaries[key].get_string_by_original(original);
+                }
+                if (string.slug == true) {
                     action = 'trp_save_slug_translation';
                 }
                 if ( string.translated != translated ) {
@@ -268,12 +278,11 @@ function TRP_Editor(){
                     if (strings_to_save[key] == undefined) {
                         strings_to_save[key] = [];
                     }
-                    var id = translated_textareas[key].attr( TRP_TRANSLATION_ID );
                     var status = 2;
                     if (translated.trim() == '') {
                         status = 0;
                     }
-                    strings_to_save[key].push({id: id, original: original, translated: translated, status: status});
+                    strings_to_save[key].push({id: id, original: original, translated: translated, status: status, type: string.type});
                 }
             }
         }
@@ -299,7 +308,7 @@ function TRP_Editor(){
      * Ajax request with translation to be stored.
      *
      * @param strings_to_save           Strings to save in database.
-     * @param action                    'trp_save_translations' | 'trp_save_slug_translation'.
+     * @param action                    'trp_save_translations' | 'trp_save_slug_translation' | 'trp_get_translations'
      */
     this.ajax_save_strings = function ( strings_to_save, action ){
         jQuery.ajax({
@@ -308,10 +317,16 @@ function TRP_Editor(){
             dataType: 'json',
             data: {
                 action: action,
-                strings: JSON.stringify( strings_to_save )
+                language: trp_on_screen_language,
+                strings: JSON.stringify( strings_to_save ),
+                all_languages: 'true'
             },
             success: function (response) {
-                _this.populate_strings( strings_to_save );
+                if ( action == 'trp_save_translation_block_draft' ){
+                    strings_to_save = response;
+                }
+                _this.populate_strings(strings_to_save);
+
                 _this.saved_translation_ui();
 
             },
@@ -840,7 +855,7 @@ function TRP_String( language, array_index ){
                             mergeable_children_count = block_parent.find( trp_merge_rules.self_object_type[sl] ).length;
                             if ( mergeable_children_count > 1 ) {
                                 for( var i in trp_merge_rules.incompatible_siblings ){
-                                    var incompatible_children = block.parent.find( trp_merge_rules.incompatible_siblings[i] ).length;
+                                    var incompatible_children = block_parent.find( trp_merge_rules.incompatible_siblings[i] ).length;
                                     if ( incompatible_children > 0 ) {
                                         return 'none';
                                     }
@@ -858,7 +873,8 @@ function TRP_String( language, array_index ){
     this.strip_editor_meta_data = function ( parent ) {
         var clone = parent.clone();
         clone.find('trp-span').remove();
-        clone.find('translate-press').contents().unwrap();
+        clone.find('translate-press, trp-wrap').contents().unwrap();
+
         clone.find('a').removeAttr( 'data-trp-unpreviewable');
         stripped_html = clone.html();
         return stripped_html;
