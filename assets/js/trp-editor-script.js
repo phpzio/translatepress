@@ -782,9 +782,7 @@ function TRP_String( language, array_index ){
                     }else if( _this.jquery_object.attr( 'data-trp-button' ) ){
                         _this.jquery_object.children('button').text(text_to_set);
                     }else {
-                        _this.pause_observer();
                         _this.jquery_object.html( text_to_set );
-                        _this.unpause_observer();
                     }
                 }
             }

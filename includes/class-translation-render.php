@@ -681,7 +681,7 @@ class TRP_Translation_Render{
         foreach( $translateable_strings as $i => $string ){
             //strings existing in database,
 
-            if ( isset( $dictionary[$this->full_trim($string)]->translated ) ){
+            if ( isset( $dictionary[$string]->translated ) ){
                 $translated_strings[$i] = $dictionary[$this->full_trim($string)]->translated;
             }else{
                 $new_strings[$i] = $translateable_strings[$i];
@@ -710,8 +710,8 @@ class TRP_Translation_Render{
                     // we have a translation
                     array_push ( $update_strings, array(
                         'id' => $untranslated_list[$string]->id,
-                        'original' => sanitize_text_field($untranslated_list[$string]->original),
-                        'translated' => sanitize_text_field($machine_strings[$i]),
+                        'original' => trp_sanitize_string($untranslated_list[$string]->original),
+                        'translated' => trp_sanitize_string($machine_strings[$i]),
                         'status' => $this->trp_query->get_constant_machine_translated() ) );
                     $translated_strings[$i] = $machine_strings[$i];
                 }
@@ -729,7 +729,7 @@ class TRP_Translation_Render{
                     array_push ( $update_strings, array(
                         'id' => NULL,
                         'original' => $new_strings[$i],
-                        'translated' => sanitize_text_field($machine_strings[$i]),
+                        'translated' => trp_sanitize_string($machine_strings[$i]),
                         'status' => $this->trp_query->get_constant_machine_translated() ) );
                     unset($new_strings[$i]);
                 }

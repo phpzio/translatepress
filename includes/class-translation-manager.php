@@ -151,7 +151,7 @@ class TRP_Translation_Manager{
 		    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
 			    $id_array[$key] = (int)$string->id;
 		    } else if ( isset( $string->original ) ) {
-			    $original_array[$key] = sanitize_text_field( $string->original );
+			    $original_array[$key] = trp_sanitize_string( $string->original );
 		    }
 	    }
 
@@ -344,8 +344,8 @@ class TRP_Translation_Manager{
 					    $update_strings[ $language ] = array();
 					    array_push($update_strings[ $language ], array(
 						    'id' => (int)$string->id,
-						    'original' => sanitize_text_field($string->original),
-						    'translated' => preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $string->translated ),
+						    'original' => trp_sanitize_string( $string->original ),
+						    'translated' => trp_sanitize_string( $string->translated ),
 						    'status' => (int)$string->status
 					    ));
 
@@ -393,8 +393,8 @@ class TRP_Translation_Manager{
                                 $update_strings[ $language ] = array();
                                 array_push($update_strings[ $language ], array(
                                     'id' => (int)$string->id,
-                                    'original' => sanitize_text_field($string->original),
-                                    'translated' => preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $string->translated ),
+                                    'original' => trp_sanitize_string( $string->original ),
+                                    'translated' => trp_sanitize_string( $string->translated ),
                                     'domain' => sanitize_text_field( $string->domain ),
                                     'status' => (int)$string->status
                                 ));
@@ -432,25 +432,28 @@ class TRP_Translation_Manager{
 						}
 					}
 
-					/* merging the dictionary received from get_translation_for_strings (which contains ID and possibly automatic translations)
-					 * with
+					/*
+					 * Merging the dictionary received from get_translation_for_strings (which contains ID and possibly automatic translations) with
 					 * ajax translated (which can contain manual translations)
 					 */
 					if ( isset( $dictionary ) ){
 						foreach ( $dictionary as $language => $list_of_strings ){
 							foreach( $list_of_strings as $dictionary_string_key => $dictionary_string ){
+								if ( !isset ($strings->$language) ){
+									continue;
+								}
 								$ajax_translated_string_list = $strings->$language;
 								foreach( $ajax_translated_string_list as $ajax_key => $ajax_string ) {
-									//todo don't sanitize original ever because they will not match
-									//todo there's an error here
-									if ( $ajax_string != '' && sanitize_text_field( $ajax_string->original ) == $dictionary_string->original ) {
-										$dictionary[ $language ][ $dictionary_string_key ]->translated = preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $ajax_string->translated );
+									if ( $ajax_string->translated != '' && trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
+										$dictionary[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
+										$dictionary[ $language ][ $dictionary_string_key ]->status = (int) $ajax_string->status ;
+										$dictionary[ $language ][ $dictionary_string_key ]->type = (int) $ajax_string->type;
 									}
 								}
 							}
 						}
 
-						save_translations_of_strings( $dictionary );
+						$this->save_translations_of_strings( $dictionary );
 						error_log( json_encode($dictionary ));
 					}
 				}

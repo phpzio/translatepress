@@ -127,3 +127,31 @@ function trp_add_affiliate_id_to_link( $link ){
 
     return esc_url( $link );
 }
+/**
+ * Function that makes string safe for display.
+ *
+ * Can be used on original or translated string.
+ * Removes any unwanted html code from the string.
+ * Do not confuse with trim.
+ */
+function trp_sanitize_string( $filtered ){
+	$filtered = preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $filtered );
+
+	if ( ! $keep_newlines ) {
+		$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
+	}
+	$filtered = trim( $filtered );
+
+	$found = false;
+	while ( preg_match('/%[a-f0-9]{2}/i', $filtered, $match) ) {
+		$filtered = str_replace($match[0], '', $filtered);
+		$found = true;
+	}
+
+	if ( $found ) {
+		// Strip out the whitespace that may now exist after removing the octets.
+		$filtered = trim( preg_replace('/ +/', ' ', $filtered) );
+	}
+
+	return $filtered;
+}
