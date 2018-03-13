@@ -1,7 +1,7 @@
 ﻿=== TranslatePress - Translate Multilingual sites ===
 Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
-Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
+Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.4
 Stable tag: 1.1.7
@@ -16,7 +16,7 @@ Easily translate your entire site directly from the front-end and go multilingua
 
 The interface allows you to easily translate the entire page at once, including output from shortcodes, forms and page builders. It also works out of the box with WooCommerce.
 
-Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted translation plugin, meaning you'll own all your translations, forever.
+Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted translation plugin, meaning you'll own all your translations, forever. It's the fastest way to create a bilingual or multilingual site.
 
 = Multilingual & Translation Features =
 
@@ -36,7 +36,7 @@ Note: this plugin uses the Google Translation API to translate the strings on yo
 
 Users with administrator rights have access to the following translate settings:
 
-* select default language of the website and one translation language.
+* select default language of the website and one translation language, for bilingual sites
 * choose whether language switcher should display languages in their native names or English name
 * force custom links to open in current language
 * enable or disable url subdirectory for the default language
@@ -91,9 +91,9 @@ All the translation are stored locally in your server's database.
 
 TranslatePress - Multilingual works out of the box with WooCommerce, custom post types, complex themes and site builders, so you'll be able to translate any type of content.
 
-= How is it different from other multilingual & translation plugins? =
+= How is it different from other multilingual & translation plugins like WPML or Polylang? =
 
-TranslatePress is easier to use and more intuitive altogether. No more switching between the editor, string translation interfaces or badly translated plugins. You can now translate the full page content directly from the front-end.
+TranslatePress is easier to use and more intuitive altogether. No more switching between the editor, string translation interfaces or badly translated plugins. You can now translate the full page content directly from the front-end. This makes TranslatePress a great alternative to plugins like Polylang and WPML.
 
 = How do I start to translate my site? =
 
