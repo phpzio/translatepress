@@ -17,6 +17,10 @@ class TRP_Query{
     const MACHINE_TRANSLATED = 1;
     const HUMAN_REVIEWED = 2;
 
+    const BLOCK_TYPE_REGULAR_STRING = 0;
+    const BLOCK_TYPE_ACTIVE = 1;
+    const BLOCK_TYPE_DEPRECATED = 2;
+
     /**
      * TRP_Query constructor.
      * @param $settings
@@ -24,7 +28,7 @@ class TRP_Query{
     public function __construct( $settings ){
         global $wpdb;
         $this->db = $wpdb;
-        $this->settings =$settings;
+        $this->settings = $settings;
     }
 
     /**
@@ -51,11 +55,16 @@ class TRP_Query{
      * @param string $language_code     Language code to query for.
      * @return object                   Associative Array of objects with translations where key is original string.
      */
-    public function get_existing_translations( $strings_array, $language_code ){
+    public function get_existing_translations( $strings_array, $language_code, $block_type = null ){
         if ( !is_array( $strings_array ) || count ( $strings_array ) == 0 ){
             return array();
         }
-        $query = "SELECT original,translated FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . " AND original IN ";
+        if ( $block_type == null ){
+	        $and_block_type = "";
+        }else {
+	        $and_block_type = " AND block_type = " . $block_type;
+        }
+        $query = "SELECT original,translated FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . $and_block_type . " AND original IN ";
 
         $placeholders = array();
         $values = array();
@@ -96,7 +105,34 @@ class TRP_Query{
         return self::HUMAN_REVIEWED;
     }
 
-    /**
+	/**
+	 * Return constant used for individual strings, not part of a translation block
+	 *
+	 * @return int
+	 */
+	public function get_constant_block_type_regular_string(){
+		return self::BLOCK_TYPE_REGULAR_STRING;
+	}
+
+	/**
+	 * Return constant used for a translation block
+	 *
+	 * @return int
+	 */
+	public function get_constant_block_type_active(){
+		return self::BLOCK_TYPE_ACTIVE;
+	}
+
+	/**
+	 * Return constant used for a translation block, no longer in use (i.e. after being split )
+	 *
+	 * @return int
+	 */
+	public function get_constant_block_type_deprecated(){
+		return self::BLOCK_TYPE_DEPRECATED;
+	}
+
+	/**
      * Check if table for specific language exists.
      *
      * If the table does not exists it is created.
@@ -114,7 +150,7 @@ class TRP_Query{
                                     original  longtext NOT NULL,
                                     translated  longtext,
                                     status int(20),
-                                    type int(20),
+                                    block_type int(20),
                                     UNIQUE KEY id (id) )
                                      $charset_collate;";
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -123,7 +159,7 @@ class TRP_Query{
             $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
             $this->db->query( $sql_index );
         }else{
-	        $this->check_for_type_column( $language_code, $default_language );
+	        $this->check_for_block_type_column( $language_code, $default_language );
         }
     }
 
@@ -164,7 +200,7 @@ class TRP_Query{
         $stored_database_version = get_option('trp_plugin_version');
         if( empty($stored_database_version) || version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '>' ) ){
             $this->check_if_gettext_tables_exist();
-            $this->check_for_type_column();
+            $this->check_for_block_type_column();
         }
 
         update_option( 'trp_plugin_version', TRP_PLUGIN_VERSION );
@@ -182,12 +218,12 @@ class TRP_Query{
     }
 
 	/**
-	 * Add type column to dictionary tables, if it doesn't exist.
+	 * Add block_type column to dictionary tables, if it doesn't exist.
 	 *
 	 * @param null $language_code
 	 * @param null $default_language
 	 */
-    public function check_for_type_column( $language_code = null, $default_language = null ){
+    public function check_for_block_type_column( $language_code = null, $default_language = null ){
     	if ( $language_code ){
     		// check only this language
     		$array_of_languages = array( $language_code );
@@ -198,8 +234,8 @@ class TRP_Query{
 
 	    if ( ! empty( $array_of_languages ) ) {
 		    foreach ( $array_of_languages as $site_language_code ) {
-			    if ( $site_language_code != $this->settings['default-language'] && ! $this->table_column_exists( $this->get_table_name( $site_language_code, $default_language ), 'type' ) ) {
-				    $this->db->query("ALTER TABLE " . $this->get_table_name( $language_code ) . " ADD type INT(20) DEFAULT 0");
+			    if ( $site_language_code != $this->settings['default-language'] && ! $this->table_column_exists( $this->get_table_name( $site_language_code, $default_language ), 'block_type' ) ) {
+				    $this->db->query("ALTER TABLE " . $this->get_table_name( $site_language_code, $default_language ) . " ADD block_type INT(20) DEFAULT " . $this::BLOCK_TYPE_REGULAR_STRING );
 			    }
 		    }
 	    }
@@ -234,26 +270,29 @@ class TRP_Query{
      * @param array $update_strings         Array of arrays, each containing an entry to update.
      * @param string $language_code         Language code of table where it should be inserted.
      */
-    public function insert_strings( $new_strings, $update_strings, $language_code ){
+    public function insert_strings( $new_strings, $update_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING ){
         if ( count( $new_strings ) == 0 && count( $update_strings ) == 0 ){
             return;
         }
-        $query = "INSERT INTO `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` ( id, original, translated, status ) VALUES ";
+        $query = "INSERT INTO `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` ( id, original, translated, status, block_type ) VALUES ";
 
         $values = array();
         $place_holders = array();
         $new_strings = array_unique( $new_strings );
 
         foreach ( $new_strings as $string ) {
-            array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED );
-            $place_holders[] = "( '%d', '%s', '%s', '%d')";
+            array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED, $block_type );
+            $place_holders[] = "( '%d', '%s', '%s', '%d', '%d')";
         }
         foreach ( $update_strings as $string ) {
-            array_push( $values, $string['id'], $string['original'], $string['translated'], $string['status'] );
-            $place_holders[] = "( '%d', '%s', '%s', '%d')";
+        	if ( ! isset( $string['block_type'] ) ){
+        		$string['block_type'] = self::BLOCK_TYPE_REGULAR_STRING;
+	        }
+            array_push( $values, $string['id'], $string['original'], $string['translated'], $string['status'], $string['block_type'] );
+            $place_holders[] = "( '%d', '%s', '%s', '%d', '%d')";
         }
 
-        $on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status)';
+        $on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status), block_type=VALUES(block_type)';
 
         $query .= implode(', ', $place_holders);
         $query .= $on_duplicate;

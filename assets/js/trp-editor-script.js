@@ -265,7 +265,7 @@ function TRP_Editor(){
                 if ( id == 'trp_translation_block_draft' ){
                     string.translated = 'trp_translation_block_draft';
                     string.slug = false;
-                    string.type = 1;
+                    string.block_type = 1;
                     action  = 'trp_save_translation_block_draft';
                 }else {
                     string = dictionaries[key].get_string_by_original(original);
@@ -282,7 +282,7 @@ function TRP_Editor(){
                     if (translated.trim() == '') {
                         status = 0;
                     }
-                    strings_to_save[key].push({id: id, original: original, translated: translated, status: status, type: string.type});
+                    strings_to_save[key].push({id: id, original: original, translated: translated, status: status, block_type: string.block_type});
                 }
             }
         }
@@ -326,8 +326,9 @@ function TRP_Editor(){
                     strings_to_save = response;
                 }
                 _this.populate_strings(strings_to_save);
-
+                // maybe reload list()
                 _this.saved_translation_ui();
+                console.log( );
 
             },
             error: function(errorThrown){
@@ -837,7 +838,7 @@ function TRP_String( language, array_index ){
      * Return 'merge', 'split' or 'none' for the jquery_object received based on rules.
      */
     this.decide_if_merge_or_split = function ( jquery_object ){
-        // if type is block, then return 'split'
+        // if block_type is active, then return 'split'
         if ( typeof trp_merge_rules == 'undefined' ) {
             return 'none';
         }

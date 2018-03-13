@@ -667,7 +667,7 @@ class TRP_Translation_Render{
      * @param $language_code
      * @return array
      */
-    public function process_strings( $translateable_strings, $language_code ){
+    public function process_strings( $translateable_strings, $language_code, $block_type = null ){
         $translated_strings = array();
 
         if ( ! $this->trp_query ) {
@@ -676,7 +676,7 @@ class TRP_Translation_Render{
         }
 
         // get existing translations
-        $dictionary = $this->trp_query->get_existing_translations( array_values($translateable_strings), $language_code );
+        $dictionary = $this->trp_query->get_existing_translations( array_values($translateable_strings), $language_code, $block_type );
         $new_strings = array();
         foreach( $translateable_strings as $i => $string ){
             //strings existing in database,

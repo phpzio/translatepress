@@ -135,7 +135,7 @@ class TRP_Translation_Manager{
         return array_values( $original_array );
     }
 
-    protected function get_translation_for_strings( $strings ){
+    protected function get_translation_for_strings( $strings, $block_type = null ){
 	    $id_array = array();
 	    $original_array = array();
 	    $dictionaries = array();
@@ -171,7 +171,7 @@ class TRP_Translation_Manager{
 	    // necessary in order to obtain all the original strings
 	    if ( $this->settings['default-language'] != $current_language ) {
 		    if ( current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
-			    $this->translation_render->process_strings($original_array, $current_language);
+			    $this->translation_render->process_strings($original_array, $current_language, $block_type);
 		    }
 		    $dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
 		    if ( $slug_info !== false ) {
@@ -229,7 +229,12 @@ class TRP_Translation_Manager{
 	        if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
 	            $strings = json_decode(stripslashes($_POST['strings']));
 		        if ( is_array( $strings ) ) {
-	                $dictionaries = $this->get_translation_for_strings( $strings );
+			        if (!$this->trp_query) {
+				        $trp = TRP_Translate_Press::get_trp_instance();
+				        $this->trp_query = $trp->get_component('query');
+			        }
+			        $block_type = $this->trp_query->get_constant_block_type_regular_string();
+	                $dictionaries = $this->get_translation_for_strings( $strings, $block_type );
                     echo trp_safe_json_encode( $dictionaries );
                 }
             }
@@ -335,18 +340,29 @@ class TRP_Translation_Manager{
         }
     }
 
-    protected function save_translations_of_strings( $strings ){
+    protected function save_translations_of_strings( $strings, $block_type = null ){
+    	if ( !$block_type ){
+		    if (!$this->trp_query) {
+			    $trp = TRP_Translate_Press::get_trp_instance();
+			    $this->trp_query = $trp->get_component('query');
+		    }
+		    $block_type = $this->trp_query->get_constant_block_type_regular_string();
+	    }
 	    $update_strings = array();
 	    foreach ( $strings as $language => $language_strings ) {
 		    if ( in_array( $language, $this->settings['translation-languages'] ) && $language != $this->settings['default-language'] ) {
 			    foreach( $language_strings as $string ) {
 				    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
 					    $update_strings[ $language ] = array();
+					    if ( ! isset( $string->block_type ) ){
+						    $string->block_type = $block_type;
+					    }
 					    array_push($update_strings[ $language ], array(
 						    'id' => (int)$string->id,
 						    'original' => trp_sanitize_string( $string->original ),
 						    'translated' => trp_sanitize_string( $string->translated ),
-						    'status' => (int)$string->status
+						    'status' => (int)$string->status,
+						    'block_type' => (int)$string->block_type
 					    ));
 
 				    }
@@ -360,7 +376,7 @@ class TRP_Translation_Manager{
 	    }
 
 	    foreach( $update_strings as $language => $update_string_array ) {
-		    $this->trp_query->insert_strings( array(), $update_string_array, $language );
+		    $this->trp_query->insert_strings( array(), $update_string_array, $language, $block_type );
 	    }
     }
 
@@ -425,9 +441,15 @@ class TRP_Translation_Manager{
 			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translation_block_draft' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
 				$strings = json_decode( stripslashes( $_POST['strings'] ) );
 				if ( isset ( $this->settings['translation-languages']) ){
+					if (!$this->trp_query) {
+						$trp = TRP_Translate_Press::get_trp_instance();
+						$this->trp_query = $trp->get_component('query');
+					}
+
+					$block_type = $this->trp_query->get_constant_block_type_active();
 					foreach( $this->settings['translation-languages'] as $language ){
 						if ( $language !=  $this->settings['default-language'] ){
-							$dictionary = $this->get_translation_for_strings( $strings->$language );
+							$dictionaries = $this->get_translation_for_strings( $strings->$language, $block_type );
 							break;
 						}
 					}
@@ -436,25 +458,25 @@ class TRP_Translation_Manager{
 					 * Merging the dictionary received from get_translation_for_strings (which contains ID and possibly automatic translations) with
 					 * ajax translated (which can contain manual translations)
 					 */
-					if ( isset( $dictionary ) ){
-						foreach ( $dictionary as $language => $list_of_strings ){
-							foreach( $list_of_strings as $dictionary_string_key => $dictionary_string ){
+					if ( isset( $dictionaries ) ){
+						foreach ( $dictionaries as $language => $dictionary ){
+							foreach( $dictionary as $dictionary_string_key => $dictionary_string ){
 								if ( !isset ($strings->$language) ){
 									continue;
 								}
 								$ajax_translated_string_list = $strings->$language;
 								foreach( $ajax_translated_string_list as $ajax_key => $ajax_string ) {
 									if ( $ajax_string->translated != '' && trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
-										$dictionary[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
-										$dictionary[ $language ][ $dictionary_string_key ]->status = (int) $ajax_string->status ;
-										$dictionary[ $language ][ $dictionary_string_key ]->type = (int) $ajax_string->type;
+										$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
+										$dictionaries[ $language ][ $dictionary_string_key ]->status = (int) $ajax_string->status ;
+										$dictionaries[ $language ][ $dictionary_string_key ]->block_type = (int) $ajax_string->block_type;
 									}
 								}
 							}
 						}
 
-						$this->save_translations_of_strings( $dictionary );
-						error_log( json_encode($dictionary ));
+						$this->save_translations_of_strings( $dictionaries, $block_type );
+						echo trp_safe_json_encode( $dictionaries );
 					}
 				}
 
@@ -688,7 +710,7 @@ class TRP_Translation_Manager{
                         $found_in_db = true;
                         /* update the db if a translation appeared in the po file later */
                         if( empty( $trp_translated_gettext_text['translated'] ) && $translation != $text ) {
-                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => TRP_Query::HUMAN_REVIEWED ), get_locale() );
+                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => $this->trp_query->get_constant_human_reviewed() ), get_locale() );
                         }
 
                         break;
@@ -715,7 +737,7 @@ class TRP_Translation_Manager{
                     foreach( $trp_translated_gettext_texts as $trp_translated_gettext_text ){
                         if( $trp_translated_gettext_text['id'] == $db_id ){
                             if( $trp_translated_gettext_text['translated'] == '' ){
-                                $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => TRP_Query::MACHINE_TRANSLATED );
+                                $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => $this->trp_query->get_constant_machine_translated() );
                             }
                             break;
                         }

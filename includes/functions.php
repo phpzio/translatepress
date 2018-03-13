@@ -137,9 +137,7 @@ function trp_add_affiliate_id_to_link( $link ){
 function trp_sanitize_string( $filtered ){
 	$filtered = preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $filtered );
 
-	if ( ! $keep_newlines ) {
-		$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
-	}
+	$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
 	$filtered = trim( $filtered );
 
 	$found = false;
