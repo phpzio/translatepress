@@ -48,6 +48,20 @@ function TRP_Translator(){
     };
 
     /**
+     * Return given text converted to html.
+     *
+     * Useful for decoding special characters into displayable form.
+     *
+     * @param html
+     * @returns {*}
+     */
+    this.decode_html = function( html ) {
+        var txt = document.createElement( "textarea" );
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    /**
      * Replace original strings with translations if found.
      */
     this.update_strings = function( response, strings_to_query ) {
@@ -67,7 +81,7 @@ function TRP_Translator(){
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
-                            queried_string.node.textContent = text_to_set;
+                            queried_string.node.textContent = _this.decode_html(text_to_set);
                             _this.unpause_observer();
                             translation_found = true;
                             break;
