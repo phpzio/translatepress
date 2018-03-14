@@ -10,6 +10,7 @@ class TRP_Translation_Render{
     protected $machine_translator;
     protected $trp_query;
     protected $url_converter;
+	protected $translation_manager;
 
     /**
      * TRP_Translation_Render constructor.
@@ -220,6 +221,34 @@ class TRP_Translation_Render{
 
     }
 
+	/**
+	 * Specific trim made for translation block string
+	 *
+	 * Problem especially for nbsp; which gets saved like that in DB. Then, in translation-render, the string arrives with nbsp; rendered to actual space character.
+	 * Used before inserting in db, and when trying to match on translation-render.
+	 *
+	 * @param $string
+	 *
+	 * @return string
+	 */
+    public function trim_translation_block( $string ){
+	    return html_entity_decode( htmlspecialchars_decode( $this->full_trim( $string ), ENT_QUOTES ) );
+    }
+
+	/**
+	 * Return true if matches any existing translation block from db.
+	 *
+	 */
+    public function found_translation_block( $row, $all_existing_translation_blocks, $merge_rules ){
+    	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
+		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
+		    if ( isset( $all_existing_translation_blocks[ $trimmed_inner_text ] ) ) {
+			    return true;
+		    }
+	    }
+    	return false;
+    }
+
     /**
      * Finding translateable strings and replacing with translations.
      *
@@ -294,6 +323,17 @@ class TRP_Translation_Render{
         $translateable_strings = array();
         $nodes = array();
 
+	    if ( ! $this->trp_query ) {
+		    $trp = TRP_Translate_Press::get_trp_instance();
+		    $this->trp_query = $trp->get_component( 'query' );
+	    }
+	    if ( ! $this->translation_manager ) {
+		    $trp = TRP_Translate_Press::get_trp_instance();
+		    $this->translation_manager = $trp->get_component( 'translation_manager' );
+	    }
+        $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
+		$merge_rules = $this->translation_manager->get_merge_rules();
+
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         /**
@@ -315,6 +355,10 @@ class TRP_Translation_Render{
             }
             else{
                 $trp_attr_rows[] = $row;
+	            if ( $this->found_translation_block( $row, $all_existing_translation_blocks, $merge_rules ) ){
+	            	$existing_classes = $row->getAttribute('class');
+                	$row->setAttribute( 'class', $existing_classes . ' translation-block' );
+                }
             }
         }
 
@@ -456,11 +500,6 @@ class TRP_Translation_Render{
         $translateable_information = apply_filters( 'trp_translateable_strings', $translateable_information, $html, $no_translate_attribute, $TRP_LANGUAGE, $language_code, $this );
         $translateable_strings = $translateable_information['translateable_strings'];
         $nodes = $translateable_information['nodes'];
-
-        if ( ! $this->trp_query ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_query = $trp->get_component( 'query' );
-        }
 
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
 

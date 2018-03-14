@@ -441,14 +441,20 @@ class TRP_Translation_Manager{
 			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translation_block_draft' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
 				$strings = json_decode( stripslashes( $_POST['strings'] ) );
 				if ( isset ( $this->settings['translation-languages']) ){
+					$trp = TRP_Translate_Press::get_trp_instance();
 					if (!$this->trp_query) {
-						$trp = TRP_Translate_Press::get_trp_instance();
 						$this->trp_query = $trp->get_component('query');
+					}
+					if (!$this->translation_render) {
+						$this->translation_render = $trp->get_component('translation_render');
 					}
 
 					$block_type = $this->trp_query->get_constant_block_type_active();
 					foreach( $this->settings['translation-languages'] as $language ){
 						if ( $language !=  $this->settings['default-language'] ){
+							foreach ( $strings->$language as $key => $value ){
+								$strings->$language[$key]->original = $this->translation_render->trim_translation_block( $strings->$language[$key]->original );
+							}
 							$dictionaries = $this->get_translation_for_strings( $strings->$language, $block_type );
 							break;
 						}

@@ -127,6 +127,7 @@ function trp_add_affiliate_id_to_link( $link ){
 
     return esc_url( $link );
 }
+
 /**
  * Function that makes string safe for display.
  *

@@ -46,6 +46,19 @@ class TRP_Query{
 	    return $this->translation_render->full_trim( $string );
     }
 
+	/**
+	 * Return an array of all the active translation blocks
+	 *
+	 * @param $language_code
+	 *
+	 * @return array|null|object
+	 */
+    public function get_all_translation_blocks( $language_code ){
+    	$query = "SELECT original FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE block_type = " . self::BLOCK_TYPE_ACTIVE;
+	    $dictionary = $this->db->get_results( $query, OBJECT_K );
+	    return $dictionary;
+    }
+
     /**
      * Returns the translations for the provided strings.
      *
