@@ -92,10 +92,12 @@ function TRP_Translator(){
                 if ( ! translation_found ){
                     queried_string.node.textContent = initial_value;
                 }
-                if ( typeof parent.trpEditor !== 'undefined' ) {
-                    parent.trpEditor.populate_strings( response );
-                    parent.trpEditor.trp_lister.reload_list();
-                }
+            }
+
+            // this should always be outside the for loop
+            if ( typeof parent.trpEditor !== 'undefined' ) {
+                parent.trpEditor.populate_strings( response );
+                parent.trpEditor.trp_lister.reload_list();
             }
         }else{
             for ( var j in strings_to_query ) {
