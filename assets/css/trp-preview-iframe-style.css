@@ -55,8 +55,16 @@ span.trp-edit-translation svg {
     background: #00ba3f !important;
 }
 
+*[data-trpgettextoriginal]  *[data-trp-translate-id] span.trp-edit-translation{
+    background: #0085ba!important;
+}
+
 *[data-trpgettextoriginal] span.trp-edit-translation:hover, .trpgettext-wrap span.trp-edit-translation:hover{
     background: #00ce44 !important;
+}
+
+*[data-trpgettextoriginal]  *[data-trp-translate-id] span.trp-edit-translation:hover{
+    background: #008ec2!important;
 }
 
 translate-press{
