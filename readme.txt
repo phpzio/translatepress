@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.4
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,16 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.1.8 =
+* Fixed bug with Strings List appearing also in Dynamic Strings List. Also fixed bug with duplicate dynamic strings not having a pencil icon because of missing jquery_object.
+* Fixed Woocommerce session storage compatibility
+* Fixed language floater not opening on iPhone.
+* Fixed issue with normal text nodes that were inside an element that had an atribute with gettext and did not get translated
+* Replaced _ with - in hreflang and filter it
+* Make force language to custom links set to yes as a default
+* Remove intensive functions from inside two loops so they only happen once we detect something in js
+* Decode html characters in mutation observed strings and removed stripslashes from trp-ajax.php to fix some strings added with js not being translated
+
 = 1.1.7 =
 * Compatibility fix with Elementor Page Builder
 * Added translation .pot file
