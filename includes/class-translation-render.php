@@ -371,7 +371,7 @@ class TRP_Translation_Render{
                 /* Parent node has no other children and no other innertext besides the current node */
                 if( count( $row->parent()->children ) == 1 && $row->parent()->innertext == $row->outertext ){
                     $row->outertext = $row->innertext();
-                    $row->parent()->setAttribute('data-no-translation', '');
+                    $row->parent()->setAttribute($no_translate_attribute, '');
                     // we are in the editor
                     if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
                         //move up the data-trpgettextoriginal attribute
@@ -404,7 +404,8 @@ class TRP_Translation_Render{
                             $nfv_row->outertext = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $node_from_value->save() );
                             if( !$row->has_child() ){// if the node doesn't have children set the needed attributes, else it means that there are other nodes inside so probably they are the ones displayed
-                                $row->setAttribute('data-no-translation', '');
+                                if( empty( $row->innertext ) )// add the no translate attribute only if it does not contain any kind of text
+                                    $row->setAttribute($no_translate_attribute, '');
                                 // we are in the editor
                                 if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
                                     $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');

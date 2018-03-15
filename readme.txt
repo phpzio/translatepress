@@ -1,10 +1,10 @@
 ﻿=== TranslatePress - Translate Multilingual sites ===
 Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
-Tags: translate, translation, multilingual, automatic translation, front-end translation, google translate, bilingual
+Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.4
-Stable tag: 1.1.6
+Stable tag: 1.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ Easily translate your entire site directly from the front-end and go multilingua
 
 The interface allows you to easily translate the entire page at once, including output from shortcodes, forms and page builders. It also works out of the box with WooCommerce.
 
-Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted translation plugin, meaning you'll own all your translations, forever.
+Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted translation plugin, meaning you'll own all your translations, forever. It's the fastest way to create a bilingual or multilingual site.
 
 = Multilingual & Translation Features =
 
@@ -36,7 +36,7 @@ Note: this plugin uses the Google Translation API to translate the strings on yo
 
 Users with administrator rights have access to the following translate settings:
 
-* select default language of the website and one translation language.
+* select default language of the website and one translation language, for bilingual sites
 * choose whether language switcher should display languages in their native names or English name
 * force custom links to open in current language
 * enable or disable url subdirectory for the default language
@@ -91,9 +91,9 @@ All the translation are stored locally in your server's database.
 
 TranslatePress - Multilingual works out of the box with WooCommerce, custom post types, complex themes and site builders, so you'll be able to translate any type of content.
 
-= How is it different from other multilingual & translation plugins? =
+= How is it different from other multilingual & translation plugins like WPML or Polylang? =
 
-TranslatePress is easier to use and more intuitive altogether. No more switching between the editor, string translation interfaces or badly translated plugins. You can now translate the full page content directly from the front-end.
+TranslatePress is easier to use and more intuitive altogether. No more switching between the editor, string translation interfaces or badly translated plugins. You can now translate the full page content directly from the front-end. This makes TranslatePress a great alternative to plugins like Polylang and WPML.
 
 = How do I start to translate my site? =
 
@@ -113,6 +113,23 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.1.8 =
+* Fixed bug with Strings List appearing also in Dynamic Strings List. Also fixed bug with duplicate dynamic strings not having a pencil icon because of missing jquery_object.
+* Fixed Woocommerce session storage compatibility
+* Fixed language floater not opening on iPhone.
+* Fixed issue with normal text nodes that were inside an element that had an atribute with gettext and did not get translated
+* Replaced _ with - in hreflang and filter it
+* Make force language to custom links set to yes as a default
+* Remove intensive functions from inside two loops so they only happen once we detect something in js
+* Decode html characters in mutation observed strings and removed stripslashes from trp-ajax.php to fix some strings added with js not being translated
+
+= 1.1.7 =
+* Compatibility fix with Elementor Page Builder
+* Added translation .pot file
+* Add proper encoding for mysqli connection in our trp-ajax.php file so we fixed some translation
+* Fixed infinite loop related to mutation observer on javascript strings by not re-adding detected strings again if they are similar to existing ones
+* Aligned text from add-ons tab.
+
 = 1.1.6 =
 * Added support for translating Contact Form 7 alert messages
 * Fixed issue with some strings containing special characters not being translated (i.e. "¿¡")

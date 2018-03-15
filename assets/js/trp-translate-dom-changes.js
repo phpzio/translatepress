@@ -48,26 +48,50 @@ function TRP_Translator(){
     };
 
     /**
+     * Return given text converted to html.
+     *
+     * Useful for decoding special characters into displayable form.
+     *
+     * @param html
+     * @returns {*}
+     */
+    this.decode_html = function( html ) {
+        var txt = document.createElement( "textarea" );
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    /**
      * Replace original strings with translations if found.
      */
     this.update_strings = function( response, strings_to_query ) {
         if ( response != null && response[language_to_query] != null ){
+            var strings_to_store = {};
             for ( var j in strings_to_query ) {
                 var queried_string = strings_to_query[j];
                 var translation_found = false;
                 var initial_value = queried_string.original;
                 for( var i in response[language_to_query] ) {
+                    if ( typeof strings_to_store[language_to_query] == 'undefined' ){
+                        strings_to_store[language_to_query] = {};
+                    }
                     var response_string = response[language_to_query][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
-                        response[language_to_query][i].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
+                        strings_to_store[language_to_query][j] = {};
+                        strings_to_store[language_to_query][j].id = response[language_to_query][i].id;
+                        strings_to_store[language_to_query][j].original = response[language_to_query][i].original;
+                        strings_to_store[language_to_query][j].translated = response[language_to_query][i].translated;
+                        strings_to_store[language_to_query][j].status = response[language_to_query][i].status;
+                        strings_to_store[language_to_query][j].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
                         if ( typeof parent.trpEditor !== 'undefined' ) {
-                            response[language_to_query][i].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
-                            response[language_to_query][i].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
+                            strings_to_store[language_to_query][j].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
+                            strings_to_store[language_to_query][j].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
                         }
+
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
-                            queried_string.node.textContent = text_to_set;
+                            queried_string.node.textContent = _this.decode_html(text_to_set);
                             _this.unpause_observer();
                             translation_found = true;
                             break;
@@ -78,10 +102,11 @@ function TRP_Translator(){
                 if ( ! translation_found ){
                     queried_string.node.textContent = initial_value;
                 }
-                if ( typeof parent.trpEditor !== 'undefined' ) {
-                    parent.trpEditor.populate_strings( response );
-                    parent.trpEditor.trp_lister.reload_list();
-                }
+            }
+            // this should always be outside the for loop
+            if ( typeof parent.trpEditor !== 'undefined' ) {
+                parent.trpEditor.populate_strings( strings_to_store );
+                parent.trpEditor.trp_lister.reload_list();
             }
         }else{
             for ( var j in strings_to_query ) {

@@ -255,7 +255,7 @@ class TRP_Settings{
             'publish-languages'                     => array( $default, '' ),
             'native_or_english_name'                => 'english_name',
             'add-subdirectory-to-default-language'  => 'no',
-            'force-language-to-custom-links'        => 'no',
+            'force-language-to-custom-links'        => 'yes',
             'g-translate'                           => 'no',
             'trp-ls-floater'                        => 'yes',
             'shortcode-options'                     => 'flags-full-names',

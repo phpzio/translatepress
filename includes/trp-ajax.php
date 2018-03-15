@@ -41,7 +41,7 @@ class TRP_Ajax{
      * @return array                    Sanitized array of strings.
      */
     protected function sanitize_strings( $posted_strings){
-        $strings = json_decode(stripslashes( $posted_strings ));
+        $strings = json_decode( $posted_strings );
         $original_array = array();
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
@@ -83,7 +83,9 @@ class TRP_Ajax{
             'db_name'       => 'DB_NAME',
             'db_user'       => 'DB_USER',
             'db_password'   => 'DB_PASSWORD',
-            'db_host'       => 'DB_HOST' );
+            'db_host'       => 'DB_HOST',
+            'db_charset'    => 'DB_CHARSET'
+        );
 
         foreach ( $credentials as $credential => $constant_name ) {
             if ( preg_match_all( "/define\s*\(\s*['\"]" . $constant_name . "['\"]\s*,\s*['\"](.*?)['\"]\s*\)/", $content, $result ) ) {
@@ -95,6 +97,7 @@ class TRP_Ajax{
 
 
         $this->connection = mysqli_connect( $credentials['db_host'], $credentials['db_user'], $credentials['db_password'], $credentials['db_name'] );
+        mysqli_set_charset ( $this->connection , $credentials['db_charset'] );
 
         // Check connection
         if ( mysqli_connect_errno() ) {
