@@ -30,7 +30,7 @@ function TRP_Editor(){
      */
     this.change_language = function( select ){
         var language = select.value;
-        var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language + ']').first().attr('href');
+        var link = jQuery( '#trp-preview-iframe' ).contents().find('link[hreflang=' + language.replace("_", "-") + ']').first().attr('href');
         if ( link != undefined ){
 
             /* pass on trp-view-as parameters to all links that also have preview parameter */
@@ -1361,6 +1361,8 @@ jQuery( function(){
         }
     });
 
+    // WooCommerce compatibility. Sometimes wc_fragments were cached in the editor.
+    window.sessionStorage.removeItem('wc_fragments');
 });
 
 
