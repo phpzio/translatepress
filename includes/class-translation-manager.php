@@ -477,6 +477,7 @@ class TRP_Translation_Manager{
 										$dictionaries[ $language ][ $dictionary_string_key ]->status = (int) $ajax_string->status ;
 										$dictionaries[ $language ][ $dictionary_string_key ]->block_type = (int) $ajax_string->block_type;
 									}
+									$dictionaries[ $language ][ $dictionary_string_key ]->new_translation_block = true;
 								}
 							}
 						}
