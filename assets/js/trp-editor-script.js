@@ -590,8 +590,6 @@ function TRP_Dictionary( language_code ){
                     strings_object[i].set = true;
                     _this.strings[s].set_string( strings_object[i] );
                     break;
-                }else{
-                    strings_object[i].set = false;
                 }
             }
         }
