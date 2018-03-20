@@ -466,7 +466,7 @@ class TRP_Query{
      */
     public function get_string_rows( $id_array, $original_array, $language_code ){
 
-        $select_query = "SELECT id, original, translated, status FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE ";
+        $select_query = "SELECT id, original, translated, status, block_type FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE ";
 
         $prepared_query1 = '';
         if ( is_array( $original_array ) && count ( $original_array ) > 0 ) {
