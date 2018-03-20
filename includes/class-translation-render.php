@@ -776,7 +776,7 @@ class TRP_Translation_Render{
             }
         }
 
-        $this->trp_query->insert_strings( $new_strings, $update_strings, $language_code );
+        $this->trp_query->insert_strings( $new_strings, $update_strings, $language_code, $block_type );
 
         return $translated_strings;
     }

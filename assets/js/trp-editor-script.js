@@ -305,6 +305,27 @@ function TRP_Editor(){
     };
 
     /**
+     * Call populate strings on response
+     *
+     * Remove individual strings composing the translation blocks
+     * Reload list
+     * Removes the highlight of the translation block
+     *
+     * @param response
+     */
+    this.populate_translation_block_strings = function( response ){
+        // remove individual strings composing the translation blocks
+        trpEditor.preview_iframe.contents().find('.trp-create-translation-block [data-trp-translate-id]').each( function(){
+            dictionaries[trp_on_screen_language].remove_strings_with_id_from_translation_block( jQuery( this ).attr( TRP_TRANSLATION_ID ) );
+        });
+        _this.populate_strings( response );
+        _this.trp_lister.reload_list();
+
+        // remove highlighting of possibly highlighted new translation block
+        trpEditor.preview_iframe.contents().find('.trp-create-translation-block').removeClass('trp-highlight trp-create-translation-block');
+    };
+
+    /**
      * Ajax request with translation to be stored.
      *
      * @param strings_to_save           Strings to save in database.
@@ -323,16 +344,11 @@ function TRP_Editor(){
             },
             success: function (response) {
                 if ( action == 'trp_save_translation_block_draft' ){
-                    strings_to_save = response;
+                    _this.populate_translation_block_strings( response );
+                }else {
+                    _this.populate_strings(strings_to_save);
                 }
-                _this.populate_strings(strings_to_save);
-                // maybe reload list()
                 _this.saved_translation_ui();
-                if ( action == 'trp_save_translation_block_draft' ) {
-                    _this.trp_lister.reload_list();
-                    // remove highlighting of possibly highlighted new translation block
-                    trpEditor.preview_iframe.contents().find('.trp-highlight.trp-create-translation-block').removeClass('trp-highlight trp-create-translation-block');
-                }
             },
             error: function(errorThrown){
                 loading_animation.toggle();
@@ -628,6 +644,20 @@ function TRP_Dictionary( language_code ){
             _this.strings.push(string);
         }
 
+    };
+
+    /**
+     * Remove trp_strings which match the id from this dictionary and has ancestor a newly created translation block
+     *
+     * @param id
+     */
+    this.remove_strings_with_id_from_translation_block = function ( id ){
+        for ( var i in _this.strings ) {
+            if (_this.strings[i].id == id && _this.strings[i].jquery_object.parents( '.trp-create-translation-block' ).length > 0 ){
+                //remove from array
+                delete( _this.strings[i] );
+            }
+        }
     };
 
     /**

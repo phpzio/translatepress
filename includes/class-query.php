@@ -284,6 +284,9 @@ class TRP_Query{
      * @param string $language_code         Language code of table where it should be inserted.
      */
     public function insert_strings( $new_strings, $update_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING ){
+	    if ( $block_type == null ){
+		    $block_type = self::BLOCK_TYPE_REGULAR_STRING;
+	    }
         if ( count( $new_strings ) == 0 && count( $update_strings ) == 0 ){
             return;
         }
