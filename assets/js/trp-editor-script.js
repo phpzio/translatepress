@@ -238,14 +238,6 @@ function TRP_Editor(){
         }
     };
 
-    this.update_textareas = function ( original ){
-        _this.original_textarea.val( original );
-        for ( var key in translated_textareas ){
-            translated_textareas[key].val( '' );
-            translated_textareas[key].attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
-        }
-    };
-
     /**
      * Prepare modified translation and send it via Ajax for saving in db.
      *
@@ -304,26 +296,6 @@ function TRP_Editor(){
         return dictionaries;
     };
 
-    /**
-     * Call populate strings on response
-     *
-     * Remove individual strings composing the translation blocks
-     * Reload list
-     * Removes the highlight of the translation block
-     *
-     * @param response
-     */
-    this.populate_translation_block_strings = function( response ){
-        // remove individual strings composing the translation blocks
-        trpEditor.preview_iframe.contents().find('.trp-create-translation-block [data-trp-translate-id]').each( function(){
-            dictionaries[trp_on_screen_language].remove_strings_with_id_from_translation_block( jQuery( this ).attr( TRP_TRANSLATION_ID ) );
-        });
-        _this.populate_strings( response );
-        _this.trp_lister.reload_list();
-
-        // remove highlighting of possibly highlighted new translation block
-        trpEditor.preview_iframe.contents().find('.trp-create-translation-block').removeClass('trp-highlight trp-create-translation-block');
-    };
 
     /**
      * Ajax request with translation to be stored.
@@ -356,6 +328,120 @@ function TRP_Editor(){
             }
         });
     };
+
+    /**
+     * Call populate strings on response
+     *
+     * Remove individual strings composing the translation blocks
+     * Reload list
+     * Removes the highlight of the translation block
+     *
+     * @param response
+     */
+    this.populate_translation_block_strings = function( response ){
+        // remove individual strings composing the translation blocks
+        trpEditor.preview_iframe.contents().find('.trp-create-translation-block [data-trp-translate-id]').each( function(){
+            dictionaries[trp_on_screen_language].remove_strings_with_id_from_translation_block( jQuery( this ).attr( TRP_TRANSLATION_ID ) );
+        });
+        _this.populate_strings( response );
+        _this.trp_lister.reload_list();
+
+        // remove highlighting of possibly highlighted new translation block
+        trpEditor.preview_iframe.contents().find('.trp-create-translation-block').removeClass('trp-highlight trp-create-translation-block');
+    };
+
+    /*
+     * Construct a string version for the top_parents_array
+     */
+    this.get_parent_block = function ( jquery_object ){
+        if ( typeof trp_merge_rules.top_parents_selector == 'undefined' ) {
+            var t = 0;
+            var top_parents_string = trp_merge_rules.top_parents[t];
+            while (t + 1 < trp_merge_rules.top_parents.length) {
+                t = t + 1;
+                top_parents_string = top_parents_string + ', ' + trp_merge_rules.top_parents[t];
+            }
+            trp_merge_rules.top_parents_selector = top_parents_string;
+        }
+
+        return jquery_object.closest( trp_merge_rules.top_parents_selector );
+    };
+
+    /**
+     * Return 'merge', 'split' or 'none' for the jquery_object received based on rules.
+     */
+    this.decide_if_merge_or_split = function ( jquery_object ){
+        // if block_type is active, then return 'split'
+        if ( typeof trp_merge_rules == 'undefined' ) {
+            return 'none';
+        }
+
+        // check if object is of correct type
+        for ( var s in trp_merge_rules.self_object_type ) {
+            if ( jquery_object.is( trp_merge_rules.self_object_type[s] ) ) {
+                if ( typeof trp_merge_rules.top_parents != 'undefined' && trp_merge_rules.top_parents.length > 0 ) {
+                    // closest element which is of type like
+                    var block_parent = _this.get_parent_block(jquery_object);
+                    if ( block_parent.length > 0 ){
+                        for ( var sl in trp_merge_rules.self_object_type ) {
+                            mergeable_children_count = block_parent.find( trp_merge_rules.self_object_type[sl] ).length;
+                            if ( mergeable_children_count > 1 ) {
+                                for( var i in trp_merge_rules.incompatible_siblings ){
+                                    var incompatible_children = block_parent.find( trp_merge_rules.incompatible_siblings[i] ).length;
+                                    if ( incompatible_children > 0 ) {
+                                        return 'none';
+                                    }
+                                }
+                                return 'merge';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return 'none';
+    };
+
+    this.strip_editor_meta_data = function ( parent ) {
+        var clone = parent.clone();
+       /* if ( trp_language == trp_on_screen_language ){
+            // editor is not in original language
+            clone.find('['+TRP_TRANSLATION_ID+']').each( function(){
+                dictionaries.get_string_by_id( jQuery( this ).attr( TRP_TRANSLATION_ID ) );
+
+            });
+
+        }*/
+
+        clone.find('trp-span').remove();
+        clone.find('translate-press, trp-wrap').contents().unwrap();
+
+        clone.find('a').removeAttr( 'data-trp-unpreviewable');
+        stripped_html = clone.html();
+        return stripped_html;
+    };
+
+    this.update_textareas = function ( original ){
+        _this.original_textarea.val( original );
+        for ( var key in translated_textareas ){
+            translated_textareas[key].val( '' );
+            translated_textareas[key].attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
+        }
+    };
+
+    this.prepare_merging = function( trp_string_to_merge ){
+        // check again
+        if ( _this.decide_if_merge_or_split( trp_string_to_merge.jquery_object ) != 'merge' ) {
+            return;
+        }
+
+        var parent = _this.get_parent_block( trp_string_to_merge.jquery_object );
+        parent.attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
+        parent.addClass( 'trp-highlight trp-create-translation-block' );
+
+        _this.update_textareas( _this.strip_editor_meta_data(  parent ) );
+    };
+
 
     /**
      * Show UI for translation being saved.
@@ -870,83 +956,7 @@ function TRP_String( language, array_index ){
         }
     };
 
-    /*
-     * Construct a string version for the top_parents_array
-     */
-    this.get_parent_block = function (jquery_object){
-        if ( typeof trp_merge_rules.top_parents_selector == 'undefined' ) {
-            var t = 0;
-            var top_parents_string = trp_merge_rules.top_parents[t];
-            while (t + 1 < trp_merge_rules.top_parents.length) {
-                t = t + 1;
-                top_parents_string = top_parents_string + ', ' + trp_merge_rules.top_parents[t];
-            }
-            trp_merge_rules.top_parents_selector = top_parents_string;
-        }
 
-        return jquery_object.closest( trp_merge_rules.top_parents_selector );
-    };
-
-    /**
-     * Return 'merge', 'split' or 'none' for the jquery_object received based on rules.
-     */
-    this.decide_if_merge_or_split = function ( jquery_object ){
-        // if block_type is active, then return 'split'
-        if ( typeof trp_merge_rules == 'undefined' ) {
-            return 'none';
-        }
-
-        // check if object is of correct type
-        for ( var s in trp_merge_rules.self_object_type ) {
-            if ( jquery_object.is( trp_merge_rules.self_object_type[s] ) ) {
-                if ( typeof trp_merge_rules.top_parents != 'undefined' && trp_merge_rules.top_parents.length > 0 ) {
-                    // closest element which is of type like
-                    var block_parent = _this.get_parent_block(jquery_object);
-                    if ( block_parent.length > 0 ){
-                        for ( var sl in trp_merge_rules.self_object_type ) {
-                            mergeable_children_count = block_parent.find( trp_merge_rules.self_object_type[sl] ).length;
-                            if ( mergeable_children_count > 1 ) {
-                                for( var i in trp_merge_rules.incompatible_siblings ){
-                                    var incompatible_children = block_parent.find( trp_merge_rules.incompatible_siblings[i] ).length;
-                                    if ( incompatible_children > 0 ) {
-                                        return 'none';
-                                    }
-                                }
-                                return 'merge';
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return 'none';
-    };
-
-    this.strip_editor_meta_data = function ( parent ) {
-        var clone = parent.clone();
-        clone.find('trp-span').remove();
-        clone.find('translate-press, trp-wrap').contents().unwrap();
-
-        clone.find('a').removeAttr( 'data-trp-unpreviewable');
-        stripped_html = clone.html();
-        return stripped_html;
-    };
-
-    /**
-     *
-     */
-    this.prepare_merging = function( e ){
-        // check again
-        if ( _this.decide_if_merge_or_split( _this.jquery_object ) != 'merge' ) {
-            return;
-        }
-
-        var parent = _this.get_parent_block( _this.jquery_object );
-        parent.attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
-        parent.addClass( 'trp-highlight trp-create-translation-block' );
-
-        trpEditor.update_textareas( _this.strip_editor_meta_data(  parent ) );
-    };
 
     /**
      * Show the pencil and border the viewable string in Preview window.
@@ -962,7 +972,7 @@ function TRP_String( language, array_index ){
             _this.jquery_object.prepend(trpEditor.edit_translation_button);
         }
         trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
-        var merge_or_split = _this.decide_if_merge_or_split( _this.jquery_object );
+        var merge_or_split = trpEditor.decide_if_merge_or_split( _this.jquery_object );
         if ( merge_or_split != 'none' ) {
             trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
         }
@@ -991,7 +1001,7 @@ function TRP_String( language, array_index ){
             // remove highlighting of possibly highlighted new translation block
             trpEditor.preview_iframe.contents().find('.trp-highlight.trp-create-translation-block').removeClass('trp-highlight trp-create-translation-block');
             if( jQuery( e.target ).closest( 'trp-merge' ).length > 0 ){
-                _this.prepare_merging();
+                trpEditor.prepare_merging( _this );
             }
 
 
