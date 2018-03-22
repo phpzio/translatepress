@@ -114,7 +114,7 @@ For more information please check out [TranslatePress documentation](https://tra
 
 == Changelog ==
 = 1.1.9 =
-Fix widget language switcher to take into account the new hreflang
+* Fix widget language switcher to take into account the new hreflang
 
 = 1.1.8 =
 * Fixed bug with Strings List appearing also in Dynamic Strings List. Also fixed bug with duplicate dynamic strings not having a pencil icon because of missing jquery_object.
