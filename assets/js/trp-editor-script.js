@@ -901,9 +901,13 @@ function TRP_String( language, array_index ){
     this.set_string = function ( new_settings ){
         _this.id = ( new_settings.hasOwnProperty ( 'id' ) ) ? new_settings.id : _this.id;
         _this.original = ( new_settings.hasOwnProperty ( 'original' ) ) ? new_settings.original : _this.original;
-        _this.original = decode_html( _this.original );
+
         _this.jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : _this.jquery_object;
         _this.block_type = ( new_settings.hasOwnProperty ( 'block_type' ) ) ? new_settings.block_type : _this.block_type;
+        if ( _this.block_type != 1 ) {
+            // decode only normal strings. translation blocks may contain &lt; which should not be transformed to < when creating a new block
+            _this.original = decode_html(_this.original);
+        }
 
         if ( new_settings.hasOwnProperty ( 'new_translation_block' ) && new_settings.new_translation_block == true && _this.language == trp_on_screen_language ){
             _this.jquery_object = trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_translation_block_draft']" );

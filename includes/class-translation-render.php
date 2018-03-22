@@ -236,15 +236,27 @@ class TRP_Translation_Render{
     }
 
 	/**
-	 * Return true if matches any existing translation block from db.
+	 * Return true if matches any existing translation block from db
 	 *
+	 * If found replaces in $row with translation block string found in db. This ensures we find the translateable version
+	 * Only happens when we have a translation.
+	 *
+	 * @param $row
+	 * @param $all_existing_translation_blocks
+	 * @param $merge_rules
+	 *
+	 * @return bool
 	 */
     public function found_translation_block( $row, $all_existing_translation_blocks, $merge_rules ){
     	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
-		    if ( isset( $all_existing_translation_blocks[ $trimmed_inner_text ] ) ) {
-			    return true;
-		    }
+			foreach( $all_existing_translation_blocks as $existing_translation_block ){
+				if ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ){
+					// make sure we find it later exactly the way it is in DB
+					$row->innertext = $existing_translation_block->original;
+					return true;
+				}
+			}
 	    }
     	return false;
     }
@@ -355,7 +367,7 @@ class TRP_Translation_Render{
             }
             else{
                 $trp_attr_rows[] = $row;
-	            if ( $this->found_translation_block( $row, $all_existing_translation_blocks, $merge_rules ) ){
+                if ( $this->found_translation_block( $row, $all_existing_translation_blocks, $merge_rules ) ){
 	            	$existing_classes = $row->getAttribute('class');
                 	$row->setAttribute( 'class', $existing_classes . ' translation-block' );
                 }
@@ -437,7 +449,6 @@ class TRP_Translation_Render{
                 $row->setAttribute( $no_translate_attribute, '' );
             }
         }
-
         foreach ( $html->find('.translation-block') as $k => $row ){
             if( $this->full_trim($row->outertext)!=""
                 && $row->parent()->tag!="script"

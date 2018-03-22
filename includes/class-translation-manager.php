@@ -129,7 +129,9 @@ class TRP_Translation_Manager{
     protected function extract_original_strings( $strings, $original_array, $id_array ){
         if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {
-                $original_array[] = $strings[$id]->original;
+            	if ( isset( $strings[$id] ) ) {
+		            $original_array[] = $strings[ $id ]->original;
+	            }
             }
         }
         return array_values( $original_array );
@@ -452,9 +454,6 @@ class TRP_Translation_Manager{
 					$block_type = $this->trp_query->get_constant_block_type_active();
 					foreach( $this->settings['translation-languages'] as $language ){
 						if ( $language !=  $this->settings['default-language'] ){
-							foreach ( $strings->$language as $key => $value ){
-								$strings->$language[$key]->original = $this->translation_render->trim_translation_block( $strings->$language[$key]->original );
-							}
 							$dictionaries = $this->get_translation_for_strings( $strings->$language, $block_type );
 							break;
 						}
