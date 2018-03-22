@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.4
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,9 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.1.9 =
+Fix widget language switcher to take into account the new hreflang
+
 = 1.1.8 =
 * Fixed bug with Strings List appearing also in Dynamic Strings List. Also fixed bug with duplicate dynamic strings not having a pencil icon because of missing jquery_object.
 * Fixed Woocommerce session storage compatibility
