@@ -239,7 +239,6 @@ class TRP_Translation_Render{
 	 * Return true if matches any existing translation block from db
 	 *
 	 * If found replaces in $row with translation block string found in db. This ensures we find the translateable version
-	 * Only happens when we have a translation.
 	 *
 	 * @param $row
 	 * @param $all_existing_translation_blocks

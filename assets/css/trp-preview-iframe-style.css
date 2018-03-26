@@ -27,7 +27,6 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 3px;
-    text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;
 }
 
 .trp-icon:hover {
@@ -102,5 +101,24 @@ translate-press{
 }
 
 .trp-icon.trp-merge.trp-active-icon, .trp-icon.trp-merge.trp-active-icon:hover{
+    display: inline;
+}
+
+/*
+ * Split icon
+ */
+
+.trp-icon.trp-split{
+    display: none;
+    margin-left: -60px !important;
+    background: #ffa500!important;
+}
+
+.trp-icon.trp-split:hover {
+    display: none;
+    background: #ffae19!important;
+}
+
+.trp-icon.trp-split.trp-active-icon, .trp-icon.trp-split.trp-active-icon:hover{
     display: inline;
 }
