@@ -491,6 +491,37 @@ class TRP_Translation_Manager{
 		die();
 	}
 
+	public function split_translation_block() {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_split_translation_block' && ! empty( $_POST['strings'] ) && ! empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
+				$strings = json_decode( stripslashes( $_POST['strings'] ) );
+				if ( isset ( $this->settings['translation-languages'] ) ) {
+					$trp = TRP_Translate_Press::get_trp_instance();
+					if ( ! $this->trp_query ) {
+						$this->trp_query = $trp->get_component( 'query' );
+					}
+					if ( ! $this->translation_render ) {
+						$this->translation_render = $trp->get_component( 'translation_render' );
+					}
+
+					$block_type = $this->trp_query->get_constant_block_type_deprecated();
+					foreach ( $this->settings['translation-languages'] as $language ) {
+						if ( $language != $this->settings['default-language'] ) {
+							$original = $strings->$language->original;
+							//$this->trp_query query by id, change block type, $strings->$language->id
+						}
+					}
+
+					$_REQUEST['trp-edit-translation'] = 'preview';
+					$html_without_active_translation_block = $this->translation_render->translate_page($original));
+
+					//return $html_without_active_translation_block
+					// return get_string_ids;
+				}
+			}
+		}
+	}
+
     /**
      * Display button to enter translation Editor in admin bar
      *

@@ -450,6 +450,53 @@ function TRP_Editor(){
     };
 
 
+    this.split_translation_block = function( trp_string_to_split ){
+        //todo translate this text
+        //todo uncomment this
+        /*var split = confirm( "Are you sure you want to split this translation block? ");
+        if ( split == false ){
+            return;
+        }*/
+        var tb_to_split = {};
+
+        for ( var key in dictionaries ) {
+            tb_to_split[key] = {};
+            var trp_string = dictionaries[key].get_string_by_original( trp_string_to_split.original );
+            tb_to_split[key].id = trp_string.id;
+            tb_to_split[key].original = trp_string.original;
+        }
+        console.log(tb_to_split);
+        _this.ajax_split_tb_into_individual_strings( tb_to_split );
+
+    };
+
+    this.ajax_split_tb_into_individual_strings = function( tb_to_split ){
+        jQuery.ajax({
+            url: trp_ajax_url,
+            type: 'post',
+            dataType: 'json',
+            data: {
+                action: 'trp_split_translation_block',
+                language: trp_on_screen_language,
+                strings: JSON.stringify( tb_to_split ),
+            },
+            success: function (response) {
+                //update iframe with original.
+                //lookup for tp_ids
+                //populate_response
+                //reload list
+
+                /*
+                _this.populate_strings( response );
+                _this.trp_lister.reload_list();
+                */
+            },
+            error: function(errorThrown){
+                console.log( 'TranslatePress AJAX Request Error' );
+            }
+        });
+    };
+
     /**
      * Show UI for translation being saved.
      */
@@ -1009,6 +1056,9 @@ function TRP_String( language, array_index ){
                 trpEditor.jquery_string_selector.trigger('trpSelectorNotChanged');
             }
 
+            if( jQuery( e.target ).closest( 'trp-split' ).length > 0 ){
+                trpEditor.split_translation_block( _this );
+            }
             // remove highlighting of possibly highlighted new translation block
             trpEditor.preview_iframe.contents().find('.trp-highlight.trp-create-translation-block').removeClass('trp-highlight trp-create-translation-block');
             if( jQuery( e.target ).closest( 'trp-merge' ).length > 0 ){

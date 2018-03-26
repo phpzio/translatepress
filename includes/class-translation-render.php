@@ -271,7 +271,7 @@ class TRP_Translation_Render{
     public function translate_page( $output ){
         $output = apply_filters('trp_before_translate_content', $output);
 
-        if ( strlen( $output ) < 1 ){
+        if ( strlen( $output ) < 1 || $output == false ){
             return $output;
         }
 
@@ -286,7 +286,7 @@ class TRP_Translation_Render{
         if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
 
             /* if it's one of our own ajax calls don't do nothing */
-            if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 ){
+            if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 && $_REQUEST['action'] != 'trp_split_translation_block' ){
                 return $output;
             }
 
@@ -928,7 +928,7 @@ class TRP_Translation_Render{
      * @since 1.0.8
      */
     public function force_preview_on_url_in_ajax( $output ){
-        if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] === 'preview' ) {
+        if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] === 'preview' && $output != false ) {
             $result = json_decode($output, TRUE);
             if ( json_last_error() === JSON_ERROR_NONE) {
                 array_walk_recursive($result, array($this, 'callback_add_preview_arg'));
