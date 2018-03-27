@@ -507,16 +507,34 @@ class TRP_Translation_Manager{
 					$block_type = $this->trp_query->get_constant_block_type_deprecated();
 					foreach ( $this->settings['translation-languages'] as $language ) {
 						if ( $language != $this->settings['default-language'] ) {
-							$original = $strings->$language->original;
-							//$this->trp_query query by id, change block type, $strings->$language->id
+							$update_strings = array();
+							foreach( $strings->$language as $string ) {
+								$original = $string->original;
+								array_push( $update_strings, array(
+									'id'         => (int) $string->id,
+									'original'   => trp_sanitize_string( $string->original ),
+									'translated' => trp_sanitize_string( $string->translated ),
+									'status' => (int)$string->status,
+									'block_type' => $block_type
+								));
+							}
+							//check to see if it also changes translation or status
+							$this->trp_query->insert_strings( array(), $update_strings, $language );
 						}
 					}
 
 					$_REQUEST['trp-edit-translation'] = 'preview';
-					$html_without_active_translation_block = $this->translation_render->translate_page($original));
+					$html_without_active_translation_block = $this->translation_render->translate_page($original);
 
-					//return $html_without_active_translation_block
-					// return get_string_ids;
+					// get ids from html attributes $html_without_active_translation_block.
+					// get string ids.
+
+					$individual_strings = '';
+					$response = array(
+						'tb_html' => $html_without_active_translation_block,
+						'response' => $individual_strings
+					);
+					return trp_safe_json_encode( );
 				}
 			}
 		}

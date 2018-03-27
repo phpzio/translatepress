@@ -460,12 +460,10 @@ function TRP_Editor(){
         var tb_to_split = {};
 
         for ( var key in dictionaries ) {
-            tb_to_split[key] = {};
+            tb_to_split[key] = [];
             var trp_string = dictionaries[key].get_string_by_original( trp_string_to_split.original );
-            tb_to_split[key].id = trp_string.id;
-            tb_to_split[key].original = trp_string.original;
+            tb_to_split[key].push({id: trp_string.id, original: trp_string.original, translated: trp_string.translated, status: trp_string.status });
         }
-        console.log(tb_to_split);
         _this.ajax_split_tb_into_individual_strings( tb_to_split );
 
     };
