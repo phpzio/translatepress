@@ -18,6 +18,8 @@ The interface allows you to easily translate the entire page at once, including 
 
 Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted translation plugin, meaning you'll own all your translations, forever. It's the fastest way to create a bilingual or multilingual site.
 
+https://www.youtube.com/watch?v=pUlYisvBm8g
+
 = Multilingual & Translation Features =
 
 * Translate all your website content directly from the front-end, in a friendly user interface (translation displayed in real-time).
