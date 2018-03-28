@@ -216,7 +216,6 @@ class TRP_Translate_Press{
         $this->loader->run();
     }
 
-
     /**
      * Load plugin textdomain
      */
