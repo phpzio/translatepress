@@ -175,6 +175,10 @@ class TRP_Url_Converter {
             $trp_link_is_processed = '';
         }
 
+        if ( $this->url_is_file($url) ){
+            return $url . $trp_link_is_processed;
+        }
+
         $trp_language_copy = $TRP_LANGUAGE;
 
         if ( empty( $language ) ) {
@@ -228,6 +232,29 @@ class TRP_Url_Converter {
         }
 
         return $new_url . $trp_link_is_processed ;
+    }
+
+    /**
+     * Check is a url is an actual file on the server, in which case don't add a language param.
+     *
+     * @param string $url
+     * @return bool
+     */
+    public function url_is_file( $url = null ){
+        $trp = TRP_Translate_Press::get_trp_instance();
+        $translation_render = $trp->get_component("translation_render");
+
+        if ( empty( $url ) || $translation_render->is_external_link($url) ){
+            return false;
+        }
+
+        $path = untrailingslashit(ABSPATH) . str_replace($this->get_abs_home(), '', $url);
+
+        if( is_file($path)){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
