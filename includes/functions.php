@@ -96,7 +96,6 @@ function trp_find_translation_location_for_domain( $domain, $language ){
         $path = WP_LANG_DIR . '/themes/'. $domain .'-' . $language . '.mo';
     } elseif( $domain === '' && file_exists( WP_LANG_DIR . '/' . $language . '.mo')){
         $path = WP_LANG_DIR . '/' . $language . '.mo';
-        error_log($path);
     } else {
         $possible_translation_folders = array( '', 'languages/', 'language/', 'translations/', 'translation/', 'lang/' );
         foreach( $possible_translation_folders as $possible_translation_folder ){
