@@ -596,7 +596,7 @@ class TRP_Translation_Render{
      * @param string $url           Url.
      * @return bool                 Whether given url links to an external domain.
      */
-    protected function is_external_link( $url ){
+    public function is_external_link( $url ){
         // Abort if parameter URL is empty
         if( empty($url) ) {
             return false;
