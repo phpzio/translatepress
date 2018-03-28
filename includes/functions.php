@@ -79,7 +79,6 @@ function trp_x( $text, $context, $domain, $language ){
     return $text;
 }
 
-
 /**
  * Function that tries to find the path for a translation file defined by textdomain and language
  * @param $domain the textdomain of the string that you want the translation for
@@ -95,8 +94,10 @@ function trp_find_translation_location_for_domain( $domain, $language ){
     }
     elseif ( file_exists( WP_LANG_DIR . '/themes/'. $domain .'-' . $language . '.mo') ){
         $path = WP_LANG_DIR . '/themes/'. $domain .'-' . $language . '.mo';
-    }
-    else {
+    } elseif( $domain === '' && file_exists( WP_LANG_DIR . '/' . $language . '.mo')){
+        $path = WP_LANG_DIR . '/' . $language . '.mo';
+        error_log($path);
+    } else {
         $possible_translation_folders = array( '', 'languages/', 'language/', 'translations/', 'translation/', 'lang/' );
         foreach( $possible_translation_folders as $possible_translation_folder ){
             if (file_exists(get_template_directory() . '/' . $possible_translation_folder . $domain . '-' . $language . '.mo')) {
