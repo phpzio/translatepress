@@ -201,6 +201,9 @@ class TRP_Translate_Press{
 
         /* add to the body class the current language */
         $this->loader->add_filter( "body_class", $this->translation_manager, 'add_language_to_body_class' );
+
+        /* load textdomain */
+        $this->loader->add_action( "init", $this, 'init_translation', 8 );
     }
 
     /**
@@ -208,6 +211,13 @@ class TRP_Translate_Press{
      */
     public function run() {
         $this->loader->run();
+    }
+
+    /**
+     * Load plugin textdomain
+     */
+    public function init_translation(){
+        load_plugin_textdomain( 'translatepress-multilingual', false, basename(dirname(__FILE__)) . '/languages/' );
     }
 
 }
