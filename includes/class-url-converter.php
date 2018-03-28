@@ -250,11 +250,7 @@ class TRP_Url_Converter {
 
         $path = untrailingslashit(ABSPATH) . str_replace($this->get_abs_home(), '', $url);
 
-        if( is_file($path)){
-            return true;
-        } else {
-            return false;
-        }
+        return is_file($path);
     }
 
     /**
