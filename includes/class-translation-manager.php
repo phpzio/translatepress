@@ -511,7 +511,7 @@ class TRP_Translation_Manager{
 					}
 
 					$originals = array();
-					$block_type = $this->trp_query->get_constant_block_type_deprecated();
+					$deprecated_block_type = $this->trp_query->get_constant_block_type_deprecated();
 					$response = array();
 					$strings_to_send = array();
 					foreach ( $this->settings['translation-languages'] as $language ) {
@@ -522,7 +522,7 @@ class TRP_Translation_Manager{
 						$update_strings = array();
 						foreach( $strings->$language as $string ) {
 							if ( ! in_array( $string->original, $originals ) ){
-								$originals[] = $string->original;
+								$originals[] = trp_sanitize_string( $string->original );
 							}
 							$new_string = new \stdClass();
 							$new_string->id = (int) $string->id;
@@ -533,7 +533,7 @@ class TRP_Translation_Manager{
 								'original'   => trp_sanitize_string( $string->original ),
 								'translated' => trp_sanitize_string( $string->translated ),
 								'status' => (int)$string->status,
-								'block_type' => $block_type
+								'block_type' => $deprecated_block_type
 							);
 							array_push( $update_strings, $update_string);
 
@@ -543,8 +543,10 @@ class TRP_Translation_Manager{
 
 					$_REQUEST['trp-edit-translation'] = 'preview';
 					$_POST['all_languages'] = 'true';
+					$html_without_active_translation_block_array = array();
 					foreach( $originals as $original ) {
 						$html_without_active_translation_block = $this->translation_render->translate_page( $original );
+						$html_without_active_translation_block_array[$original] = $html_without_active_translation_block;
 						$html = trp_str_get_html( $html_without_active_translation_block, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT );
 						foreach ( $html->find( '[data-trp-translate-id]' ) as $k => $row ) {
 							$new_string = new \stdClass();
@@ -553,6 +555,20 @@ class TRP_Translation_Manager{
 						}
 					}
 					$response = $this->get_translation_for_strings( $strings_to_send );
+					foreach( $response as $language => $strings ){
+						if ( $language == $this->settings['default-language'] ) {
+							continue;
+						}
+						foreach( $strings as $key => $string ){
+							if ( $string->block_type == $deprecated_block_type ) {
+								$original = $string->original;
+								if ( isset ( $html_without_active_translation_block_array[$original] ) ){
+									$response[$language][$key]->original = $html_without_active_translation_block_array[$original];
+									$response[$language][$key]->translated = $html_without_active_translation_block_array[$original];
+								}
+							}
+						}
+					}
 					return trp_safe_json_encode( $response );
 				}
 			}
