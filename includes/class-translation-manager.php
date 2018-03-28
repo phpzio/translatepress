@@ -538,6 +538,8 @@ class TRP_Translation_Manager{
 							array_push( $update_strings, $update_string);
 
 						}
+						// setting translation blocks to deprecated
+						//todo uncomment this:
 						$this->trp_query->insert_strings( array(), $update_strings, $language );
 					}
 
@@ -564,12 +566,13 @@ class TRP_Translation_Manager{
 								$original = $string->original;
 								if ( isset ( $html_without_active_translation_block_array[$original] ) ){
 									$response[$language][$key]->original = $html_without_active_translation_block_array[$original];
-									$response[$language][$key]->translated = $html_without_active_translation_block_array[$original];
+									//todo not sure if the following code is needed so I commented it
+									//$response[$language][$key]->translated = $html_without_active_translation_block_array[$original];
 								}
 							}
 						}
 					}
-					return trp_safe_json_encode( $response );
+					echo trp_safe_json_encode( $response );
 				}
 			}
 		}

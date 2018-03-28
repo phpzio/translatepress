@@ -428,6 +428,7 @@ function TRP_Editor(){
         return stripped_html;
     };
 
+    //todo refactor and remove this function
     this.update_textareas = function ( original ){
         _this.original_textarea.val( original );
         for ( var key in translated_textareas ){
@@ -457,6 +458,9 @@ function TRP_Editor(){
         if ( split == false ){
             return;
         }*/
+        //todo not sure if needed
+        //trp_string_to_split.jquery_object.addClass( 'trp-split-translation-block' );
+
         var tb_to_split = {};
 
         for ( var key in dictionaries ) {
@@ -479,15 +483,27 @@ function TRP_Editor(){
                 strings: JSON.stringify( tb_to_split ),
             },
             success: function (response) {
-                //update iframe with original.
-                //lookup for tp_ids
-                //populate_response
-                //reload list
+                if ( typeof response[trp_on_screen_language] != 'undefined' ) {
+                    for (var i in response[trp_on_screen_language] ) {
+                        if ( response[trp_on_screen_language][i].block_type == 2 ){
+                            _this.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='" + response[trp_on_screen_language][i].id + "'" ).html( response[trp_on_screen_language][i].original ).removeClass('trp-highlight').removeAttr( TRP_TRANSLATION_ID );
+                        }
+                    }
 
-                /*
-                _this.populate_strings( response );
-                _this.trp_lister.reload_list();
-                */
+                    // separate 'for' because the order of operations is important
+                    for ( var i in response[trp_on_screen_language] ) {
+                        if ( response[trp_on_screen_language][i].block_type == 0 ){
+                            response[trp_on_screen_language][i].jquery_object = _this.preview_iframe.find( ".translation-block [" + TRP_TRANSLATION_ID + "='" + response[trp_on_screen_language][i].id + "'" ).first();
+                        }
+                    }
+                    // only do the following for trp_on_screen_language
+                    // foreach response, search for block type deprecated, replace in iframe.
+                    // foreach response, search in not block type, get jquery object based on id, and inside a class '.translation-block' element
+
+
+                    _this.populate_strings(response);
+                    _this.trp_lister.reload_list();
+                }
             },
             error: function(errorThrown){
                 console.log( 'TranslatePress AJAX Request Error' );
@@ -970,7 +986,8 @@ function TRP_String( language, array_index ){
             }
         }
 
-        if ( _this.jquery_object ){
+        //todo: investigate this _this.block_type != 2
+        if ( _this.jquery_object && _this.block_type != 2 ) {
             if ( trp_language == trp_on_screen_language ) {
                 var text_to_set = null;
                 if (new_settings.hasOwnProperty('translated') && new_settings.translated != _this.translated) {
