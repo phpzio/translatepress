@@ -491,6 +491,12 @@ class TRP_Translation_Manager{
 		die();
 	}
 
+	/**
+	 *
+	 * Can handle splitting multiple blocks.
+	 *
+	 * @return mixed|string|void
+	 */
 	public function split_translation_block() {
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
 			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_split_translation_block' && ! empty( $_POST['strings'] ) && ! empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
@@ -504,40 +510,54 @@ class TRP_Translation_Manager{
 						$this->translation_render = $trp->get_component( 'translation_render' );
 					}
 
+					$originals = array();
 					$block_type = $this->trp_query->get_constant_block_type_deprecated();
+					$response = array();
+					$strings_to_send = array();
 					foreach ( $this->settings['translation-languages'] as $language ) {
-						if ( $language != $this->settings['default-language'] ) {
-							$update_strings = array();
-							foreach( $strings->$language as $string ) {
-								$original = $string->original;
-								array_push( $update_strings, array(
-									'id'         => (int) $string->id,
-									'original'   => trp_sanitize_string( $string->original ),
-									'translated' => trp_sanitize_string( $string->translated ),
-									'status' => (int)$string->status,
-									'block_type' => $block_type
-								));
-							}
-							//check to see if it also changes translation or status
-							$this->trp_query->insert_strings( array(), $update_strings, $language );
+						if ( $language == $this->settings['default-language'] ) {
+							continue;
 						}
+						$response[$language] = array();
+						$update_strings = array();
+						foreach( $strings->$language as $string ) {
+							if ( ! in_array( $string->original, $originals ) ){
+								$originals[] = $string->original;
+							}
+							$new_string = new \stdClass();
+							$new_string->id = (int) $string->id;
+							$strings_to_send[] = $new_string;
+
+							$update_string = array(
+								'id'         => (int) $string->id,
+								'original'   => trp_sanitize_string( $string->original ),
+								'translated' => trp_sanitize_string( $string->translated ),
+								'status' => (int)$string->status,
+								'block_type' => $block_type
+							);
+							array_push( $update_strings, $update_string);
+
+						}
+						$this->trp_query->insert_strings( array(), $update_strings, $language );
 					}
 
 					$_REQUEST['trp-edit-translation'] = 'preview';
-					$html_without_active_translation_block = $this->translation_render->translate_page($original);
-
-					// get ids from html attributes $html_without_active_translation_block.
-					// get string ids.
-
-					$individual_strings = '';
-					$response = array(
-						'tb_html' => $html_without_active_translation_block,
-						'response' => $individual_strings
-					);
-					return trp_safe_json_encode( );
+					$_POST['all_languages'] = 'true';
+					foreach( $originals as $original ) {
+						$html_without_active_translation_block = $this->translation_render->translate_page( $original );
+						$html = trp_str_get_html( $html_without_active_translation_block, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT );
+						foreach ( $html->find( '[data-trp-translate-id]' ) as $k => $row ) {
+							$new_string = new \stdClass();
+							$new_string->id = $row->getAttribute( 'data-trp-translate-id' );
+							$strings_to_send[] = $new_string;
+						}
+					}
+					$response = $this->get_translation_for_strings( $strings_to_send );
+					return trp_safe_json_encode( $response );
 				}
 			}
 		}
+		die();
 	}
 
     /**
