@@ -6,6 +6,8 @@ Description: Experience a better way of translating your WordPress site, with fu
 Version: 1.1.9
 Author: Cozmoslabs, Razvan Mocanu, Madalin Ungureanu, Cristophor Hurduban
 Author URI: https://cozmoslabs.com/
+Text Domain: translatepress-multilingual
+Domain Path: /languages
 License: GPL2
 WC requires at least: 2.5.0
 WC tested up to: 3.3
