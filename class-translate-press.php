@@ -189,6 +189,9 @@ class TRP_Translate_Press{
         /* hide php ors and notice when we are storing strings in db */
         $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
 
+        /* fix wptexturize to always replace with the default translated strings */
+        $this->loader->add_action( 'gettext_with_context', $this->translation_render, 'fix_wptexturize_characters', 999, 4 );
+
         /* ?or init ? hook here where you can change the $current_user global */
         $this->loader->add_action( 'init', $this->translation_manager, 'trp_view_as_user' );
         
