@@ -315,6 +315,7 @@ class TRP_Query{
 
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.
+//	    error_log($this->db->prepare($query . ' ', $values) );
         $this->db->query( $this->db->prepare($query . ' ', $values) );
     }
 

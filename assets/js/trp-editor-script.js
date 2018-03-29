@@ -484,22 +484,25 @@ function TRP_Editor(){
             },
             success: function (response) {
                 if ( typeof response[trp_on_screen_language] != 'undefined' ) {
+
+                    // search for block type deprecated, replace in iframe.
                     for (var i in response[trp_on_screen_language] ) {
                         if ( response[trp_on_screen_language][i].block_type == 2 ){
-                            _this.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='" + response[trp_on_screen_language][i].id + "'" ).html( response[trp_on_screen_language][i].original ).removeClass('trp-highlight').removeAttr( TRP_TRANSLATION_ID );
+                            _this.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='" + response[trp_on_screen_language][i].id + "'" )
+                                .html( response[trp_on_screen_language][i].original )
+                                .removeClass('trp-highlight')
+                                .removeAttr( TRP_TRANSLATION_ID )
+                                .off();
                         }
                     }
 
                     // separate 'for' because the order of operations is important
+                    // search in not block type, get jquery object based on id, and inside a class '.translation-block' element
                     for ( var i in response[trp_on_screen_language] ) {
                         if ( response[trp_on_screen_language][i].block_type == 0 ){
                             response[trp_on_screen_language][i].jquery_object = _this.preview_iframe.find( ".translation-block [" + TRP_TRANSLATION_ID + "='" + response[trp_on_screen_language][i].id + "'" ).first();
                         }
                     }
-                    // only do the following for trp_on_screen_language
-                    // foreach response, search for block type deprecated, replace in iframe.
-                    // foreach response, search in not block type, get jquery object based on id, and inside a class '.translation-block' element
-
 
                     _this.populate_strings(response);
                     _this.trp_lister.reload_list();
@@ -986,7 +989,6 @@ function TRP_String( language, array_index ){
             }
         }
 
-        //todo: investigate this _this.block_type != 2
         if ( _this.jquery_object && _this.block_type != 2 ) {
             if ( trp_language == trp_on_screen_language ) {
                 var text_to_set = null;
