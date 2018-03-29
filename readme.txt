@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.4
-Stable tag: 1.1.9
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,12 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.0 =
+* Fix wptexturize changing characters in secondary languages
+* Mini refactoring of the url_is_file() function
+* Refactor get_url_for_language() to not use the global  var
+* We no longer add the language path to links to actual files on the server
+
 = 1.1.9 =
 * Fix widget language switcher to take into account the new hreflang
 
