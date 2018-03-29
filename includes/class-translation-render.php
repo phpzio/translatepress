@@ -131,8 +131,14 @@ class TRP_Translation_Render{
      * @return string                           Category name.
      */
     protected function get_node_type_category( $current_node_type ){
+	    $trp = TRP_Translate_Press::get_trp_instance();
+	    if ( ! $this->translation_manager ) {
+		    $this->translation_manager = $trp->get_component( 'translation_manager' );
+	    }
+	    $localized_text = $this->translation_manager->localized_text();
+
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-            __( 'Meta Information', 'translatepress-multilingual' ) => array( 'meta_desc', 'post_slug', 'page_title' ),
+	        $localized_text['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
         ));
 
         foreach( $node_type_categories as $category_name => $node_types ){
@@ -141,8 +147,7 @@ class TRP_Translation_Render{
             }
         }
 
-        return __( 'String List', 'translatepress-multilingual' );
-
+        return $localized_text['stringlist'];
     }
 
     /**
@@ -334,12 +339,11 @@ class TRP_Translation_Render{
         $translateable_strings = array();
         $nodes = array();
 
+	    $trp = TRP_Translate_Press::get_trp_instance();
 	    if ( ! $this->trp_query ) {
-		    $trp = TRP_Translate_Press::get_trp_instance();
 		    $this->trp_query = $trp->get_component( 'query' );
 	    }
 	    if ( ! $this->translation_manager ) {
-		    $trp = TRP_Translate_Press::get_trp_instance();
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
         $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );

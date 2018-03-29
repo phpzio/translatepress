@@ -63,6 +63,7 @@ class TRP_Translation_Manager{
     }
 
 	public function get_merge_rules(){
+		$localized_text = $this->localized_text();
     	$merge_rules = array (
     		'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body', 'footer', 'article', 'main', 'iframe', 'section' ),
 		    /*
@@ -70,9 +71,21 @@ class TRP_Translation_Manager{
 		     */
 
 		    'self_object_type' => array( 'translate-press' ),
-		    'incompatible_siblings' => array( '[data-trpgettextoriginal]' ) // translated data-attributes from inputs
+		    'incompatible_siblings' => array( '[data-trpgettextoriginal]', '[data-trp-node-type="' . $localized_text['dynamicstrings'] . '"]'  ) // translated data-attributes from inputs
 	    );
     	return apply_filters( 'trp_merge_rules', $merge_rules );
+	}
+
+	public function localized_text(){
+		$text = array(
+			'edit'              => __( 'Translate', 'translatepress-multilingual' ),
+			'merge'             => __( 'Translate entire block element', 'translatepress-multilingual' ),
+			'split'             => __( 'Split block to translate individually', 'translatepress-multilingual' ),
+			'metainformation'   => __( 'Meta Information', 'translatepress-multilingual' ),
+			'stringlist'        => __( 'String List', 'translatepress-multilingual' ),
+			'dynamicstrings'    => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+		);
+		return $text;
 	}
 
     /**
@@ -85,6 +98,8 @@ class TRP_Translation_Manager{
         wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
 	    $trp_merge_rules = $this->get_merge_rules();
 	    wp_localize_script('trp-translation-manager-script', 'trp_merge_rules', $trp_merge_rules);
+	    $localized_text = $this->localized_text();
+	    wp_localize_script('trp-translation-manager-script', 'trp_localized_text', $localized_text );
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
 
         wp_enqueue_script( 'trp-translation-overlay',  TRP_PLUGIN_URL . 'assets/js/trp-editor-overlay.js', array(), TRP_PLUGIN_VERSION );

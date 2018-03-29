@@ -2,7 +2,7 @@
  * Handle Editor interface
  */
 function TRP_Editor(){
-    trp_action_button_html = '<trp-span><trp-merge class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>';
+    trp_action_button_html = '<trp-span><trp-merge  title="' + trp_localized_text['merge'] + '" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split  title="' + trp_localized_text['split'] + '" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="' + trp_localized_text['edit'] + '" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>';
     var _this = this;
     this.preview_iframe = null;
     var strings;
@@ -902,7 +902,7 @@ function TRP_String( language, array_index ){
     this.original = null;
     this.translated = null;
     this.status = null;
-    this.node_type = 'Dynamic Added Strings';
+    this.node_type = trp_localized_text['dynamicstrings'];
     this.node_description = '';
     this.jquery_object = null;
     this.language = language;
