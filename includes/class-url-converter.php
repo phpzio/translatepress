@@ -165,7 +165,8 @@ class TRP_Url_Converter {
      * @return string
      */
     public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
-        global $post, $TRP_LANGUAGE;
+        global $TRP_LANGUAGE;
+        $new_url = '';
 
         // we're appending $trp_link_is_processed string to the end of each processed link so we don't process them again in the render class.
         // we're stripping this from each url in the render class
@@ -185,35 +186,33 @@ class TRP_Url_Converter {
             $language = $TRP_LANGUAGE;
         }
 
-        // make sure we have the original query
-        wp_reset_query();
+        if( empty( $url ) ) {
+            $url = $this->cur_page_url();
+        }
 
-        if ( empty( $url ) && is_object( $post ) && ( $post->ID != '0' ) && is_singular() ) {
-            // if we have a $post we need to run the language switcher through get_permalink so we apply the correct slug that can be different.
+        $post_id = url_to_postid($url);
+        if( $post_id ){
             $TRP_LANGUAGE = $language;
-            $new_url = get_permalink( $post->ID );
+            $new_url = get_permalink( $post_id );
             $TRP_LANGUAGE = $trp_language_copy;
-        }else{
-            if( empty( $url ) ){
-                $url = $this->cur_page_url();
-            }
-            // If no $post is set we simply replace the current language root with the new language root.
-	        // we can't assume the URL's have / at the end so we need to untrailingslashit both $abs_home and $new_language_root
-	        $abs_home = trailingslashit( $this->get_abs_home() );
+        } else {
+            // If no $post_id is set we simply replace the current language root with the new language root.
+            // we can't assume the URL's have / at the end so we need to untrailingslashit both $abs_home and $new_language_root
+            $abs_home = trailingslashit( $this->get_abs_home() );
 
             $current_lang_root =  untrailingslashit($abs_home . $this->get_url_slug( $TRP_LANGUAGE ));
             $new_language_root =  untrailingslashit($abs_home . $this->get_url_slug( $language ) );
 
             if( $this->get_lang_from_url_string($url) === null ){
                 // this is for forcing the custom url's. We expect them to not have a language in them.
-	            $new_url = str_replace(untrailingslashit($abs_home), $new_language_root, $url);
-			} else {
+                $new_url = str_replace(untrailingslashit($abs_home), $new_language_root, $url);
+            } else {
                 $new_url = str_replace($current_lang_root, $new_language_root, $url);
-	        }
-	        $new_url =apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
+            }
+            $new_url =apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
         }
 
-        
+
         /* fix links for woocommerce on language switcher for product categories and product tags */
         if( class_exists( 'WooCommerce' ) ){
             if ( is_product_category() ) {
