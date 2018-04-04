@@ -984,6 +984,12 @@ function TRP_String( language, array_index ){
             _this.jquery_object = trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_translation_block_draft']" );
             _this.jquery_object.attr( TRP_TRANSLATION_ID, _this.id );
             _this.jquery_object = trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='" + _this.id + "'" );
+
+            _this.jquery_object.addClass('translation-block');
+            _this.node_type = trp_localized_text['stringlist'];
+            _this.jquery_object.attr( TRP_NODE_TYPE, _this.node_type );
+
+            _this.node_type = trp_localized_text['stringlist'];
             if ( trp_language != trp_on_screen_language ) {
                 _this.set_text_in_iframe( _this.original, _this.jquery_object );
             }
