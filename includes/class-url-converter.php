@@ -298,6 +298,10 @@ class TRP_Url_Converter {
 									LIMIT 1" ) )
             );
 
+        if( empty($this->absolute_home) ){
+            $this->absolute_home = get_option("siteurl");
+        }
+        
         return $this->absolute_home;
     }
 
