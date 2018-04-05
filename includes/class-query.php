@@ -54,7 +54,7 @@ class TRP_Query{
 	 * @return array|null|object
 	 */
     public function get_all_translation_blocks( $language_code ){
-    	$query = "SELECT original FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE block_type = " . self::BLOCK_TYPE_ACTIVE;
+    	$query = "SELECT original, id, block_type, status FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE block_type = " . self::BLOCK_TYPE_ACTIVE . " OR block_type = " . self::BLOCK_TYPE_DEPRECATED;
 	    $dictionary = $this->db->get_results( $query, OBJECT_K );
 	    return $dictionary;
     }
@@ -315,7 +315,6 @@ class TRP_Query{
 
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.
-//	    error_log($this->db->prepare($query . ' ', $values) );
         $this->db->query( $this->db->prepare($query . ' ', $values) );
     }
 

@@ -403,7 +403,6 @@ class TRP_Translation_Manager{
      * Hooked to wp_ajax_trp_save_translations.
      */
     public function save_translations(){
-
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
@@ -488,16 +487,17 @@ class TRP_Translation_Manager{
 								}
 								$ajax_translated_string_list = $strings->$language;
 								foreach( $ajax_translated_string_list as $ajax_key => $ajax_string ) {
-									if ( $ajax_string->translated != '' && trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
-										$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
-										$dictionaries[ $language ][ $dictionary_string_key ]->status = (int) $ajax_string->status ;
+									if ( trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
+										if ( $ajax_string->translated != '' ) {
+											$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
+											$dictionaries[ $language ][ $dictionary_string_key ]->status = (int) $ajax_string->status ;
+										}
 										$dictionaries[ $language ][ $dictionary_string_key ]->block_type = (int) $ajax_string->block_type;
 									}
 									$dictionaries[ $language ][ $dictionary_string_key ]->new_translation_block = true;
 								}
 							}
 						}
-
 						$this->save_translations_of_strings( $dictionaries, $block_type );
 						echo trp_safe_json_encode( $dictionaries );
 					}

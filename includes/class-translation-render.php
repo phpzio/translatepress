@@ -251,18 +251,22 @@ class TRP_Translation_Render{
 	 *
 	 * @return bool
 	 */
-    public function found_translation_block( $row, $all_existing_translation_blocks, $merge_rules ){
+    public function maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules ){
     	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
 			foreach( $all_existing_translation_blocks as $existing_translation_block ){
 				if ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ){
-					// make sure we find it later exactly the way it is in DB
-					$row->innertext = $existing_translation_block->original;
-					return true;
+					if ( $existing_translation_block->block_type == 1 ) {
+						// make sure we find it later exactly the way it is in DB
+						$row->innertext   = $existing_translation_block->original;
+						$existing_classes = $row->getAttribute( 'class' );
+						$row->setAttribute( 'class', $existing_classes . ' translation-block' );
+					}else if ( $existing_translation_block->block_type == 2 && $existing_translation_block->status != 0 ) {
+						$row->setAttribute( 'data-trp-translate-id', $existing_translation_block->id );
+					}
 				}
 			}
 	    }
-    	return false;
     }
 
     /**
@@ -370,10 +374,9 @@ class TRP_Translation_Render{
             }
             else{
                 $trp_attr_rows[] = $row;
-                if ( $this->found_translation_block( $row, $all_existing_translation_blocks, $merge_rules ) ){
-	            	$existing_classes = $row->getAttribute('class');
-                	$row->setAttribute( 'class', $existing_classes . ' translation-block' );
-                }
+
+                // $row is possibly modified after calling this function
+	            $this->maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules );
             }
         }
 

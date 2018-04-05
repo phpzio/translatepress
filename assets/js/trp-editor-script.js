@@ -428,14 +428,6 @@ function TRP_Editor(){
         return stripped_html;
     };
 
-    //todo refactor and remove this function
-    this.update_textareas = function ( original ){
-        _this.original_textarea.val( original );
-        for ( var key in translated_textareas ){
-            translated_textareas[key].val( '' );
-            translated_textareas[key].attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
-        }
-    };
 
     this.prepare_merging = function( trp_string_to_merge ){
         // check again
@@ -444,10 +436,24 @@ function TRP_Editor(){
         }
 
         var parent = _this.get_parent_block( trp_string_to_merge.jquery_object );
+        var maybe_deprecated_id = parent.attr( TRP_TRANSLATION_ID );
+        var trp_deprecated_string = null;
+        if ( maybe_deprecated_id != '' ){
+            trp_deprecated_string = dictionaries[trp_on_screen_language].get_string_by_id( maybe_deprecated_id );
+        }
         parent.attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
         parent.addClass( 'trp-highlight trp-create-translation-block' );
 
-        _this.update_textareas( _this.strip_editor_meta_data(  parent ) );
+        _this.original_textarea.val( _this.strip_editor_meta_data(  parent ) );
+        for ( var key in translated_textareas ){
+            if ( trp_deprecated_string == null ) {
+                translated_textareas[key].val('');
+            }else{
+                var trp_string = dictionaries[key].get_string_by_original( trp_deprecated_string.original );
+                translated_textareas[key].val( trp_string.translated );
+            }
+            translated_textareas[key].attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
+        }
     };
 
 
@@ -811,6 +817,20 @@ function TRP_Dictionary( language_code ){
     };
 
     /**
+     * Return a TRP_String entry for the given id.
+     *
+     * @param id
+     */
+    this.get_string_by_id = function( id ){
+        for ( var i in _this.strings ) {
+            if (_this.strings[i].id == id) {
+                return _this.strings[i];
+            }
+        }
+        return null;
+    };
+
+    /**
      * Return a TRP_String entry for the given original.
      *
      * @param original
@@ -959,7 +979,10 @@ function TRP_String( language, array_index ){
 
         _this.jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : _this.jquery_object;
         _this.block_type = ( new_settings.hasOwnProperty ( 'block_type' ) ) ? new_settings.block_type : _this.block_type;
-        if ( _this.block_type != 1 ) {
+        if ( _this.block_type == 1 ) {
+            //todo: translate localize this text
+            _this.node_description = 'translation block';
+        }else{
             // decode only normal strings. translation blocks may contain &lt; which should not be transformed to < when creating a new block
             _this.original = decode_html(_this.original);
         }
@@ -1176,8 +1199,14 @@ function TRP_Lister( current_dictionary ) {
         jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).prevAll(":not(.default-option)").remove();
         /* add the normal strings before the trp-gettext-strings-optgroup optiongroup so it doesn't matter which ajax finishes first */
         for ( var category in category_array ){
+            if ( category == 'undefined' ){
+                continue;
+            }
             jQuery( "#trp-gettext-strings-optgroup", jquery_string_selector ).before( jQuery( '<optgroup></optgroup>' ).attr( 'label', _this.format_category_name( category ) ) );
             for ( var i in category_array[category] ) {
+                if ( category_array[category][i].block_type == 2 ){
+                    continue;
+                }
                 var original = category_array[category][i].original;
                 var description = '';
                 if ( category_array[category][i].node_description != undefined && category_array[category][i].node_description != '' ){
