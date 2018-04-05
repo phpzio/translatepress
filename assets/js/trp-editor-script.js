@@ -453,65 +453,49 @@ function TRP_Editor(){
 
     this.split_translation_block = function( trp_string_to_split ){
         //todo translate this text
-        //todo uncomment this
-        /*var split = confirm( "Are you sure you want to split this translation block? ");
+        var split = confirm( "Are you sure you want to split this translation block? ");
         if ( split == false ){
             return;
-        }*/
-        //todo not sure if needed
-        //trp_string_to_split.jquery_object.addClass( 'trp-split-translation-block' );
+        }
 
         var tb_to_split = {};
-
         for ( var key in dictionaries ) {
             tb_to_split[key] = [];
             var trp_string = dictionaries[key].get_string_by_original( trp_string_to_split.original );
             tb_to_split[key].push({id: trp_string.id, original: trp_string.original, translated: trp_string.translated, status: trp_string.status });
         }
-        _this.ajax_split_tb_into_individual_strings( tb_to_split );
 
+        _this.post_split_tb_into_individual_strings( tb_to_split );
     };
 
-    this.ajax_split_tb_into_individual_strings = function( tb_to_split ){
-        jQuery.ajax({
-            url: trp_ajax_url,
-            type: 'post',
-            dataType: 'json',
-            data: {
-                action: 'trp_split_translation_block',
-                language: trp_on_screen_language,
-                strings: JSON.stringify( tb_to_split ),
-            },
-            success: function (response) {
-                if ( typeof response[trp_on_screen_language] != 'undefined' ) {
+    /*
+     * Append POST information to split tb and submit form
+     */
+    this.post_split_tb_into_individual_strings = function( tb_to_split ) {
+        var form = document.createElement('form');
+        form.setAttribute('method', 'POST');
+        form.setAttribute('action', document.getElementById('trp-preview-iframe').src );
 
-                    // search for block type deprecated, replace in iframe.
-                    for (var i in response[trp_on_screen_language] ) {
-                        if ( response[trp_on_screen_language][i].block_type == 2 ){
-                            _this.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='" + response[trp_on_screen_language][i].id + "'" )
-                                .html( response[trp_on_screen_language][i].original )
-                                .removeClass('trp-highlight')
-                                .removeAttr( TRP_TRANSLATION_ID )
-                                .off();
-                        }
-                    }
+        var action = document.createElement('input');
+        action.setAttribute('type', 'hidden');
+        action.setAttribute('name', 'action');
+        action.setAttribute('value', 'trp_split_translation_block');
+        form.appendChild(action);
 
-                    // separate 'for' because the order of operations is important
-                    // search in not block type, get jquery object based on id, and inside a class '.translation-block' element
-                    for ( var i in response[trp_on_screen_language] ) {
-                        if ( response[trp_on_screen_language][i].block_type == 0 ){
-                            response[trp_on_screen_language][i].jquery_object = _this.preview_iframe.find( ".translation-block [" + TRP_TRANSLATION_ID + "='" + response[trp_on_screen_language][i].id + "'" ).first();
-                        }
-                    }
+        var language = document.createElement('input');
+        language.setAttribute('type', 'hidden');
+        language.setAttribute('name', 'language');
+        language.setAttribute('value', trp_on_screen_language );
+        form.appendChild(language);
 
-                    _this.populate_strings(response);
-                    _this.trp_lister.reload_list();
-                }
-            },
-            error: function(errorThrown){
-                console.log( 'TranslatePress AJAX Request Error' );
-            }
-        });
+        var strings = document.createElement('input');
+        strings.setAttribute('type', 'hidden');
+        strings.setAttribute('name', 'strings');
+        strings.setAttribute('value', JSON.stringify( tb_to_split ));
+        form.appendChild(strings);
+
+        document.getElementById('trp-preview-iframe').contentWindow.document.body.appendChild(form);
+        form.submit();
     };
 
     /**
