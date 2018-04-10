@@ -256,13 +256,16 @@ class TRP_Translation_Render{
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
 			foreach( $all_existing_translation_blocks as $existing_translation_block ){
 				if ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ){
+					$existing_classes = $row->getAttribute( 'class' );
 					if ( $existing_translation_block->block_type == 1 ) {
 						// make sure we find it later exactly the way it is in DB
 						$row->innertext   = $existing_translation_block->original;
-						$existing_classes = $row->getAttribute( 'class' );
 						$row->setAttribute( 'class', $existing_classes . ' translation-block' );
 					}else if ( $existing_translation_block->block_type == 2 && $existing_translation_block->status != 0 ) {
+						//todo only if in preview mode
 						$row->setAttribute( 'data-trp-translate-id', $existing_translation_block->id );
+						$row->setAttribute( 'data-trp-translate-id-deprecated', $existing_translation_block->id );
+						$row->setAttribute( 'class', $existing_classes . 'deprecated-tb' );
 					}
 				}
 			}

@@ -411,14 +411,16 @@ function TRP_Editor(){
 
     this.strip_editor_meta_data = function ( parent ) {
         var clone = parent.clone();
-       /* if ( trp_language == trp_on_screen_language ){
+        if ( trp_language == trp_on_screen_language ){
             // editor is not in original language
             clone.find('['+TRP_TRANSLATION_ID+']').each( function(){
-                dictionaries.get_string_by_id( jQuery( this ).attr( TRP_TRANSLATION_ID ) );
-
+                var trp_string = dictionaries[trp_on_screen_language].get_string_by_id( jQuery( this ).attr( TRP_TRANSLATION_ID ) );
+                if ( trp_string.status != 0 ) {
+                    // todo pause observer
+                    jQuery( this ).html( jQuery( this ).text().replace( trp_string.translated, trp_string.original ) );
+                }
             });
-
-        }*/
+        }
 
         clone.find('trp-span').remove();
         clone.find('translate-press, trp-wrap').contents().unwrap();
@@ -436,11 +438,12 @@ function TRP_Editor(){
         }
 
         var parent = _this.get_parent_block( trp_string_to_merge.jquery_object );
-        var maybe_deprecated_id = parent.attr( TRP_TRANSLATION_ID );
+        var maybe_deprecated_id = parent.attr( 'data-trp-translate-id-deprecated' );
         var trp_deprecated_string = null;
         if ( maybe_deprecated_id != '' ){
             trp_deprecated_string = dictionaries[trp_on_screen_language].get_string_by_id( maybe_deprecated_id );
         }
+        trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_translation_block_draft']" ).removeAttr( TRP_TRANSLATION_ID );
         parent.attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
         parent.addClass( 'trp-highlight trp-create-translation-block' );
 
