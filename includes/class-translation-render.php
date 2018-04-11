@@ -251,7 +251,7 @@ class TRP_Translation_Render{
 	 *
 	 * @return bool
 	 */
-    public function maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules ){
+    public function maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode ){
     	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
 			foreach( $all_existing_translation_blocks as $existing_translation_block ){
@@ -261,11 +261,10 @@ class TRP_Translation_Render{
 						// make sure we find it later exactly the way it is in DB
 						$row->innertext   = $existing_translation_block->original;
 						$row->setAttribute( 'class', $existing_classes . ' translation-block' );
-					}else if ( $existing_translation_block->block_type == 2 && $existing_translation_block->status != 0 ) {
-						//todo only if in preview mode
+					}else if ( $preview_mode && $existing_translation_block->block_type == 2 && $existing_translation_block->status != 0 ) {
 						$row->setAttribute( 'data-trp-translate-id', $existing_translation_block->id );
 						$row->setAttribute( 'data-trp-translate-id-deprecated', $existing_translation_block->id );
-						$row->setAttribute( 'class', $existing_classes . 'deprecated-tb' );
+						$row->setAttribute( 'class', $existing_classes . 'trp-deprecated-tb' );
 					}
 				}
 			}
@@ -293,6 +292,7 @@ class TRP_Translation_Render{
             return $output;
         }
 
+	    $preview_mode = isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview';
 
         /* if there is an ajax request and we have a json response we need to parse it and only translate the nodes that contain html  */
         if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
@@ -379,7 +379,7 @@ class TRP_Translation_Render{
                 $trp_attr_rows[] = $row;
 
                 // $row is possibly modified after calling this function
-	            $this->maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules );
+	            $this->maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode );
             }
         }
 
@@ -524,7 +524,6 @@ class TRP_Translation_Render{
 
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
 
-        $preview_mode = isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview';
         if ( $preview_mode ) {
             $translated_string_ids = $this->trp_query->get_string_ids($translateable_strings, $language_code);
         }
@@ -645,7 +644,6 @@ class TRP_Translation_Render{
         foreach ( $html->find('form') as $k => $row ){
             $row->innertext .= apply_filters( 'trp_form_inputs', '<input type="hidden" name="trp-form-language" value="'. $this->settings['url-slugs'][$TRP_LANGUAGE] .'"/>', $TRP_LANGUAGE, $this->settings['url-slugs'][$TRP_LANGUAGE] );
         }
-
 
         return $html->save();
     }

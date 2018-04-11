@@ -80,7 +80,9 @@ class TRP_Translation_Manager{
 		$text = array(
 			'edit'              => __( 'Translate', 'translatepress-multilingual' ),
 			'merge'             => __( 'Translate entire block element', 'translatepress-multilingual' ),
-			'split'             => __( 'Split block to translate individually', 'translatepress-multilingual' ),
+			'split'             => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
+			'translationblock'  => __( 'Translation block', 'translatepress-multilingual' ),
+			'areyousuresplittb' => __( 'Are you sure you want to split this translation block?', 'translatepress-multilingual' ),
 			'metainformation'   => __( 'Meta Information', 'translatepress-multilingual' ),
 			'stringlist'        => __( 'String List', 'translatepress-multilingual' ),
 			'dynamicstrings'    => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),

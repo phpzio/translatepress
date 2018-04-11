@@ -416,7 +416,6 @@ function TRP_Editor(){
             clone.find('['+TRP_TRANSLATION_ID+']').each( function(){
                 var trp_string = dictionaries[trp_on_screen_language].get_string_by_id( jQuery( this ).attr( TRP_TRANSLATION_ID ) );
                 if ( trp_string.status != 0 ) {
-                    // todo pause observer
                     jQuery( this ).html( jQuery( this ).text().replace( trp_string.translated, trp_string.original ) );
                 }
             });
@@ -461,8 +460,7 @@ function TRP_Editor(){
 
 
     this.split_translation_block = function( trp_string_to_split ){
-        //todo translate this text
-        var split = confirm( "Are you sure you want to split this translation block? ");
+        var split = confirm( trp_localized_text['areyousuresplittb'] );
         if ( split == false ){
             return;
         }
@@ -483,7 +481,7 @@ function TRP_Editor(){
     this.post_split_tb_into_individual_strings = function( tb_to_split ) {
         var form = document.createElement('form');
         form.setAttribute('method', 'POST');
-        form.setAttribute('action', document.getElementById('trp-preview-iframe').src );
+        form.setAttribute('action', window.location.href );
 
         var action = document.createElement('input');
         action.setAttribute('type', 'hidden');
@@ -503,7 +501,7 @@ function TRP_Editor(){
         strings.setAttribute('value', JSON.stringify( tb_to_split ));
         form.appendChild(strings);
 
-        document.getElementById('trp-preview-iframe').contentWindow.document.body.appendChild(form);
+        document.body.appendChild(form);
         form.submit();
     };
 
@@ -778,6 +776,7 @@ function TRP_Dictionary( language_code ){
                         ( _this.strings[s].jquery_object != null && strings_object[i].jquery_object == null ) ||
                         ( strings_object[i].jquery_object ==_this.strings[s].jquery_object )
                     )
+                    && _this.strings[s].block_type != 2
                 ) {
                     strings_object[i].set = true;
                     _this.strings[s].set_string( strings_object[i] );
@@ -979,15 +978,16 @@ function TRP_String( language, array_index ){
     this.set_string = function ( new_settings ){
         _this.id = ( new_settings.hasOwnProperty ( 'id' ) ) ? new_settings.id : _this.id;
         _this.original = ( new_settings.hasOwnProperty ( 'original' ) ) ? new_settings.original : _this.original;
-
         _this.jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : _this.jquery_object;
         _this.block_type = ( new_settings.hasOwnProperty ( 'block_type' ) ) ? new_settings.block_type : _this.block_type;
-        if ( _this.block_type == 1 ) {
-            //todo: translate localize this text
-            _this.node_description = 'translation block';
-        }else{
-            // decode only normal strings. translation blocks may contain &lt; which should not be transformed to < when creating a new block
-            _this.original = decode_html(_this.original);
+        switch ( _this.block_type ){
+            case '0':
+                // decode only normal strings. translation blocks may contain &lt; which should not be transformed to < when creating a new block
+                _this.original = decode_html(_this.original);
+                break;
+            case '1':
+                _this.node_description = trp_localized_text['translationblock'];
+                break;
         }
 
         if ( new_settings.hasOwnProperty ( 'new_translation_block' ) && new_settings.new_translation_block == true && _this.language == trp_on_screen_language ){
@@ -1002,6 +1002,8 @@ function TRP_String( language, array_index ){
             _this.node_type = trp_localized_text['stringlist'];
             if ( trp_language != trp_on_screen_language ) {
                 _this.set_text_in_iframe( _this.original, _this.jquery_object );
+            }else{
+                _this.set_text_in_iframe( _this.translated, _this.jquery_object );
             }
         }
 
@@ -1068,7 +1070,7 @@ function TRP_String( language, array_index ){
             trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
         }
 
-        //trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );
+        trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );
 
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click',  function(e){
@@ -1240,6 +1242,17 @@ function TRP_Lister( current_dictionary ) {
     };
 
     /**
+     * Escape tags for a given string
+     *
+     * @param string
+     */
+    this.escape_html = function ( string ){
+        var escape = document.createElement('textarea');
+        escape.textContent = string;
+        return escape.innerHTML;
+    };
+
+    /**
      * Cut the length of text displayed in string dropdown list.
      */
     this.format_text = function ( original ){
@@ -1248,7 +1261,7 @@ function TRP_Lister( current_dictionary ) {
             suspension_dots = '';
         }
 
-        return original.substring(0, 90) + suspension_dots ;
+        return _this.escape_html( original.substring(0, 90) ) + suspension_dots ;
     };
 
     /**
