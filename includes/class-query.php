@@ -243,6 +243,7 @@ class TRP_Query{
 	    }else {
 		    // check all languages
 			$array_of_languages = $this->settings['translation-languages'];
+			//todo need to check all tables, including deactivated ones
 	    }
 
 	    if ( ! empty( $array_of_languages ) ) {
@@ -553,4 +554,35 @@ class TRP_Query{
         return $dictionary;
     }
 
+    public function get_all_table_names ( $original_language, $exception_translation_languages = array() ){
+	    foreach ( $exception_translation_languages as $key => $language ){
+		    $exception_translation_languages[$key] = $this->get_table_name( $language, $original_language );
+	    }
+	    $return_tables = array();
+	    $table_name = $this->get_table_name( ''  );
+	    $table_names = $this->db->get_results( "SHOW TABLES LIKE '$table_name%'", ARRAY_N );
+	    foreach ( $table_names as $table_name ){
+	    	if ( isset( $table_name[0]) && ! in_array( $table_name[0], $exception_translation_languages ) ) {
+			    $return_tables[] = $table_name[0];
+		    }
+	    }
+	    return $return_tables;
+    }
+
+	public function update_translation_blocks( $table_names, $original_array, $block_type ) {
+
+		$values = array();
+		foreach( $table_names as $table_name ){
+			$placeholders = array();
+			foreach( $original_array as $string ){
+				$placeholders[] = '%s';
+				$values[] = $this->full_trim( $string );
+			}
+		}
+
+		$placeholders = "( " . implode ( ", ", $placeholders ) . " )";
+		$query = 'UPDATE `' . implode( $table_names, '`, `' ) . '` SET `' . implode( $table_names, '`.block_type=' . $block_type . ', `' ) . '`.block_type=' . $block_type . ' WHERE `' . implode( $table_names, '`.original IN ' . $placeholders . ' AND `' ) . '`.original IN ' . $placeholders ;
+
+		return $this->db->query( $this->db->prepare( $query, $values ) );
+	}
 }

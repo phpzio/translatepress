@@ -464,21 +464,8 @@ function TRP_Editor(){
         if ( split == false ){
             return;
         }
+        var tb_to_split = [ trp_string_to_split.original ];
 
-        var tb_to_split = {};
-        for ( var key in dictionaries ) {
-            tb_to_split[key] = [];
-            var trp_string = dictionaries[key].get_string_by_original( trp_string_to_split.original );
-            tb_to_split[key].push({id: trp_string.id, original: trp_string.original, translated: trp_string.translated, status: trp_string.status });
-        }
-
-        _this.post_split_tb_into_individual_strings( tb_to_split );
-    };
-
-    /*
-     * Append POST information to split tb and submit form
-     */
-    this.post_split_tb_into_individual_strings = function( tb_to_split ) {
         var form = document.createElement('form');
         form.setAttribute('method', 'POST');
         form.setAttribute('action', window.location.href );
@@ -488,12 +475,6 @@ function TRP_Editor(){
         action.setAttribute('name', 'action');
         action.setAttribute('value', 'trp_split_translation_block');
         form.appendChild(action);
-
-        var language = document.createElement('input');
-        language.setAttribute('type', 'hidden');
-        language.setAttribute('name', 'language');
-        language.setAttribute('value', trp_on_screen_language );
-        form.appendChild(language);
 
         var strings = document.createElement('input');
         strings.setAttribute('type', 'hidden');
