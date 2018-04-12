@@ -11,6 +11,8 @@ function trp_change_language( select ){
 
 jQuery( document ).ready( function( ) {
 
+    sessionStorage.removeItem('wc_fragments');
+
     // Run this code only if flags are enabled in shortcode language switcher
     if( trp_language_switcher_data.shortcode_ls_flags ) {
         jQuery.widget( 'trp.iconselectmenu', jQuery.ui.selectmenu, {
