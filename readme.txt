@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 4.9.4
-Stable tag: 1.2.0
+Tested up to: 4.9.5
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,11 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.1 =
+* Extra css for the floater images so they don't brake the line in certain themes
+* Fixed compatibility issue with Woocommerce cart widget
+* Fix: use the siteurl when the homeurl is empty to detect the language
+
 = 1.2.0 =
 * Fix wptexturize changing characters in secondary languages
 * Mini refactoring of the url_is_file() function
