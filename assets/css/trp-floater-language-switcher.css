@@ -80,6 +80,9 @@
     margin-right: 5px;
     margin-top: -1px;
     vertical-align: middle;
+    height: auto;
+    max-width: 100%;
+    display: inline;
 }
 
 #trp-floater-ls a {
