@@ -162,8 +162,8 @@ class TRP_Query{
                                     id bigint(20) AUTO_INCREMENT NOT NULL PRIMARY KEY,
                                     original  longtext NOT NULL,
                                     translated  longtext,
-                                    status int(20),
-                                    block_type int(20),
+                                    status int(20) DEFAULT " . $this::NOT_TRANSLATED .",
+                                    block_type int(20) DEFAULT " . $this::BLOCK_TYPE_REGULAR_STRING .",
                                     UNIQUE KEY id (id) )
                                      $charset_collate;";
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -171,9 +171,31 @@ class TRP_Query{
 
             $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
             $this->db->query( $sql_index );
+
+	        //syncronize all translation blocks.
+            $this->copy_all_translation_blocks_into_table( $default_language, $language_code );
         }else{
 	        $this->check_for_block_type_column( $language_code, $default_language );
         }
+    }
+
+    public function copy_all_translation_blocks_into_table( $default_language, $language_code ){
+    	$all_table_names = $this->get_all_table_names( $default_language, array( $language_code ) );
+    	if ( count( $all_table_names ) > 0 ){
+		    $source_table_name = $all_table_names[0];
+
+		    // copy translation blocks from table name of this language
+		    $source_language = apply_filters( 'trp_source_language_translation_blocks', '', $default_language, $language_code );
+		    if ( $source_language != '' ){
+			    $source_table_name = $this->get_table_name( $source_language, $default_language );
+		    }
+
+		    $destination_table_name = $this->get_table_name( $language_code, $default_language );
+
+		    // get all tb from $source_table_name and copy to $destination_table_name
+		    $sql = 'INSERT INTO `' . $destination_table_name . '` SELECT NULL, original, "", ' . $this::NOT_TRANSLATED . ', block_type FROM `' . $source_table_name . '` WHERE block_type = ' . self::BLOCK_TYPE_ACTIVE . ' OR block_type = ' . self::BLOCK_TYPE_DEPRECATED;
+		    $this->db->query( $sql );
+	    }
     }
 
 	/**
@@ -233,24 +255,27 @@ class TRP_Query{
 	/**
 	 * Add block_type column to dictionary tables, if it doesn't exist.
 	 *
+	 * Affects all existing tables, including deactivated languages
+	 *
 	 * @param null $language_code
 	 * @param null $default_language
 	 */
     public function check_for_block_type_column( $language_code = null, $default_language = null ){
-    	if ( $language_code ){
-    		// check only this language
-    		$array_of_languages = array( $language_code );
-	    }else {
-		    // check all languages
-			$array_of_languages = $this->settings['translation-languages'];
-			//todo need to check all tables, including deactivated ones
+    	if ( $default_language == null ){
+		    $default_language = $this->settings['default_language'];
 	    }
 
-	    if ( ! empty( $array_of_languages ) ) {
-		    foreach ( $array_of_languages as $site_language_code ) {
-			    if ( $site_language_code != $this->settings['default-language'] && ! $this->table_column_exists( $this->get_table_name( $site_language_code, $default_language ), 'block_type' ) ) {
-				    $this->db->query("ALTER TABLE " . $this->get_table_name( $site_language_code, $default_language ) . " ADD block_type INT(20) DEFAULT " . $this::BLOCK_TYPE_REGULAR_STRING );
-			    }
+    	if ( $language_code ){
+    		// check only this language
+    		$array_of_table_names = array( $this->get_table_name( $language_code, $default_language ) );
+	    }else {
+		    // check all languages, including deactivated ones
+		    $array_of_table_names = $this->get_all_table_names( $default_language, array() );
+	    }
+
+	    foreach( $array_of_table_names as $table_name ){
+		    if ( ! $this->table_column_exists( $table_name, 'block_type' ) ) {
+			    $this->db->query("ALTER TABLE " . $table_name . " ADD block_type INT(20) DEFAULT " . $this::BLOCK_TYPE_REGULAR_STRING );
 		    }
 	    }
     }
