@@ -7,7 +7,9 @@
  */
 class TRP_Translation_Manager{
     protected $settings;
+	/** @var TRP_Translation_Render */
     protected $translation_render;
+	/** @var TRP_Query */
     protected $trp_query;
     protected $machine_translator;
     protected $slug_manager;
@@ -467,10 +469,10 @@ class TRP_Translation_Manager{
 						$this->translation_render = $trp->get_component('translation_render');
 					}
 
-					$block_type = $this->trp_query->get_constant_block_type_active();
+					$active_block_type = $this->trp_query->get_constant_block_type_active();
 					foreach( $this->settings['translation-languages'] as $language ){
 						if ( $language !=  $this->settings['default-language'] ){
-							$dictionaries = $this->get_translation_for_strings( $strings->$language, $block_type );
+							$dictionaries = $this->get_translation_for_strings( $strings->$language, $active_block_type );
 							break;
 						}
 					}
@@ -479,6 +481,8 @@ class TRP_Translation_Manager{
 					 * Merging the dictionary received from get_translation_for_strings (which contains ID and possibly automatic translations) with
 					 * ajax translated (which can contain manual translations)
 					 */
+					$originals_array_constructed = false;
+					$originals = array();
 					if ( isset( $dictionaries ) ){
 						foreach ( $dictionaries as $language => $dictionary ){
 							foreach( $dictionary as $dictionary_string_key => $dictionary_string ){
@@ -490,15 +494,45 @@ class TRP_Translation_Manager{
 									if ( trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
 										if ( $ajax_string->translated != '' ) {
 											$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
-											$dictionaries[ $language ][ $dictionary_string_key ]->status = (int) $ajax_string->status ;
+											$dictionaries[ $language ][ $dictionary_string_key ]->status     = (int) $ajax_string->status;
 										}
 										$dictionaries[ $language ][ $dictionary_string_key ]->block_type = (int) $ajax_string->block_type;
 									}
 									$dictionaries[ $language ][ $dictionary_string_key ]->new_translation_block = true;
 								}
+
+								if( !$originals_array_constructed ){
+									$originals[] = $dictionary_string->original;
+								}
+							}
+							$originals_array_constructed = true;
+						}
+						$this->save_translations_of_strings( $dictionaries, $active_block_type );
+
+						// update deactivated languages
+						$copy_of_originals = $originals;
+						if ( $originals_array_constructed ){
+							$table_names = $this->trp_query->get_all_table_names( $this->settings['default-language'], $this->settings['translation-languages'] );
+							if ( count( $table_names ) > 0 ){
+								foreach( $table_names as $table_name ) {
+									$originals = $copy_of_originals;
+									$language = $this->trp_query->get_language_code_from_table_name( $table_name );
+									$existing_dictionary = $this->trp_query->get_string_rows( array(), $originals, $language, ARRAY_A );
+									foreach ( $existing_dictionary as $string_key => $string ){
+										foreach ( $originals as $original_key => $original ){
+											if ( $string['original'] == $original ){
+												unset( $originals[$original_key] );
+											}
+										}
+										$existing_dictionary[$string_key]['block_type'] = $active_block_type;
+										$originals = array_values( $originals );
+									}
+									$this->trp_query->insert_strings( $originals, $existing_dictionary, $language, $active_block_type );
+								}
+
 							}
 						}
-						$this->save_translations_of_strings( $dictionaries, $block_type );
+
 						echo trp_safe_json_encode( $dictionaries );
 					}
 				}
@@ -531,14 +565,13 @@ class TRP_Translation_Manager{
 
 				// even inactive languages ( not in $this->settings['translation-languages'] array ) will be updated
 				$all_languages_table_names = $this->trp_query->get_all_table_names( $this->settings['default-language'], array() );
-				$rows_affected = $this->trp_query->update_translation_blocks( $all_languages_table_names, $originals, $deprecated_block_type );
+				$rows_affected = $this->trp_query->update_translation_blocks_by_original( $all_languages_table_names, $originals, $deprecated_block_type );
 				if ( $rows_affected == 0 ){
 					// do updates individually if it fails
 					foreach ( $all_languages_table_names as $table_name ){
-						$this->trp_query->update_translation_blocks( array( $table_name ), $originals, $deprecated_block_type );
+						$this->trp_query->update_translation_blocks_by_original( array( $table_name ), $originals, $deprecated_block_type );
 					}
 				}
-
 			}
 		}
 	}

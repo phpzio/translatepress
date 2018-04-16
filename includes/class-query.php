@@ -408,7 +408,7 @@ class TRP_Query{
      * @param string $language_code         Language code to query for.
      * @return object                       Associative Array of objects with translations where key is original string.
      */
-    public function get_string_ids( $original_strings, $language_code ){
+    public function get_string_ids( $original_strings, $language_code, $output = OBJECT_K ){
         if ( !is_array( $original_strings ) || count ( $original_strings ) == 0 ){
             return array();
         }
@@ -422,7 +422,7 @@ class TRP_Query{
         }
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
-        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), OBJECT_K  );
+        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), $output  );
         return $dictionary;
     }
 
@@ -462,10 +462,18 @@ class TRP_Query{
      * @return string                       Table name.
      */
     protected function get_table_name( $language_code, $default_language = null ){
-        if ( $default_language != null ) {
-            $this->settings['default-language'] = $default_language;
+        if ( $default_language == null ) {
+            $default_language = $this->settings['default-language'];
         }
-        return $this->db->prefix . 'trp_dictionary_' . strtolower( $this->settings['default-language'] ) . '_'. strtolower( $language_code );
+        return $this->db->prefix . 'trp_dictionary_' . strtolower( $default_language ) . '_'. strtolower( $language_code );
+    }
+
+    public function get_language_code_from_table_name( $table_name, $default_language = null ){
+	    if ( $default_language == null ) {
+		    $default_language = $this->settings['default-language'];
+	    }
+	    $language_code = str_replace($this->db->prefix . 'trp_dictionary_' . strtolower( $default_language ) . '_', '', $table_name );
+	    return $language_code;
     }
 
     public function get_all_gettext_strings(  $language_code ){
@@ -493,7 +501,7 @@ class TRP_Query{
      * @param string $language_code     Language code of table.
      * @return object                   Associative Array of objects with translations where key is id.
      */
-    public function get_string_rows( $id_array, $original_array, $language_code ){
+    public function get_string_rows( $id_array, $original_array, $language_code, $output = OBJECT_K ){
 
         $select_query = "SELECT id, original, translated, status, block_type FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE ";
 
@@ -539,7 +547,7 @@ class TRP_Query{
         }
 
 
-        $dictionary = $this->db->get_results( $query, OBJECT_K );
+        $dictionary = $this->db->get_results( $query, $output );
         return $dictionary;
     }
 
@@ -594,7 +602,7 @@ class TRP_Query{
 	    return $return_tables;
     }
 
-	public function update_translation_blocks( $table_names, $original_array, $block_type ) {
+	public function update_translation_blocks_by_original( $table_names, $original_array, $block_type ) {
 
 		$values = array();
 		foreach( $table_names as $table_name ){
