@@ -194,6 +194,12 @@ class TRP_Url_Converter {
         if( $post_id ){
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post_id );
+
+            $pass_arguments = parse_url($url);
+            if(isset($pass_arguments['query'])){
+                $new_url = untrailingslashit($new_url) . '?' . $pass_arguments['query'];
+            }
+
             $TRP_LANGUAGE = $trp_language_copy;
         } else {
             // If no $post_id is set we simply replace the current language root with the new language root.
