@@ -80,14 +80,19 @@ class TRP_Translation_Manager{
 
 	public function localized_text(){
 		$text = array(
-			'edit'              => __( 'Translate', 'translatepress-multilingual' ),
-			'merge'             => __( 'Translate entire block element', 'translatepress-multilingual' ),
-			'split'             => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
-			'translationblock'  => __( 'Translation block', 'translatepress-multilingual' ),
-			'areyousuresplittb' => __( 'Are you sure you want to split this translation block?', 'translatepress-multilingual' ),
-			'metainformation'   => __( 'Meta Information', 'translatepress-multilingual' ),
-			'stringlist'        => __( 'String List', 'translatepress-multilingual' ),
-			'dynamicstrings'    => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+			'edit'                          => __( 'Translate', 'translatepress-multilingual' ),
+			'merge'                         => __( 'Translate entire block element', 'translatepress-multilingual' ),
+			'split'                         => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
+			'translationblock'              => __( 'Translation block', 'translatepress-multilingual' ),
+			'areyousuresplittb'             => __( 'Are you sure you want to split this translation block?', 'translatepress-multilingual' ),
+			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
+			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
+			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+			'gettranslationsnonce'          => __( wp_create_nonce('get_translations'), 'translatepress-multilingual' ),
+			'savestringsnonce'              => __( wp_create_nonce('save_translations'), 'translatepress-multilingual' ),
+			'splittbnonce'                  => __( wp_create_nonce('split_translation_block'), 'translatepress-multilingual' ),
+			'gettextgettranslationsnonce'   => __( wp_create_nonce('gettext_get_translations'), 'translatepress-multilingual' ),
+			'gettextsavetranslationsnonce'  => __( wp_create_nonce('gettext_save_translations'), 'translatepress-multilingual' ),
 		);
 		return $text;
 	}
@@ -247,6 +252,7 @@ class TRP_Translation_Manager{
      */
     public function get_translations() {
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+        	check_ajax_referer( 'get_translations', 'security' );
 	        if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
 	            $strings = json_decode(stripslashes($_POST['strings']));
 		        if ( is_array( $strings ) ) {
@@ -266,9 +272,9 @@ class TRP_Translation_Manager{
 
     public function gettext_get_translations(){
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_get_translations' && !empty($_POST['gettext_string_ids']) && !empty($_POST['language']) && in_array($_POST['language'], $this->settings['translation-languages'])) {
-
-                if (!empty($_POST['gettext_string_ids']))
+	        if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_get_translations' && !empty($_POST['gettext_string_ids']) && !empty($_POST['language']) && in_array($_POST['language'], $this->settings['translation-languages'])) {
+	            check_ajax_referer( 'gettext_get_translations', 'security' );
+	            if (!empty($_POST['gettext_string_ids']))
                     $gettext_string_ids = json_decode(stripslashes($_POST['gettext_string_ids']));
                 else
                     $gettext_string_ids = array();
@@ -408,6 +414,7 @@ class TRP_Translation_Manager{
      */
     public function save_translations(){
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+        	check_ajax_referer( 'save_translations', 'security' );
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
                 $this->save_translations_of_strings( $strings );
@@ -420,6 +427,7 @@ class TRP_Translation_Manager{
     public function gettext_save_translations(){
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_save_translations' && !empty($_POST['gettext_strings'])) {
+	            check_ajax_referer( 'gettext_save_translations', 'security' );
                 $strings = json_decode(stripslashes($_POST['gettext_strings']));
                 $update_strings = array();
                 foreach ( $strings as $language => $language_strings ) {
@@ -456,8 +464,8 @@ class TRP_Translation_Manager{
 	 * Save newly generated translation block
 	 */
 	public function save_translation_block_draft(){
-
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+			check_ajax_referer( 'save_translations', 'security' );
 			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translation_block_draft' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
 				$strings = json_decode( stripslashes( $_POST['strings'] ) );
 				if ( isset ( $this->settings['translation-languages']) ){
@@ -550,8 +558,8 @@ class TRP_Translation_Manager{
 	 */
 	public function split_translation_block() {
 		if ( current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
-			//todo maybe nonce?
 			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_split_translation_block' && ! empty( $_POST['strings'] ) ) {
+				check_ajax_referer( 'split_translation_block', 'security' );
 				$raw_original_array = json_decode( stripslashes( $_POST['strings'] ) );
 				$trp = TRP_Translate_Press::get_trp_instance();
 				if ( ! $this->trp_query ) {

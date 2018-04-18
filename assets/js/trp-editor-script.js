@@ -164,6 +164,7 @@ function TRP_Editor(){
             dataType: 'json',
             data: {
                 action: 'trp_get_translations',
+                security: trp_localized_text['gettranslationsnonce'],
                 language: trp_on_screen_language,
                 strings: JSON.stringify( strings_to_query ),
                 all_languages: 'true'
@@ -219,7 +220,7 @@ function TRP_Editor(){
         if (  _this.change_tracker.check_unsaved_changes() ) {
             return;
         }
-        _this.original_textarea.val( trp_string.original );
+        _this.original_textarea.val( decode_html( trp_string.original ) );
         for ( var key in translated_textareas ){
             var translated = '';
             var id = '';
@@ -311,6 +312,7 @@ function TRP_Editor(){
             dataType: 'json',
             data: {
                 action: action,
+                security: trp_localized_text['savestringsnonce'],
                 language: trp_on_screen_language,
                 strings: JSON.stringify( strings_to_save ),
                 all_languages: 'true'
@@ -475,6 +477,12 @@ function TRP_Editor(){
         action.setAttribute('name', 'action');
         action.setAttribute('value', 'trp_split_translation_block');
         form.appendChild(action);
+
+        var security = document.createElement('input');
+        security.setAttribute('type', 'hidden');
+        security.setAttribute('name', 'security');
+        security.setAttribute('value', trp_localized_text['splittbnonce']);
+        form.appendChild(security);
 
         var strings = document.createElement('input');
         strings.setAttribute('type', 'hidden');
@@ -916,20 +924,6 @@ function TRP_String( language, array_index ){
     };
 
     /**
-     * Return given text converted to html.
-     *
-     * Useful for decoding special characters into displayable form.
-     *
-     * @param html
-     * @returns {*}
-     */
-    function decode_html( html ) {
-        var txt = document.createElement( "textarea" );
-        txt.innerHTML = html;
-        return txt.value;
-    }
-
-    /**
      * Replace existing text from iframe with specified string
      *
      * @param text_to_set
@@ -961,14 +955,8 @@ function TRP_String( language, array_index ){
         _this.original = ( new_settings.hasOwnProperty ( 'original' ) ) ? new_settings.original : _this.original;
         _this.jquery_object = ( new_settings.hasOwnProperty ( 'jquery_object' ) ) ? new_settings.jquery_object : _this.jquery_object;
         _this.block_type = ( new_settings.hasOwnProperty ( 'block_type' ) ) ? new_settings.block_type : _this.block_type;
-        switch ( _this.block_type ){
-            case '0':
-                // decode only normal strings. translation blocks may contain &lt; which should not be transformed to < when creating a new block
-                _this.original = decode_html(_this.original);
-                break;
-            case '1':
-                _this.node_description = trp_localized_text['translationblock'];
-                break;
+        if ( _this.block_type == 1 ){
+            _this.node_description = trp_localized_text['translationblock'];
         }
 
         if ( new_settings.hasOwnProperty ( 'new_translation_block' ) && new_settings.new_translation_block == true && _this.language == trp_on_screen_language ){
@@ -1193,7 +1181,7 @@ function TRP_Lister( current_dictionary ) {
                 if ( category_array[category][i].block_type == 2 ){
                     continue;
                 }
-                var original = category_array[category][i].original;
+                var original = decode_html( category_array[category][i].original );
                 var description = '';
                 if ( category_array[category][i].node_description != undefined && category_array[category][i].node_description != '' ){
                     description = '(' + category_array[category][i].node_description + ')';
@@ -1494,6 +1482,7 @@ jQuery(function(){
             dataType: 'json',
             data: {
                 action: 'trp_gettext_get_translations',
+                security: trp_localized_text['gettextgettranslationsnonce'],
                 language: trp_language,
                 gettext_string_ids: JSON.stringify( gettext_string_ids )
             },
@@ -1598,6 +1587,7 @@ jQuery(function(){
                 dataType: 'json',
                 data: {
                     action: 'trp_gettext_save_translations',
+                    security: trp_localized_text['gettextsavetranslationsnonce'],
                     gettext_strings: JSON.stringify( strings_to_save )
                 },
                 success: function (response) {
@@ -1638,3 +1628,16 @@ jQuery( function(){
 });
 
 
+/**
+ * Return given text converted to html.
+ *
+ * Useful for decoding special characters into displayable form.
+ *
+ * @param html
+ * @returns {*}
+ */
+function decode_html( html ) {
+    var txt = document.createElement( "textarea" );
+    txt.innerHTML = html;
+    return txt.value;
+}
