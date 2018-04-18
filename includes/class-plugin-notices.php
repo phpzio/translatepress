@@ -284,6 +284,16 @@ class TRP_Trigger_Plugin_Notifications{
             $notifications->add_notification($notification_id, $message, 'trp-notice trp-narrow notice notice-info', true, array('translate-press'));
         }
 
+
+	    /* this must be unique */
+	    $notification_id = 'trp_new_feature_translation_block';
+
+	    $message = '<p style="padding-right:30px;">' . __('You can now translate an entire block element at once. Check out how in <a href="https://translatepress.com/docs/translatepress/" >our documentation</a>.' , 'translatepress-multilingual' ) . '</p>';
+	    //make sure to use the trp_dismiss_admin_notification arg
+	    $message .= '<a href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
+
+	    $notifications->add_notification($notification_id, $message, 'trp-notice trp-narrow notice notice-info', true, array('translate-press'));
+
     }
 
 }
