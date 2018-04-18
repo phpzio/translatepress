@@ -621,6 +621,10 @@ class TRP_Translation_Render{
             $this->url_converter = $trp->get_component('url_converter');
         }
 
+        // We need to save here in order to access the translated links too.
+	    $html = $html->save();
+        $html = trp_str_get_html($html, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+
         // force custom links to have the correct language
         foreach( $html->find('a[href!="#"]') as $a_href)  {
             $url = $a_href->href;
