@@ -73,9 +73,9 @@ class TRP_Url_Converter {
 
         $url_slug = $this->get_url_slug( $TRP_LANGUAGE );
         $abs_home = $this->get_abs_home();
-        $new_url = trailingslashit( $abs_home ) . $url_slug;
+        $new_url = trailingslashit( trailingslashit( $abs_home ) . $url_slug );
         if ( ! empty( $path ) ){
-            $new_url .= '/' . ltrim( $path, '/' );
+            $new_url .= ltrim( $path, '/' );
         }
 
         return apply_filters( 'trp_home_url', $new_url, $abs_home, $TRP_LANGUAGE, $path, $url );
