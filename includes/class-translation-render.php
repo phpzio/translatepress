@@ -627,6 +627,10 @@ class TRP_Translation_Render{
             $is_external_link = $this->is_external_link( $url );
             $is_admin_link = $this->is_admin_link($url);
 
+	        if( $preview_mode && ! $is_external_link ){
+				$a_href->setAttribute( 'data-trp-original-href', $url );
+	        }
+
             if ( $this->settings['force-language-to-custom-links'] == 'yes' && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$is_admin_link && strpos($url, '#TRPLINKPROCESSED') === false ){
                 $a_href->href = apply_filters( 'trp_force_custom_links', $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $url ), $url, $TRP_LANGUAGE, $a_href );
                 $url = $a_href->href;

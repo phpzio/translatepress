@@ -427,6 +427,11 @@ function TRP_Editor(){
         clone.find('translate-press, trp-wrap').contents().unwrap();
 
         clone.find('a').removeAttr( 'data-trp-unpreviewable');
+        clone.find('[data-trp-original-href]').each( function () {
+            jQuery(this).attr( 'href', jQuery(this).attr( 'data-trp-original-href' ) );
+            jQuery(this).removeAttr( 'data-trp-original-href' );
+        } );
+
         stripped_html = clone.html();
         return stripped_html;
     };
