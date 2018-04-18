@@ -161,6 +161,14 @@ class TRP_Translation_Manager{
         return array_values( $original_array );
     }
 
+	/**
+	 * Return dictionary with translated strings.
+	 *
+	 * @param $strings
+	 * @param null $block_type
+	 *
+	 * @return array
+	 */
     protected function get_translation_for_strings( $strings, $block_type = null ){
 	    $id_array = array();
 	    $original_array = array();
@@ -367,6 +375,12 @@ class TRP_Translation_Manager{
         }
     }
 
+	/**
+	 * Save translations in DB for the strings
+	 *
+	 * @param $strings
+	 * @param null $block_type
+	 */
     protected function save_translations_of_strings( $strings, $block_type = null ){
     	if ( !$block_type ){
 		    if (!$this->trp_query) {
@@ -461,12 +475,15 @@ class TRP_Translation_Manager{
     }
 
 	/**
-	 * Save newly generated translation block
+	 * Set translation block to active.
+	 *
+	 * Creates TB is not exists. Adds auto translation if one is not provided.
+	 * Supports handling multiple translation blocks
 	 */
-	public function save_translation_block_draft(){
+	public function create_translation_block(){
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
 			check_ajax_referer( 'save_translations', 'security' );
-			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translation_block_draft' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
+			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_create_translation_block' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
 				$strings = json_decode( stripslashes( $_POST['strings'] ) );
 				if ( isset ( $this->settings['translation-languages']) ){
 					$trp = TRP_Translate_Press::get_trp_instance();
@@ -551,6 +568,7 @@ class TRP_Translation_Manager{
 	}
 
 	/**
+	 * Set translation block to deprecated
 	 *
 	 * Can handle splitting multiple blocks.
 	 *

@@ -256,11 +256,11 @@ function TRP_Editor(){
                 var translated = translated_textareas[key].val();
                 var id = translated_textareas[key].attr( TRP_TRANSLATION_ID );
                 var string = {};
-                if ( id == 'trp_translation_block_draft' ){
-                    string.translated = 'trp_translation_block_draft';
+                if ( id == 'trp_creating_translation_block' ){
+                    string.translated = 'trp_creating_translation_block';
                     string.slug = false;
                     string.block_type = 1;
-                    action  = 'trp_save_translation_block_draft';
+                    action  = 'trp_create_translation_block';
                 }else {
                     string = dictionaries[key].get_string_by_original(original);
                 }
@@ -318,7 +318,7 @@ function TRP_Editor(){
                 all_languages: 'true'
             },
             success: function (response) {
-                if ( action == 'trp_save_translation_block_draft' ){
+                if ( action == 'trp_create_translation_block' ){
                     _this.populate_translation_block_strings( response );
                 }else {
                     _this.populate_strings(strings_to_save);
@@ -411,6 +411,11 @@ function TRP_Editor(){
         return 'none';
     };
 
+    /*
+     * Strips all the html added by TP Editor to return a vanilla html.
+     *
+     * Returns original language even if in TP Editor is in secondary language preview.
+     */
     this.strip_editor_meta_data = function ( parent ) {
         var clone = parent.clone();
         if ( trp_language == trp_on_screen_language ){
@@ -436,7 +441,11 @@ function TRP_Editor(){
         return stripped_html;
     };
 
-
+    /*
+     * Brings translation block in sidebar for saving
+      *
+     * @param trp_string_to_merge TRP_String from which to extract parent block.
+     */
     this.prepare_merging = function( trp_string_to_merge ){
         // check again
         if ( _this.decide_if_merge_or_split( trp_string_to_merge ) != 'merge' ) {
@@ -449,8 +458,8 @@ function TRP_Editor(){
         if ( maybe_deprecated_id != '' ){
             trp_deprecated_string = dictionaries[trp_on_screen_language].get_string_by_id( maybe_deprecated_id );
         }
-        trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_translation_block_draft']" ).removeAttr( TRP_TRANSLATION_ID );
-        parent.attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
+        trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_creating_translation_block']" ).removeAttr( TRP_TRANSLATION_ID );
+        parent.attr( TRP_TRANSLATION_ID, 'trp_creating_translation_block' );
         parent.addClass( 'trp-highlight trp-create-translation-block' );
 
         _this.original_textarea.val( _this.strip_editor_meta_data(  parent ) );
@@ -461,12 +470,20 @@ function TRP_Editor(){
                 var trp_string = dictionaries[key].get_string_by_original( trp_deprecated_string.original );
                 translated_textareas[key].val( trp_string.translated );
             }
-            translated_textareas[key].attr( TRP_TRANSLATION_ID, 'trp_translation_block_draft' );
+            translated_textareas[key].attr( TRP_TRANSLATION_ID, 'trp_creating_translation_block' );
         }
     };
 
-
+    /**
+     * Submit a form with the action of splitting received translation block
+     *
+     * @param trp_string_to_split
+     */
     this.split_translation_block = function( trp_string_to_split ){
+        // check again
+        if ( _this.decide_if_merge_or_split( trp_string_to_split ) != 'split' ) {
+            return;
+        }
         var split = confirm( trp_localized_text['areyousuresplittb'] );
         if ( split == false ){
             return;
@@ -965,7 +982,7 @@ function TRP_String( language, array_index ){
         }
 
         if ( new_settings.hasOwnProperty ( 'new_translation_block' ) && new_settings.new_translation_block == true && _this.language == trp_on_screen_language ){
-            _this.jquery_object = trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_translation_block_draft']" );
+            _this.jquery_object = trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_creating_translation_block']" );
             _this.jquery_object.attr( TRP_TRANSLATION_ID, _this.id );
             _this.jquery_object = trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='" + _this.id + "'" );
 
@@ -1022,7 +1039,6 @@ function TRP_String( language, array_index ){
             _this.jquery_object = _this.jquery_object.parent();
         }
     };
-
 
 
     /**

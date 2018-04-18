@@ -112,7 +112,7 @@ class TRP_Translate_Press{
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations', $this->translation_manager, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->translation_manager, 'save_translations' );
-        $this->loader->add_action( 'wp_ajax_trp_save_translation_block_draft', $this->translation_manager, 'save_translation_block_draft' );
+        $this->loader->add_action( 'wp_ajax_trp_create_translation_block', $this->translation_manager, 'create_translation_block' );
         $this->loader->add_action( 'init', $this->translation_manager, 'split_translation_block' );
 
 
