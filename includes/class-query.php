@@ -262,7 +262,7 @@ class TRP_Query{
 	 */
     public function check_for_block_type_column( $language_code = null, $default_language = null ){
     	if ( $default_language == null ){
-		    $default_language = $this->settings['default_language'];
+		    $default_language = $this->settings['default-language'];
 	    }
 
     	if ( $language_code ){

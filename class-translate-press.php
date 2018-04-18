@@ -182,7 +182,7 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'date_i18n', $this->translation_manager, 'handle_date_i18n_function_for_gettext', 1, 4 );
 
         /* define an update hook here */
-        $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );
+        $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates', 10 );
 
         $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 3 );
         
