@@ -39,7 +39,7 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.1.8' );
+        define( 'TRP_PLUGIN_VERSION', '1.2.1' );
 
         $this->load_dependencies();
         $this->initialize_components();
@@ -192,6 +192,9 @@ class TRP_Translate_Press{
         /* hide php ors and notice when we are storing strings in db */
         $this->loader->add_action( 'wp', $this->translation_render, 'trp_debug_mode_off' );
 
+        /* fix wptexturize to always replace with the default translated strings */
+        $this->loader->add_action( 'gettext_with_context', $this->translation_render, 'fix_wptexturize_characters', 999, 4 );
+
         /* ?or init ? hook here where you can change the $current_user global */
         $this->loader->add_action( 'init', $this->translation_manager, 'trp_view_as_user' );
         
@@ -204,6 +207,9 @@ class TRP_Translate_Press{
 
         /* add to the body class the current language */
         $this->loader->add_filter( "body_class", $this->translation_manager, 'add_language_to_body_class' );
+
+        /* load textdomain */
+        $this->loader->add_action( "init", $this, 'init_translation', 8 );
     }
 
     /**
@@ -211,6 +217,13 @@ class TRP_Translate_Press{
      */
     public function run() {
         $this->loader->run();
+    }
+
+    /**
+     * Load plugin textdomain
+     */
+    public function init_translation(){
+        load_plugin_textdomain( 'translatepress-multilingual', false, basename(dirname(__FILE__)) . '/languages/' );
     }
 
 }

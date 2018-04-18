@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 4.9.4
-Stable tag: 1.1.8
+Tested up to: 4.9.5
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,8 @@ Easily translate your entire site directly from the front-end and go multilingua
 The interface allows you to easily translate the entire page at once, including output from shortcodes, forms and page builders. It also works out of the box with WooCommerce.
 
 Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted translation plugin, meaning you'll own all your translations, forever. It's the fastest way to create a bilingual or multilingual site.
+
+https://www.youtube.com/watch?v=pUlYisvBm8g
 
 = Multilingual & Translation Features =
 
@@ -113,6 +115,20 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.1 =
+* Extra css for the floater images so they don't brake the line in certain themes
+* Fixed compatibility issue with Woocommerce cart widget
+* Fix: use the siteurl when the homeurl is empty to detect the language
+
+= 1.2.0 =
+* Fix wptexturize changing characters in secondary languages
+* Mini refactoring of the url_is_file() function
+* Refactor get_url_for_language() to not use the global  var
+* We no longer add the language path to links to actual files on the server
+
+= 1.1.9 =
+* Fix widget language switcher to take into account the new hreflang
+
 = 1.1.8 =
 * Fixed bug with Strings List appearing also in Dynamic Strings List. Also fixed bug with duplicate dynamic strings not having a pencil icon because of missing jquery_object.
 * Fixed Woocommerce session storage compatibility

@@ -661,7 +661,7 @@ class TRP_Translation_Render{
      * @param string $url           Url.
      * @return bool                 Whether given url links to an external domain.
      */
-    protected function is_external_link( $url ){
+    public function is_external_link( $url ){
         // Abort if parameter URL is empty
         if( empty($url) ) {
             return false;
@@ -1013,5 +1013,43 @@ class TRP_Translation_Render{
     public function handle_cdata( $output ){
         $output = str_replace( ']]&gt;', ']]>', $output );
         return $output;
+    }
+
+    /**
+     * Function always renders the default language wptexturize characters instead of the translated ones for secondary languages.
+     * @param string
+     * @param string
+     * @param string
+     * @param string
+     * @return string
+     */
+    function fix_wptexturize_characters( $translated, $text, $context, $domain ){
+        global $TRP_LANGUAGE;
+        $trp = TRP_Translate_Press::get_trp_instance();
+        $trp_settings = $trp->get_component( 'settings' );
+        $settings = $trp_settings->get_settings();
+
+        $default_language= $settings["default-language"];
+
+        // it's reversed because the same string &#8217; is replaced differently based on context and we can't have the same key twice on an array
+        $list_of_context_text = array(
+            'opening curly double quote' => '&#8220;',
+            'closing curly double quote' => '&#8221;',
+            'apostrophe' => '&#8217;',
+            'prime' => '&#8242;',
+            'double prime' => '&#8243;',
+            'opening curly single quote' => '&#8216;',
+            'closing curly single quote' => '&#8217;',
+            'en dash' => '&#8211;',
+            'em dash' => '&#8212;',
+            'Comma-separated list of words to texturize in your language' => "'tain't,'twere,'twas,'tis,'twill,'til,'bout,'nuff,'round,'cause,'em",
+            'Comma-separated list of replacement words in your language' => '&#8217;tain&#8217;t,&#8217;twere,&#8217;twas,&#8217;tis,&#8217;twill,&#8217;til,&#8217;bout,&#8217;nuff,&#8217;round,&#8217;cause,&#8217;em'
+        );
+
+        if( $default_language != $TRP_LANGUAGE && array_key_exists($context, $list_of_context_text) && in_array($text, $list_of_context_text) ){
+            return trp_x( $text, $context, '', $default_language );
+        }
+
+        return $translated;
     }
 }
