@@ -429,13 +429,24 @@ function TRP_Editor(){
         }
 
         clone.find('trp-span').remove();
-        clone.find('translate-press, trp-wrap').contents().unwrap();
+        clone.find('translate-press, trp-wrap, trp-highlight').contents().unwrap();
 
-        clone.find('a').removeAttr( 'data-trp-unpreviewable');
-        clone.find('[data-trp-original-href]').each( function () {
-            jQuery(this).attr( 'href', jQuery(this).attr( 'data-trp-original-href' ) );
-            jQuery(this).removeAttr( 'data-trp-original-href' );
-        } );
+        var replace_attributes = ['href', 'target'];
+        var arrayLength = replace_attributes.length;
+        for (var i = 0; i < arrayLength; i++) {
+            var attribute = replace_attributes[i];
+            clone.find('[data-trp-original-' + attribute + ']').each(function () {
+                jQuery(this).attr( attribute, jQuery(this).attr('data-trp-original-' + attribute));
+                jQuery(this).removeAttr('data-trp-original-' + attribute );
+            });
+        }
+
+        var remove_attributes = ['data-trp-translate-id', 'data-trp-node-type', 'data-trp-placeholder', 'data-trp-node-description', 'data-trp-unpreviewable' ];
+        arrayLength = remove_attributes.length;
+        for (var i = 0; i < arrayLength; i++) {
+            var attribute = remove_attributes[i];
+            clone.find('[' + attribute + ']').removeAttr( attribute );
+        }
 
         stripped_html = clone.html();
         return stripped_html;
@@ -1046,6 +1057,7 @@ function TRP_String( language, array_index ){
      */
     this.highlight = function (e){
         e.stopPropagation();
+        trpEditor.remove_pencil_icon();
         if ( ! trpEditor.edit_translation_button ){
             _this.jquery_object.prepend( trp_action_button_html );
             trpEditor.edit_translation_button = _this.jquery_object.children('trp-span');

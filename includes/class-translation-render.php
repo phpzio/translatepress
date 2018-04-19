@@ -42,6 +42,7 @@ class TRP_Translation_Render{
      * Function to hide php errors and notice and instead log them in debug.log so we don't store the notice strings inside the db if WP_DEBUG is on
      */
     public function trp_debug_mode_off(){
+    	return;
         if ( WP_DEBUG ) {
             global $TRP_LANGUAGE;
             if (is_admin() ||
@@ -236,7 +237,7 @@ class TRP_Translation_Render{
 	 * @return string
 	 */
     public function trim_translation_block( $string ){
-	    return html_entity_decode( htmlspecialchars_decode( $this->full_trim( $string ), ENT_QUOTES ) );
+	    return preg_replace('/\s+/', ' ', strip_tags( html_entity_decode( htmlspecialchars_decode( $this->full_trim( $string ), ENT_QUOTES ) ) ));
     }
 
 	/**
@@ -255,7 +256,17 @@ class TRP_Translation_Render{
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
 			foreach( $all_existing_translation_blocks as $existing_translation_block ){
 				if ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ){
-					$existing_classes = $row->getAttribute( 'class' );
+					return $existing_translation_block;
+//					if ( strpos( $existing_translation_block->original, 'Hi, this is a comment' ) !== false ){
+//						if ( strpos( $trimmed_inner_text, 'Hi, this is a comment' ) !== false ){
+//							error_log( 'ar trebuie sa matchuie');
+//							error_log($existing_translation_block->original);
+//							error_log( $this->trim_translation_block( $existing_translation_block->original ) );
+//							error_log('-------' . ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ) . '-----');
+//							error_log($trimmed_inner_text);
+//						}
+//					}
+					/*$existing_classes = $row->getAttribute( 'class' );
 					if ( $existing_translation_block->block_type == 1 ) {
 						// make sure we find it later exactly the way it is in DB
 						$row->innertext   = $existing_translation_block->original;
@@ -264,10 +275,11 @@ class TRP_Translation_Render{
 						$row->setAttribute( 'data-trp-translate-id', $existing_translation_block->id );
 						$row->setAttribute( 'data-trp-translate-id-deprecated', $existing_translation_block->id );
 						$row->setAttribute( 'class', $existing_classes . 'trp-deprecated-tb' );
-					}
+					}*/
 				}
 			}
 	    }
+	    return null;
     }
 
     /**
@@ -378,7 +390,30 @@ class TRP_Translation_Render{
                 $trp_attr_rows[] = $row;
 
                 // $row is possibly modified after calling this function
-	            $this->maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode );
+	            $translation_block = $this->maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode );
+	            if ( $translation_block ){
+		            $existing_classes = $row->getAttribute( 'class' );
+		            if ( $translation_block->block_type == 1 ) {
+		            	$found_inner_translation_block = false;
+			            foreach( $row->children() as $child ){
+				            if ( $this->maybe_add_translation_block_meta( $child, array( $translation_block ), $merge_rules, $preview_mode ) != null ){
+				            	$found_inner_translation_block = true;
+				            	break;
+				            }
+			            }
+		            	if ( !$found_inner_translation_block ) {
+				            // make sure we find it later exactly the way it is in DB
+				            $row->innertext = $translation_block->original;
+				            $row->setAttribute( 'class', $existing_classes . ' translation-block' );
+			            }
+		            }else if ( $preview_mode && $translation_block->block_type == 2 && $translation_block->status != 0 ) {
+		            	// refactor to not do this for each
+			            $row->setAttribute( 'data-trp-translate-id', $translation_block->id );
+			            $row->setAttribute( 'data-trp-translate-id-deprecated', $translation_block->id );
+			            $row->setAttribute( 'class', $existing_classes . 'trp-deprecated-tb' );
+		            }
+	            }
+
             }
         }
 
