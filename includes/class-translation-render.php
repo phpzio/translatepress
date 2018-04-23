@@ -241,9 +241,9 @@ class TRP_Translation_Render{
     }
 
 	/**
-	 * Return true if matches any existing translation block from db
+	 * Return translation block if matches any existing translation block from db
 	 *
-	 * If found replaces in $row with translation block string found in db. This ensures we find the translateable version
+	 * Return null if not found
 	 *
 	 * @param $row
 	 * @param $all_existing_translation_blocks
@@ -251,7 +251,7 @@ class TRP_Translation_Render{
 	 *
 	 * @return bool
 	 */
-    public function find_translation_block( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode ){
+    public function find_translation_block( $row, $all_existing_translation_blocks, $merge_rules ){
     	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
 			foreach( $all_existing_translation_blocks as $existing_translation_block ){
@@ -370,14 +370,13 @@ class TRP_Translation_Render{
             else{
                 $trp_attr_rows[] = $row;
 
-                // $row is possibly modified after calling this function
-	            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode );
+	            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules );
 	            if ( $translation_block ){
 		            $existing_classes = $row->getAttribute( 'class' );
 		            if ( $translation_block->block_type == 1 ) {
 		            	$found_inner_translation_block = false;
 			            foreach( $row->children() as $child ){
-				            if ( $this->find_translation_block( $child, array( $translation_block ), $merge_rules, $preview_mode ) != null ){
+				            if ( $this->find_translation_block( $child, array( $translation_block ), $merge_rules ) != null ){
 				            	$found_inner_translation_block = true;
 				            	break;
 				            }
