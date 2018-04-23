@@ -251,31 +251,12 @@ class TRP_Translation_Render{
 	 *
 	 * @return bool
 	 */
-    public function maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode ){
+    public function find_translation_block( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode ){
     	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
 			foreach( $all_existing_translation_blocks as $existing_translation_block ){
 				if ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ){
 					return $existing_translation_block;
-//					if ( strpos( $existing_translation_block->original, 'Hi, this is a comment' ) !== false ){
-//						if ( strpos( $trimmed_inner_text, 'Hi, this is a comment' ) !== false ){
-//							error_log( 'ar trebuie sa matchuie');
-//							error_log($existing_translation_block->original);
-//							error_log( $this->trim_translation_block( $existing_translation_block->original ) );
-//							error_log('-------' . ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ) . '-----');
-//							error_log($trimmed_inner_text);
-//						}
-//					}
-					/*$existing_classes = $row->getAttribute( 'class' );
-					if ( $existing_translation_block->block_type == 1 ) {
-						// make sure we find it later exactly the way it is in DB
-						$row->innertext   = $existing_translation_block->original;
-						$row->setAttribute( 'class', $existing_classes . ' translation-block' );
-					}else if ( $preview_mode && $existing_translation_block->block_type == 2 && $existing_translation_block->status != 0 ) {
-						$row->setAttribute( 'data-trp-translate-id', $existing_translation_block->id );
-						$row->setAttribute( 'data-trp-translate-id-deprecated', $existing_translation_block->id );
-						$row->setAttribute( 'class', $existing_classes . 'trp-deprecated-tb' );
-					}*/
 				}
 			}
 	    }
@@ -390,13 +371,13 @@ class TRP_Translation_Render{
                 $trp_attr_rows[] = $row;
 
                 // $row is possibly modified after calling this function
-	            $translation_block = $this->maybe_add_translation_block_meta( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode );
+	            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules, $preview_mode );
 	            if ( $translation_block ){
 		            $existing_classes = $row->getAttribute( 'class' );
 		            if ( $translation_block->block_type == 1 ) {
 		            	$found_inner_translation_block = false;
 			            foreach( $row->children() as $child ){
-				            if ( $this->maybe_add_translation_block_meta( $child, array( $translation_block ), $merge_rules, $preview_mode ) != null ){
+				            if ( $this->find_translation_block( $child, array( $translation_block ), $merge_rules, $preview_mode ) != null ){
 				            	$found_inner_translation_block = true;
 				            	break;
 				            }
