@@ -122,6 +122,8 @@ class TRP_Translation_Manager{
         if ( $this->conditions_met( 'preview' ) ) {
             wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery'), TRP_PLUGIN_VERSION );
             wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css', array('dashicons'), TRP_PLUGIN_VERSION );
+	        $localized_text = $this->localized_text();
+	        wp_localize_script('trp-translation-manager-preview-script', 'trp_localized_text', $localized_text );
         }
     }
 

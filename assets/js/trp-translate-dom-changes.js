@@ -24,6 +24,7 @@ function TRP_Translator(){
             data: {
                 action: 'trp_get_translations',
                 async: false,
+                security: trp_localized_text['gettranslationsnonce'],
                 language: language_to_query,
                 original_language: original_language,
                 strings: JSON.stringify( strings_to_query )
@@ -59,7 +60,7 @@ function TRP_Translator(){
         var txt = document.createElement( "textarea" );
         txt.innerHTML = html;
         return txt.value;
-    }
+    };
 
     /**
      * Replace original strings with translations if found.
@@ -106,7 +107,9 @@ function TRP_Translator(){
             // this should always be outside the for loop
             if ( typeof parent.trpEditor !== 'undefined' ) {
                 parent.trpEditor.populate_strings( strings_to_store );
-                parent.trpEditor.trp_lister.reload_list();
+                if ( parent.trpEditor.trp_lister != null ) {
+                    parent.trpEditor.trp_lister.reload_list();
+                }
             }
         }else{
             for ( var j in strings_to_query ) {
