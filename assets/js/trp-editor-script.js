@@ -450,9 +450,9 @@ function TRP_Editor(){
             var attribute = remove_attributes[i];
             clone.find('[' + attribute + ']').removeAttr( attribute );
         }
-
+   
         stripped_html = clone.html();
-        return stripped_html;
+        return stripped_html.replace('&nbsp;', "\u00a0");
     };
 
     /*
@@ -474,6 +474,7 @@ function TRP_Editor(){
         }
         trpEditor.preview_iframe.find( "[" + TRP_TRANSLATION_ID + "='trp_creating_translation_block']" ).removeAttr( TRP_TRANSLATION_ID );
         parent.attr( TRP_TRANSLATION_ID, 'trp_creating_translation_block' );
+        parent.find('.trp-highlight').removeClass( 'trp-highlight' );
         parent.addClass( 'trp-highlight trp-create-translation-block' );
 
         _this.original_textarea.val( _this.strip_editor_meta_data(  parent ) );
@@ -1060,14 +1061,23 @@ function TRP_String( language, array_index ){
      */
     this.highlight = function (e){
         e.stopPropagation();
+        var this_jquery_object;
+        var tb_parent = _this.jquery_object.parents( '.trp-create-translation-block' );
+        if ( tb_parent.length > 0 ){
+            this_jquery_object = tb_parent.first();
+        }else{
+            this_jquery_object = _this.jquery_object;
+        }
+
         trpEditor.remove_pencil_icon();
+
         if ( ! trpEditor.edit_translation_button ){
-            _this.jquery_object.prepend( trp_action_button_html );
-            trpEditor.edit_translation_button = _this.jquery_object.children('trp-span');
+            this_jquery_object.prepend( trp_action_button_html );
+            trpEditor.edit_translation_button = this_jquery_object.children('trp-span');
         }else{
             _this.wrap_special_html_elements();
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
-            _this.jquery_object.prepend(trpEditor.edit_translation_button);
+            this_jquery_object.prepend(trpEditor.edit_translation_button);
         }
         trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
         var merge_or_split = trpEditor.decide_if_merge_or_split( _this );
@@ -1075,7 +1085,7 @@ function TRP_String( language, array_index ){
             trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
         }
 
-        trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );
+        trpEditor.make_sure_pencil_icon_is_inside_view( this_jquery_object[0] );
 
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click',  function(e){
@@ -1107,8 +1117,9 @@ function TRP_String( language, array_index ){
 
 
         });
-
-        jQuery( this ).addClass( 'trp-highlight' );
+        if ( tb_parent.length == 0 ) {
+            jQuery(this).addClass('trp-highlight');
+        }
 
     };
 
