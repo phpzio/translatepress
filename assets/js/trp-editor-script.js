@@ -9,6 +9,7 @@ function TRP_Editor(){
     var dictionaries;
     var default_language;
     var TRP_TRANSLATION_ID = 'data-trp-translate-id';
+    var TRP_BLOCK_TYPE = 'data-trp-block-type';
     this.original_textarea = jQuery( '#trp-original' );
     var loading_animation = jQuery( '#trp-string-saved-ajax-loader' );
     var translation_saved = jQuery( '#trp-translation-saved' );
@@ -221,6 +222,7 @@ function TRP_Editor(){
             return;
         }
         _this.original_textarea.val( decode_html( trp_string.original ) );
+        _this.original_textarea.attr( TRP_BLOCK_TYPE, trp_string.block_type );
         for ( var key in translated_textareas ){
             var translated = '';
             var id = '';
@@ -250,6 +252,7 @@ function TRP_Editor(){
         var strings_to_save = {};
         var modified = false;
         var original = _this.original_textarea.val();
+        var block_type = _this.original_textarea.attr( TRP_BLOCK_TYPE );
         var action = 'trp_save_translations';
         if ( original != "" ) {
             for ( var key in translated_textareas ) {
@@ -259,7 +262,7 @@ function TRP_Editor(){
                 if ( id == 'trp_creating_translation_block' ){
                     string.translated = 'trp_creating_translation_block';
                     string.slug = false;
-                    string.block_type = 1;
+                    block_type = 1;
                     action  = 'trp_create_translation_block';
                 }else {
                     string = dictionaries[key].get_string_by_original(original);
@@ -276,7 +279,7 @@ function TRP_Editor(){
                     if (translated.trim() == '') {
                         status = 0;
                     }
-                    strings_to_save[key].push({id: id, original: original, translated: translated, status: status, block_type: string.block_type});
+                    strings_to_save[key].push({id: id, original: original, translated: translated, status: status, block_type: block_type});
                 }
             }
         }
