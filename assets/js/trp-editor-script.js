@@ -218,7 +218,7 @@ function TRP_Editor(){
      * @param index
      */
     this.edit_strings = function ( trp_string, index ){
-        if (  _this.change_tracker.check_unsaved_changes() ) {
+        if (  _this.change_tracker == null || _this.change_tracker.check_unsaved_changes() ) {
             return;
         }
         _this.original_textarea.val( decode_html( trp_string.original ) );
@@ -662,7 +662,7 @@ function TRP_Editor(){
         jQuery( '.trp-toggle-languages span' ).on( 'click', _this.toggle_languages );
         jQuery( '#trp-previous' ).on( 'click', function(e){
             e.preventDefault();
-            if (  _this.change_tracker.check_unsaved_changes() ) {
+            if (  _this.change_tracker == null || _this.change_tracker.check_unsaved_changes() ) {
                 return;
             }
             prev_option_value = jQuery( 'option:selected', _this.jquery_string_selector ).prevAll('option').first().attr('value');
@@ -672,7 +672,7 @@ function TRP_Editor(){
         });
         jQuery( '#trp-next' ).on( 'click', function(e){
             e.preventDefault();
-            if (  _this.change_tracker.check_unsaved_changes() ) {
+            if (   _this.change_tracker == null || _this.change_tracker.check_unsaved_changes() ) {
                 return;
             }
             next_option_value = jQuery('option:selected', _this.jquery_string_selector).nextAll('option').first().attr('value');
@@ -704,7 +704,7 @@ function TRP_Editor(){
 
         /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
         _this.jquery_string_selector.on('select2:opening', function (e) {
-            if ( trpEditor.change_tracker.check_unsaved_changes() ) {
+            if ( trpEditor.change_tracker == null || trpEditor.change_tracker.check_unsaved_changes() ) {
                 e.preventDefault();
             }
         });
@@ -1090,7 +1090,7 @@ function TRP_String( language, array_index ){
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click',  function(e){
             e.preventDefault();
-            if ( trpEditor.change_tracker.check_unsaved_changes() ) {
+            if ( trpEditor.change_tracker == null || trpEditor.change_tracker.check_unsaved_changes() ) {
                 return;
             }
 
@@ -1293,7 +1293,7 @@ function TRP_Lister( current_dictionary ) {
     this.set_textareas_with_gettext =  function( string_id ){
 
         /* don't do anything if there is an unsaved change */
-        if ( trpEditor.change_tracker.check_unsaved_changes() ) {
+        if ( trpEditor.change_tracker == null || trpEditor.change_tracker.check_unsaved_changes() ) {
             return;
         }
 
@@ -1334,7 +1334,7 @@ function TRP_Lister( current_dictionary ) {
     };
 
     this.set_texts_select_to_gettext = function( jquery_object ){
-        if ( trpEditor.change_tracker.check_unsaved_changes() ) {
+        if ( trpEditor.change_tracker == null || trpEditor.change_tracker.check_unsaved_changes() ) {
             return;
         }
         string_id = jquery_object.attr('data-trpgettextoriginal');
