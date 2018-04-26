@@ -288,7 +288,7 @@ class TRP_Trigger_Plugin_Notifications{
 	    /* this must be unique */
 	    $notification_id = 'trp_new_feature_translation_block';
 
-	    $message = '<p style="padding-right:30px;">' . __('You can now translate several strings at once by merging them together. Find out more about these translation blocks in <a href="https://translatepress.com/docs/translatepress/" >our documentation.</a>.' , 'translatepress-multilingual' ) . '</p>';
+	    $message = '<p style="padding-right:30px;">' . __('You can now translate several strings at once by merging them together. Find out more about these translation blocks in <a href="https://translatepress.com/docs/translation-editor/#translation-blocks" >our documentation.</a>.' , 'translatepress-multilingual' ) . '</p>';
 	    //make sure to use the trp_dismiss_admin_notification arg
 	    $message .= '<a href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
 

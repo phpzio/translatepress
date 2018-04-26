@@ -367,6 +367,5 @@ var original_language;
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {
     trpTranslator = new TRP_Translator();
-    jQuery('.entry-title').append("<div>Primul</div>");
 });
 
