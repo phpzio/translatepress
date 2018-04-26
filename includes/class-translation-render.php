@@ -464,6 +464,8 @@ class TRP_Translation_Render{
 
         $translated_strings = $this->process_strings( $translateable_strings, $language_code );
 
+        do_action('trp_translateable_information', $translateable_information, $translated_strings, $language_code);
+
         $preview_mode = isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview';
         if ( $preview_mode ) {
             $translated_string_ids = $this->trp_query->get_string_ids($translateable_strings, $language_code);
