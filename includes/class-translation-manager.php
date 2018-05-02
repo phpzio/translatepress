@@ -7,7 +7,9 @@
  */
 class TRP_Translation_Manager{
     protected $settings;
+	/** @var TRP_Translation_Render */
     protected $translation_render;
+	/** @var TRP_Query */
     protected $trp_query;
     protected $machine_translator;
     protected $slug_manager;
@@ -62,6 +64,35 @@ class TRP_Translation_Manager{
         return TRP_PLUGIN_DIR . 'partials/translation-manager.php' ;
     }
 
+	public function get_merge_rules(){
+		$localized_text = $this->localized_text();
+    	$merge_rules = array (
+    		'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body', 'footer', 'article', 'main', 'iframe', 'section', 'figure', 'figcaption' ),
+		    'self_object_type' => array( 'translate-press' ),
+		    'incompatible_siblings' => array( '[data-trpgettextoriginal]', '[data-trp-node-type="' . $localized_text['dynamicstrings'] . '"]'  )
+	    );
+    	return apply_filters( 'trp_merge_rules', $merge_rules );
+	}
+
+	public function localized_text(){
+		$text = array(
+			'edit'                          => __( 'Translate', 'translatepress-multilingual' ),
+			'merge'                         => __( 'Translate entire block element', 'translatepress-multilingual' ),
+			'split'                         => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
+			'translationblock'              => __( 'Translation block', 'translatepress-multilingual' ),
+			'areyousuresplittb'             => __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ),
+			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
+			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
+			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+			'gettranslationsnonce'          => __( wp_create_nonce('get_translations'), 'translatepress-multilingual' ),
+			'savestringsnonce'              => __( wp_create_nonce('save_translations'), 'translatepress-multilingual' ),
+			'splittbnonce'                  => __( wp_create_nonce('split_translation_block'), 'translatepress-multilingual' ),
+			'gettextgettranslationsnonce'   => __( wp_create_nonce('gettext_get_translations'), 'translatepress-multilingual' ),
+			'gettextsavetranslationsnonce'  => __( wp_create_nonce('gettext_save_translations'), 'translatepress-multilingual' ),
+		);
+		return $text;
+	}
+
     /**
      * Enqueue scripts and styles for translation Editor parent window.
      */
@@ -70,6 +101,10 @@ class TRP_Translation_Manager{
         wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
 
         wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
+	    $trp_merge_rules = $this->get_merge_rules();
+	    wp_localize_script('trp-translation-manager-script', 'trp_merge_rules', $trp_merge_rules);
+	    $localized_text = $this->localized_text();
+	    wp_localize_script('trp-translation-manager-script', 'trp_localized_text', $localized_text );
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
 
         wp_enqueue_script( 'trp-translation-overlay',  TRP_PLUGIN_URL . 'assets/js/trp-editor-overlay.js', array(), TRP_PLUGIN_VERSION );
@@ -86,7 +121,7 @@ class TRP_Translation_Manager{
     public function enqueue_preview_scripts_and_styles(){
         if ( $this->conditions_met( 'preview' ) ) {
             wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery'), TRP_PLUGIN_VERSION );
-            wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css', array(), TRP_PLUGIN_VERSION );
+            wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css', array('dashicons'), TRP_PLUGIN_VERSION );
         }
     }
 
@@ -118,11 +153,104 @@ class TRP_Translation_Manager{
     protected function extract_original_strings( $strings, $original_array, $id_array ){
         if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {
-                $original_array[] = $strings[$id]->original;
+            	if ( is_object( $strings[$id] ) ){
+		            $original_array[] = $strings[ $id ]->original;
+	            }
             }
         }
         return array_values( $original_array );
     }
+
+	/**
+	 * Return dictionary with translated strings.
+	 *
+	 * @param $strings
+	 * @param null $block_type
+	 *
+	 * @return array
+	 */
+    protected function get_translation_for_strings( $strings, $block_type = null ){
+	    $id_array = array();
+	    $original_array = array();
+	    $dictionaries = array();
+	    $slug_info = false;
+	    foreach ( $strings as $key => $string ) {
+		    if ( isset( $string->slug ) && $string->slug === true ){
+			    $slug_info = array(
+				    'post_id'   => (int)$string->slug_post_id,
+				    'id'        => (int)$string->id,
+				    'original'  => sanitize_text_field( $string->original ) );
+			    continue;
+		    }
+		    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
+			    $id_array[$key] = (int)$string->id;
+		    } else if ( isset( $string->original ) ) {
+			    $original_array[$key] = trp_sanitize_string( $string->original );
+		    }
+	    }
+
+	    $current_language = sanitize_text_field( $_POST['language'] );
+
+	    $trp = TRP_Translate_Press::get_trp_instance();
+	    if ( ! $this->trp_query ) {
+		    $this->trp_query = $trp->get_component( 'query' );
+	    }
+	    if ( ! $this->slug_manager ) {
+		    $this->slug_manager = $trp->get_component('slug_manager');
+	    }
+	    if ( ! $this->translation_render ) {
+		    $this->translation_render = $trp->get_component('translation_render');
+	    }
+
+	    // necessary in order to obtain all the original strings
+	    if ( $this->settings['default-language'] != $current_language ) {
+		    if ( current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+			    $this->translation_render->process_strings($original_array, $current_language, $block_type);
+		    }
+		    $dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
+		    if ( $slug_info !== false ) {
+			    $dictionaries[$current_language][$slug_info['id']] = array(
+				    'id'         => $slug_info['id'],
+				    'original'   => $slug_info['original'],
+				    'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $current_language ),
+			    );
+		    }
+
+	    }else{
+		    $dictionaries[$current_language] = array();
+	    }
+
+	    if ( isset( $_POST['all_languages'] ) && $_POST['all_languages'] === 'true' ) {
+		    foreach ($this->settings['translation-languages'] as $language) {
+			    if ($language == $this->settings['default-language']) {
+				    $dictionaries[$language]['default-language'] = true;
+				    continue;
+			    }
+
+			    if ($language == $current_language) {
+				    continue;
+			    }
+			    if (empty($original_strings)) {
+				    $original_strings = $this->extract_original_strings($dictionaries[$current_language], $original_array, $id_array);
+			    }
+			    if (current_user_can(apply_filters( 'trp_translating_capability', 'manage_options' ))) {
+				    $this->translation_render->process_strings($original_strings, $language, $block_type);
+			    }
+			    $dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
+			    if ( $slug_info !== false ) {
+				    $dictionaries[$language][0] = array(
+					    'id'         => 0,
+					    'original'   => $slug_info['original'],
+					    'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $language ),
+				    );
+			    }
+		    }
+	    }
+
+	    return $dictionaries;
+    }
+
+
 
     /**
      * Returns translations based on original strings and ids.
@@ -132,89 +260,18 @@ class TRP_Translation_Manager{
      */
     public function get_translations() {
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
-                $strings = json_decode(stripslashes($_POST['strings']));
-                if ( is_array( $strings ) ) {
-                    $id_array = array();
-                    $original_array = array();
-                    $dictionaries = array();
-                    $slug_info = false;
-                    foreach ( $strings as $key => $string ) {
-                        if ( isset( $string->slug ) && $string->slug === true ){
-                            $slug_info = array(
-                                'post_id'   => (int)$string->slug_post_id,
-                                'id'        => (int)$string->id,
-                                'original'  => sanitize_text_field( $string->original ) );
-                            continue;
-                        }
-                        if ( isset( $string->id ) && is_numeric( $string->id ) ) {
-                            $id_array[$key] = (int)$string->id;
-                        } else if ( isset( $string->original ) ) {
-                            $original_array[$key] = sanitize_text_field( $string->original );
-                        }
-                    }
-
-                    $current_language = sanitize_text_field( $_POST['language'] );
-
-                    $trp = TRP_Translate_Press::get_trp_instance();
-                    if ( ! $this->trp_query ) {
-                        $this->trp_query = $trp->get_component( 'query' );
-                    }
-                    if ( ! $this->slug_manager ) {
-                        $this->slug_manager = $trp->get_component('slug_manager');
-                    }
-                    if ( ! $this->translation_render ) {
-                        $this->translation_render = $trp->get_component('translation_render');
-                    }
-
-                    // necessary in order to obtain all the original strings
-                    if ( $this->settings['default-language'] != $current_language ) {
-                        if ( current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
-                            $this->translation_render->process_strings($original_array, $current_language);
-                        }
-                        $dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
-                        if ( $slug_info !== false ) {
-                            $dictionaries[$current_language][$slug_info['id']] = array(
-                                'id'         => $slug_info['id'],
-                                'original'   => $slug_info['original'],
-                                'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $current_language ),
-                            );
-                        }
-
-                    }else{
-                        $dictionaries[$current_language] = array();
-                    }
-
-                    if ( isset( $_POST['all_languages'] ) && $_POST['all_languages'] === 'true' ) {
-                        foreach ($this->settings['translation-languages'] as $language) {
-                            if ($language == $this->settings['default-language']) {
-                                $dictionaries[$language]['default-language'] = true;
-                                continue;
-                            }
-
-                            if ($language == $current_language) {
-                                continue;
-                            }
-                            if (empty($original_strings)) {
-                                $original_strings = $this->extract_original_strings($dictionaries[$current_language], $original_array, $id_array);
-                            }
-                            if (current_user_can(apply_filters( 'trp_translating_capability', 'manage_options' ))) {
-                                $this->translation_render->process_strings($original_strings, $language);
-                            }
-                            $dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
-                            if ( $slug_info !== false ) {
-                                $dictionaries[$language][0] = array(
-                                    'id'         => 0,
-                                    'original'   => $slug_info['original'],
-                                    'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $language ),
-                                );
-                            }
-                        }
-                    }
-
+        	check_ajax_referer( 'get_translations', 'security' );
+	        if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
+	            $strings = json_decode(stripslashes($_POST['strings']));
+		        if ( is_array( $strings ) ) {
+			        if (!$this->trp_query) {
+				        $trp = TRP_Translate_Press::get_trp_instance();
+				        $this->trp_query = $trp->get_component('query');
+			        }
+			        $block_type = $this->trp_query->get_constant_block_type_regular_string();
+	                $dictionaries = $this->get_translation_for_strings( $strings, $block_type );
                     echo trp_safe_json_encode( $dictionaries );
                 }
-
             }
         }
 
@@ -223,9 +280,9 @@ class TRP_Translation_Manager{
 
     public function gettext_get_translations(){
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_get_translations' && !empty($_POST['gettext_string_ids']) && !empty($_POST['language']) && in_array($_POST['language'], $this->settings['translation-languages'])) {
-
-                if (!empty($_POST['gettext_string_ids']))
+	        if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_get_translations' && !empty($_POST['gettext_string_ids']) && !empty($_POST['language']) && in_array($_POST['language'], $this->settings['translation-languages'])) {
+	            check_ajax_referer( 'gettext_get_translations', 'security' );
+	            if (!empty($_POST['gettext_string_ids']))
                     $gettext_string_ids = json_decode(stripslashes($_POST['gettext_string_ids']));
                 else
                     $gettext_string_ids = array();
@@ -318,42 +375,63 @@ class TRP_Translation_Manager{
         }
     }
 
+	/**
+	 * Save translations in DB for the strings
+	 *
+	 * @param $strings
+	 * @param null $block_type
+	 */
+    protected function save_translations_of_strings( $strings, $block_type = null ){
+    	if ( !$block_type ){
+		    if (!$this->trp_query) {
+			    $trp = TRP_Translate_Press::get_trp_instance();
+			    $this->trp_query = $trp->get_component('query');
+		    }
+		    $block_type = $this->trp_query->get_constant_block_type_regular_string();
+	    }
+	    $update_strings = array();
+	    foreach ( $strings as $language => $language_strings ) {
+		    if ( in_array( $language, $this->settings['translation-languages'] ) && $language != $this->settings['default-language'] ) {
+			    foreach( $language_strings as $string ) {
+				    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
+					    $update_strings[ $language ] = array();
+					    if ( ! isset( $string->block_type ) ){
+						    $string->block_type = $block_type;
+					    }
+					    array_push($update_strings[ $language ], array(
+						    'id' => (int)$string->id,
+						    'original' => trp_sanitize_string( $string->original ),
+						    'translated' => trp_sanitize_string( $string->translated ),
+						    'status' => (int)$string->status,
+						    'block_type' => (int)$string->block_type
+					    ));
+
+				    }
+			    }
+		    }
+	    }
+
+	    if ( ! $this->trp_query ) {
+		    $trp = TRP_Translate_Press::get_trp_instance();
+		    $this->trp_query = $trp->get_component( 'query' );
+	    }
+
+	    foreach( $update_strings as $language => $update_string_array ) {
+		    $this->trp_query->insert_strings( array(), $update_string_array, $language, $block_type );
+	    }
+    }
+
     /**
      * Save translations from ajax post.
      *
      * Hooked to wp_ajax_trp_save_translations.
      */
     public function save_translations(){
-
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+        	check_ajax_referer( 'save_translations', 'security' );
             if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_save_translations' && !empty( $_POST['strings'] ) ) {
                 $strings = json_decode(stripslashes($_POST['strings']));
-                $update_strings = array();
-                foreach ( $strings as $language => $language_strings ) {
-                    if ( in_array( $language, $this->settings['translation-languages'] ) && $language != $this->settings['default-language'] ) {
-                        foreach( $language_strings as $string ) {
-                            if ( isset( $string->id ) && is_numeric( $string->id ) ) {
-                                $update_strings[ $language ] = array();
-                                array_push($update_strings[ $language ], array(
-                                    'id' => (int)$string->id,
-                                    'original' => sanitize_text_field($string->original),
-                                    'translated' => preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $string->translated ),
-                                    'status' => (int)$string->status
-                                ));
-
-                            }
-                        }
-                    }
-                }
-
-                if ( ! $this->trp_query ) {
-                    $trp = TRP_Translate_Press::get_trp_instance();
-                    $this->trp_query = $trp->get_component( 'query' );
-                }
-
-                foreach( $update_strings as $language => $update_string_array ) {
-                    $this->trp_query->insert_strings( array(), $update_string_array, $language );
-                }
+                $this->save_translations_of_strings( $strings );
             }
         }
 
@@ -363,6 +441,7 @@ class TRP_Translation_Manager{
     public function gettext_save_translations(){
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
             if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_save_translations' && !empty($_POST['gettext_strings'])) {
+	            check_ajax_referer( 'gettext_save_translations', 'security' );
                 $strings = json_decode(stripslashes($_POST['gettext_strings']));
                 $update_strings = array();
                 foreach ( $strings as $language => $language_strings ) {
@@ -372,8 +451,8 @@ class TRP_Translation_Manager{
                                 $update_strings[ $language ] = array();
                                 array_push($update_strings[ $language ], array(
                                     'id' => (int)$string->id,
-                                    'original' => sanitize_text_field($string->original),
-                                    'translated' => preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $string->translated ),
+                                    'original' => trp_sanitize_string( $string->original ),
+                                    'translated' => trp_sanitize_string( $string->translated ),
                                     'domain' => sanitize_text_field( $string->domain ),
                                     'status' => (int)$string->status
                                 ));
@@ -394,6 +473,134 @@ class TRP_Translation_Manager{
         }
         die();
     }
+
+	/**
+	 * Set translation block to active.
+	 *
+	 * Creates TB is not exists. Adds auto translation if one is not provided.
+	 * Supports handling multiple translation blocks
+	 */
+	public function create_translation_block(){
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+			check_ajax_referer( 'save_translations', 'security' );
+			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_create_translation_block' && !empty( $_POST['strings'] ) && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
+				$strings = json_decode( stripslashes( $_POST['strings'] ) );
+				if ( isset ( $this->settings['translation-languages']) ){
+					$trp = TRP_Translate_Press::get_trp_instance();
+					if (!$this->trp_query) {
+						$this->trp_query = $trp->get_component('query');
+					}
+					if (!$this->translation_render) {
+						$this->translation_render = $trp->get_component('translation_render');
+					}
+
+					$active_block_type = $this->trp_query->get_constant_block_type_active();
+					foreach( $this->settings['translation-languages'] as $language ){
+						if ( $language !=  $this->settings['default-language'] ){
+							$dictionaries = $this->get_translation_for_strings( $strings->$language, $active_block_type );
+							break;
+						}
+					}
+
+					/*
+					 * Merging the dictionary received from get_translation_for_strings (which contains ID and possibly automatic translations) with
+					 * ajax translated (which can contain manual translations)
+					 */
+					$originals_array_constructed = false;
+					$originals = array();
+					if ( isset( $dictionaries ) ){
+						foreach ( $dictionaries as $language => $dictionary ){
+							foreach( $dictionary as $dictionary_string_key => $dictionary_string ){
+								if ( !isset ($strings->$language) ){
+									continue;
+								}
+								$ajax_translated_string_list = $strings->$language;
+								foreach( $ajax_translated_string_list as $ajax_key => $ajax_string ) {
+									if ( trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
+										if ( $ajax_string->translated != '' ) {
+											$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
+											$dictionaries[ $language ][ $dictionary_string_key ]->status     = (int) $ajax_string->status;
+										}
+										$dictionaries[ $language ][ $dictionary_string_key ]->block_type = (int) $ajax_string->block_type;
+									}
+									$dictionaries[ $language ][ $dictionary_string_key ]->new_translation_block = true;
+								}
+
+								if( !$originals_array_constructed ){
+									$originals[] = $dictionary_string->original;
+								}
+							}
+							$originals_array_constructed = true;
+						}
+						$this->save_translations_of_strings( $dictionaries, $active_block_type );
+
+						// update deactivated languages
+						$copy_of_originals = $originals;
+						if ( $originals_array_constructed ){
+							$table_names = $this->trp_query->get_all_table_names( $this->settings['default-language'], $this->settings['translation-languages'] );
+							if ( count( $table_names ) > 0 ){
+								foreach( $table_names as $table_name ) {
+									$originals = $copy_of_originals;
+									$language = $this->trp_query->get_language_code_from_table_name( $table_name );
+									$existing_dictionary = $this->trp_query->get_string_rows( array(), $originals, $language, ARRAY_A );
+									foreach ( $existing_dictionary as $string_key => $string ){
+										foreach ( $originals as $original_key => $original ){
+											if ( $string['original'] == $original ){
+												unset( $originals[$original_key] );
+											}
+										}
+										$existing_dictionary[$string_key]['block_type'] = $active_block_type;
+										$originals = array_values( $originals );
+									}
+									$this->trp_query->insert_strings( $originals, $existing_dictionary, $language, $active_block_type );
+								}
+
+							}
+						}
+
+						echo trp_safe_json_encode( $dictionaries );
+					}
+				}
+
+			}
+		}
+		die();
+	}
+
+	/**
+	 * Set translation block to deprecated
+	 *
+	 * Can handle splitting multiple blocks.
+	 *
+	 * @return mixed|string|void
+	 */
+	public function split_translation_block() {
+		if ( current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_split_translation_block' && ! empty( $_POST['strings'] ) ) {
+				check_ajax_referer( 'split_translation_block', 'security' );
+				$raw_original_array = json_decode( stripslashes( $_POST['strings'] ) );
+				$trp = TRP_Translate_Press::get_trp_instance();
+				if ( ! $this->trp_query ) {
+					$this->trp_query = $trp->get_component( 'query' );
+				}
+				$deprecated_block_type = $this->trp_query->get_constant_block_type_deprecated();
+				$originals = array();
+				foreach( $raw_original_array as $original ){
+					$originals[] = trp_sanitize_string( $original );
+				}
+
+				// even inactive languages ( not in $this->settings['translation-languages'] array ) will be updated
+				$all_languages_table_names = $this->trp_query->get_all_table_names( $this->settings['default-language'], array() );
+				$rows_affected = $this->trp_query->update_translation_blocks_by_original( $all_languages_table_names, $originals, $deprecated_block_type );
+				if ( $rows_affected == 0 ){
+					// do updates individually if it fails
+					foreach ( $all_languages_table_names as $table_name ){
+						$this->trp_query->update_translation_blocks_by_original( array( $table_name ), $originals, $deprecated_block_type );
+					}
+				}
+			}
+		}
+	}
 
     /**
      * Display button to enter translation Editor in admin bar
@@ -620,7 +827,7 @@ class TRP_Translation_Manager{
                         $found_in_db = true;
                         /* update the db if a translation appeared in the po file later */
                         if( empty( $trp_translated_gettext_text['translated'] ) && $translation != $text ) {
-                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => TRP_Query::HUMAN_REVIEWED ), get_locale() );
+                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => $this->trp_query->get_constant_human_reviewed() ), get_locale() );
                         }
 
                         break;
@@ -647,7 +854,7 @@ class TRP_Translation_Manager{
                     foreach( $trp_translated_gettext_texts as $trp_translated_gettext_text ){
                         if( $trp_translated_gettext_text['id'] == $db_id ){
                             if( $trp_translated_gettext_text['translated'] == '' ){
-                                $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => TRP_Query::MACHINE_TRANSLATED );
+                                $trp_gettext_strings_for_machine_translation[] = array( 'id' => $db_id, 'original' => $text, 'translated' => '', 'domain' => $domain, 'status' => $this->trp_query->get_constant_machine_translated() );
                             }
                             break;
                         }

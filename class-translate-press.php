@@ -112,6 +112,9 @@ class TRP_Translate_Press{
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations', $this->translation_manager, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->translation_manager, 'save_translations' );
+        $this->loader->add_action( 'wp_ajax_trp_create_translation_block', $this->translation_manager, 'create_translation_block' );
+        $this->loader->add_action( 'init', $this->translation_manager, 'split_translation_block' );
+
 
         $this->loader->add_action( 'wp_ajax_trp_process_js_strings_in_translation_editor', $this->translation_render, 'process_js_strings_in_translation_editor' );
         
@@ -179,7 +182,7 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'date_i18n', $this->translation_manager, 'handle_date_i18n_function_for_gettext', 1, 4 );
 
         /* define an update hook here */
-        $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates' );
+        $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates', 10 );
 
         $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 3 );
         

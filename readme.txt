@@ -28,7 +28,8 @@ https://www.youtube.com/watch?v=pUlYisvBm8g
 * Support for both manual and automatic translation (via Google Translate)
 * Ability to translate dynamic strings (gettext) added by WordPress, plugins and themes.
 * Integrates with Google Translate, allowing you to set up Automatic Translation using your own Google API key.
-* Translate larger html blocks using the css class **translation-block**. `<p class="translation-block">Translate <em>everything</em> inside</p>`
+* Translate larger html blocks by merging strings into translation blocks.
+* Select specific html blocks for translation using the css class **translation-block**. `<p class="translation-block">Translate <em>everything</em> inside</p>`
 * Place language switchers anywhere using shortcode **[language-switcher]**, WP menu item or as a floating dropdown.
 * Editorial control allowing you to publish your language only when all your translations are done
 * Conditional display content shortcode based on language [trp_language language="en_US"] English content only [/trp_language]
