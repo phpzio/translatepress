@@ -604,6 +604,9 @@ class TRP_Translation_Render{
             $row->action = str_replace('#TRPLINKPROCESSED', '', $row->action);
         }
 
+        foreach ( $html->find('link') as $link ){
+            $link->href = str_replace('#TRPLINKPROCESSED', '', $link->href);
+        }
 
         return $html->save();
     }
