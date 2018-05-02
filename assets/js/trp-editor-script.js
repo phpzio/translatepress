@@ -1155,7 +1155,7 @@ function TRP_String( language, array_index ){
             if ( _this.jquery_object.attr( 'name' ) == 'trp-slug' ){
                 _this.slug = true;
                 _this.slug_post_id = _this.jquery_object.attr( 'post-id' );
-                _this.original = _this.jquery_object.attr( 'content' );
+                _this.original = _this.jquery_object.attr( 'original' );
             }
         }else{
             _this.original = _this.jquery_object.text();

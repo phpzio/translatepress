@@ -166,6 +166,7 @@ class TRP_Url_Converter {
      */
     public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
         global $TRP_LANGUAGE;
+        global $trp_backup_post_id;
         $new_url = '';
 
         // we're appending $trp_link_is_processed string to the end of each processed link so we don't process them again in the render class.
@@ -190,7 +191,7 @@ class TRP_Url_Converter {
             $url = $this->cur_page_url();
         }
 
-        $post_id = url_to_postid($url);
+        $post_id = $trp_backup_post_id;
         if( $post_id ){
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post_id );
