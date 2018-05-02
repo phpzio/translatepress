@@ -589,11 +589,19 @@ class TRP_Translation_Render{
             $row->innertext .= apply_filters( 'trp_form_inputs', '<input type="hidden" name="trp-form-language" value="'. $this->settings['url-slugs'][$TRP_LANGUAGE] .'"/>', $TRP_LANGUAGE, $this->settings['url-slugs'][$TRP_LANGUAGE] );
             $form_action = $row->action;
 
+            $is_external_link = $this->is_external_link( $form_action );
+            $is_admin_link = $this->is_admin_link($form_action );
 
-            if (!empty($form_action) && !$this->is_external_link( $form_action ) && !$this->is_admin_link( $form_action )){
-                //error_log($row->action);
+            if ( !empty($form_action)
+                && $this->settings['force-language-to-custom-links'] == 'yes'
+                && !$is_external_link
+                && $this->url_converter->get_lang_from_url_string( $form_action ) == null
+                && !$is_admin_link
+                && strpos($url, '#TRPLINKPROCESSED') === false)
+            {
                 $row->action =  $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $form_action );
             }
+            $row->action = str_replace('#TRPLINKPROCESSED', '', $row->action);
         }
 
 
