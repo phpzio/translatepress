@@ -187,11 +187,12 @@ class TRP_Url_Converter {
             $language = $TRP_LANGUAGE;
         }
 
+        $post_id = url_to_postid( $url );
         if( empty( $url ) ) {
             $url = $this->cur_page_url();
+            $post_id = ( url_to_postid( $url ) ) ? ( url_to_postid( $url ) ) : ( $trp_backup_post_id );
         }
 
-        $post_id = $trp_backup_post_id;
         if( $post_id ){
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post_id );
