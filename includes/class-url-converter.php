@@ -191,7 +191,8 @@ class TRP_Url_Converter {
             $url = $this->cur_page_url();
         }
 
-        $post_id = $trp_backup_post_id;
+        // the url_to_postid fails when using one of our own translated slugs. So we're using the backed up post_id that we setup in the header.
+        $post_id = ( url_to_postid( $url ) ) ? ( url_to_postid( $url ) ) : ( $trp_backup_post_id );
         if( $post_id ){
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post_id );
