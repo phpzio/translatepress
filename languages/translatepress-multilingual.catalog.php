@@ -17,6 +17,7 @@
 <?php __("Select the languages you wish to make your website available in.", "translatepress-multilingual"); ?>
 <?php __("You are not using a permalink structure! Please <a href=\"%s\">enable</a> one or install our <a href=\"%s\">\"Language by GET parameter\"</a> addon so TranslatePress can function properly.", "translatepress-multilingual"); ?>
 <?php __("Dismiss this notice.", "translatepress-multilingual"); ?>
+<?php __("You can now translate several strings at once by merging them together. Find out more about these translation blocks in <a href=\"https://translatepress.com/docs/translation-editor/#translation-blocks\" >our documentation.</a>.", "translatepress-multilingual"); ?>
 <?php __("Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Short Language Names", "translatepress-multilingual"); ?>
 <?php __("Flags with Full Language Names", "translatepress-multilingual"); ?>
@@ -27,11 +28,17 @@
 <?php __("Translate Site", "translatepress-multilingual"); ?>
 <?php __("License", "translatepress-multilingual"); ?>
 <?php __("Addons", "translatepress-multilingual"); ?>
+<?php __("Translate", "translatepress-multilingual"); ?>
+<?php __("Translate entire block element", "translatepress-multilingual"); ?>
+<?php __("Split block to translate strings individually", "translatepress-multilingual"); ?>
+<?php __("Translation block", "translatepress-multilingual"); ?>
+<?php __("Are you sure you want to split this phrase into smaller pieces?", "translatepress-multilingual"); ?>
+<?php __("Meta Information", "translatepress-multilingual"); ?>
+<?php __("String List", "translatepress-multilingual"); ?>
+<?php __("Dynamic Added Strings", "translatepress-multilingual"); ?>
 <?php __("Translate Page", "translatepress-multilingual"); ?>
 <?php __("Settings", "translatepress-multilingual"); ?>
 <?php __("Security check", "translatepress-multilingual"); ?>
-<?php __("Meta Information", "translatepress-multilingual"); ?>
-<?php __("String List", "translatepress-multilingual"); ?>
 <?php __("Description", "translatepress-multilingual"); ?>
 <?php __("OG Title", "translatepress-multilingual"); ?>
 <?php __("OG Site Name", "translatepress-multilingual"); ?>

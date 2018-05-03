@@ -21,23 +21,23 @@ msgstr ""
 msgid "Limit this menu item to the following languages"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, partials/license-settings-page.php:4
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
 msgid "TranslatePress Settings"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:10, ../tp-add-on-seo-pack/partials/license-settings-page.php:10, partials/license-settings-page.php:10
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:10, partials/license-settings-page.php:10, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:10
 msgid "License Key"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:15, ../tp-add-on-seo-pack/partials/license-settings-page.php:15, partials/license-settings-page.php:15
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:15, partials/license-settings-page.php:15, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:15
 msgid "Enter your license key."
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:22, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:31, ../tp-add-on-seo-pack/partials/license-settings-page.php:22, ../tp-add-on-seo-pack/partials/license-settings-page.php:31, partials/license-settings-page.php:22, partials/license-settings-page.php:31
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:22, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:31, partials/license-settings-page.php:22, partials/license-settings-page.php:31, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:22, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:31
 msgid "Activate License"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:28, ../tp-add-on-seo-pack/partials/license-settings-page.php:28, partials/license-settings-page.php:28
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:28, partials/license-settings-page.php:28, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:28
 msgid "Deactivate License"
 msgstr ""
 
@@ -81,8 +81,12 @@ msgstr ""
 msgid "You are not using a permalink structure! Please <a href=\"%s\">enable</a> one or install our <a href=\"%s\">\"Language by GET parameter\"</a> addon so TranslatePress can function properly."
 msgstr ""
 
-#: ../translatepress/includes/class-plugin-notices.php:282
+#: ../translatepress/includes/class-plugin-notices.php:282, ../translatepress/includes/class-plugin-notices.php:293
 msgid "Dismiss this notice."
+msgstr ""
+
+#: ../translatepress/includes/class-plugin-notices.php:291
+msgid "You can now translate several strings at once by merging them together. Find out more about these translation blocks in <a href=\"https://translatepress.com/docs/translation-editor/#translation-blocks\" >our documentation.</a>."
 msgstr ""
 
 #: ../translatepress/includes/class-settings.php:25
@@ -113,7 +117,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:397, ../translatepress/includes/class-translation-manager.php:409
+#: ../translatepress/includes/class-settings.php:397, ../translatepress/includes/class-translation-manager.php:624
 msgid "Translate Site"
 msgstr ""
 
@@ -125,55 +129,82 @@ msgstr ""
 msgid "Addons"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:421
-msgid "Translate Page"
+#: ../translatepress/includes/class-translation-manager.php:79
+msgid "Translate"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:440
-msgid "Settings"
+#: ../translatepress/includes/class-translation-manager.php:80
+msgid "Translate entire block element"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:880
-msgid "Security check"
+#: ../translatepress/includes/class-translation-manager.php:81
+msgid "Split block to translate strings individually"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:133
+#: ../translatepress/includes/class-translation-manager.php:82
+msgid "Translation block"
+msgstr ""
+
+#: ../translatepress/includes/class-translation-manager.php:83
+msgid "Are you sure you want to split this phrase into smaller pieces?"
+msgstr ""
+
+#: ../translatepress/includes/class-translation-manager.php:84
 msgid "Meta Information"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:142
+#: ../translatepress/includes/class-translation-manager.php:85
 msgid "String List"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:159
+#: ../translatepress/includes/class-translation-manager.php:86
+msgid "Dynamic Added Strings"
+msgstr ""
+
+#: ../translatepress/includes/class-translation-manager.php:87, ../translatepress/includes/class-translation-manager.php:88, ../translatepress/includes/class-translation-manager.php:89, ../translatepress/includes/class-translation-manager.php:90, ../translatepress/includes/class-translation-manager.php:91
+msgstr ""
+
+#: ../translatepress/includes/class-translation-manager.php:636
+msgid "Translate Page"
+msgstr ""
+
+#: ../translatepress/includes/class-translation-manager.php:655
+msgid "Settings"
+msgstr ""
+
+#: ../translatepress/includes/class-translation-manager.php:1095
+msgid "Security check"
+msgstr ""
+
+#: ../translatepress/includes/class-translation-render.php:166
 msgid "Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:165
+#: ../translatepress/includes/class-translation-render.php:172
 msgid "OG Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:171
+#: ../translatepress/includes/class-translation-render.php:178
 msgid "OG Site Name"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:177
+#: ../translatepress/includes/class-translation-render.php:184
 msgid "OG Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:183
+#: ../translatepress/includes/class-translation-render.php:190
 msgid "Twitter Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:189
+#: ../translatepress/includes/class-translation-render.php:196
 msgid "Twitter Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:195
+#: ../translatepress/includes/class-translation-render.php:202
 msgid "Post Slug"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:199
+#: ../translatepress/includes/class-translation-render.php:206
 msgid "Page Title"
 msgstr ""
 
@@ -409,14 +440,14 @@ msgstr ""
 msgid "Learn More"
 msgstr ""
 
-#: includes/class-translator-accounts.php:119
+#: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:119
 msgid " TranslatePress Settings"
 msgstr ""
 
-#: includes/class-translator-accounts.php:123, includes/class-translator-accounts.php:124
+#: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:123, ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:124
 msgid "Translator"
 msgstr ""
 
-#: includes/class-translator-accounts.php:128
+#: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:128
 msgid "Allow this user to translate the website."
 msgstr ""

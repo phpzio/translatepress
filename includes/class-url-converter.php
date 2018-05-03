@@ -199,7 +199,7 @@ class TRP_Url_Converter {
 
             $pass_arguments = parse_url($url);
             if(isset($pass_arguments['query'])){
-                $new_url = untrailingslashit($new_url) . '?' . $pass_arguments['query'];
+                $new_url = trailingslashit($new_url) . '?' . $pass_arguments['query'];
             }
 
             $TRP_LANGUAGE = $trp_language_copy;

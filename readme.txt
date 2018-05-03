@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.5
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,7 @@ https://www.youtube.com/watch?v=pUlYisvBm8g
 * Editorial control allowing you to publish your language only when all your translations are done
 * Conditional display content shortcode based on language [trp_language language="en_US"] English content only [/trp_language]
 * Possibility to edit gettext strings from themes and plugins from english to english, without adding another language. Basically a string-replace functionality.
+* Translation Block feature in which you can translate multiple html elements together
 
 Note: this plugin uses the Google Translation API to translate the strings on your site. This feature can be enabled or disabled according to your preferences.
 
@@ -116,6 +117,13 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.2 =
+* Added Translation Block feature in which you can translate multiple html elements together
+* Improvement: make it possible for the SEO Addon to automatically translate page slugs using Google Translate
+* Fix: using the shortcode language switcher added #trpprocessurl to the end of the url
+* Fix: changing languages from a secondary language gave 404 page when the page slug was translated
+* Fix: submitting a form from one page to another directed the user to the default language. Now if Force Custom Language Links is enabled the user gets directed to the correct url
+
 = 1.2.1 =
 * Extra css for the floater images so they don't brake the line in certain themes
 * Fixed compatibility issue with Woocommerce cart widget

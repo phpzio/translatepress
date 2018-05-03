@@ -133,8 +133,12 @@ class TRP_Translation_Manager{
     public function add_slug_as_meta_tag() {
         global $post;
         // we need this further down when generating slug translations
-        global $trp_backup_post_id;
-        $trp_backup_post_id = (isset( $post->ID ) && !empty( $post->ID )) ? ( $post->ID ) : ( 0 );
+		global $trp_backup_post_id;
+		if( isset( $post->ID ) && !empty( $post->ID ) && !is_home() && !is_front_page() && !is_archive() && !is_search() ){
+			$trp_backup_post_id = $post->ID;
+		} else {
+			$trp_backup_post_id = 0;
+		}
 
         if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && !is_home() && !is_front_page() && !is_archive() && !is_search() ) {
             echo '<meta name="trp-slug" original="' . $post->post_name. '" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
