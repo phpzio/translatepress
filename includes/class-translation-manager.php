@@ -438,7 +438,7 @@ class TRP_Translation_Manager{
                 $this->save_translations_of_strings( $strings );
             }
         }
-
+	    echo trp_safe_json_encode( array() );
         die();
     }
 
@@ -475,6 +475,7 @@ class TRP_Translation_Manager{
                 }
             }
         }
+	    echo trp_safe_json_encode( array() );
         die();
     }
 
