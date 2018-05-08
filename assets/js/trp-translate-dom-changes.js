@@ -163,14 +163,19 @@ function TRP_Translator(){
                             }
                         }else{
                             var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
-                            var all_strings = all_nodes.contents().filter(get_string_from_node);
+                            var all_strings = all_nodes.contents().filter(function(){
+                                if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
+                                        if ( jQuery(this).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(this).closest( '[data-trp-translate-id]').length == 0 ){
+                                                return this;
+                                            }
+                                    }});
                             if ( typeof parent.trpEditor !== 'undefined' ) {
                                 all_strings.wrap('<translate-press></translate-press>');
                             }
                             var all_strings_length = all_strings.length;
                             for (var j = 0; j < all_strings_length; j++ ) {
                                 if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                                    strings.push({node: all_strings[j], original: _this.trim( all_strings[j].textContent, trim_characters )});
+                                    strings.push({node: all_strings[j], original: all_strings[j].textContent });
                                     all_strings[j].textContent = '';
                                 }
                             }
@@ -185,9 +190,6 @@ function TRP_Translator(){
     };
 
     function get_string_from_node( node ){
-        if ( node == false ){
-            node = this;
-        }
         if( node.nodeType === 3 && /\S/.test(node.nodeValue) ){
             if ( jQuery(node).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(node).closest( '[data-trp-translate-id]').length == 0 ){
                 return node;
