@@ -439,7 +439,7 @@ class TRP_Translation_Render{
                             $nfv_row->outertext = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $node_from_value->save() );
                             if( !$row->has_child() ){// if the node doesn't have children set the needed attributes, else it means that there are other nodes inside so probably they are the ones displayed
-                                if( empty( $row->innertext ) )// add the no translate attribute only if it does not contain any kind of text
+                                if( empty( $row->innertext ) && ( $attr_name == 'placeholder' || $attr_name == 'value' || $attr_name == 'alt' ) )// add the no translate attribute only if it does not contain any kind of text or it is an attribute we search for
                                     $row->setAttribute($no_translate_attribute, '');
                                 // we are in the editor
                                 if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
