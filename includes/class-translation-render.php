@@ -322,8 +322,9 @@ class TRP_Translation_Render{
         }
 
         /**
-         * tries to fix the html document. It is off by default. use at own risk
-         * */
+         * Tries to fix the HTML document. It is off by default. Use at own risk.
+         * Solves the problem where a duplicate attribute inside a tag causes the plugin to remove the duplicated attribute and all the other attributes to the right of the it.
+         */
         if( apply_filters( 'trp_try_fixing_invalid_html', false ) ) {
             if( class_exists('DOMDocument') ) {
                 $dom = new DOMDocument();
