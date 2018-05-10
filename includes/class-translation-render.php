@@ -9,6 +9,7 @@ class TRP_Translation_Render{
     protected $settings;
     protected $machine_translator;
     protected $trp_query;
+	/* @var TRP_Url_Converter */
     protected $url_converter;
     /* @var TRP_Translation_Manager */
 	protected $translation_manager;

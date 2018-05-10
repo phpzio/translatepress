@@ -192,6 +192,11 @@ class TRP_Url_Converter {
             $url = $this->cur_page_url();
             $post_id = ( url_to_postid( $url ) ) ? ( url_to_postid( $url ) ) : ( $trp_backup_post_id );
         }
+	    if ( $post_id == 0 ) {
+		    $TRP_LANGUAGE = $this->settings['default-language'];
+		    $post_id      = url_to_postid( $url );
+		    $TRP_LANGUAGE = $trp_language_copy;
+	    }
 
         if( $post_id ){
             $TRP_LANGUAGE = $language;
