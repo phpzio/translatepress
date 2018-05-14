@@ -165,7 +165,7 @@ function TRP_Translator(){
                             var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
                             var all_strings = all_nodes.contents().filter(function(){
                                 if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                        if ( jQuery(this).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(this).closest( '[data-trp-translate-id]').length == 0 ){
+                                        if ( jQuery(this).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(this).closest( '[data-trp-translate-id]').length == 0 && jQuery(this).parents( '[data-no-translation]' ).length == 0 ){
                                                 return this;
                                             }
                                     }});
@@ -191,7 +191,7 @@ function TRP_Translator(){
 
     function get_string_from_node( node ){
         if( node.nodeType === 3 && /\S/.test(node.nodeValue) ){
-            if ( jQuery(node).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(node).closest( '[data-trp-translate-id]').length == 0 ){
+            if ( jQuery(node).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(node).closest( '[data-trp-translate-id]').length == 0 && jQuery(this).parents( '[data-no-translation]' ).length == 0 ){
                 return node;
             }
         }
