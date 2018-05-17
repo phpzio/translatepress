@@ -368,8 +368,34 @@ var trpTranslator;
 var current_language;
 var original_language;
 
+function trp_get_IE_version() {
+    var sAgent = window.navigator.userAgent;
+    var Idx = sAgent.indexOf("MSIE");
+
+    // If IE, return version number.
+    if (Idx > 0)
+        return parseInt(sAgent.substring(Idx+ 5, sAgent.indexOf(".", Idx)));
+
+    // If IE 11 then look for Updated user agent string.
+    else if (!!navigator.userAgent.match(/Trident\/7\./))
+        return 11;
+    else
+        return 0; //It is not IE
+}
+
+function trp_allow_detect_dom_changes_to_run(){
+    var IE_version = trp_get_IE_version();
+    if ( IE_version != 0 && IE_version <= 11 ){
+        return false;
+    }
+    return true;
+}
+
+
 // Initialize the Translate Press Editor after jQuery is ready
 jQuery( function() {
-    trpTranslator = new TRP_Translator();
+    if ( trp_allow_detect_dom_changes_to_run() ) {
+        trpTranslator = new TRP_Translator();
+    }
 });
 
