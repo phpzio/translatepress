@@ -283,7 +283,7 @@ class TRP_Settings{
      * @param string $hook          Admin page.
      */
     public function enqueue_scripts_and_styles( $hook ) {
-        if ( $hook == 'settings_page_translate-press' || 'settings_page_trp_license_key' ) {
+        if ( $hook == 'settings_page_translate-press' || $hook == 'settings_page_trp_license_key' ) {
             wp_enqueue_style(
                 'trp-settings-style',
                 TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css',
