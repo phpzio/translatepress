@@ -176,7 +176,9 @@ function TRP_Translator(){
                             for (var j = 0; j < all_strings_length; j++ ) {
                                 if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
                                     strings.push({node: all_strings[j], original: all_strings[j].textContent });
-                                    all_strings[j].textContent = '';
+                                    if ( trp_localized_text ['showdynamiccontentbeforetranslation'] == false ) {
+                                        all_strings[j].textContent = '';
+                                    }
                                 }
                             }
                         }
