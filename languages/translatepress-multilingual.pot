@@ -117,7 +117,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:397, ../translatepress/includes/class-translation-manager.php:624
+#: ../translatepress/includes/class-settings.php:397, ../translatepress/includes/class-translation-manager.php:626
 msgid "Translate Site"
 msgstr ""
 
@@ -164,47 +164,47 @@ msgstr ""
 #: ../translatepress/includes/class-translation-manager.php:87, ../translatepress/includes/class-translation-manager.php:88, ../translatepress/includes/class-translation-manager.php:89, ../translatepress/includes/class-translation-manager.php:90, ../translatepress/includes/class-translation-manager.php:91
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:636
+#: ../translatepress/includes/class-translation-manager.php:638
 msgid "Translate Page"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:655
+#: ../translatepress/includes/class-translation-manager.php:657
 msgid "Settings"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1095
+#: ../translatepress/includes/class-translation-manager.php:1097
 msgid "Security check"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:166
+#: ../translatepress/includes/class-translation-render.php:167
 msgid "Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:172
+#: ../translatepress/includes/class-translation-render.php:173
 msgid "OG Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:178
+#: ../translatepress/includes/class-translation-render.php:179
 msgid "OG Site Name"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:184
+#: ../translatepress/includes/class-translation-render.php:185
 msgid "OG Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:190
+#: ../translatepress/includes/class-translation-render.php:191
 msgid "Twitter Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:196
+#: ../translatepress/includes/class-translation-render.php:197
 msgid "Twitter Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:202
+#: ../translatepress/includes/class-translation-render.php:203
 msgid "Post Slug"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:206
+#: ../translatepress/includes/class-translation-render.php:207
 msgid "Page Title"
 msgstr ""
 

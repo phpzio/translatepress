@@ -38,22 +38,6 @@ span.select2-container{
     box-shadow: none;
 }
 
-#wpadminbar #wp-admin-bar-trp_edit_translation .ab-icon:before {
-    content: '\f326';
-    top: 3px;
-}
-
-@media screen and ( max-width: 782px ) {
-
-    #wpadminbar #wp-admin-bar-trp_edit_translation > .ab-item {
-        text-indent: 0;
-    }
-
-    #wpadminbar li#wp-admin-bar-trp_edit_translation {
-        display: block;
-    }
-
-}
 
 /**************************************************/
 /* Extra styling for admin notices

@@ -665,7 +665,24 @@ class TRP_Translation_Manager{
 
     }
 
-    /**
+	/**
+	* Add the glyph icon for Translate Site button in admin bar
+	*
+	* hooked to admin_head action
+	*/
+    public function add_styling_to_admin_bar_button() {
+		echo "<style type='text/css'> #wpadminbar #wp-admin-bar-trp_edit_translation .ab-icon:before {    content: '\\f326';    top: 3px;}
+		#wpadminbar #wp-admin-bar-trp_edit_translation > .ab-item {
+			text-indent: 0;
+		}
+	
+		#wpadminbar li#wp-admin-bar-trp_edit_translation {
+			display: block;
+		}</style>";
+	}
+
+
+	/**
      * Function to hide admin bar when in editor preview mode.
      *
      * Hooked to show_admin_bar.

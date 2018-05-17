@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.5
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,16 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.3 =
+* Fixed back-end css style not being targeted only for TranslatePress Settings page
+* Add filter to not remove detected dynamic strings until the ajax is finished
+* Fixed data-no-translation not taken into account in some cases of Dynamic strings
+* Fixed translated slug not being included in url sometimes
+* Fixed issue with gettext string on non visible html attr that prevented other attr from being translated
+* Fixed bug with translating dom changes not working for complex HTML hierarchy
+* Corrected flag for Afrikaans.
+* Fixed compatibility issues with older jQuery versions
+
 = 1.2.2 =
 * Added Translation Block feature in which you can translate multiple html elements together
 * Improvement: make it possible for the SEO Addon to automatically translate page slugs using Google Translate
