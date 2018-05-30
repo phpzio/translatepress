@@ -46,7 +46,7 @@
                         <option value="yes" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php _e( 'Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the "Translation Languages" list.', 'translatepress-multilingual' ); ?>
+                        <?php _e( 'Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the "All Languages" list.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
@@ -107,7 +107,11 @@
                             <?php $this->output_language_switcher_select( 'menu-options', $this->settings['menu-options'] ); ?>
                         </div>
                         <p class="description">
-                            <?php _e( 'Go to Appearance -> Menus to add Language Switcher Languages in any menu.', 'translatepress-multilingual' ); ?>
+                            <?php
+                            $link_start = '<a href="' . admin_url( 'nav-menus.php' ) .'">';
+                            $link_end = '</a>';
+                            printf(__( 'Go to  %1$s Appearance -> Menus%2$s to add Language Switcher Languages in any menu.', 'translatepress-multilingual' ), $link_start, $link_end ); ?>
+                            <a href="https://translatepress.com/docs/settings/#language-switcher"><?php _e( 'Learn more in our documentation.', 'translatepress-multilingual' ); ?></a>
                         </p>
                     </div>
                     <div class="trp-ls-type">
