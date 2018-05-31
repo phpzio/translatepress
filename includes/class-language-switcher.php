@@ -41,13 +41,24 @@ class TRP_Language_Switcher{
         ob_start();
 
         global $TRP_LANGUAGE;
-        $current_language = $TRP_LANGUAGE;
 
         if ( ! $this->trp_languages ){
             $trp = TRP_Translate_Press::get_trp_instance();
             $this->trp_languages = $trp->get_component( 'languages' );
         }
         $published_languages = $this->trp_languages->get_language_names( $this->settings['publish-languages'] );
+
+        $current_language = array();
+        $other_languages = array();
+
+        foreach( $published_languages as $code => $name ) {
+            if( $code == $TRP_LANGUAGE ) {
+                $current_language['code'] = $code;
+                $current_language['name'] = $name;
+            } else {
+                $other_languages[$code] = $name;
+            }
+        }
 
 	    if( ! $this->trp_settings_object ) {
 		    $trp = TRP_Translate_Press::get_trp_instance();
@@ -89,39 +100,12 @@ class TRP_Language_Switcher{
      * Hooked on wp_enqueue_scripts.
      */
     public function enqueue_language_switcher_scripts( ){
-        wp_enqueue_script('trp-language-switcher', TRP_PLUGIN_URL . 'assets/js/trp-language-switcher.js', array('jquery'), TRP_PLUGIN_VERSION );
 
         if ( isset( $this->settings['trp-ls-floater'] ) && $this->settings['trp-ls-floater'] == 'yes' ) {
             wp_enqueue_style('trp-floater-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-floater-language-switcher.css', array(), TRP_PLUGIN_VERSION );
         }
 
         wp_enqueue_style( 'trp-language-switcher-style', TRP_PLUGIN_URL . 'assets/css/trp-language-switcher.css', array(), TRP_PLUGIN_VERSION );
-
-        if( ! $this->trp_settings_object ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_settings_object = $trp->get_component( 'settings' );
-        }
-
-        $ls_options = $this->trp_settings_object->get_language_switcher_options();
-        $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
-
-        $ls_script_vars_array = array();
-
-        if( $shortcode_settings['flags'] ) {
-            wp_enqueue_script( 'jquery-ui-core' );
-            wp_enqueue_script( 'jquery-ui-widget' );
-            wp_enqueue_script( 'jquery-ui-menu' );
-            wp_enqueue_script( 'jquery-ui-position' );
-            wp_enqueue_script( 'jquery-ui-selectmenu' );
-
-            wp_enqueue_style( 'trp-jquery-ui-style', TRP_PLUGIN_URL . 'assets/css/trp-jquery-ui.css', array(), TRP_PLUGIN_VERSION );
-
-            $ls_script_vars_array['shortcode_ls_flags'] = true;
-        } else {
-            $ls_script_vars_array['shortcode_ls_flags'] = null;
-        }
-
-        wp_localize_script( 'trp-language-switcher', 'trp_language_switcher_data', $ls_script_vars_array );
     }
 
     /**
@@ -254,6 +238,36 @@ class TRP_Language_Switcher{
         }
 
         return $flag_html;
+    }
+
+    /**
+     * Return full or short name, with or without flag
+     *
+     * @param string $language_code         Language code.
+     * @param string $language_name         Language full name or shortname.
+     * @param array $settings              NULL | ls_shortcode
+     * @return string                       Returns html with flags short or long names, depending on settings.
+     */
+    public function add_shortcode_preferences( $settings, $language_code, $language_name ) {
+        if ( $settings['flags'] ){
+            $flag = $this->add_flag($language_code, $language_name);
+        } else {
+            $flag = '';
+        }
+
+        if ( $settings['full_names'] ){
+            $full_name = $language_name;
+        } else {
+            $full_name = '';
+        }
+
+        if ( $settings['short_names'] ){
+            $short_name = strtoupper( $this->url_converter->get_url_slug( $language_code, false ) );
+        } else {
+            $short_name = '';
+        }
+
+        return $flag . ' ' . $short_name . $full_name;
     }
 
     /**

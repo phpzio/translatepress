@@ -1,29 +1,31 @@
 <?php
-$only_flags_class = '';
-if( $shortcode_settings['flags'] && ! $shortcode_settings['full_names'] && ! $shortcode_settings['short_names'] ) {
-    $only_flags_class = 'trp-ls-shortcode-only-flags';
-}
+$current_language_preference = $this->add_shortcode_preferences($shortcode_settings, $current_language['code'], $current_language['name']);
 
 ?>
-<div class="trp-language-switcher " data-no-translation>
-    <form class="trp-language-switcher-form <?php echo $only_flags_class ?>" action="" method="POST">
-        <select data-no-translation class="trp-language-switcher-select" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?> name="lang" onchange='trp_change_language( this )'>
-            <?php foreach ( $published_languages as $code => $name ){ ?>
-            <option title="<?php echo ucfirst( $name ) ?>" data-class="trp-flag-icon" data-style="background-image: url( <?php echo $this->add_flag( $code, $name, 'ls_shortcode' ) ?> );" data-flag-url="<?php echo $this->add_flag( $code, $name, 'ls_shortcode' ) ?>" value="<?php echo str_replace("_", "-", $code );?>" <?php echo ( $current_language == $code ) ? 'selected' : '' ?> >
-                <?php
+<div class="trp-language-switcher" data-no-translation <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?>>
+    <script type="application/javascript">
+        jQuery( document ).ready(function(){
+            // need to have the same with set from JS on both divs. Otherwise it can push stuff around in HTML
+            var trp_ls_shortcode_width = jQuery('.trp-ls-shortcode-language').width();
+            jQuery('.trp-ls-shortcode-language').width(trp_ls_shortcode_width);
+            jQuery('.trp-ls-shortcode-current-language').width(trp_ls_shortcode_width);
+            // We're putting this on display: none after we have it's width.
+            jQuery('.trp-ls-shortcode-language').hide();
+        })
+    </script>
+    <div class="trp-ls-shortcode-current-language">
+        <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language" title="<?php echo $current_language['name'] ?>"><?php echo $current_language_preference ?></a>
+    </div>
+    <div class="trp-ls-shortcode-language">
+        <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language"  title="<?php echo $current_language['name'] ?>"><?php echo $current_language_preference ?></a>
+    <?php foreach ( $other_languages as $code => $name ){
 
-                if( $shortcode_settings['full_names'] ) {
-                    echo ucfirst( $name );
-                }
+        $language_preference = $this->add_shortcode_preferences($shortcode_settings, $code, $name);
+        ?>
+        <a href="<?php echo $this->url_converter->get_url_for_language($code, false); ?>" title="<?php echo $name; ?>">
+            <?php echo $language_preference?>
+        </a>
 
-                if( $shortcode_settings['short_names'] ) {
-                    echo strtoupper( $this->url_converter->get_url_slug( $code, false ) );
-                }
-
-                ?>
-            </option>
-            <?php } ?>
-        </select>
-        <noscript><input type="submit" value="<?php _e( 'Change', 'translatepress-multilingual' );?>"></noscript>
-    </form>
+    <?php } ?>
+    </div>
 </div>

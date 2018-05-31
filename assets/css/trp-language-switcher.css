@@ -1,102 +1,88 @@
-.menu-item-object-language_switcher .trp-flag-image {
-    margin: -1px 5px;
-    vertical-align: baseline;
-}
-
-.trp-language-switcher-select {
-    width: 100%;
-    border: 1px solid #c5c5c5;
-    background: #f6f6f6;
-    font-weight: normal;
-    color: #454545;
-    padding: 5px;
-}
-
-.ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl { border-top-left-radius: 0 !important; }
-.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr { border-top-right-radius: 0 !important; }
-.ui-corner-all, .ui-corner-bottom, .ui-corner-left, .ui-corner-bl { border-bottom-left-radius: 0 !important; }
-.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br { border-bottom-right-radius: 0 !important; }
-
-.ui-icon.trp-current-language-icon,
-.ui-icon.trp-flag-icon {
-    width: 18px;
-    height: 18px;
-}
-
-form.trp-language-switcher-form .ui-widget,
-.trp-ls-options-with-flag-icons.ui-widget {
+.trp-language-switcher{
+    position: relative;
+    width: auto;
     display: inline-block;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
 
-form.trp-language-switcher-form .ui-selectmenu-text {
+
+.trp-language-switcher > div {
+    box-sizing: border-box;
+
+    padding:3px 20px 3px 5px;
+    border: 1px solid #c1c1c1;
+    border-radius: 3px;
+
+    background-image:
+            linear-gradient(45deg, transparent 50%, gray 50%),
+            linear-gradient(135deg, gray 50%, transparent 50%);
+
+    background-position:
+            calc(100% - 8px) calc(1em + 0px),
+            calc(100% - 3px) calc(1em + 0px);
+
+    background-size:
+            5px 5px,
+            5px 5px;
+
+    background-repeat: no-repeat;
+
+    background-color: #fff;
+}
+
+.trp-language-switcher > div > a {
+    display: block;
+    padding: 2px;
+    border-radius: 3px;
+    color: rgb(7, 105, 173);
+}
+
+.trp-language-switcher > div > a:hover {
+    background: #f1f1f1;
+}
+.trp-language-switcher > div > a.trp-ls-shortcode-disabled-language {
     cursor: default;
 }
-
-form.trp-language-switcher-form span.ui-selectmenu-text {
-    width: 50%;
-    white-space: nowrap;
+.trp-language-switcher > div > a.trp-ls-shortcode-disabled-language:hover {
+    background: none;
 }
 
-.trp-ls-li .ui-icon.trp-flag-icon {
-    position: inherit;
+.trp-language-switcher > div > a > img{
+    display: inline;
+    margin: 0 3px;
+    width: 18px;
+    height: 12px;
+    border-radius: 0;
 }
 
-.trp-language-switcher form.trp-language-switcher-form:not( .trp-ls-shortcode-only-flags ) .ui-selectmenu-button.ui-widget {
-    width: 100% !important;
-}
-
-.trp-language-switcher form.trp-language-switcher-form.trp-ls-shortcode-only-flags .ui-selectmenu-button.ui-widget {
-    width: auto !important;
-}
-
-.ui-selectmenu-menu.ui-front .trp-ls-li {
-    list-style-image: inherit !important;
-}
-
-form.trp-language-switcher-form .ui-selectmenu-button.ui-widget span,
-.trp-ls-li.ui-menu-item span {
+.trp-language-switcher .trp-ls-shortcode-current-language{
     display: inline-block;
-    margin: 3px 2px 3px 5px;
-    vertical-align: middle;
+}
+.trp-language-switcher:focus .trp-ls-shortcode-current-language,
+.trp-language-switcher:hover .trp-ls-shortcode-current-language{
+    visibility: hidden;
 }
 
-form.trp-language-switcher-form .ui-selectmenu-button.ui-widget span.trp-current-language-icon {
-    margin-top: 4px;
-}
-
-form.trp-language-switcher-form .ui-selectmenu-button span.dashicons-arrow-down {
-    float: right;
-    margin-left: 0;
-}
-
-.ui-icon.trp-current-language-icon,
-.trp-ls-options-with-flag-icons .ui-icon {
-    background-position: left center;
-}
-
-.ui-selectmenu-menu .trp-ls-options-with-flag-icons .trp-ls-li div {
-    width: 100%;
-}
-
-.ui-selectmenu-menu .trp-ls-options-with-flag-icons .trp-ls-li span:not( .trp-flag-icon ) {
-    white-space: nowrap;
+.trp-language-switcher .trp-ls-shortcode-language{
+    display: inline-block;
+    height: 1px;
     overflow: hidden;
-    text-overflow: ellipsis;
+    visibility: hidden;
 }
 
-#wpadminbar #wp-admin-bar-trp_edit_translation .ab-icon:before {
-    content: '\f326';
-    top: 3px;
+.trp-language-switcher:focus .trp-ls-shortcode-language,
+.trp-language-switcher:hover .trp-ls-shortcode-language{
+    visibility:visible;
+    height:auto;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: inline-block !important;
+    
 }
 
-@media screen and ( max-width: 782px ) {
 
-    #wpadminbar #wp-admin-bar-trp_edit_translation > .ab-item {
-        text-indent: 0;
-    }
 
-    #wpadminbar li#wp-admin-bar-trp_edit_translation {
-        display: block;
-    }
-
-}
