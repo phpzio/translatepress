@@ -6,11 +6,13 @@ $current_language_preference = $this->add_shortcode_preferences($shortcode_setti
     <script type="application/javascript">
         jQuery( document ).ready(function(){
             // need to have the same with set from JS on both divs. Otherwise it can push stuff around in HTML
-            var trp_ls_shortcode_width = jQuery('.trp-ls-shortcode-language').width();
-            jQuery('.trp-ls-shortcode-language').width(trp_ls_shortcode_width);
-            jQuery('.trp-ls-shortcode-current-language').width(trp_ls_shortcode_width);
-            // We're putting this on display: none after we have it's width.
-            jQuery('.trp-ls-shortcode-language').hide();
+            jQuery('.trp-language-switcher').each(function(index, el){
+                var trp_ls_shortcode_width = jQuery(el).find('.trp-ls-shortcode-language').width();
+                jQuery(el).find('.trp-ls-shortcode-language').width(trp_ls_shortcode_width);
+                jQuery(el).find('.trp-ls-shortcode-current-language').width(trp_ls_shortcode_width);
+                // We're putting this on display: none after we have it's width.
+                jQuery(el).find('.trp-ls-shortcode-language').hide();
+            })
         })
     </script>
     <div class="trp-ls-shortcode-current-language">
