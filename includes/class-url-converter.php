@@ -199,14 +199,12 @@ class TRP_Url_Converter {
 	    }
 
         if( $post_id ){
+            $TRP_LANGUAGE = $this->settings['default-language'];
+            $original_permalink = get_permalink( $post_id );
+            $arguments = str_replace($original_permalink, '', $url);
+
             $TRP_LANGUAGE = $language;
-            $new_url = get_permalink( $post_id );
-
-            $pass_arguments = parse_url($url);
-            if(isset($pass_arguments['query'])){
-                $new_url = trailingslashit($new_url) . '?' . $pass_arguments['query'];
-            }
-
+            $new_url = trailingslashit(get_permalink( $post_id )) . ltrim($arguments, '/');
             $TRP_LANGUAGE = $trp_language_copy;
         } else {
             // If no $post_id is set we simply replace the current language root with the new language root.
