@@ -21,23 +21,23 @@ msgstr ""
 msgid "Limit this menu item to the following languages"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, partials/license-settings-page.php:4
 msgid "TranslatePress Settings"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:10, partials/license-settings-page.php:10, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:10
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:10, ../tp-add-on-seo-pack/partials/license-settings-page.php:10, partials/license-settings-page.php:10
 msgid "License Key"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:15, partials/license-settings-page.php:15, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:15
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:15, ../tp-add-on-seo-pack/partials/license-settings-page.php:15, partials/license-settings-page.php:15
 msgid "Enter your license key."
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:22, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:31, partials/license-settings-page.php:22, partials/license-settings-page.php:31, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:22, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:31
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:22, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:31, ../tp-add-on-seo-pack/partials/license-settings-page.php:22, ../tp-add-on-seo-pack/partials/license-settings-page.php:31, partials/license-settings-page.php:22, partials/license-settings-page.php:31
 msgid "Activate License"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:28, partials/license-settings-page.php:28, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:28
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:28, ../tp-add-on-seo-pack/partials/license-settings-page.php:28, partials/license-settings-page.php:28
 msgid "Deactivate License"
 msgstr ""
 
@@ -172,7 +172,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1097
+#: ../translatepress/includes/class-translation-manager.php:1114
 msgid "Security check"
 msgstr ""
 
@@ -206,10 +206,6 @@ msgstr ""
 
 #: ../translatepress/includes/class-translation-render.php:207
 msgid "Page Title"
-msgstr ""
-
-#: ../translatepress/partials/language-switcher-shortcode.php:27
-msgid "Change"
 msgstr ""
 
 #: ../translatepress/partials/main-settings-language-selector.php:2
@@ -257,7 +253,7 @@ msgid "Use subdirectory for default language"
 msgstr ""
 
 #: ../translatepress/partials/main-settings-page.php:49
-msgid "Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the \"Translation Languages\" list."
+msgid "Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the \"All Languages\" list."
 msgstr ""
 
 #: ../translatepress/partials/main-settings-page.php:55
@@ -304,15 +300,19 @@ msgstr ""
 msgid "Menu item"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:110
-msgid "Go to Appearance -> Menus to add Language Switcher Languages in any menu."
+#: ../translatepress/partials/main-settings-page.php:113
+msgid "Go to  %1$s Appearance -> Menus%2$s to add Language Switcher Languages in any menu."
 msgstr ""
 
 #: ../translatepress/partials/main-settings-page.php:114
+msgid "Learn more in our documentation."
+msgstr ""
+
+#: ../translatepress/partials/main-settings-page.php:118
 msgid "Floating language selection"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:119
+#: ../translatepress/partials/main-settings-page.php:123
 msgid "Have a floating dropdown following the user on every page."
 msgstr ""
 
@@ -440,14 +440,14 @@ msgstr ""
 msgid "Learn More"
 msgstr ""
 
-#: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:119
+#: includes/class-translator-accounts.php:119
 msgid " TranslatePress Settings"
 msgstr ""
 
-#: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:123, ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:124
+#: includes/class-translator-accounts.php:123, includes/class-translator-accounts.php:124
 msgid "Translator"
 msgstr ""
 
-#: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:128
+#: includes/class-translator-accounts.php:128
 msgid "Allow this user to translate the website."
 msgstr ""

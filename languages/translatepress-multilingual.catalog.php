@@ -47,7 +47,6 @@
 <?php __("Twitter Description", "translatepress-multilingual"); ?>
 <?php __("Post Slug", "translatepress-multilingual"); ?>
 <?php __("Page Title", "translatepress-multilingual"); ?>
-<?php __("Change", "translatepress-multilingual"); ?>
 <?php __("All Languages", "translatepress-multilingual"); ?>
 <?php __("Select the language you wish to make your website available in.", "translatepress-multilingual"); ?>
 <?php __("To add <strong>more then two languages</strong> and support for SEO Title, Description, Slug and more checkout <a href=\"%s\" class=\"button button-primary\" target=\"_blank\" title=\"TranslatePress Pro\">TranslatePress PRO</a>", "translatepress-multilingual"); ?>
@@ -59,7 +58,7 @@
 <?php __("Yes", "translatepress-multilingual"); ?>
 <?php __("Select Yes if you want languages to display in their native names. Otherwise, they will be displayed in English.", "translatepress-multilingual"); ?>
 <?php __("Use subdirectory for default language", "translatepress-multilingual"); ?>
-<?php __("Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the \"Translation Languages\" list.", "translatepress-multilingual"); ?>
+<?php __("Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the \"All Languages\" list.", "translatepress-multilingual"); ?>
 <?php __("Force language in custom links", "translatepress-multilingual"); ?>
 <?php __("Select Yes if you want to force custom links without language encoding to keep the currently selected language.", "translatepress-multilingual"); ?>
 <?php __("Google Translate", "translatepress-multilingual"); ?>
@@ -71,7 +70,8 @@
 <?php __("Shortcode ", "translatepress-multilingual"); ?>
 <?php __("Use shortcode on any page or widget.", "translatepress-multilingual"); ?>
 <?php __("Menu item", "translatepress-multilingual"); ?>
-<?php __("Go to Appearance -> Menus to add Language Switcher Languages in any menu.", "translatepress-multilingual"); ?>
+<?php __("Go to  %1$s Appearance -> Menus%2$s to add Language Switcher Languages in any menu.", "translatepress-multilingual"); ?>
+<?php __("Learn more in our documentation.", "translatepress-multilingual"); ?>
 <?php __("Floating language selection", "translatepress-multilingual"); ?>
 <?php __("Have a floating dropdown following the user on every page.", "translatepress-multilingual"); ?>
 <?php __("Google API Key from settings page:", "translatepress-multilingual"); ?>

@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 4.9.5
-Stable tag: 1.2.3
+Tested up to: 4.9.6
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,12 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.4 =
+* Refactor the shortcode language switcher so it's now HTML similar to the floater
+* Added link to Appearance -> menus in TranslatePress settings page
+* Fixed language redirect with permalinks so custom parameters are passed correctly back to the url
+* Do not load dynamic string translation for IE11 and older
+
 = 1.2.3 =
 * Fixed back-end css style not being targeted only for TranslatePress Settings page
 * Add filter to not remove detected dynamic strings until the ajax is finished

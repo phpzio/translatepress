@@ -199,10 +199,22 @@ class TRP_Url_Converter {
 	    }
 
         if( $post_id ){
-            $TRP_LANGUAGE = $this->settings['default-language'];
-            $original_permalink = get_permalink( $post_id );
-            $arguments = str_replace($original_permalink, '', $url);
+            /*
+             * We need to find if the current URL (either passed as parameter or found via cur_page_url)
+             * has extra arguments compared to it's permalink.
+             * We need the permalink based on the language IN THE URL, not the one passed to this function,
+             * as that represents the language to be translated into.
+             */
+            $TRP_LANGUAGE = $this->get_lang_from_url_string( $url );
+            $processed_permalink = get_permalink($post_id);
+            $arguments = str_replace($processed_permalink, '', $url);
+            // if nothing was replaced, something was wrong, just use the normal permalink without any arguments.
+            if( $arguments == $url ) $arguments = '';
 
+            /*
+             * Transform the global language into the language to be translated,
+             * so we can get the correct permalink (slug and all) and add the remaining arguments that might exist.
+             */
             $TRP_LANGUAGE = $language;
             $new_url = trailingslashit(get_permalink( $post_id )) . ltrim($arguments, '/');
             $TRP_LANGUAGE = $trp_language_copy;
