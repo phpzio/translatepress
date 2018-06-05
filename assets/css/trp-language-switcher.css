@@ -1,3 +1,19 @@
+/*
+ *  Menu Language Switcher
+ */
+
+.menu-item-object-language_switcher .trp-flag-image {
+    display: inline-block;
+    margin: -1px 5px;
+    vertical-align: baseline;
+    padding: 0;
+    border: 0;
+    border-radius:0;
+}
+
+/*
+ *  Shortcode Language Switcher
+ */
 .trp-language-switcher{
     position: relative;
     width: auto;
@@ -84,5 +100,21 @@
     
 }
 
+/*
+ *  Front-end Admin Bar Icon
+ */
+#wpadminbar #wp-admin-bar-trp_edit_translation .ab-icon:before {
+    content: '\f326';
+    top: 3px;
+}
 
+@media screen and ( max-width: 782px ) {
+    #wpadminbar #wp-admin-bar-trp_edit_translation > .ab-item {
+        text-indent: 0;
+    }
+
+    #wpadminbar li#wp-admin-bar-trp_edit_translation {
+        display: block;
+    }
+}
 
