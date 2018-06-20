@@ -35,7 +35,11 @@ class TRP_Language_Switcher{
 	 */
 	private function get_current_language(){
 		$language_from_url = $this->url_converter->get_lang_from_url_string();
+
 		$needed_language = $this->determine_needed_language( $language_from_url );
+
+		error_log('$needed_language ' . $needed_language);
+		error_log('language_from_url ' . $language_from_url);
 
 		if ( ( $language_from_url == null && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' ) ||
              ( $language_from_url == null && $needed_language != $this->settings['default-language'] ) ||
@@ -54,8 +58,8 @@ class TRP_Language_Switcher{
 
 	public function determine_needed_language( $lang_from_url ){
 		if ( $lang_from_url == null ){
-			if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' && isset( $this->settings['translation-languages'][0] ) ) {
-                $needed_language = $this->settings['translation-languages'][0];
+			if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' && isset( $this->settings['publish-languages'][0] ) ) {
+                $needed_language = $this->settings['publish-languages'][0];
 			}else{
 				$needed_language = $this->settings['default-language'];
 			}
@@ -70,6 +74,9 @@ class TRP_Language_Switcher{
 			return;
 		}
         global $TRP_LANGUAGE;
+		error_log('$TRP_LANGUAGE' .$TRP_LANGUAGE );
+		error_log('redirect' . $this->url_converter->get_url_for_language( $TRP_LANGUAGE, null, '' ) );
+
 		header( 'Location: ' . $this->url_converter->get_url_for_language( $TRP_LANGUAGE, null, '' ) );
 		exit;
     }
@@ -80,10 +87,11 @@ class TRP_Language_Switcher{
 	 * @param string $current_language          Current language code.
 	 */
 	public function add_cookie( $current_language ) {
-		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) || isset( $_COOKIE['trp_current_language'] ) ) {
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
 			return;
 		}
-		setcookie( 'trp_current_language', $current_language, strtotime( '+30 days' ), "/" );
+		error_log('addd_cookie' . $current_language);
+		setcookie( 'trp_language', $current_language, strtotime( '+30 days' ), "/" );
 	}
 
 	/**
