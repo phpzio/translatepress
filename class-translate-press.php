@@ -87,7 +87,7 @@ class TRP_Translate_Press{
         $this->settings = new TRP_Settings();
         $this->translation_render = new TRP_Translation_Render( $this->settings->get_settings() );
         $this->url_converter = new TRP_Url_Converter( $this->settings->get_settings() );
-        $this->language_switcher = new TRP_Language_Switcher( $this->settings->get_settings(), $this->url_converter );
+        $this->language_switcher = new TRP_Language_Switcher( $this->settings->get_settings(), $this );
         $this->query = new TRP_Query( $this->settings->get_settings() );
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings() );
         $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );

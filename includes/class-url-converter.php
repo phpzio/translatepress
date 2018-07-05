@@ -191,8 +191,8 @@ class TRP_Url_Converter {
             // If no $post_id is set we simply replace the current language root with the new language root.
             // we can't assume the URL's have / at the end so we need to untrailingslashit both $abs_home and $new_language_root
             $abs_home = trailingslashit( $this->get_abs_home() );
-
-            $current_lang_root =  untrailingslashit($abs_home . $this->get_url_slug( $TRP_LANGUAGE ));
+	        $current_url_language = $this->get_lang_from_url_string( $url );
+            $current_lang_root =  untrailingslashit($abs_home . $this->get_url_slug( $current_url_language ));
             $new_language_root =  untrailingslashit($abs_home . $this->get_url_slug( $language ) );
 
             if( $this->get_lang_from_url_string($url) === null ){
@@ -201,7 +201,7 @@ class TRP_Url_Converter {
             } else {
                 $new_url = str_replace($current_lang_root, $new_language_root, $url);
             }
-            $new_url =apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
+	        $new_url = apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
         }
 
 

@@ -11,7 +11,10 @@ class TRP_Language_Switcher{
 	/** @var TRP_Url_Converter */
     protected $url_converter;
     protected $trp_settings_object;
+	/** @var TRP_Languages */
     protected $trp_languages;
+	/** @var TRP_Translate_Press */
+    protected $trp;
 
     /**
      * TRP_Language_Switcher constructor.
@@ -19,10 +22,11 @@ class TRP_Language_Switcher{
      * @param array $settings           Settings option.
      * @param $url_converter            $TRP_Url_Converter object.
      */
-    public function __construct( $settings, $url_converter ){
+    public function __construct( $settings, $trp ){
         $this->settings = $settings;
-        $this->url_converter = $url_converter;
-        $language = $this->get_current_language();
+        $this->trp = $trp;
+        $this->url_converter = $this->trp->get_component( 'url_converter' );
+        $language = $this->get_current_language($trp);
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
         add_filter( 'get_user_option_metaboxhidden_nav-menus', array( $this, 'cpt_always_visible_in_menus' ), 10, 3 );
@@ -33,13 +37,10 @@ class TRP_Language_Switcher{
 	 *
 	 * @return string           Current language code.
 	 */
-	private function get_current_language(){
+	private function get_current_language( $trp ){
 		$language_from_url = $this->url_converter->get_lang_from_url_string();
 
-		$needed_language = $this->determine_needed_language( $language_from_url );
-
-		error_log('$needed_language ' . $needed_language);
-		error_log('language_from_url ' . $language_from_url);
+		$needed_language = $this->determine_needed_language( $language_from_url, $trp );
 
 		if ( ( $language_from_url == null && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' ) ||
              ( $language_from_url == null && $needed_language != $this->settings['default-language'] ) ||
@@ -48,6 +49,8 @@ class TRP_Language_Switcher{
 			// compatibility with Elementor preview. Do not redirect to subdir language when elementor preview is present.
 			// TODO: move to compatibility file in the future.
 			if ( ! isset( $_GET['elementor-preview'] ) ) {
+			    global $TRP_NEEDED_LANGUAGE;
+				$TRP_NEEDED_LANGUAGE = $needed_language;
 				add_filter( 'template_redirect', array( $this, 'redirect_to_correct_language' ) );
 			}
         }
@@ -56,7 +59,7 @@ class TRP_Language_Switcher{
         return $needed_language;
 	}
 
-	public function determine_needed_language( $lang_from_url ){
+	public function determine_needed_language( $lang_from_url, $trp ){
 		if ( $lang_from_url == null ){
 			if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' && isset( $this->settings['publish-languages'][0] ) ) {
                 $needed_language = $this->settings['publish-languages'][0];
@@ -66,18 +69,19 @@ class TRP_Language_Switcher{
 		}else{
 			$needed_language = $lang_from_url;
 		}
-		return apply_filters( 'trp_needed_language', $needed_language, $lang_from_url, $this->settings );
+		return apply_filters( 'trp_needed_language', $needed_language, $lang_from_url, $this->settings, $trp );
     }
 
 	public function redirect_to_correct_language(){
 		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
 			return;
 		}
-        global $TRP_LANGUAGE;
-		error_log('$TRP_LANGUAGE' .$TRP_LANGUAGE );
-		error_log('redirect' . $this->url_converter->get_url_for_language( $TRP_LANGUAGE, null, '' ) );
-
-		header( 'Location: ' . $this->url_converter->get_url_for_language( $TRP_LANGUAGE, null, '' ) );
+		global $TRP_NEEDED_LANGUAGE;
+		if ( ! $this->url_converter ){
+			$trp = TRP_Translate_Press::get_trp_instance();
+			$this->trp_languages = $trp->get_component( 'url_converter' );
+		}
+		header( 'Location: ' . $this->url_converter->get_url_for_language( $TRP_NEEDED_LANGUAGE, null, '' ) );
 		exit;
     }
 
@@ -90,7 +94,6 @@ class TRP_Language_Switcher{
 		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
 			return;
 		}
-		error_log('addd_cookie' . $current_language);
 		setcookie( 'trp_language', $current_language, strtotime( '+30 days' ), "/" );
 	}
 
