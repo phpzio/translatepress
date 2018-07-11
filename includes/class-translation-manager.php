@@ -728,6 +728,7 @@ class TRP_Translation_Manager{
             add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ) );
         }
         elseif( class_exists( 'WooCommerce' ) ){
+        	// WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
             add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ), 19 );
         }//otherwise start from the wp_head hook
         else{
@@ -737,7 +738,9 @@ class TRP_Translation_Manager{
 
     /* apply the gettext filter here */
     public function apply_gettext_filter(){
-        if( !is_admin() || $this::is_ajax_on_frontend() ) {
+	   	global $pagenow;
+	   	// Do not process gettext strings on wp-login pages. Do not process strings in admin area except for when when is_ajax_on_frontend.
+        if( ( $pagenow != 'wp-login.php' ) && ( !is_admin() || $this::is_ajax_on_frontend() ) ) {
             add_filter('gettext', array($this, 'process_gettext_strings'), 100, 3);
             add_filter('gettext_with_context', array($this, 'process_gettext_strings_with_context'), 100, 4);
             add_filter('ngettext', array($this, 'process_ngettext_strings'), 100, 5);
