@@ -33,9 +33,13 @@ class TRP_Language_Switcher{
     }
 
 	/**
-	 * Returns a valid current language code.
+     * Returns a valid current language code.
+     *
+     * Adds cookie, adds filter for redirect if necessary
+     *
+	 * @param $trp TRP_Translate_Press  TRP singleton object
 	 *
-	 * @return string           Current language code.
+	 * @return string       Language code
 	 */
 	private function get_current_language( $trp ){
 		$language_from_url = $this->url_converter->get_lang_from_url_string();
@@ -59,6 +63,14 @@ class TRP_Language_Switcher{
         return $needed_language;
 	}
 
+	/**
+     * Determine the language needed.
+     *
+	 * @param string $lang_from_url          Language code from url
+	 * @param TRP_Translate_Press $trp       TRP singleton object
+	 *
+	 * @return string Language code
+	 */
 	public function determine_needed_language( $lang_from_url, $trp ){
 		if ( $lang_from_url == null ){
 			if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' && isset( $this->settings['publish-languages'][0] ) ) {
@@ -72,6 +84,9 @@ class TRP_Language_Switcher{
 		return apply_filters( 'trp_needed_language', $needed_language, $lang_from_url, $this->settings, $trp );
     }
 
+	/**
+	 * Redirects to language stored in global $TRP_NEEDED_LANGUAGE
+	 */
 	public function redirect_to_correct_language(){
 		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
 			return;
@@ -88,13 +103,13 @@ class TRP_Language_Switcher{
 	/**
 	 * Adds cookie with language
 	 *
-	 * @param string $current_language          Current language code.
+	 * @param string $language_code          Language code to add cookie for
 	 */
-	public function add_cookie( $current_language ) {
+	public function add_cookie( $language_code ) {
 		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
 			return;
 		}
-		setcookie( 'trp_language', $current_language, strtotime( '+30 days' ), "/" );
+		setcookie( 'trp_language', $language_code, strtotime( '+30 days' ), "/" );
 	}
 
 	/**
