@@ -20,37 +20,6 @@ class TRP_Url_Converter {
     }
 
     /**
-     * Redirects to default page for default language.
-     *
-     * Only if settings option add-subdirectory-to-default-language is set to no.
-     *
-     * Hooked to template redirect.
-     */
-    public function redirect_to_default_language() {
-        global $TRP_LANGUAGE;
-        if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'no' && $TRP_LANGUAGE == $this->settings['default-language'] ) {
-            return;
-        }
-        $lang_from_url = $this->get_lang_from_url_string( $this->cur_page_url() );
-
-        // compatibility with Elementor preview. Do not redirect to subdir language when elementor preview is present.
-        // TODO: move to compatibility file in the future.
-        if( isset( $_GET['elementor-preview'] ) ){
-            return;
-        }
-
-        if ( $lang_from_url == null ) {
-        	$language_to_redirect = $this->settings['default-language'];
-	        if ( isset( $this->settings['translation-languages'][0] ) ) {
-		        $language_to_redirect = $this->settings['translation-languages'][0];
-	        }
-	        $TRP_LANGUAGE = $this->settings['default-language'];
-            header( 'Location: ' . $this->get_url_for_language( $language_to_redirect ) );
-            exit;
-        }
-    }
-
-    /**
      * Add language code as a subdirectory after home url.
      *
      * Hooked to home_url.
@@ -222,8 +191,8 @@ class TRP_Url_Converter {
             // If no $post_id is set we simply replace the current language root with the new language root.
             // we can't assume the URL's have / at the end so we need to untrailingslashit both $abs_home and $new_language_root
             $abs_home = trailingslashit( $this->get_abs_home() );
-
-            $current_lang_root =  untrailingslashit($abs_home . $this->get_url_slug( $TRP_LANGUAGE ));
+	        $current_url_language = $this->get_lang_from_url_string( $url );
+            $current_lang_root =  untrailingslashit($abs_home . $this->get_url_slug( $current_url_language ));
             $new_language_root =  untrailingslashit($abs_home . $this->get_url_slug( $language ) );
 
             if( $this->get_lang_from_url_string($url) === null ){
@@ -232,7 +201,7 @@ class TRP_Url_Converter {
             } else {
                 $new_url = str_replace($current_lang_root, $new_language_root, $url);
             }
-            $new_url =apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
+	        $new_url = apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
         }
 
 
@@ -439,6 +408,5 @@ class TRP_Url_Converter {
         else
             return $rewrite_rules;
     }
-    
 
 }

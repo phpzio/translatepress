@@ -8,9 +8,13 @@
 class TRP_Language_Switcher{
 
     protected $settings;
+	/** @var TRP_Url_Converter */
     protected $url_converter;
     protected $trp_settings_object;
+	/** @var TRP_Languages */
     protected $trp_languages;
+	/** @var TRP_Translate_Press */
+    protected $trp;
 
     /**
      * TRP_Language_Switcher constructor.
@@ -18,79 +22,139 @@ class TRP_Language_Switcher{
      * @param array $settings           Settings option.
      * @param $url_converter            $TRP_Url_Converter object.
      */
-    public function __construct( $settings, $url_converter ){
+    public function __construct( $settings, $trp ){
         $this->settings = $settings;
-        $this->url_converter = $url_converter;
-        $language = $this->get_current_language();
+        $this->trp = $trp;
+        $this->url_converter = $this->trp->get_component( 'url_converter' );
+        $language = $this->get_current_language($trp);
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = $language;
-        $this->add_cookie( $TRP_LANGUAGE );
         add_filter( 'get_user_option_metaboxhidden_nav-menus', array( $this, 'cpt_always_visible_in_menus' ), 10, 3 );
     }
 
-    /**
-     * Returns HTML for shortcode language switcher.
-     *
-     * Only shows published languages.
-     * Takes into account shortcode flags and name options.
-     * Runs an output buffer on 'partials/language-switcher-shortcode.php'.
-     *
-     * @return string                   HTML for shortcode language switcher
-     */
-    public function language_switcher(){
-        ob_start();
-
-        global $TRP_LANGUAGE;
-
-        if ( ! $this->trp_languages ){
-            $trp = TRP_Translate_Press::get_trp_instance();
-            $this->trp_languages = $trp->get_component( 'languages' );
-        }
-        $published_languages = $this->trp_languages->get_language_names( $this->settings['publish-languages'] );
-
-        $current_language = array();
-        $other_languages = array();
-
-        foreach( $published_languages as $code => $name ) {
-            if( $code == $TRP_LANGUAGE ) {
-                $current_language['code'] = $code;
-                $current_language['name'] = $name;
-            } else {
-                $other_languages[$code] = $name;
-            }
-        }
-
-	    if( ! $this->trp_settings_object ) {
-		    $trp = TRP_Translate_Press::get_trp_instance();
-		    $this->trp_settings_object = $trp->get_component( 'settings' );
-	    }
-        $ls_options = $this->trp_settings_object->get_language_switcher_options();
-        $shortcode_settings = $ls_options[$this->settings['shortcode-options']];
-
-        require TRP_PLUGIN_DIR . 'partials/language-switcher-shortcode.php';
-
-        return ob_get_clean();
-    }
-
-    /**
+	/**
      * Returns a valid current language code.
      *
-     * $_REQUEST['lang'] is prioritized over current url encoding.
-     * Returns default language if nothing is found.
+     * Adds cookie, adds filter for redirect if necessary
      *
-     * @return string           Current language code.
-     */
-    private function get_current_language(){
-        $lang_from_url = $this->url_converter->get_lang_from_url_string();
-        if ( $lang_from_url != null ){
-            return $lang_from_url;
+	 * @param $trp TRP_Translate_Press  TRP singleton object
+	 *
+	 * @return string       Language code
+	 */
+	private function get_current_language( $trp ){
+		$language_from_url = $this->url_converter->get_lang_from_url_string();
+
+		$needed_language = $this->determine_needed_language( $language_from_url, $trp );
+
+		if ( ( $language_from_url == null && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' ) ||
+             ( $language_from_url == null && $needed_language != $this->settings['default-language'] ) ||
+             ( $language_from_url != null && $needed_language != $language_from_url )
+        ){
+			// compatibility with Elementor preview. Do not redirect to subdir language when elementor preview is present.
+			// TODO: move to compatibility file in the future.
+			if ( ! isset( $_GET['elementor-preview'] ) ) {
+			    global $TRP_NEEDED_LANGUAGE;
+				$TRP_NEEDED_LANGUAGE = $needed_language;
+				add_filter( 'template_redirect', array( $this, 'redirect_to_correct_language' ) );
+			}
         }
-	    if ( $this->settings['add-subdirectory-to-default-language'] == 'yes' && isset( $this->settings['translation-languages'][0] ) ) {
-		    return $this->settings['translation-languages'][0];
-	    }else{
-		    return $this->settings['default-language'];
-        }
+
+		$this->add_cookie( $needed_language );
+        return $needed_language;
+	}
+
+	/**
+     * Determine the language needed.
+     *
+	 * @param string $lang_from_url          Language code from url
+	 * @param TRP_Translate_Press $trp       TRP singleton object
+	 *
+	 * @return string Language code
+	 */
+	public function determine_needed_language( $lang_from_url, $trp ){
+		if ( $lang_from_url == null ){
+			if ( isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' && isset( $this->settings['publish-languages'][0] ) ) {
+                $needed_language = $this->settings['publish-languages'][0];
+			}else{
+				$needed_language = $this->settings['default-language'];
+			}
+		}else{
+			$needed_language = $lang_from_url;
+		}
+		return apply_filters( 'trp_needed_language', $needed_language, $lang_from_url, $this->settings, $trp );
     }
+
+	/**
+	 * Redirects to language stored in global $TRP_NEEDED_LANGUAGE
+	 */
+	public function redirect_to_correct_language(){
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
+			return;
+		}
+		global $TRP_NEEDED_LANGUAGE;
+		if ( ! $this->url_converter ){
+			$trp = TRP_Translate_Press::get_trp_instance();
+			$this->trp_languages = $trp->get_component( 'url_converter' );
+		}
+		header( 'Location: ' . $this->url_converter->get_url_for_language( $TRP_NEEDED_LANGUAGE, null, '' ) );
+		exit;
+    }
+
+	/**
+	 * Adds cookie with language
+	 *
+	 * @param string $language_code          Language code to add cookie for
+	 */
+	public function add_cookie( $language_code ) {
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
+			return;
+		}
+		setcookie( 'trp_language', $language_code, strtotime( '+30 days' ), "/" );
+	}
+
+	/**
+	 * Returns HTML for shortcode language switcher.
+	 *
+	 * Only shows published languages.
+	 * Takes into account shortcode flags and name options.
+	 * Runs an output buffer on 'partials/language-switcher-shortcode.php'.
+	 *
+	 * @return string                   HTML for shortcode language switcher
+	 */
+	public function language_switcher(){
+		ob_start();
+
+		global $TRP_LANGUAGE;
+
+		if ( ! $this->trp_languages ){
+			$trp = TRP_Translate_Press::get_trp_instance();
+			$this->trp_languages = $trp->get_component( 'languages' );
+		}
+		$published_languages = $this->trp_languages->get_language_names( $this->settings['publish-languages'] );
+
+		$current_language = array();
+		$other_languages = array();
+
+		foreach( $published_languages as $code => $name ) {
+			if( $code == $TRP_LANGUAGE ) {
+				$current_language['code'] = $code;
+				$current_language['name'] = $name;
+			} else {
+				$other_languages[$code] = $name;
+			}
+		}
+
+		if( ! $this->trp_settings_object ) {
+			$trp = TRP_Translate_Press::get_trp_instance();
+			$this->trp_settings_object = $trp->get_component( 'settings' );
+		}
+		$ls_options = $this->trp_settings_object->get_language_switcher_options();
+		$shortcode_settings = $ls_options[$this->settings['shortcode-options']];
+
+		require TRP_PLUGIN_DIR . 'partials/language-switcher-shortcode.php';
+
+		return ob_get_clean();
+	}
 
     /**
      * Enqueue language switcher scripts and styles.
@@ -378,15 +442,5 @@ class TRP_Language_Switcher{
         return $items;
     }
 
-    /**
-     * Adds cookie with language
-     *
-     * @param string $current_language          Current language code.
-     */
-    public function add_cookie( $current_language ) {
-
-        setcookie( 'trp_current_language', $current_language, strtotime( '+30 days' ), "/" );
-
-    }
 
 }
