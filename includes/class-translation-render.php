@@ -458,9 +458,8 @@ class TRP_Translation_Render{
         /* save it as a string */
         $trpremoved = $html->save();
         /* perform preg replace on the remaining trp-gettext tags */
-        $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $trpremoved );
-        $trpremoved = preg_replace( '/(<|&lt;)(.*?)\/trp-gettext(>|&gt;)/', '', $trpremoved );
-
+	    $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $trpremoved );
+	    $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
         $html = trp_str_get_html($trpremoved, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         $no_translate_selectors = apply_filters( 'trp_no_translate_selectors', array( '#wpadminbar' ), $TRP_LANGUAGE );
