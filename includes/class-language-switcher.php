@@ -20,7 +20,7 @@ class TRP_Language_Switcher{
      * TRP_Language_Switcher constructor.
      *
      * @param array $settings           Settings option.
-     * @param $url_converter            $TRP_Url_Converter object.
+     * @param $trp TRP_Translate_Press  Trp object
      */
     public function __construct( $settings, $trp ){
         $this->settings = $settings;
@@ -59,7 +59,6 @@ class TRP_Language_Switcher{
 			}
         }
 
-		$this->add_cookie( $needed_language );
         return $needed_language;
 	}
 
