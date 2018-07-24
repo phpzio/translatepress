@@ -94,5 +94,9 @@ var trpSettingsLanguages;
 // Initialize the Translate Press Settings after jQuery is ready
 jQuery( function() {
     trpSettingsLanguages = new TRP_Settings_Language_Selector();
+
+    jQuery('#trp-default-language').on("select2:selecting", function(e) {
+        jQuery("#trp-options .warning").show('fast');
+    });
 });
 
