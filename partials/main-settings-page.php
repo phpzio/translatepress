@@ -23,7 +23,7 @@
 
                     <p class="warning" style="display: none;" >
                         <?php _e( 'WARNING. Changing the default language will invalidate existing translations.', 'translatepress-multilingual' ); ?><br/>
-                        <?php _e( 'Even changing from en_EN to en_GB, because they are treated as two different languages.', 'translatepress-multilingual' ); ?><br/>
+                        <?php _e( 'Even changing from en_US to en_GB, because they are treated as two different languages.', 'translatepress-multilingual' ); ?><br/>
                         <?php _e( 'In most cases changing the default flag is all it is needed: ', 'translatepress-multilingual' ); ?>
                         <a href="https://translatepress.com/docs/developers/replace-default-flags/"><?php _e( 'replace the default flag', 'translatepress-multilingual' ); ?></a>
                     </p>

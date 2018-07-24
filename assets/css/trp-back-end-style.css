@@ -136,4 +136,5 @@ input.trp-translation-published{
     border: 1px solid #a00;
     padding: 1rem;
     background: #fff;
+    max-width:800px;
 }
