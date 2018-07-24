@@ -239,7 +239,7 @@ class TRP_Url_Converter {
             return false;
         }
 
-        $path = untrailingslashit(ABSPATH) . str_replace($this->get_abs_home(), '', $url);
+        $path = trailingslashit(ABSPATH) . str_replace(untrailingslashit($this->get_abs_home()), '', $url);
 
         return is_file($path);
     }
