@@ -136,3 +136,7 @@ input.trp-translation-published{
     padding: 1rem;
     background: #fff;
 }
+
+.trp-settings-delimiter-border{
+    border-top: 1px solid #d9d9d9;
+}
