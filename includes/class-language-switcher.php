@@ -95,7 +95,8 @@ class TRP_Language_Switcher{
 			$trp = TRP_Translate_Press::get_trp_instance();
 			$this->trp_languages = $trp->get_component( 'url_converter' );
 		}
-		header( 'Location: ' . $this->url_converter->get_url_for_language( $TRP_NEEDED_LANGUAGE, null, '' ) );
+        $link_to_redirect = apply_filters( 'trp_link_to_redirect_to', $this->url_converter->get_url_for_language( $TRP_NEEDED_LANGUAGE, null, '' ), $TRP_NEEDED_LANGUAGE );
+		header( 'Location: ' . $link_to_redirect );
 		exit;
     }
 

@@ -185,7 +185,10 @@ class TRP_Url_Converter {
              * so we can get the correct permalink (slug and all) and add the remaining arguments that might exist.
              */
             $TRP_LANGUAGE = $language;
-            $new_url = trailingslashit(get_permalink( $post_id )) . ltrim($arguments, '/');
+            if ( !empty ( $arguments ) ){
+	            $arguments = apply_filters( 'trp_get_url_for_language_custom_arguments', '/' . ltrim($arguments, '/' ), $language, $url, $post_id );
+            }
+            $new_url = get_permalink( $post_id ) . $arguments;
             $TRP_LANGUAGE = $trp_language_copy;
         } else {
             // If no $post_id is set we simply replace the current language root with the new language root.
