@@ -35,7 +35,7 @@ class TRP_Language_Switcher{
 	/**
      * Returns a valid current language code.
      *
-     * Adds cookie, adds filter for redirect if necessary
+     * Adds filter for redirect if necessary
      *
 	 * @param $trp TRP_Translate_Press  TRP singleton object
 	 *
@@ -98,18 +98,6 @@ class TRP_Language_Switcher{
 		header( 'Location: ' . $link_to_redirect );
 		exit;
     }
-
-	/**
-	 * Adds cookie with language
-	 *
-	 * @param string $language_code          Language code to add cookie for
-	 */
-	public function add_cookie( $language_code ) {
-		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
-			return;
-		}
-		setcookie( 'trp_language', $language_code, strtotime( '+30 days' ), "/" );
-	}
 
 	/**
 	 * Returns HTML for shortcode language switcher.
