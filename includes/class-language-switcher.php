@@ -46,18 +46,17 @@ class TRP_Language_Switcher{
 
 		$needed_language = $this->determine_needed_language( $language_from_url, $trp );
 
-		if ( ( $language_from_url == null && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' ) ||
-             ( $language_from_url == null && $needed_language != $this->settings['default-language'] ) ||
-             ( $language_from_url != null && $needed_language != $language_from_url )
-        ){
-			// compatibility with Elementor preview. Do not redirect to subdir language when elementor preview is present.
-			// TODO: move to compatibility file in the future.
-			if ( ! isset( $_GET['elementor-preview'] ) ) {
-			    global $TRP_NEEDED_LANGUAGE;
-				$TRP_NEEDED_LANGUAGE = $needed_language;
-				add_filter( 'template_redirect', array( $this, 'redirect_to_correct_language' ) );
+		$allow_redirect = apply_filters( 'trp_allow_language_redirect', true, $needed_language );
+		if ( $allow_redirect ) {
+			if ( ( $language_from_url == null && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' ) ||
+			     ( $language_from_url == null && $needed_language != $this->settings['default-language'] ) ||
+			     ( $language_from_url != null && $needed_language != $language_from_url )
+			) {
+                global $TRP_NEEDED_LANGUAGE;
+                $TRP_NEEDED_LANGUAGE = $needed_language;
+                add_filter( 'template_redirect', array( $this, 'redirect_to_correct_language' ) );
 			}
-        }
+		}
 
         return $needed_language;
 	}
