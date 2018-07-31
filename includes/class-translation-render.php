@@ -677,9 +677,8 @@ class TRP_Translation_Render{
             if ( !empty($form_action)
                 && $this->settings['force-language-to-custom-links'] == 'yes'
                 && !$is_external_link
-                && $this->url_converter->get_lang_from_url_string( $form_action ) == null
                 && !$is_admin_link
-                && strpos($url, '#TRPLINKPROCESSED') === false)
+                && strpos($form_action, '#TRPLINKPROCESSED') === false)
             {
                 $row->action =  $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $form_action );
             }

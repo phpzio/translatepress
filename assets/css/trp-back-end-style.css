@@ -131,10 +131,12 @@ input.trp-translation-published{
     margin-top: 10px;
 }
 
+.warning,
 .trp-upsell-multiple-languages{
     border: 1px solid #a00;
     padding: 1rem;
     background: #fff;
+    max-width:800px;
 }
 
 .trp-settings-delimiter-border{
