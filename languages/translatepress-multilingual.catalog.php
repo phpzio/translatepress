@@ -53,6 +53,10 @@
 <?php __("Not only you are getting extra features and premium support, you also help fund the future development of TranslatePress.", "translatepress-multilingual"); ?>
 <?php __("Default Language", "translatepress-multilingual"); ?>
 <?php __("Select the original language your website was written in. ", "translatepress-multilingual"); ?>
+<?php __("WARNING. Changing the default language will invalidate existing translations.", "translatepress-multilingual"); ?>
+<?php __("Even changing from en_US to en_GB, because they are treated as two different languages.", "translatepress-multilingual"); ?>
+<?php __("In most cases changing the default flag is all it is needed: ", "translatepress-multilingual"); ?>
+<?php __("replace the default flag", "translatepress-multilingual"); ?>
 <?php __("Native language name", "translatepress-multilingual"); ?>
 <?php __("No", "translatepress-multilingual"); ?>
 <?php __("Yes", "translatepress-multilingual"); ?>

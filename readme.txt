@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.7
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,12 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.7 =
+* Added a warning when changing the default language that it will invalidate their existing translations
+* Fixed incorrect detection of the form action language parameter
+* Improved compatibility with themes and plugins that use object buffering
+* Fixed some issues with image urls
+
 = 1.2.6 =
 * Refactored determining language, redirecting and cookie adding
 * Removed leftover trp-gettext tags when WooCommerce is active on some pages

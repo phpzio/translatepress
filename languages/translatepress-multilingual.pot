@@ -232,87 +232,103 @@ msgstr ""
 msgid "Select the original language your website was written in. "
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:29
+#: ../translatepress/partials/main-settings-page.php:25
+msgid "WARNING. Changing the default language will invalidate existing translations."
+msgstr ""
+
+#: ../translatepress/partials/main-settings-page.php:26
+msgid "Even changing from en_US to en_GB, because they are treated as two different languages."
+msgstr ""
+
+#: ../translatepress/partials/main-settings-page.php:27
+msgid "In most cases changing the default flag is all it is needed: "
+msgstr ""
+
+#: ../translatepress/partials/main-settings-page.php:28
+msgid "replace the default flag"
+msgstr ""
+
+#: ../translatepress/partials/main-settings-page.php:37
 msgid "Native language name"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:32, ../translatepress/partials/main-settings-page.php:45, ../translatepress/partials/main-settings-page.php:58, ../translatepress/partials/main-settings-page.php:71
+#: ../translatepress/partials/main-settings-page.php:40, ../translatepress/partials/main-settings-page.php:53, ../translatepress/partials/main-settings-page.php:66, ../translatepress/partials/main-settings-page.php:79
 msgid "No"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:33, ../translatepress/partials/main-settings-page.php:46, ../translatepress/partials/main-settings-page.php:59, ../translatepress/partials/main-settings-page.php:72
+#: ../translatepress/partials/main-settings-page.php:41, ../translatepress/partials/main-settings-page.php:54, ../translatepress/partials/main-settings-page.php:67, ../translatepress/partials/main-settings-page.php:80
 msgid "Yes"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:36
+#: ../translatepress/partials/main-settings-page.php:44
 msgid "Select Yes if you want languages to display in their native names. Otherwise, they will be displayed in English."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:42
+#: ../translatepress/partials/main-settings-page.php:50
 msgid "Use subdirectory for default language"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:49
+#: ../translatepress/partials/main-settings-page.php:57
 msgid "Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the \"All Languages\" list."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:55
+#: ../translatepress/partials/main-settings-page.php:63
 msgid "Force language in custom links"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:62
+#: ../translatepress/partials/main-settings-page.php:70
 msgid "Select Yes if you want to force custom links without language encoding to keep the currently selected language."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:68
+#: ../translatepress/partials/main-settings-page.php:76
 msgid "Google Translate"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:75
+#: ../translatepress/partials/main-settings-page.php:83
 msgid "Enable or disable the automatic translation of the site with Google Translate. Only untranslated strings will receive a translation.<br>You can later edit these automatic translations.<br>Note: Not all languages support automatic translation. Please consult the <a href=\"https://cloud.google.com/translate/docs/languages\" target=\"_blank\" title=\"Automatic translation supported languages.\">supported languages list</a>. "
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:81
+#: ../translatepress/partials/main-settings-page.php:89
 msgid "Google Translate API Key"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:84
+#: ../translatepress/partials/main-settings-page.php:92
 msgid "Test api key."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:86
+#: ../translatepress/partials/main-settings-page.php:94
 msgid "Visit this <a href=\"https://support.google.com/cloud/answer/6158862\" target=\"_blank\">link</a> to see how you can set up an API key. "
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:93
+#: ../translatepress/partials/main-settings-page.php:101
 msgid "Language Switcher"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:96
+#: ../translatepress/partials/main-settings-page.php:104
 msgid "Shortcode "
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:101
+#: ../translatepress/partials/main-settings-page.php:109
 msgid "Use shortcode on any page or widget."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:105
+#: ../translatepress/partials/main-settings-page.php:113
 msgid "Menu item"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:113
+#: ../translatepress/partials/main-settings-page.php:121
 msgid "Go to  %1$s Appearance -> Menus%2$s to add Language Switcher Languages in any menu."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:114
+#: ../translatepress/partials/main-settings-page.php:122
 msgid "Learn more in our documentation."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:118
+#: ../translatepress/partials/main-settings-page.php:126
 msgid "Floating language selection"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:123
+#: ../translatepress/partials/main-settings-page.php:131
 msgid "Have a floating dropdown following the user on every page."
 msgstr ""
 
