@@ -48,6 +48,10 @@ function TRP_Settings_Language_Selector() {
         new_option.find( '.select2-container' ).remove();
         var select = new_option.find( 'select.trp-translation-language' );
         select.removeAttr( 'disabled' );
+        select.find( 'option' ).each(function(index, el){
+            el.text = el.text.replace('Default: ', '');
+        })
+
         select.val( new_language );
         select.select2();
 
