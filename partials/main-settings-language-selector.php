@@ -1,7 +1,7 @@
 <tr>
     <th scope="row"> <?php _e( 'All Languages', 'translatepress-multilingual' ) ?> </th>
     <td>
-        <table id="trp-languages-table">
+        <table id="trp-languages-table" class="trp-language-selector-limited">
             <thead>
             <tr>
                 <th colspan="2"><?php _e( 'Language', 'translatepress-multilingual' ); ?></th>
@@ -11,25 +11,7 @@
             <tbody id="trp-sortable-languages">
 
             <?php
-
-            // we should always have at least two languages in free version.
-            // edge case when enable multiple language addon, delete all languages and then disable multiple language addon. The free version won't be able to have two languages.
-            if( count($this->settings['translation-languages']) < 2 )
-                $this->settings['translation-languages'][] = '';
-
-            // we should force only two languages in the free version
-            $translation_languages = array();
-            foreach ($this->settings['translation-languages'] as $lang ){
-                if ( ( count($translation_languages) == 0 ) && ( $lang != $this->settings['default-language'] ) ){
-                    $translation_languages[] = $lang;
-                } elseif( $lang == $this->settings['default-language']) {
-                    $translation_languages[] = $lang;
-                } elseif( in_array($this->settings['default-language'], $translation_languages ) && count($translation_languages) == 1 ){
-                    $translation_languages[] = $lang;
-                }
-            }
-
-            foreach ($translation_languages as $selected_language_code ){
+            foreach ( $this->settings['translation-languages'] as $selected_language_code ){
                 $default_language = ( $selected_language_code == $this->settings['default-language'] );?>
                 <tr class="trp-language">
                     <td><span class="trp-sortable-handle"></span></td>
@@ -50,6 +32,9 @@
                     </td>
                     <td>
                         <input class="trp-language-slug" name="trp_settings[url-slugs][<?php echo $selected_language_code ?>]" type="text" style="text-transform: lowercase;" value="<?php echo $this->url_converter->get_url_slug( $selected_language_code, false ); ?>">
+                    </td>
+                    <td>
+                        <a class="trp-remove-language" style=" <?php echo ( $default_language ) ? 'display:none' : '' ?>" data-confirm-message="<?php _e( 'Are you sure you want to remove this language?', TRP_PLUGIN_SLUG ); ?>"><?php _e( 'Remove', TRP_PLUGIN_SLUG ); ?></a>
                     </td>
                 </tr>
             <?php }?>

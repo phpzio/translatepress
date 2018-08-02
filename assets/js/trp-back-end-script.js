@@ -28,7 +28,50 @@ function TRP_Settings_Language_Selector() {
     };
 
     this.add_language = function(){
-        jQuery(".trp-upsell-multiple-languages").show('fast');
+        var selected_language = jQuery( '#trp-select-language' );
+        var new_language = selected_language.val();
+        if ( new_language == "" ){
+            return;
+        }
+
+        if (jQuery( "#trp-languages-table .trp-language" ).length >= 2 ){
+            jQuery(".trp-upsell-multiple-languages").show('fast');
+            return;
+        }
+
+        selected_language.val( '' ).trigger( 'change' );
+
+        var new_option = jQuery( '.trp-language' ).first().clone();
+        new_option = jQuery( new_option );
+
+        new_option.find( '.trp-hidden-default-language' ).remove();
+        new_option.find( '.select2-container' ).remove();
+        var select = new_option.find( 'select.trp-translation-language' );
+        select.removeAttr( 'disabled' );
+        select.val( new_language );
+        select.select2();
+
+        var checkbox = new_option.find( 'input.trp-translation-published' );
+        checkbox.removeAttr( 'disabled' );
+        checkbox.val( new_language );
+
+        var url_slug = new_option.find( 'input.trp-language-slug' );
+        url_slug.val( _this.get_default_url_slug( new_language ) );
+        url_slug.attr('name', 'trp_settings[url-slugs][' + new_language + ']' );
+
+        var remove = new_option.find( '.trp-remove-language' ).toggle();
+
+        new_option = jQuery( '#trp-sortable-languages' ).append( new_option );
+        new_option.find( '.trp-remove-language' ).last().click( _this.remove_language );
+
+    };
+
+    this.remove_language = function( element ){
+        var message = jQuery( element.target ).attr( 'data-confirm-message' );
+        var confirmed = confirm( message );
+        if ( confirmed ) {
+            jQuery ( element.target ).parent().parent().remove();
+        }
     };
 
     this.update_default_language = function(){
@@ -76,11 +119,17 @@ function TRP_Settings_Language_Selector() {
 
     this.initialize = function () {
         this.initialize_select2();
+
+        if ( !jQuery( '.trp-language-selector-limited' ).length ){
+            return;
+        }
+
         duplicate_url_error_message = trp_url_slugs_info['error_message_duplicate_slugs'];
         iso_codes = trp_url_slugs_info['iso_codes'];
 
         jQuery( '#trp-sortable-languages' ).sortable({ handle: '.trp-sortable-handle' });
         jQuery( '#trp-add-language' ).click( _this.add_language );
+        jQuery( '.trp-remove-language' ).click( _this.remove_language );
         jQuery( '#trp-default-language' ).on( 'change', _this.update_default_language );
         jQuery( "form[action='options.php']").on ( 'submit', _this.check_unique_url_slugs );
         jQuery( '#trp-languages-table' ).on( 'change', '.trp-translation-language', _this.update_url_slug_and_status );

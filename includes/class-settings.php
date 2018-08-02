@@ -251,8 +251,8 @@ class TRP_Settings{
         }
         $default_settings = array(
             'default-language'                      => $default,
-            'translation-languages'                 => array( $default, '' ),
-            'publish-languages'                     => array( $default, '' ),
+            'translation-languages'                 => array( $default ),
+            'publish-languages'                     => array( $default ),
             'native_or_english_name'                => 'english_name',
             'add-subdirectory-to-default-language'  => 'no',
             'force-language-to-custom-links'        => 'yes',
