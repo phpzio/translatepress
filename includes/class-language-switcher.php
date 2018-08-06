@@ -20,7 +20,7 @@ class TRP_Language_Switcher{
      * TRP_Language_Switcher constructor.
      *
      * @param array $settings           Settings option.
-     * @param $url_converter            $TRP_Url_Converter object.
+     * @param $trp TRP_Translate_Press  Trp object
      */
     public function __construct( $settings, $trp ){
         $this->settings = $settings;
@@ -35,7 +35,7 @@ class TRP_Language_Switcher{
 	/**
      * Returns a valid current language code.
      *
-     * Adds cookie, adds filter for redirect if necessary
+     * Adds filter for redirect if necessary
      *
 	 * @param $trp TRP_Translate_Press  TRP singleton object
 	 *
@@ -46,20 +46,18 @@ class TRP_Language_Switcher{
 
 		$needed_language = $this->determine_needed_language( $language_from_url, $trp );
 
-		if ( ( $language_from_url == null && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' ) ||
-             ( $language_from_url == null && $needed_language != $this->settings['default-language'] ) ||
-             ( $language_from_url != null && $needed_language != $language_from_url )
-        ){
-			// compatibility with Elementor preview. Do not redirect to subdir language when elementor preview is present.
-			// TODO: move to compatibility file in the future.
-			if ( ! isset( $_GET['elementor-preview'] ) ) {
-			    global $TRP_NEEDED_LANGUAGE;
-				$TRP_NEEDED_LANGUAGE = $needed_language;
-				add_filter( 'template_redirect', array( $this, 'redirect_to_correct_language' ) );
+		$allow_redirect = apply_filters( 'trp_allow_language_redirect', true, $needed_language );
+		if ( $allow_redirect ) {
+			if ( ( $language_from_url == null && isset( $this->settings['add-subdirectory-to-default-language'] ) && $this->settings['add-subdirectory-to-default-language'] == 'yes' ) ||
+			     ( $language_from_url == null && $needed_language != $this->settings['default-language'] ) ||
+			     ( $language_from_url != null && $needed_language != $language_from_url )
+			) {
+                global $TRP_NEEDED_LANGUAGE;
+                $TRP_NEEDED_LANGUAGE = $needed_language;
+                add_filter( 'template_redirect', array( $this, 'redirect_to_correct_language' ) );
 			}
-        }
+		}
 
-		$this->add_cookie( $needed_language );
         return $needed_language;
 	}
 
@@ -96,21 +94,10 @@ class TRP_Language_Switcher{
 			$trp = TRP_Translate_Press::get_trp_instance();
 			$this->trp_languages = $trp->get_component( 'url_converter' );
 		}
-		header( 'Location: ' . $this->url_converter->get_url_for_language( $TRP_NEEDED_LANGUAGE, null, '' ) );
+        $link_to_redirect = apply_filters( 'trp_link_to_redirect_to', $this->url_converter->get_url_for_language( $TRP_NEEDED_LANGUAGE, null, '' ), $TRP_NEEDED_LANGUAGE );
+		header( 'Location: ' . $link_to_redirect );
 		exit;
     }
-
-	/**
-	 * Adds cookie with language
-	 *
-	 * @param string $language_code          Language code to add cookie for
-	 */
-	public function add_cookie( $language_code ) {
-		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
-			return;
-		}
-		setcookie( 'trp_language', $language_code, strtotime( '+30 days' ), "/" );
-	}
 
 	/**
 	 * Returns HTML for shortcode language switcher.

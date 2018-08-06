@@ -272,7 +272,6 @@ class TRP_Settings{
                     $settings_option[$key_default_setting] = $value_default_setting;
                 }
             }
-            $settings_option = $this->check_settings_option( $settings_option, $default_settings );
         }
         $this->settings = $settings_option;
     }
@@ -283,7 +282,7 @@ class TRP_Settings{
      * @param string $hook          Admin page.
      */
     public function enqueue_scripts_and_styles( $hook ) {
-        if ( $hook == 'settings_page_translate-press' || $hook == 'settings_page_trp_license_key' ) {
+        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_license_key' || $hook == 'admin_page_trp_addons_page' ) {
             wp_enqueue_style(
                 'trp-settings-style',
                 TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css',
@@ -323,18 +322,6 @@ class TRP_Settings{
         $selected_language_code = '';
 
         require_once TRP_PLUGIN_DIR . 'partials/main-settings-language-selector.php';
-    }
-
-    /**
-     * Validate settings option.
-     *
-     * @deprecated
-     * @param array $settings               Settings option.
-     * @param array $default_settings       Default settings option.
-     * @return array                        Validated settings option.
-     */
-    public function check_settings_option( $settings, $default_settings ){
-            return $settings;
     }
 
     /**

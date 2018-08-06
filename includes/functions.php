@@ -154,3 +154,23 @@ function trp_sanitize_string( $filtered ){
 
 	return $filtered;
 }
+
+
+
+/** Compatibility functions */
+
+/**
+ * Do not redirect when elementor preview is present
+ *
+ * @param $allow_redirect
+ *
+ * @return bool
+ */
+function trp_elementor_compatibility( $allow_redirect ){
+	// compatibility with Elementor preview. Do not redirect to subdir language when elementor preview is present.
+	if ( isset( $_GET['elementor-preview'] ) ) {
+		return false;
+	}
+	return $allow_redirect;
+}
+add_filter( 'trp_allow_language_redirect', 'trp_elementor_compatibility' );
