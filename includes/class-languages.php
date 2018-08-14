@@ -11,6 +11,7 @@ class TRP_Languages{
 	protected $wp_languages;
 	protected $wp_languages_backup = array();
 	protected $settings;
+	protected $is_admin_request;
 
 
     /**
@@ -36,7 +37,17 @@ class TRP_Languages{
 	 * @return mixed
 	 */
 	public function change_locale( $locale ){
-		global $TRP_LANGUAGE;
+        if ( !$this->is_admin_request ){
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $trp_is_admin_request = $trp->get_component( 'url_converter' );
+            $this->is_admin_request= $trp_is_admin_request->is_admin_request();
+        }
+
+		if ( $this->is_admin_request )
+		    return $locale;
+
+
+	    global $TRP_LANGUAGE;
 		if( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ){
 			$locale = $TRP_LANGUAGE;
 		}

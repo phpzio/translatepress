@@ -165,7 +165,7 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'widget_text', null, 'shortcode_unautop', 11 );
 
         /* handle dynamic texts with gettext */
-        $this->loader->add_filter( 'locale', $this->languages, 'change_locale' );        
+        $this->loader->add_filter( 'locale', $this->languages, 'change_locale' );
         
         $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global' );        
         $this->loader->add_action( 'admin_init', $this->translation_manager, 'create_gettext_translated_global' );
