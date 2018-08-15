@@ -733,6 +733,10 @@ class TRP_Translation_Render{
      */
     public function maybe_is_local_url( $url ){
 
+        if ( apply_filters('disable_maybe_is_local_url', false) ){
+            return $url;
+        }
+
         // Abort if parameter URL is empty
         if( empty($url) ) {
             return $url;
