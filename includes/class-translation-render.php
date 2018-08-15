@@ -645,6 +645,9 @@ class TRP_Translation_Render{
         // force custom links to have the correct language
         foreach( $html->find('a[href!="#"]') as $a_href)  {
             $url = $a_href->href;
+
+            $url = $this->maybe_is_local_url($url);
+
             $is_external_link = $this->is_external_link( $url );
             $is_admin_link = $this->is_admin_link($url);
 
@@ -721,7 +724,47 @@ class TRP_Translation_Render{
             return true;
         }
     }
+    /**
+     * Checks to see if the user didn't incorrectly formated a url that's different from the home_url
+     * Takes into account http, https, www and all the possible combinations between them.
+     *
+     * @param string $url           Url.
+     * @return string               Correct URL that's the same structure as home_url
+     */
+    public function maybe_is_local_url( $url ){
 
+        // Abort if parameter URL is empty
+        if( empty($url) ) {
+            return $url;
+        }
+        if ( strpos( $url, '#' ) === 0 || strpos( $url, '/' ) === 0){
+            return $url;
+        }
+
+        // Parse home URL and parameter URL
+        $link_url = parse_url( $url );
+        $home_url = parse_url( home_url() );
+
+        // Decide on target
+        if( !isset ($link_url['host'] ) || $link_url['host'] == $home_url['host'] ) {
+            // Is an internal link
+            return $url;
+        } else {
+
+            // test out possible local urls that the user might have mistyped
+            $valid_local_prefix = array('http://', 'https://', 'http://www.', 'https://www.');
+            foreach ($valid_local_prefix as $prefix){
+                foreach ($valid_local_prefix as $replacement_prefix){
+                    if( str_replace($prefix, $replacement_prefix, $link_url['scheme'] . '://' . $link_url['host']) == $home_url['scheme'] . '://' .$home_url['host'] ){
+                        return str_replace($prefix, $replacement_prefix, $url);
+                    }
+                }
+            }
+
+            // Is an external link
+            return $url;
+        }
+    }
     /**
      * Whether given url links to a different language than the current one.
      *
