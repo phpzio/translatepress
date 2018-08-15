@@ -38,6 +38,7 @@
 </head>
 <body>
     <div id="trp-editor">
+        <?php do_action( 'trp_translation_manager_before_controls' ); ?>
         <div id="trp-controls">
             <div class="trp-controls-container">
                 <div id="trp-close-save">
@@ -50,6 +51,7 @@
                         <button id="trp-save" type="submit" class="button-primary trp-save-string"><?php _e( 'Save translation', 'translatepress-multilingual' ); ?></button>
                     </div>
                 </div>
+                <?php do_action( 'trp_translation_manager_before_strings' ); ?>
                 <div class="trp-controls-section">
                     <div class="trp-controls-section-content">
                         <form id="trp-language-switch-form" action="" method="GET">
@@ -97,6 +99,9 @@
                     <br class="clear">
 
                 </div>
+
+                <?php do_action( 'trp_translation_manager_before_translations' ); ?>
+
                 <div class="trp-controls-section">
                     <div id="trp-translation-section" class="trp-controls-section-content">
                         <div id="trp-unsaved-changes-warning-message" style="display:none"><?php _e( 'You have unsaved changes!', 'translatepress-multilingual' );?></div>
@@ -133,6 +138,7 @@
                     </div>
                 </div>
 
+                <?php do_action( 'trp_translation_manager_after_translations' ); ?>
 
                 <?php if( count( $trp_settings['translation-languages'] ) == 1 ) { ?>
                 <div class="trp-controls-section">
@@ -169,7 +175,7 @@
                 <iframe id="trp-preview-iframe" onload="trpEditor.initialize();" src="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>" width="100%" height="100%"></iframe>
         </div>
     </div>
-
+    do_action( 'trp_translation_manager_footer' );
 </body>
 </html>
 
