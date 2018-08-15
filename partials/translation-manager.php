@@ -175,7 +175,7 @@
                 <iframe id="trp-preview-iframe" onload="trpEditor.initialize();" src="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>" width="100%" height="100%"></iframe>
         </div>
     </div>
-    do_action( 'trp_translation_manager_footer' );
+    <?php do_action( 'trp_translation_manager_footer' ); ?>
 </body>
 </html>
 
