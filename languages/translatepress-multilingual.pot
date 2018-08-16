@@ -17,27 +17,31 @@ msgstr ""
 msgid "Error! Duplicate Url slug values."
 msgstr ""
 
-#: class-navigation-based-on-language.php:85
+#: ../tp-add-on-navigation-based-on-language/class-navigation-based-on-language.php:85
 msgid "Limit this menu item to the following languages"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
+#: ../tp-add-on-seo-pack/class-seo-pack.php:154
+msgid "The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when you submit the sitemap to Google."
+msgstr ""
+
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
 msgid "TranslatePress Settings"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, partials/license-settings-page.php:10, ../tp-add-on-seo-pack/partials/license-settings-page.php:10, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:10
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:10, ../tp-add-on-seo-pack/partials/license-settings-page.php:10, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:10
 msgid "License Key"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, partials/license-settings-page.php:15, ../tp-add-on-seo-pack/partials/license-settings-page.php:15, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:15
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:15, ../tp-add-on-seo-pack/partials/license-settings-page.php:15, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:15
 msgid "Enter your license key."
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, partials/license-settings-page.php:22, partials/license-settings-page.php:31, ../tp-add-on-seo-pack/partials/license-settings-page.php:22, ../tp-add-on-seo-pack/partials/license-settings-page.php:31, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:22, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:31
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:22, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:31, ../tp-add-on-seo-pack/partials/license-settings-page.php:22, ../tp-add-on-seo-pack/partials/license-settings-page.php:31, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:22, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:31
 msgid "Activate License"
 msgstr ""
 
-#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, partials/license-settings-page.php:28, ../tp-add-on-seo-pack/partials/license-settings-page.php:28, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:28
+#: ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:28, ../tp-add-on-seo-pack/partials/license-settings-page.php:28, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:28
 msgid "Deactivate License"
 msgstr ""
 
@@ -65,11 +69,11 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:46, ../translatepress/partials/main-settings-language-selector.php:38, ../translatepress/partials/main-settings-language-selector.php:60
+#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:46, ../translatepress/partials/main-settings-language-selector.php:20, ../translatepress/partials/main-settings-language-selector.php:45
 msgid "Choose..."
 msgstr ""
 
-#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:53, ../translatepress/partials/main-settings-language-selector.php:67
+#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:53, ../translatepress/partials/main-settings-language-selector.php:52
 msgid "Add"
 msgstr ""
 
@@ -109,23 +113,23 @@ msgstr ""
 msgid "Only Flags"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:351
+#: ../translatepress/includes/class-settings.php:338
 msgid "Current Language"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:392
+#: ../translatepress/includes/class-settings.php:379
 msgid "General"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:397, ../translatepress/includes/class-translation-manager.php:626
+#: ../translatepress/includes/class-settings.php:384, ../translatepress/includes/class-translation-manager.php:626
 msgid "Translate Site"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:405
+#: ../translatepress/includes/class-settings.php:392
 msgid "License"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:411
+#: ../translatepress/includes/class-settings.php:398
 msgid "Addons"
 msgstr ""
 
@@ -212,15 +216,15 @@ msgstr ""
 msgid "All Languages"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-language-selector.php:71
+#: ../translatepress/partials/main-settings-language-selector.php:56
 msgid "Select the language you wish to make your website available in."
 msgstr ""
 
-#: ../translatepress/partials/main-settings-language-selector.php:77
+#: ../translatepress/partials/main-settings-language-selector.php:62
 msgid "To add <strong>more then two languages</strong> and support for SEO Title, Description, Slug and more checkout <a href=\"%s\" class=\"button button-primary\" target=\"_blank\" title=\"TranslatePress Pro\">TranslatePress PRO</a>"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-language-selector.php:78
+#: ../translatepress/partials/main-settings-language-selector.php:63
 msgid "Not only you are getting extra features and premium support, you also help fund the future development of TranslatePress."
 msgstr ""
 
@@ -348,111 +352,111 @@ msgstr ""
 msgid "Entire Response From wp_remote_get():"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:46
+#: ../translatepress/partials/translation-manager.php:47
 msgid "Saved!"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:50
+#: ../translatepress/partials/translation-manager.php:51
 msgid "Save translation"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:64
+#: ../translatepress/partials/translation-manager.php:66
 msgid "Select string to translate..."
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:67
+#: ../translatepress/partials/translation-manager.php:69
 msgid "Gettext strings"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:72
+#: ../translatepress/partials/translation-manager.php:74
 msgid "Previous"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:73
+#: ../translatepress/partials/translation-manager.php:75
 msgid "Next"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:77
+#: ../translatepress/partials/translation-manager.php:79
 msgid "View as"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:80
+#: ../translatepress/partials/translation-manager.php:82
 msgid "Current User"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:80
+#: ../translatepress/partials/translation-manager.php:82
 msgid "Logged Out"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:91
+#: ../translatepress/partials/translation-manager.php:93
 msgid "Available in our Pro Versions"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:102
+#: ../translatepress/partials/translation-manager.php:107
 msgid "You have unsaved changes!"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:107
+#: ../translatepress/partials/translation-manager.php:112
 msgid "Original String"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:113, ../translatepress/partials/translation-manager.php:122
+#: ../translatepress/partials/translation-manager.php:118, ../translatepress/partials/translation-manager.php:127
 msgid "To %s"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:113, ../translatepress/partials/translation-manager.php:114
+#: ../translatepress/partials/translation-manager.php:118, ../translatepress/partials/translation-manager.php:119
 msgid "From %s"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:117, ../translatepress/partials/translation-manager.php:124
+#: ../translatepress/partials/translation-manager.php:122, ../translatepress/partials/translation-manager.php:129
 msgid "Discard changes"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:127
+#: ../translatepress/partials/translation-manager.php:132
 msgid "Other languages"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:140
+#: ../translatepress/partials/translation-manager.php:146
 msgid "You can add a new language from <a href=\"%s\">Settings->TranslatePress</a>"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:141
+#: ../translatepress/partials/translation-manager.php:147
 msgid "However, you can still use TranslatePress to <strong style=\"background: #f5fb9d;\">modify gettext strings</strong> available in your page."
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:142
+#: ../translatepress/partials/translation-manager.php:148
 msgid "Strings that are user created can't be modified, only those from themes and plugins."
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:153
+#: ../translatepress/partials/translation-manager.php:159
 msgid "Your Website <br/> Multiple Languages"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:155
+#: ../translatepress/partials/translation-manager.php:161
 msgid "Support for 221 Languages"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:156
+#: ../translatepress/partials/translation-manager.php:162
 msgid "Translate SEO Title, Description, Slug"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:157
+#: ../translatepress/partials/translation-manager.php:163
 msgid "Translate Facebook Tags"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:158
+#: ../translatepress/partials/translation-manager.php:164
 msgid "Create Translator Accounts"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:159
+#: ../translatepress/partials/translation-manager.php:165
 msgid "Publish when the translation is done"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:161
+#: ../translatepress/partials/translation-manager.php:167
 msgid "Supported By Real People"
 msgstr ""
 
-#: ../translatepress/partials/translation-manager.php:162
+#: ../translatepress/partials/translation-manager.php:168
 msgid "Learn More"
 msgstr ""
 

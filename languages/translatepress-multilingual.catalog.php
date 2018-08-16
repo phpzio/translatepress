@@ -1,6 +1,7 @@
 <?php __("", "translatepress-multilingual"); ?>
 <?php __("Error! Duplicate Url slug values.", "translatepress-multilingual"); ?>
 <?php __("Limit this menu item to the following languages", "translatepress-multilingual"); ?>
+<?php __("The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when you submit the sitemap to Google.", "translatepress-multilingual"); ?>
 <?php __("TranslatePress Settings", "translatepress-multilingual"); ?>
 <?php __("License Key", "translatepress-multilingual"); ?>
 <?php __("Enter your license key.", "translatepress-multilingual"); ?>

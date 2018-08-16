@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 4.9.7
-Stable tag: 1.2.7
+Tested up to: 4.9.8
+Stable tag: 1.2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,15 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.2.8 =
+* Added a lot of hooks in the translation manager interface so other people can insert new content there.
+* We now take into account the presence of www or lack of it in custom links that might be local
+* We now make sure we're not changing the locale in the backend if the language order is different.
+* Fixed issue with incorrect language adding in the backend that caused notices in the front-end
+* Removed obsolete function add_cookie
+* Fixed trailingslashit over get_permalink in url-converter
+* Removed adding cookie from php. Fixed enqueue_styles on license and add-ons tabs. Removed deprecated function.
+
 = 1.2.7 =
 * Added a warning when changing the default language that it will invalidate their existing translations
 * Fixed incorrect detection of the form action language parameter
