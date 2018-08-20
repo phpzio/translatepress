@@ -903,7 +903,7 @@ class TRP_Translation_Manager{
                         $callstack_function['function'] == 'wp_get_document_title' ||
                         $callstack_function['function'] == 'wp_title' ||
                         $callstack_function['function'] == 'wptexturize' ||
-                        strpos($callstack_function['function'], 'wp_remote_') == 0 // if it begins with wp_remote_ don't process gettext fields.
+                        strpos($callstack_function['function'], 'wp_remote_') === 0 // if it begins with wp_remote_ don't process gettext fields.
                     ) {
                         return $translation;
                     }
