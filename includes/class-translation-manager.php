@@ -753,13 +753,34 @@ class TRP_Translation_Manager{
      * @return bool
      */
     static function is_ajax_on_frontend(){
+        $trp = TRP_Translate_Press::get_trp_instance();
+        $url_converter = $trp->get_component("url_converter");
+
         //check here for wp ajax or woocommerce ajax
         if( ( defined('DOING_AJAX') && DOING_AJAX ) || ( defined('WC_DOING_AJAX') && WC_DOING_AJAX ) ){
             $referer = '';
-            if ( ! empty( $_REQUEST['_wp_http_referer'] ) )
-                $referer = wp_unslash( esc_url_raw( $_REQUEST['_wp_http_referer'] ) );
-            elseif ( ! empty( $_SERVER['HTTP_REFERER'] ) )
+            if ( ! empty( $_REQUEST['_wp_http_referer'] ) ){
+                // this one is actually REQUEST_URI from the previous page. It's set by the wp_nonce_field() and wp_referer_field()
+                // confusingly enough, wp_get_referer() basically returns $_SERVER['REQUEST_URL'] from the prev page (not a full URL) or
+                // $_SERVER['HTTP_REFERER'] that's setup by the client/browser as a full URL (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referer)
+                $referer_uri = wp_unslash( esc_url_raw( $_REQUEST['_wp_http_referer'] ) );
+                $req_uri = $referer_uri;
+
+                $home_path = trim( parse_url( $url_converter->get_abs_home(), PHP_URL_PATH ), '/' );
+                $home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
+
+                // Trim path info from the end and the leading home path from the front.
+                $req_uri = ltrim($req_uri, '/');
+                $req_uri = preg_replace( $home_path_regex, '', $req_uri );
+                $req_uri = trim($url_converter->get_abs_home(), '/') . '/' . ltrim( $req_uri, '/' );
+
+                $referer = $req_uri;
+
+            } elseif ( ! empty( $_SERVER['HTTP_REFERER'] ) ) {
+                // this one is an actual URL that the browser sets.
                 $referer = wp_unslash( esc_url_raw( $_SERVER['HTTP_REFERER'] ) );
+
+            }
 
             //if the request did not come from the admin set propper variables for the request (being processed in ajax they got lost) and return true
             if( ( strpos( $referer, admin_url() ) === false ) ){
