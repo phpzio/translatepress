@@ -923,14 +923,18 @@ class TRP_Translation_Manager{
                         $callstack_function['function'] == 'get_bloginfo' ||
                         $callstack_function['function'] == 'wp_get_document_title' ||
                         $callstack_function['function'] == 'wp_title' ||
-                        $callstack_function['function'] == 'wptexturize' ||
-                        strpos($callstack_function['function'], 'wp_remote_') === 0 // if it begins with wp_remote_ don't process gettext fields.
+                        $callstack_function['function'] == 'wptexturize'
                     ) {
                         return $translation;
                     }
-                    
+
                     /* make sure we don't touch the woocommerce permalink rewrite slugs that are translated */
                     if( $callstack_function['function'] == 'wc_get_permalink_structure' ){
+                        return $translation;
+                    }
+
+                    /* make sure we don't touch the woocommerce process_payment function in WC_Gateway_Stripe. It does a wp_remote_post() call to stripe with localized parameters */
+                    if( $callstack_function['function'] == 'process_payment' && $callstack_function['class'] == 'WC_Gateway_Stripe' ){
                         return $translation;
                     }
 
