@@ -4,7 +4,7 @@ var gulp = require('gulp'),
     git = require('gulp-git');
 
 var addons = [ 'tp-add-on-browse-as-other-roles', 'tp-add-on-extra-languages', 'tp-add-on-language-by-get-parameter', 'tp-add-on-navigation-based-on-language',
-    'tp-add-on-seo-pack', 'trp-add-on-translator-accounts-add-on' ];
+    'tp-add-on-seo-pack', 'trp-add-on-translator-accounts-add-on', 'tp-add-on-automatic-language-detection' ];
 
 
 /* create a pot file from the main plugin and all the addons */
