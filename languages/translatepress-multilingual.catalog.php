@@ -2,11 +2,18 @@
 <?php __("Error! Duplicate Url slug values.", "translatepress-multilingual"); ?>
 <?php __("Limit this menu item to the following languages", "translatepress-multilingual"); ?>
 <?php __("The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when you submit the sitemap to Google.", "translatepress-multilingual"); ?>
+<?php __("First by browser language, then IP address (recommended)", "translatepress-multilingual"); ?>
+<?php __("First by IP address, then browser language", "translatepress-multilingual"); ?>
+<?php __("Only by browser language", "translatepress-multilingual"); ?>
+<?php __("Only by IP address", "translatepress-multilingual"); ?>
+<?php __("<div class=\"warning\">WARNING. Cannot determine your language preference based on your current IP.<br>This is most likely because the website is on a local environment.</div>", "translatepress-multilingual"); ?>
 <?php __("TranslatePress Settings", "translatepress-multilingual"); ?>
 <?php __("License Key", "translatepress-multilingual"); ?>
 <?php __("Enter your license key.", "translatepress-multilingual"); ?>
 <?php __("Activate License", "translatepress-multilingual"); ?>
 <?php __("Deactivate License", "translatepress-multilingual"); ?>
+<?php __("Method of language detection", "translatepress-multilingual"); ?>
+<?php __("Select how the language should be detected for first time visitors.<br>The visitor's last displayed language will be remembered through cookies.", "translatepress-multilingual"); ?>
 <?php __("Translation Languages", "translatepress-multilingual"); ?>
 <?php __("Language", "translatepress-multilingual"); ?>
 <?php __("Slug", "translatepress-multilingual"); ?>
@@ -18,7 +25,7 @@
 <?php __("Select the languages you wish to make your website available in.", "translatepress-multilingual"); ?>
 <?php __("You are not using a permalink structure! Please <a href=\"%s\">enable</a> one or install our <a href=\"%s\">\"Language by GET parameter\"</a> addon so TranslatePress can function properly.", "translatepress-multilingual"); ?>
 <?php __("Dismiss this notice.", "translatepress-multilingual"); ?>
-<?php __("You can now translate several strings at once by merging them together. Find out more about these translation blocks in <a href=\"https://translatepress.com/docs/translation-editor/#translation-blocks\" >our documentation.</a>.", "translatepress-multilingual"); ?>
+<?php __("Redirect users to their preferred language based on their browser language or IP address using our new <a href=\"https://translatepress.com/docs/addons/automatic-user-language-detection/\" >Automatic User Language Detection Add-on</a>.", "translatepress-multilingual"); ?>
 <?php __("Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Short Language Names", "translatepress-multilingual"); ?>
 <?php __("Flags with Full Language Names", "translatepress-multilingual"); ?>
