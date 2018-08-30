@@ -184,8 +184,9 @@ class TRP_Translate_Press{
         /* define an update hook here */
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates', 10 );
 
-        $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 3 );
-        
+        $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 4 );
+        $this->loader->add_filter( 'trp_languages', $this->languages, 'reorder_languages', 10, 2 );
+
         /* set up wp_mail hooks */
         $this->loader->add_filter( 'wp_mail', $this->translation_render, 'wp_mail_filter', 200 );
 
