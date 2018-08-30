@@ -24,7 +24,7 @@ class TRP_Languages{
 		if ( empty( $this->languages[$english_or_native_name] ) ) {
 			$wp_languages = $this->get_wp_languages();
 			foreach ( $wp_languages as $wp_language ) {
-				$this->languages[$english_or_native_name][$wp_language['language']] = apply_filters( 'trp_language_name', $wp_language[$english_or_native_name], $wp_language['language'], $english_or_native_name );
+				$this->languages[$english_or_native_name][$wp_language['language']] = $wp_language[$english_or_native_name];
 			}
 		}
 
@@ -137,11 +137,51 @@ class TRP_Languages{
         $languages = $this->get_languages( $english_or_native_name );
 		foreach ( $language_codes as $language_code ){
 			if( isset( $languages[$language_code] ) ) {
-				$return[$language_code] = $languages[$language_code];
+				$return[$language_code] = apply_filters( 'trp_language_name', $languages[$language_code], $language_code, $english_or_native_name, $language_codes );
 			}
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Returns substring of the string from the beginning until the occurrence of character
+	 *
+	 * If character not found do nothing.
+	 *
+	 * @param $string string    String to trim
+	 * @param $character string Delimitator string
+	 *
+	 * @return string
+	 */
+	public function string_trim_after_character( $string, $character ){
+		if ( strpos( $string, $character ) !== false ) {
+			$string = substr($string, 0, strpos($string, $character ));
+		}
+		return $string;
+	}
+
+	/**
+	 * Return true if the language (without country) of the language_code is present multiple times in the array
+	 *
+	 * (ex. For language code en_UK, language_code_array [en_US, en_UK], return true)
+	 *
+	 * @param $language_code string         Language code (ex. en_US)
+	 * @param $language_code_array array    Array of language codes
+	 *
+	 * @return bool
+	 */
+	public function duplicated_language( $language_code, $language_code_array ){
+		// strip country from code ( ex. en_US => en )
+		$stripped_language_code = $this->string_trim_after_character( $language_code, "_" );
+		foreach ( $language_code_array as $key => $value ){
+			$stripped_value = $this->string_trim_after_character( $value, "_" );
+			if ( $language_code != $value && $stripped_language_code == $stripped_value ){
+				return true;
+			}
+		}
+		return false;
+
 	}
 
     /**
@@ -152,21 +192,33 @@ class TRP_Languages{
      * @param string $english_or_native     'english_name' | 'native_name'
      * @return string                       Short language name.
      */
-	public function beautify_language_name( $name, $code, $english_or_native = 'english_name' ){
+	public function beautify_language_name( $name, $code, $english_or_native = 'english_name', $language_codes ){
 		if ( $english_or_native == 'english_name' ) {
-			$beautiful_language_names = array(
-				'en_US' => 'English',
-				'es_ES' => 'Spanish',
-				'fr_FR' => 'French',
-				'nb_NO' => 'Norwegian',
-				'zh_CN' => 'Chinese',
-			);
-			if ( isset ( $beautiful_language_names[$code] ) ) {
-				return $beautiful_language_names[$code];
+			if ( ! $this->duplicated_language( $code, $language_codes ) ){
+				$name = $this->string_trim_after_character( $name, " (" );
 			}
 		}
-		return apply_filters( 'trp_beautify_language_name', $name, $code, $english_or_native );
+		return apply_filters( 'trp_beautify_language_name', $name, $code, $english_or_native, $language_codes );
+	}
 
+	/**
+	 * Return language arrays with English languages first
+	 *
+	 * @param $languages_array array            Languages array
+	 * @param $english_or_native_name string    'english_name' | 'native_name'
+	 *
+	 * @return array
+	 */
+	public function reorder_languages( $languages_array, $english_or_native_name ){
+		$english_array = array();
+		foreach( $languages_array as $key => $value ){
+			if ( $this->string_trim_after_character( $key, '_' ) == 'en' ){
+				$english_array[$key] = $value;
+				unset( $languages_array[$key] );
+			}
+		}
+
+		return $english_array + $languages_array;
 	}
 
     /**
