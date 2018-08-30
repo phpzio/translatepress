@@ -67,7 +67,7 @@ class TRP_Translation_Manager{
 	public function get_merge_rules(){
 		$localized_text = $this->localized_text();
     	$merge_rules = array (
-    		'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body', 'footer', 'article', 'main', 'iframe', 'section', 'figure', 'figcaption' ),
+    		'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body', 'footer', 'article', 'main', 'iframe', 'section', 'figure', 'figcaption', 'blockquote', 'cite' ),
 		    'self_object_type' => array( 'translate-press' ),
 		    'incompatible_siblings' => array( '[data-trpgettextoriginal]', '[data-trp-node-type="' . $localized_text['dynamicstrings'] . '"]'  )
 	    );
