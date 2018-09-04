@@ -636,6 +636,8 @@ class TRP_Translation_Render{
 
         // force custom links to have the correct language
         foreach( $html->find('a[href!="#"]') as $a_href)  {
+            $a_href->href = apply_filters( 'trp_href_from_translated_page', $a_href->href, $this->settings['default-language'] );
+
             $url = $a_href->href;
 
             $url = $this->maybe_is_local_url($url);
