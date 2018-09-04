@@ -45,14 +45,6 @@ class TRP_Translation_Render{
      */
     public function trp_debug_mode_off(){
         if ( WP_DEBUG ) {
-            global $TRP_LANGUAGE;
-            if (is_admin() ||
-                ($TRP_LANGUAGE == $this->settings['default-language'] && (!isset($_REQUEST['trp-edit-translation']) || (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] != 'preview'))) ||
-                (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'true')
-            ) {
-                return; //don't do nothing if we are not storing strings
-            }
-
             ini_set('display_errors', 0);
             ini_set('log_errors', 1);
             ini_set('error_log', WP_CONTENT_DIR . '/debug.log');
