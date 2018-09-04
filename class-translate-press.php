@@ -217,7 +217,10 @@ class TRP_Translate_Press{
      * Register hooks to WP.
      */
     public function run() {
-        $this->loader->run();
+    	$run_tp = apply_filters( 'trp_allow_tp_to_run', true );
+    	if ( $run_tp ) {
+		    $this->loader->run();
+	    }
     }
 
     /**

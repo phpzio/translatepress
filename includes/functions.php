@@ -174,3 +174,20 @@ function trp_elementor_compatibility( $allow_redirect ){
 	return $allow_redirect;
 }
 add_filter( 'trp_allow_language_redirect', 'trp_elementor_compatibility' );
+
+
+/**
+ * Mb Strings missing PHP library error notice
+ */
+function trp_mbstrings_notification(){
+	echo '<div class="notice notice-error"><p>' . __( '<strong>TranslatePress</strong> requires <strong><a href="http://php.net/manual/en/book.mbstring.php">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server.','translatepress-multilingual' ) . '</p></div>';
+}
+
+function trp_missing_mbstrings_library( $allow_to_run ){
+	if ( ! extension_loaded('mbstring') ) {
+		add_action( 'admin_menu', 'trp_mbstrings_notification' );
+		return false;
+	}
+	return $allow_to_run;
+}
+add_filter( 'trp_allow_tp_to_run', 'trp_missing_mbstrings_library' );
