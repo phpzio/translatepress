@@ -138,7 +138,8 @@ function trp_add_affiliate_id_to_link( $link ){
 function trp_sanitize_string( $filtered ){
 	$filtered = preg_replace( '/<script\b[^>]*>(.*?)<\/script>/is', '', $filtered );
 
-	$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
+	// don't remove \r \n \t. They are part of the translation, they give structure and context to the text. 
+	//$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
 	$filtered = trim( $filtered );
 
 	$found = false;
