@@ -191,3 +191,12 @@ function trp_missing_mbstrings_library( $allow_to_run ){
 	return $allow_to_run;
 }
 add_filter( 'trp_allow_tp_to_run', 'trp_missing_mbstrings_library' );
+
+/**
+ * Don't have html inside menu title tags. Some themes just put in the title the content of the link without striping HTML
+ */
+add_filter( 'nav_menu_link_attributes', 'trp_remove_html_from_menu_title', 10, 3);
+function trp_remove_html_from_menu_title( $atts, $item, $args ){
+    $atts['title'] = wp_strip_all_tags($atts['title']);
+    return $atts;
+}
