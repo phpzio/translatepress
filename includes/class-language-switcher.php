@@ -86,7 +86,7 @@ class TRP_Language_Switcher{
 	 * Redirects to language stored in global $TRP_NEEDED_LANGUAGE
 	 */
 	public function redirect_to_correct_language(){
-		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) ) {
+	    if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX  ) || is_customize_preview() ) {
 			return;
 		}
 		global $TRP_NEEDED_LANGUAGE;
