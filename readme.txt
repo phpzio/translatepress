@@ -57,6 +57,7 @@ TranslatePress - Multilingual has a range of premium [Add-ons](https://translate
 * [Translator Accounts](https://translatepress.com/docs/addons/translator-accounts/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - create or allow existing users to translate the site without admin rights
 * [Browse as User Role](https://translatepress.com/docs/addons/browse-as-role/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - view and translate content that is visible only to a particular user role
 * [Navigation Based on Language](https://translatepress.com/docs/addons/navigate-based-language/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - configure and display different menu items for different languages
+* [Automatic User Language Detection](https://translatepress.com/docs/addons/automatic-user-language-detection/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - redirect first time visitors to their preferred language based on their browser settings or IP address
 
 **Free Add-ons**
 
