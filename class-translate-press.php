@@ -217,6 +217,9 @@ class TRP_Translate_Press{
      * Register hooks to WP.
      */
     public function run() {
+    	/*
+    	 * Hook that prevents running the hooks. Caution: some TP code like constructors of classes still run!
+    	 */
     	$run_tp = apply_filters( 'trp_allow_tp_to_run', true );
     	if ( $run_tp ) {
 		    $this->loader->run();
