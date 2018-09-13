@@ -1053,6 +1053,59 @@ class TRP_Translation_Manager{
         return $tags;
     }
 
+	/**
+	 * Copy function of esc_attr, unfiltered.
+	 *
+	 * Needed because all esc functions are hooked to handle_esc_functions_for_gettext, which will not escape trp-gettext tags
+	 *
+	 * @param $text string      Text to escape
+	 *
+	 * @return string           Escaped text
+	 */
+    function esc_attr_unfilttered( $text ){
+	    $safe_text = wp_check_invalid_utf8( $text );
+	    $safe_text = _wp_specialchars( $safe_text, ENT_QUOTES );
+	    return $safe_text;
+    }
+
+	/**
+	 * Escape attributes containing trp-gettext tag before passing to wp_kses.
+	 *
+	 * wp_kses will accidentally escape the parent tag, if another unescaped tag is present withing its attribute
+	 * Ex. <img alt="<trp-gettext>Placeholder</trp-gettext">"/> will be transformed by trp-gettext like this: &lt;img alt=&quot;<trp-gettext>Placeholder</trp-gettext">"/>
+	 *
+	 * As a side consequence this function will disable translation of the string contained in the trp-gettext tag because there is no hook available that will allow us to undo the escaping the tags, after wp_kses is finished
+	 *
+	 * @param $string
+	 * @param $allowed_html
+	 * @param $allowed_protocols
+	 *
+	 * @return mixed
+	 */
+    function escape_gettext_from_attributes_kses( $string, $allowed_html, $allowed_protocols ){
+	    /* remove trp-gettext tag from attributes of other tags in kses functions*/
+	    $html_modified = false;
+		if ( !is_admin () && strpos( $string, 'trp-gettext' ) !== false ) {
+			$html = trp_str_get_html($string, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+			foreach ( $html->find("*[!nuartrebuisaexiteatributulasta]") as $k => $row ) {
+				$all_attributes = $row->getAllAttributes();
+				if ( ! empty( $all_attributes ) ) {
+					foreach ( $all_attributes as $attr_name => $attr_value ) {
+						if ( strpos( $attr_value, 'trp-gettext' ) !== false ) {
+							$row->setAttribute($attr_name, $this->esc_attr_unfilttered($attr_value));
+							$html_modified = true;
+						}
+					}
+				}
+			}
+			if ( $html_modified ){
+				$string = $html->save();
+			}
+		}
+		return $string;
+    }
+
+
     /**
      * make sure we remove the trp-gettext wrap from the format the date_i18n receives
      * ideally if in the gettext filter we would know 100% that a string is a valid date format then we would not wrap it but it seems that it is not easy to determine that ( explore further in the future $d = DateTime::createFromFormat('Y', date('y a') method); )

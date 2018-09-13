@@ -176,8 +176,11 @@ class TRP_Translate_Press{
         /* we need the esc_ functions for html and attributes not to escape our tags so we put them back */
         $this->loader->add_filter( 'esc_html', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
         $this->loader->add_filter( 'attribute_escape', $this->translation_manager, 'handle_esc_functions_for_gettext', 10, 2 );
-        /* we need to allow the trp-gettext tag in ksses functions */
+        /* we need to allow the trp-gettext tag in kses functions */
         $this->loader->add_filter( 'wp_kses_allowed_html', $this->translation_manager, 'handle_kses_functions_for_gettext', 10 );
+        /* handle trp-gettext tag from attributes of other tags in kses functions*/
+        $this->loader->add_filter( 'pre_kses', $this->translation_manager, 'escape_gettext_from_attributes_kses', 5, 3 );
+
         /* we need to treat the date_i18n function differently so we remove the gettext wraps */
         $this->loader->add_filter( 'date_i18n', $this->translation_manager, 'handle_date_i18n_function_for_gettext', 1, 4 );
 
