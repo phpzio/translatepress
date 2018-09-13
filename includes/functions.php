@@ -201,3 +201,56 @@ function trp_remove_html_from_menu_title( $atts, $item, $args ){
     $atts['title'] = wp_strip_all_tags($atts['title']);
     return $atts;
 }
+
+/**
+ * Rework wp_trim_words so we can trim Chinese, Japanese and Thai words since they are based on characters as words.
+ *
+ * @since 1.3.0
+ *
+ * @param string $text      Text to trim.
+ * @param int    $num_words Number of words. Default 55.
+ * @param string $more      Optional. What to append if $text needs to be trimmed. Default '&hellip;'.
+ * @return string Trimmed text.
+ */
+function trp_wp_trim_words( $text, $num_words = 55, $more = null, $original_text ) {
+    if ( null === $more ) {
+        $more = __( '&hellip;' );
+    }
+    // what we receive is the short text in the filter
+    $text = $original_text;
+    $text = wp_strip_all_tags( $text );
+
+    $trp = TRP_Translate_Press::get_trp_instance();
+    $trp_settings = $trp->get_component( 'settings' );
+    $settings = $trp_settings->get_settings();
+
+    $default_language= $settings["default-language"];
+
+    $char_is_word = false;
+    foreach (array('ch', 'ja', 'tw') as $lang){
+        if (strpos($default_language, $lang) !== false){
+            $char_is_word = true;
+        }
+    }
+
+    if ( $char_is_word && preg_match( '/^utf\-?8$/i', get_option( 'blog_charset' ) ) ) {
+        $text = trim( preg_replace( "/[\n\r\t ]+/", ' ', $text ), ' ' );
+        preg_match_all( '/./u', $text, $words_array );
+        $words_array = array_slice( $words_array[0], 0, $num_words + 1 );
+        $sep = '';
+    } else {
+        $words_array = preg_split( "/[\n\r\t ]+/", $text, $num_words + 1, PREG_SPLIT_NO_EMPTY );
+        $sep = ' ';
+    }
+
+    if ( count( $words_array ) > $num_words ) {
+        array_pop( $words_array );
+        $text = implode( $sep, $words_array );
+        $text = $text . $more;
+    } else {
+        $text = implode( $sep, $words_array );
+    }
+
+    return $text;
+}
+add_filter('wp_trim_words', 'trp_wp_trim_words', 100, 4);
