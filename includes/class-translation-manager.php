@@ -923,7 +923,8 @@ class TRP_Translation_Manager{
                         $callstack_function['function'] == 'get_bloginfo' ||
                         $callstack_function['function'] == 'wp_get_document_title' ||
                         $callstack_function['function'] == 'wp_title' ||
-                        $callstack_function['function'] == 'wptexturize'
+                        $callstack_function['function'] == 'wptexturize' ||
+                        $callstack_function['function'] == 'wp_trim_words'
                     ) {
                         return $translation;
                     }
