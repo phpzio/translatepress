@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.8
-Stable tag: 1.2.9
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -118,6 +118,20 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.3.0 =
+* Added support for word trim when the default language is japanese, chinese or thai.
+* Exluded wp_trim_words funtion from our gettext filter to prevent som issues
+* Fixed an issue with gettext inside attributes that passed through the wp_kses function.
+* Fixed issues with the Customizer
+* Added padding to the language switcher image so we don't conflict with themes that add extra padding to images inside links
+* We no longer remove \r \n \t from the translation
+* Fixed issue with title attribute that contained html
+* Added a filter to all href attributes detected on our translation page
+* Added a notice to inform admins of the missing mbstring php library
+* We now send all error logs to debug.log
+* Added cite and blockquote as top_parents for merge rule on Translation blocks
+* Fixed nonce accidentally being passed through internationalized function
+
 = 1.2.9 =
 * Rearranged and renamed some languages in the options dropdown
 * Fixed flag of Khmer language

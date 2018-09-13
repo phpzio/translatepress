@@ -17,7 +17,7 @@ msgstr ""
 msgid "Error! Duplicate Url slug values."
 msgstr ""
 
-#: class-navigation-based-on-language.php:85
+#: ../tp-add-on-navigation-based-on-language/class-navigation-based-on-language.php:85
 msgid "Limit this menu item to the following languages"
 msgstr ""
 
@@ -25,51 +25,51 @@ msgstr ""
 msgid "The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when you submit the sitemap to Google."
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/includes/class-ald-settings.php:37
+#: includes/class-ald-settings.php:37
 msgid "First by browser language, then IP address (recommended)"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/includes/class-ald-settings.php:38
+#: includes/class-ald-settings.php:38
 msgid "First by IP address, then browser language"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/includes/class-ald-settings.php:39
+#: includes/class-ald-settings.php:39
 msgid "Only by browser language"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/includes/class-ald-settings.php:40
+#: includes/class-ald-settings.php:40
 msgid "Only by IP address"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/includes/class-ald-settings.php:110
+#: includes/class-ald-settings.php:110
 msgid "<div class=\"warning\">WARNING. Cannot determine your language preference based on your current IP.<br>This is most likely because the website is on a local environment.</div>"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/partials/license-settings-page.php:4, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
+#: partials/license-settings-page.php:4, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:17, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
 msgid "TranslatePress Settings"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/partials/license-settings-page.php:10, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, partials/license-settings-page.php:10, ../tp-add-on-seo-pack/partials/license-settings-page.php:10, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:10
+#: partials/license-settings-page.php:10, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:10, ../tp-add-on-extra-languages/partials/license-settings-page.php:10, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:10, ../tp-add-on-seo-pack/partials/license-settings-page.php:10, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:10
 msgid "License Key"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/partials/license-settings-page.php:15, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, partials/license-settings-page.php:15, ../tp-add-on-seo-pack/partials/license-settings-page.php:15, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:15
+#: partials/license-settings-page.php:15, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:15, ../tp-add-on-extra-languages/partials/license-settings-page.php:15, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:15, ../tp-add-on-seo-pack/partials/license-settings-page.php:15, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:15
 msgid "Enter your license key."
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/partials/license-settings-page.php:22, ../tp-add-on-automatic-language-detection/partials/license-settings-page.php:31, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, partials/license-settings-page.php:22, partials/license-settings-page.php:31, ../tp-add-on-seo-pack/partials/license-settings-page.php:22, ../tp-add-on-seo-pack/partials/license-settings-page.php:31, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:22, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:31
+#: partials/license-settings-page.php:22, partials/license-settings-page.php:31, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:22, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:31, ../tp-add-on-extra-languages/partials/license-settings-page.php:22, ../tp-add-on-extra-languages/partials/license-settings-page.php:31, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:22, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:31, ../tp-add-on-seo-pack/partials/license-settings-page.php:22, ../tp-add-on-seo-pack/partials/license-settings-page.php:31, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:22, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:31
 msgid "Activate License"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/partials/license-settings-page.php:28, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, partials/license-settings-page.php:28, ../tp-add-on-seo-pack/partials/license-settings-page.php:28, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:28
+#: partials/license-settings-page.php:28, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:28, ../tp-add-on-extra-languages/partials/license-settings-page.php:28, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:28, ../tp-add-on-seo-pack/partials/license-settings-page.php:28, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:28
 msgid "Deactivate License"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/partials/settings-option.php:2
+#: partials/settings-option.php:2
 msgid "Method of language detection"
 msgstr ""
 
-#: ../tp-add-on-automatic-language-detection/partials/settings-option.php:14
+#: partials/settings-option.php:14
 msgid "Select how the language should be detected for first time visitors.<br>The visitor's last displayed language will be remembered through cookies."
 msgstr ""
 
@@ -193,9 +193,6 @@ msgstr ""
 msgid "Dynamic Added Strings"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:87, ../translatepress/includes/class-translation-manager.php:88, ../translatepress/includes/class-translation-manager.php:89, ../translatepress/includes/class-translation-manager.php:90, ../translatepress/includes/class-translation-manager.php:91
-msgstr ""
-
 #: ../translatepress/includes/class-translation-manager.php:638
 msgid "Translate Page"
 msgstr ""
@@ -204,40 +201,44 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1143
+#: ../translatepress/includes/class-translation-manager.php:1197
 msgid "Security check"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:167
+#: ../translatepress/includes/class-translation-render.php:159
 msgid "Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:173
+#: ../translatepress/includes/class-translation-render.php:165
 msgid "OG Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:179
+#: ../translatepress/includes/class-translation-render.php:171
 msgid "OG Site Name"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:185
+#: ../translatepress/includes/class-translation-render.php:177
 msgid "OG Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:191
+#: ../translatepress/includes/class-translation-render.php:183
 msgid "Twitter Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:197
+#: ../translatepress/includes/class-translation-render.php:189
 msgid "Twitter Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:203
+#: ../translatepress/includes/class-translation-render.php:195
 msgid "Post Slug"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:207
+#: ../translatepress/includes/class-translation-render.php:199
 msgid "Page Title"
+msgstr ""
+
+#: ../translatepress/includes/functions.php:184
+msgid "<strong>TranslatePress</strong> requires <strong><a href=\"http://php.net/manual/en/book.mbstring.php\">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server."
 msgstr ""
 
 #: ../translatepress/partials/main-settings-language-selector.php:2
