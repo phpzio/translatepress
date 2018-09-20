@@ -148,6 +148,11 @@ function TRP_Translator(){
                         if ( typeof parent.trpEditor !== 'undefined' ) {
                             jQuery(mutation.addedNodes[i]).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(mutation.addedNodes[i]).find('a').context.href);
                         }
+
+                        //jQuery(mutation.addedNodes[i]).find('a').each( function( anchor ){
+                           // console.log(anchor);
+//                        });
+                        //console.log(jQuery(mutation.addedNodes[i]).find('a'));
                         var direct_string = get_string_from_node( mutation.addedNodes[i] );
                         if ( direct_string ) {
                             if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
@@ -163,6 +168,19 @@ function TRP_Translator(){
                             }
                         }else{
                             var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
+                            //todo filter this in server side
+                            var attributes = [ 'href' ];
+                            for ( var n = 0; n < all_nodes.length; n++ ){
+                                for ( var a = 0; a < attributes.length; a++ ){
+                                    var href = jQuery( all_nodes[n] ).attr( attributes[a] );
+                                    if ( href ){
+                                        strings.push({node: all_nodes[n], original: href, attribute: attributes[a] });
+                                        console.log(href);
+                                        // todo not sure if I should set href='';
+                                    }
+                                }
+                            }
+
                             var all_strings = all_nodes.contents().filter(function(){
                                 if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
                                         if ( jQuery(this).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(this).closest( '[data-trp-translate-id]').length == 0 && jQuery(this).parents( '[data-no-translation]' ).length == 0 ){

@@ -175,9 +175,11 @@ class TRP_Translation_Manager{
 	 * @return array
 	 */
     protected function get_translation_for_strings( $strings, $block_type = null ){
+    	error_log('eerrrrrrrrrrr');
 	    $id_array = array();
 	    $original_array = array();
 	    $dictionaries = array();
+	    $urls = array();
 	    $slug_info = false;
 	    foreach ( $strings as $key => $string ) {
 		    if ( isset( $string->slug ) && $string->slug === true ){
@@ -191,6 +193,9 @@ class TRP_Translation_Manager{
 			    $id_array[$key] = (int)$string->id;
 		    } else if ( isset( $string->original ) ) {
 			    $original_array[$key] = trp_sanitize_string( $string->original );
+			    if ( $this->is_url( $original_array[$key] ) ){
+			    	$urls[] = $original_array[$key];
+			    }
 		    }
 	    }
 
@@ -251,8 +256,48 @@ class TRP_Translation_Manager{
 			    }
 		    }
 	    }
+	    error_log(json_encode($urls));
+	    if ( $this->settings['force-language-to-custom-links'] == 'yes' ){
+		    foreach( $dictionaries as $language => $dictionary ){
+		        $copy_urls = $urls;
+		        foreach( $copy_urls as $url_key => $url ){
+		            foreach( $dictionary as $string_key => $string ){
+		                if ( $string['original'] == $url ){
+					        unset( $copy_urls[$url_key] );
+				        }
+				    }
+			    }
+			    $copy_urls = array_values( $copy_urls );
+			    foreach( $copy_urls as $url ){
+			        $translated_url = $this->translate_url( $language, $url );
+				    $dictionary[ $language ][] = array(
+				        'id'            => 'notanumber',
+					    'original'      => $url,
+				        'translated'    => $translated_url );
+				    error_log('nucred ');
+			    }
+
+		    }
+	    }
 
 	    return $dictionaries;
+    }
+
+    public function translate_url( $language, $url ){
+	    $is_external_link = $this->translation_render->is_external_link( $url );
+	    $is_admin_link = $this->translation_render->is_admin_link($url);
+	    if ( !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$is_admin_link && strpos($url, '#TRPLINKPROCESSED') === false ){
+		    $url = apply_filters( 'trp_force_custom_links', $this->url_converter->get_url_for_language( $language, $url ), $url, $language, null );
+	    }
+	    return $url;
+    }
+
+    public function is_url(){
+	    if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
+		    return false;
+	    }else {
+		    return true;
+	    }
     }
 
 

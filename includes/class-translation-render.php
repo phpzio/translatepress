@@ -792,7 +792,7 @@ class TRP_Translation_Render{
      * @param string $url           Url.
      * @return bool                 Whether given url links to an admin page.
      */
-    protected function is_admin_link( $url ){
+    public function is_admin_link( $url ){
 
         if ( strpos( $url, admin_url() ) !== false || strpos( $url, wp_login_url() ) !== false ){
             return true;
