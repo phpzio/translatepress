@@ -36,6 +36,10 @@ class TRP_Translation_Render{
             return;
         }
 
+
+        /*if($_SERVER['REQUEST_URI'] == '/it/wp-json/wp/v2/posts/')
+            return;*/
+
         mb_http_output("UTF-8");
         ob_start(array($this, 'translate_page'));
     }
@@ -257,6 +261,18 @@ class TRP_Translation_Render{
     }
 
     /**
+     * Function that translates the content excerpt and post title in the REST API
+     * @param $response
+     * @return mixed
+     */
+    public function handle_rest_api_translations($response){
+        $response->data['title']['rendered'] = $this->translate_page( $response->data['title']['rendered'] );
+        $response->data['excerpt']['rendered'] = $this->translate_page( $response->data['excerpt']['rendered'] );
+        $response->data['content']['rendered'] = $this->translate_page( $response->data['content']['rendered'] );
+        return $response;
+    }
+
+    /**
      * Finding translateable strings and replacing with translations.
      *
      * Method called for output buffer.
@@ -268,6 +284,16 @@ class TRP_Translation_Render{
         $output = apply_filters('trp_before_translate_content', $output);
 
         if ( strlen( $output ) < 1 || $output == false ){
+            return $output;
+        }
+
+        if ( ! $this->url_converter ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->url_converter = $trp->get_component('url_converter');
+        }
+        
+        /* make sure we only translate on the rest_prepare_$post_type filter in REST requests and not the whole json */
+        if( strpos( $this->url_converter->cur_page_url(), get_rest_url() ) !== false && strpos( current_filter(), 'rest_prepare_' ) !== 0){
             return $output;
         }
 
@@ -625,10 +651,6 @@ class TRP_Translation_Render{
 
         }
 
-        if ( ! $this->url_converter ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
-            $this->url_converter = $trp->get_component('url_converter');
-        }
 
         // We need to save here in order to access the translated links too.
 	    $html = $html->save();
