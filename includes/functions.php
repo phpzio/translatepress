@@ -254,3 +254,20 @@ function trp_wp_trim_words( $text, $num_words = 55, $more = null, $original_text
     return $text;
 }
 add_filter('wp_trim_words', 'trp_wp_trim_words', 100, 4);
+
+
+/**
+ * Use home_url in the https://www.peepso.com/ ajax front-end url so strings come back translated.
+ *
+ * @since 1.3.1
+ *
+ * @param array $data   Peepso data
+ * @return array
+ */
+add_filter( 'peepso_data', 'trp_use_home_url_in_peepso_ajax' );
+function trp_use_home_url_in_peepso_ajax( $data ){
+    if ( is_array( $data ) && isset( $data['ajaxurl_legacy'] ) ){
+        $data['ajaxurl_legacy'] = home_url( '/peepsoajax/' );
+    }
+    return $data;
+}
