@@ -305,39 +305,43 @@ class TRP_Translation_Render{
 
 	    $preview_mode = isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview';
 
-        /* if there is an ajax request and we have a json response we need to parse it and only translate the nodes that contain html  */
-        if( TRP_Translation_Manager::is_ajax_on_frontend() ) {
+	    $is_json = is_array( $json_array = json_decode( $output, true ) );
+	    /* If we have a json response we need to parse it and only translate the nodes that contain html
+	     *
+	     * Removed is_ajax_on_frontend() check because we need to capture custom ajax events.
+		 * Decided that if $output is json decodable it's a good enough check to handle it this way.
+		 * We have necessary checks so that we don't get to this point when is_admin, or when language is default.
+	     */
+	    if( $is_json ) {
+		    /* if it's one of our own ajax calls don't do nothing */
+	        if ( ! empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 && $_REQUEST['action'] != 'trp_split_translation_block' ) {
+		        return $output;
+	        }
 
-            /* if it's one of our own ajax calls don't do nothing */
-            if( !empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 && $_REQUEST['action'] != 'trp_split_translation_block' ){
-                return $output;
-            }
+	        //check if we have a json response
+	        if ( ! empty( $json_array ) ) {
+		        foreach ( $json_array as $key => $value ) {
+			        if ( ! empty( $value ) ) {
+				        if ( ! is_array( $value ) ) { //if the current element is not an array check if it a html text and translate
+					        if ( html_entity_decode( (string) $value ) != strip_tags( html_entity_decode( (string) $value ) ) ) {
+						        $json_array[ $key ] = $this->translate_page( stripslashes( $value ) );
+					        }
+				        } else {//look for the html elements
+					        foreach ( $value as $k => $v ) {
+						        if ( ! empty( $v ) ) {
+							        if ( ! is_array( $v ) ) {
+								        if ( html_entity_decode( (string) $v ) != strip_tags( html_entity_decode( (string) $v ) ) ) {
+									        $json_array[ $key ][ $k ] = $this->translate_page( stripslashes( $v ) );
+								        }
+							        }
+						        }
+					        }
+				        }
+			        }
+		        }
+	        }
 
-            //check if we have a json response
-            if (is_array($json_array = json_decode($output, true))) {
-                if (!empty($json_array)) {
-                    foreach ($json_array as $key => $value) {
-                        if (!empty($value)) {
-                            if (!is_array($value)) { //if the current element is not an array check if it a html text and translate
-                                if (html_entity_decode((string)$value) != strip_tags(html_entity_decode((string)$value))) {
-                                    $json_array[$key] = $this->translate_page(stripslashes($value));
-                                }
-                            } else {//look for the html elements
-                                foreach( $value as $k => $v ){
-                                    if( !empty( $v ) ) {
-                                        if (!is_array($v)) {
-                                            if (html_entity_decode((string)$v) != strip_tags(html_entity_decode((string)$v))) {
-                                                $json_array[$key][$k] = $this->translate_page(stripslashes($v));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                return trp_safe_json_encode($json_array);
-            }
+	        return trp_safe_json_encode( $json_array );
         }
 
         /**
