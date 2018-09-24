@@ -310,7 +310,7 @@ class TRP_Translation_Render{
 	     *
 	     * Removed is_ajax_on_frontend() check because we need to capture custom ajax events.
 		 * Decided that if $output is json decodable it's a good enough check to handle it this way.
-		 * We have necessary checks so that we don't get to this point when is_admin, or when language is default.
+		 * We have necessary checks so that we don't get to this point when is_admin(), or when language is not default. 
 	     */
 	    if( $is_json ) {
 		    /* if it's one of our own ajax calls don't do nothing */
