@@ -277,8 +277,10 @@ function trp_use_home_url_in_peepso_ajax( $data ){
  *
  * @since 1.3.1
  *
- * @param array $data   Peepso data
- * @return array
+ * @param string $title
+ * @param string $raw_title
+ * @param string $context
+ * @return string
  */
 add_filter( 'sanitize_title', 'trp_sanitize_title', 1, 3 );
 function trp_sanitize_title(  $title, $raw_title, $context ){
