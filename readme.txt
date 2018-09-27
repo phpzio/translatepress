@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.8
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -118,6 +118,16 @@ For more information please check out [TranslatePress documentation](https://tra
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.3.1 =
+* Fixed Woocommerce translation of permalinks
+* Added support for remove_accents to be based on default language when called from the sanitize_title function
+* Added support for translating JSON found in custom ajax request
+* Added better REST compatibility
+* Added compatibility for Peepso plugin
+* Fixed TranslatePress roken link to google translate set up api key on settings page
+* Corrected flags for Arabic and Bengali languages
+* Fixed issue with multiple slashes being added when the URL had extra get parameters
+
 = 1.3.0 =
 * Added support for word trim when the default language is japanese, chinese or thai.
 * Exluded wp_trim_words funtion from our gettext filter to prevent som issues
