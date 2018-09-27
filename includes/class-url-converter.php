@@ -219,6 +219,11 @@ class TRP_Url_Converter {
                 $translated_tag_slug = trp_x( 'product-tag', 'slug', 'woocommerce', $language );
                 $new_url = str_replace( '/'.$current_tag_slug.'/', '/'.$translated_tag_slug.'/', $new_url );
             }
+            elseif( is_product() ){
+                $current_product_slug = trp_x( 'product', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                $translated_product_slug = trp_x( 'product', 'slug', 'woocommerce', $language );
+                $new_url = str_replace( '/'.$current_product_slug.'/', '/'.$translated_product_slug.'/', $new_url );
+            }
         }
 
         if ( empty( $new_url ) ) {
@@ -380,16 +385,13 @@ class TRP_Url_Converter {
                     $default_language_wc_permalink_structure['category_rewrite_slug'] = trp_x( 'product-category', 'slug', 'woocommerce', $this->settings['default-language'] );
                     $default_language_wc_permalink_structure['tag_rewrite_slug'] = trp_x( 'product-tag', 'slug', 'woocommerce', $this->settings['default-language'] );
                 }
+                
+                //always generate the slugs for defaults on the current language
+                $current_language_permalink_structure = array();
+                $current_language_permalink_structure['product_rewrite_slug'] = trp_x( 'product', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                $current_language_permalink_structure['category_rewrite_slug'] = trp_x( 'product-category', 'slug', 'woocommerce', $TRP_LANGUAGE );
+                $current_language_permalink_structure['tag_rewrite_slug'] = trp_x( 'product-tag', 'slug', 'woocommerce', $TRP_LANGUAGE );
 
-                if( function_exists( 'wc_get_permalink_structure' ) ){
-                    $current_language_permalink_structure = wc_get_permalink_structure();
-                }
-                else{
-                    $current_language_permalink_structure = array();
-                    $current_language_permalink_structure['product_rewrite_slug'] = trp_x( 'product', 'slug', 'woocommerce', $TRP_LANGUAGE );
-                    $current_language_permalink_structure['category_rewrite_slug'] = trp_x( 'product-category', 'slug', 'woocommerce', $TRP_LANGUAGE );
-                    $current_language_permalink_structure['tag_rewrite_slug'] = trp_x( 'product-tag', 'slug', 'woocommerce', $TRP_LANGUAGE );
-                }
 
                 $new_rewrite_rules = array();
 
@@ -410,6 +412,36 @@ class TRP_Url_Converter {
         }
         else
             return $rewrite_rules;
+    }
+
+    /* on frontend on other languages dinamically generate the woo permalink structure for the default slugs */
+    function woocommerce_filter_permalink_option( $value ){
+        global $TRP_LANGUAGE;
+        if( $TRP_LANGUAGE != $this->settings['default-language'] ) {
+            if( trim($value['product_base'], '/') === trp_x( 'product', 'slug', 'woocommerce', $this->settings['default-language'] ) ){
+                $value['product_base'] = '';
+            }
+
+            if( trim($value['category_base'], '/') === trp_x( 'product-category', 'slug', 'woocommerce', $this->settings['default-language'] ) ){
+                $value['category_base'] = '';
+            }
+
+            if( trim($value['tag_base'], '/') === trp_x( 'product-tag', 'slug', 'woocommerce', $this->settings['default-language'] ) ){
+                $value['tag_base'] = '';
+            }
+
+        }
+
+        return $value;
+    }
+
+    /* don't update the woocommerce_permalink option on the frontend if we are not on the default language */
+    function woocommerce_handle_permalink_option_on_frontend($value, $old_value){
+        global $TRP_LANGUAGE;
+        if( isset($TRP_LANGUAGE) && $TRP_LANGUAGE != $this->settings['default-language'] ){
+            $value = $old_value;
+        }
+        return $value;
     }
 
 }
