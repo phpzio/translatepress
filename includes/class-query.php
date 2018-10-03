@@ -461,7 +461,7 @@ class TRP_Query{
      * @param string $default_language      Default language. Defaults to the one from settings.
      * @return string                       Table name.
      */
-    protected function get_table_name( $language_code, $default_language = null ){
+    public function get_table_name( $language_code, $default_language = null ){
         if ( $default_language == null ) {
             $default_language = $this->settings['default-language'];
         }
@@ -488,7 +488,7 @@ class TRP_Query{
         return $dictionary;
     }
 
-    protected function get_gettext_table_name( $language_code ){
+    public function get_gettext_table_name( $language_code ){
 		global $wpdb;
         return $wpdb->get_blog_prefix() . 'trp_gettext_' . strtolower( $language_code );
     }
@@ -617,5 +617,34 @@ class TRP_Query{
 		$query = 'UPDATE `' . implode( $table_names, '`, `' ) . '` SET `' . implode( $table_names, '`.block_type=' . $block_type . ', `' ) . '`.block_type=' . $block_type . ' WHERE `' . implode( $table_names, '`.original IN ' . $placeholders . ' AND `' ) . '`.original IN ' . $placeholders ;
 
 		return $this->db->query( $this->db->prepare( $query, $values ) );
+	}
+
+	/**
+	 * Removes duplicate rows of regular strings table
+	 *
+	 * (original, translated, status, block_type) have to be identical.
+	 * Only the row with the lowest ID remains
+	 *
+	 * https://stackoverflow.com/a/25206828
+	 *
+	 * @param $table
+	 */
+	public function remove_duplicate_rows_in_dictionary_table( $language_code ){
+		$table_name = $this->get_table_name( $language_code );
+    	$query = '	DELETE `a`
+					FROM
+					    ' . $table_name . ' AS `a`,
+					    ' . $table_name . ' AS `b`
+					WHERE
+					    -- IMPORTANT: Ensures one version remains
+					    `a`.`ID` < `b`.`ID`
+					
+					    -- Check for all duplicates. Binary ensure case sensitive comparison
+					    AND (`a`.`original` = BINARY `b`.`original` OR `a`.`original` IS NULL AND `b`.`original` IS NULL)
+					    AND (`a`.`translated` = BINARY`b`.`translated` OR `a`.`translated` IS NULL AND `b`.`translated` IS NULL)
+					    AND (`a`.`status` = `b`.`status` OR `a`.`status` IS NULL AND `b`.`status` IS NULL)
+					    AND (`a`.`block_type` = `b`.`block_type` OR `a`.`block_type` IS NULL AND `b`.`block_type` IS NULL)
+					    ;';
+		return $this->db->query( $query );
 	}
 }

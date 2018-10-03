@@ -68,6 +68,7 @@ class TRP_Settings{
         add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
         add_submenu_page( 'TRPHidden', 'TranslatePress Addons', 'TRPHidden', 'manage_options', 'trp_addons_page', array($this, 'addons_page_content') );
         add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array($this, 'test_google_key_page_content') );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Remove Duplicate Rows', 'TRPHidden', 'manage_options', 'trp_remove_duplicate_rows', array($this, 'trp_remove_duplicate_rows') );
     }
 
     /**
@@ -90,11 +91,75 @@ class TRP_Settings{
     }
 
     /**
-     * Addons page content.
+     * Test Google Key page content.
      */
     public function test_google_key_page_content(){
         require_once TRP_PLUGIN_DIR . 'partials/test-google-key-settings-page.php';
     }
+
+	/**
+	 * Remove duplicate rows from DB page content.
+	 */
+	public function trp_remove_duplicate_rows(){
+		// prepare page structure
+		require_once TRP_PLUGIN_DIR . 'partials/trp_remove_duplicate_rows.php';
+
+		if ( empty( $_GET['trp_rm_duplicates'] ) ){
+			// iteration not started
+			return;
+		}
+		if ( $_GET['trp_rm_duplicates'] === 'done' ){
+			// iteration finished
+			echo __('Done.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+			return;
+		}
+
+		if ( in_array( $_GET['trp_rm_duplicates'], $this->settings['translation-languages'] ) ) {
+			// language code found in array
+			$language_code = $_GET['trp_rm_duplicates'];
+
+			// skip default language since it doesn't have a table
+			if ( $language_code != $this->settings['default-language'] ) {
+				if ( ! $this->trp_query ) {
+					$trp = TRP_Translate_Press::get_trp_instance();
+					/* @var TRP_Query */
+					$this->trp_query = $trp->get_component( 'query' );
+				}
+				echo '<div>' . sprintf( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), $this->trp_query->get_table_name( $language_code ) ) . '</div>';
+
+				// execute query
+				$result = $this->trp_query->remove_duplicate_rows_in_dictionary_table( $language_code );
+				if ( $result === false ) {
+					// if query outputted error do not continue iteration
+					return;
+				}else{
+					echo '<div>' . sprintf( __( '%s duplicates removed', 'translatepress-multilingual' ), $result ) . '</div>';
+				}
+
+			}
+
+			$index = array_search( $language_code, $this->settings['translation-languages'] );
+			if ( isset ( $this->settings['translation-languages'][$index+1] ) ) {
+				// next language code in array
+				$next_language = $this->settings['translation-languages'][$index+1];
+			}else{
+				// finish iteration due to completing all the translation languages
+				$next_language = 'done';
+			}
+		}else{
+			// finish iteration due to incorrect translation language
+			$next_language = 'done';
+		}
+
+		// construct and redirect to next url
+		$url = add_query_arg( array(
+			'page'                      => 'trp_remove_duplicate_rows',
+			'trp_rm_duplicates'         => $next_language,
+		), site_url('wp-admin/admin.php') );
+		echo "<meta http-equiv='refresh' content='1; url={$url}' />";
+		echo "<br> " . __( 'If the page does not redirect automatically', 'translatepress-multilingual' ) . " <a href='$url' >" . __( 'click here', 'translatepress-multilingual' ) . ".</a>";
+		exit;
+	}
 
     /**
      * Register settings option.
