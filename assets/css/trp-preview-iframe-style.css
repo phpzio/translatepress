@@ -6,27 +6,27 @@
     width: 30px !important;
     height: 30px !important;
     display: inline-block;
-    position: absolute;
+    position: absolute !important;
     margin-left: -30px !important;
-    cursor: pointer;
+    cursor: pointer !important;
     pointer-events: auto;
-    color: #fff;
-    min-width: 30px;
-    min-height: 30px;
+    color: #fff !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
     line-height: 1em!important;
-    font-size: 18px;
-    z-index: 5;
+    font-size: 18px !important;
+    z-index: 5 !important;
     background: #0085ba!important;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    -webkit-box-shadow: 0 2px 1px rgba(46,68,83,.15);
-    box-shadow: 0 2px 1px rgba(46,68,83,.15);
-    text-align: center;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: 3px;
+    -webkit-border-radius: 50% !important;
+    border-radius: 50% !important;
+    border: 2px solid #fff !important;
+    -webkit-box-shadow: 0 2px 1px rgba(46,68,83,.15) !important;
+    box-shadow: 0 2px 1px rgba(46,68,83,.15) !important;
+    text-align: center !important;
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+    padding: 3px !important;
 }
 
 .trp-icon:hover {
