@@ -87,8 +87,9 @@ class TRP_Query{
         }
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
-        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), OBJECT_K  );
-        return $dictionary;
+	    $prepared_query = $this->db->prepare( $query, $values );
+        $dictionary = $this->db->get_results( $prepared_query, OBJECT_K  );
+        return apply_filters( 'trp_get_existing_translations', $dictionary, $prepared_query );
     }
 
     /**
