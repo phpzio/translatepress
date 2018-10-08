@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: TranslatePress - Multilingual - v.1.3.2-alpha
+Plugin Name: TranslatePress - Multilingual
 Plugin URI: https://translatepress.com/
 Description: Experience a better way of translating your WordPress site, with full support for WooCommerce and site builders.
 Version: 1.3.1

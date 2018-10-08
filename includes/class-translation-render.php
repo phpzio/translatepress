@@ -847,10 +847,7 @@ class TRP_Translation_Render{
         // get existing translations
         $dictionary = $this->trp_query->get_existing_translations( array_values($translateable_strings), $language_code );
         if ( $dictionary === false ){
-        	error_log('ar trebui sa mearga');
         	return array();
-        }else{
-        	error_log( 'nu_merge', $dictionary );
         }
         $new_strings = array();
         foreach( $translateable_strings as $i => $string ){
