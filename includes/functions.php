@@ -67,10 +67,17 @@ function trp_x( $text, $context, $domain, $language ){
     /* try to find the correct path for the textdomain */
     $path = trp_find_translation_location_for_domain( $domain, $language );
 
-    $mo_file = new MO();
-
     if( !empty( $path ) ) {
-        if (!$mo_file->import_from_file( $path )) return $text;
+
+        $mo_file = wp_cache_get( 'trp_x_path_' . $path );
+
+        if( false === $mo_file ){
+            $mo_file = new MO();
+            $mo_file = wp_cache_set( 'trp_x_path_' . $path, $mo_file->import_from_file( $path ) );
+        }
+
+        if ( !$mo_file ) return $text;
+
 
         if (!empty($mo_file->entries[$context . '' . $text]))
             $text = $mo_file->entries[$context . '' . $text]->translations[0];
