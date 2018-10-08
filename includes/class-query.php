@@ -647,4 +647,23 @@ class TRP_Query{
 					    ;';
 		return $this->db->query( $query );
 	}
+
+	/**
+	 * Removes a row if translation status 0, if the original exists translated
+	 *
+	 * Only the original with translation remains
+	 */
+	public function remove_untranslated_strings_if_translation_available( $language_code ){
+		$table_name = $this->get_table_name( $language_code );
+		$query = '	DELETE `a`
+						FROM
+						    ' . $table_name . ' AS `a`,
+						    ' . $table_name . ' AS `b`
+						WHERE
+						    (`a`.`original` = BINARY `b`.`original` OR `a`.`original` IS NULL AND `b`.`original` IS NULL)
+						    AND (`a`.`status` = 0 )
+						    AND (`b`.`status` != 0 )
+						    ;';
+		return $this->db->query( $query );
+	}
 }

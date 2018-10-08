@@ -128,11 +128,13 @@ class TRP_Settings{
 				echo '<div>' . sprintf( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), $this->trp_query->get_table_name( $language_code ) ) . '</div>';
 
 				// execute query
-				$result = $this->trp_query->remove_duplicate_rows_in_dictionary_table( $language_code );
-				if ( $result === false ) {
+				$result1 = $this->trp_query->remove_duplicate_rows_in_dictionary_table( $language_code );
+				$result2 = $this->trp_query->remove_untranslated_strings_if_translation_available( $language_code );
+				if ( ( $result1 === false ) || ( $result2 === false ) ) {
 					// if query outputted error do not continue iteration
 					return;
 				}else{
+					$result = $result1 + $result2;
 					echo '<div>' . sprintf( __( '%s duplicates removed', 'translatepress-multilingual' ), $result ) . '</div>';
 				}
 
