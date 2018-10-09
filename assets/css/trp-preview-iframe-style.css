@@ -47,7 +47,7 @@
 }
 
 .trp-highlight{
-    outline: 2px solid #e2e4e7;
+    outline: 2px solid #e2e4e7 !important;
 }
 
 *[data-trpgettextoriginal] .trp-icon, .trpgettext-wrap .trp-icon{
