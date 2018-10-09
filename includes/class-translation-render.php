@@ -281,6 +281,11 @@ class TRP_Translation_Render{
      * @return string               Translated HTML page.
      */
     public function translate_page( $output ){
+
+        /* replace our special tags so we have valid html */
+        $output = str_replace('#!trpst#', '<', $output);
+        $output = str_replace('#!trpen#', '>', $output);
+
         $output = apply_filters('trp_before_translate_content', $output);
 
         if ( strlen( $output ) < 1 || $output == false ){
