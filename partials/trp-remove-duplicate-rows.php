@@ -1,9 +1,3 @@
-<?php
-
-
-//trp_remove_duplicate_rows
-
-?>
 <div id="trp-addons-page" class="wrap">
 
     <h1> <?php _e( 'TranslatePress Settings', 'translatepress-multilingual' );?></h1>

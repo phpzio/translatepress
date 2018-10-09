@@ -102,7 +102,7 @@ class TRP_Settings{
 	 */
 	public function trp_remove_duplicate_rows(){
 		// prepare page structure
-		require_once TRP_PLUGIN_DIR . 'partials/trp_remove_duplicate_rows.php';
+		require_once TRP_PLUGIN_DIR . 'partials/trp-remove-duplicate-rows.php';
 
 		if ( empty( $_GET['trp_rm_duplicates'] ) ){
 			// iteration not started
