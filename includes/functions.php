@@ -69,11 +69,12 @@ function trp_x( $text, $context, $domain, $language ){
 
     if( !empty( $path ) ) {
 
-        $mo_file = wp_cache_get( 'trp_x_path_' . $path );
+        $mo_file = wp_cache_get( 'trp_x_' . $domain .'_'. $language );
 
         if( false === $mo_file ){
             $mo_file = new MO();
-            $mo_file = wp_cache_set( 'trp_x_path_' . $path, $mo_file->import_from_file( $path ) );
+            $mo_file->import_from_file( $path );
+            wp_cache_set( 'trp_x_' . $domain .'_'. $language, $mo_file );
         }
 
         if ( !$mo_file ) return $text;
