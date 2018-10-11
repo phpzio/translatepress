@@ -630,15 +630,17 @@ class TRP_Query{
 	 *
 	 * @param $table
 	 */
-	public function remove_duplicate_rows_in_dictionary_table( $language_code ){
+	public function remove_duplicate_rows_in_dictionary_table( $language_code, $batch ){
 		$table_name = $this->get_table_name( $language_code );
-    	$query = '	DELETE `a`
+		$query = '	DELETE `b`
 					FROM
 					    ' . $table_name . ' AS `a`,
 					    ' . $table_name . ' AS `b`
 					WHERE
 					    -- IMPORTANT: Ensures one version remains
-					    `a`.`ID` < `b`.`ID`
+					    `a`.ID < ' . $batch . ' 
+					    AND `b`.ID < ' . $batch . ' 
+					    AND `a`.`ID` < `b`.`ID`
 					
 					    -- Check for all duplicates. Binary ensure case sensitive comparison
 					    AND (`a`.`original` = BINARY `b`.`original` OR `a`.`original` IS NULL AND `b`.`original` IS NULL)
@@ -664,7 +666,18 @@ class TRP_Query{
 						    (`a`.`original` = BINARY `b`.`original` OR `a`.`original` IS NULL AND `b`.`original` IS NULL)
 						    AND (`a`.`status` = 0 )
 						    AND (`b`.`status` != 0 )
+						    AND (`a`.`block_type` = `b`.`block_type` OR `a`.`block_type` IS NULL AND `b`.`block_type` IS NULL)
 						    ;';
 		return $this->db->query( $query );
+	}
+
+	/*
+	 * Get last inserted ID for this table
+	 *
+	 * Useful for optimizing database by removing duplicate rows
+	 */
+	public function get_last_id( $table_name ){
+		$last_id = $this->db->get_var("SELECT MAX(id) FROM " . $table_name );
+		return $last_id;
 	}
 }
