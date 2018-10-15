@@ -84,11 +84,11 @@ class TRP_Translation_Manager{
 			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
 			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
 			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
-			'gettranslationsnonce'          => wp_create_nonce('get_translations'), 'translatepress-multilingual',
-			'savestringsnonce'              => wp_create_nonce('save_translations'), 'translatepress-multilingual',
-			'splittbnonce'                  => wp_create_nonce('split_translation_block'), 'translatepress-multilingual',
-			'gettextgettranslationsnonce'   => wp_create_nonce('gettext_get_translations'), 'translatepress-multilingual',
-			'gettextsavetranslationsnonce'  => wp_create_nonce('gettext_save_translations'), 'translatepress-multilingual',
+			'gettranslationsnonce'          => wp_create_nonce('get_translations'),
+			'savestringsnonce'              => wp_create_nonce('save_translations'),
+			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
+			'gettextgettranslationsnonce'   => wp_create_nonce('gettext_get_translations'),
+			'gettextsavetranslationsnonce'  => wp_create_nonce('gettext_save_translations'),
 			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
 		);
 		return $text;

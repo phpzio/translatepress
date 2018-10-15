@@ -87,8 +87,9 @@ class TRP_Query{
         }
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
-        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), OBJECT_K  );
-        return $dictionary;
+	    $prepared_query = $this->db->prepare( $query, $values );
+        $dictionary = $this->db->get_results( $prepared_query, OBJECT_K  );
+        return apply_filters( 'trp_get_existing_translations', $dictionary, $prepared_query );
     }
 
     /**
@@ -461,7 +462,7 @@ class TRP_Query{
      * @param string $default_language      Default language. Defaults to the one from settings.
      * @return string                       Table name.
      */
-    protected function get_table_name( $language_code, $default_language = null ){
+    public function get_table_name( $language_code, $default_language = null ){
         if ( $default_language == null ) {
             $default_language = $this->settings['default-language'];
         }
@@ -488,7 +489,7 @@ class TRP_Query{
         return $dictionary;
     }
 
-    protected function get_gettext_table_name( $language_code ){
+    public function get_gettext_table_name( $language_code ){
 		global $wpdb;
         return $wpdb->get_blog_prefix() . 'trp_gettext_' . strtolower( $language_code );
     }
@@ -617,5 +618,66 @@ class TRP_Query{
 		$query = 'UPDATE `' . implode( $table_names, '`, `' ) . '` SET `' . implode( $table_names, '`.block_type=' . $block_type . ', `' ) . '`.block_type=' . $block_type . ' WHERE `' . implode( $table_names, '`.original IN ' . $placeholders . ' AND `' ) . '`.original IN ' . $placeholders ;
 
 		return $this->db->query( $this->db->prepare( $query, $values ) );
+	}
+
+	/**
+	 * Removes duplicate rows of regular strings table
+	 *
+	 * (original, translated, status, block_type) have to be identical.
+	 * Only the row with the lowest ID remains
+	 *
+	 * https://stackoverflow.com/a/25206828
+	 *
+	 * @param $table
+	 */
+	public function remove_duplicate_rows_in_dictionary_table( $language_code, $batch ){
+		$table_name = $this->get_table_name( $language_code );
+		$query = '	DELETE `b`
+					FROM
+					    ' . $table_name . ' AS `a`,
+					    ' . $table_name . ' AS `b`
+					WHERE
+					    -- IMPORTANT: Ensures one version remains
+					    `a`.ID < ' . $batch . ' 
+					    AND `b`.ID < ' . $batch . ' 
+					    AND `a`.`ID` < `b`.`ID`
+					
+					    -- Check for all duplicates. Binary ensure case sensitive comparison
+					    AND (`a`.`original` = BINARY `b`.`original` OR `a`.`original` IS NULL AND `b`.`original` IS NULL)
+					    AND (`a`.`translated` = BINARY`b`.`translated` OR `a`.`translated` IS NULL AND `b`.`translated` IS NULL)
+					    AND (`a`.`status` = `b`.`status` OR `a`.`status` IS NULL AND `b`.`status` IS NULL)
+					    AND (`a`.`block_type` = `b`.`block_type` OR `a`.`block_type` IS NULL AND `b`.`block_type` IS NULL)
+					    ;';
+		return $this->db->query( $query );
+	}
+
+	/**
+	 * Removes a row if translation status 0, if the original exists translated
+	 *
+	 * Only the original with translation remains
+	 */
+	public function remove_untranslated_strings_if_translation_available( $language_code ){
+		$table_name = $this->get_table_name( $language_code );
+		$query = '	DELETE `a`
+						FROM
+						    ' . $table_name . ' AS `a`,
+						    ' . $table_name . ' AS `b`
+						WHERE
+						    (`a`.`original` = BINARY `b`.`original` OR `a`.`original` IS NULL AND `b`.`original` IS NULL)
+						    AND (`a`.`status` = 0 )
+						    AND (`b`.`status` != 0 )
+						    AND (`a`.`block_type` = `b`.`block_type` OR `a`.`block_type` IS NULL AND `b`.`block_type` IS NULL)
+						    ;';
+		return $this->db->query( $query );
+	}
+
+	/*
+	 * Get last inserted ID for this table
+	 *
+	 * Useful for optimizing database by removing duplicate rows
+	 */
+	public function get_last_id( $table_name ){
+		$last_id = $this->db->get_var("SELECT MAX(id) FROM " . $table_name );
+		return $last_id;
 	}
 }
