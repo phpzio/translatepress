@@ -119,8 +119,17 @@ class TRP_Settings{
 			echo __('Done.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
 			return;
 		}
+		$nonce = wp_verify_nonce( $_GET['trp_rm_nonce'], 'tpremoveduplicaterows' );
+		if ( $nonce === false ){
+			echo __('Invalid nonce.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+			return;
+		}
 
 		$next_get_batch = 1;
+		$batch_size = apply_filters( 'trp_rm_duplicate_batch_size', 10000 );
+		if ( !empty( $_GET['trp_rm_batch_size'] )  && (int) $_GET['trp_rm_batch'] > 0 ){
+			$batch_size = (int) $_GET['trp_rm_batch_size'];
+		}
 		if ( in_array( $_GET['trp_rm_duplicates'], $this->settings['translation-languages'] ) ) {
 			// language code found in array
 			$language_code = $_GET['trp_rm_duplicates'];
@@ -135,11 +144,10 @@ class TRP_Settings{
 				echo '<div>' . sprintf( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), $table_name ) . '</div>';
 
 				$last_id = $this->trp_query->get_last_id( $table_name );
-				$batch_size = apply_filters( 'trp_rm_duplicate_batch_size', 10000 );
-				if ( empty( $_GET['trp_rm_batch'] ) ) {
-					$get_batch = 1;
-				}else{
+				if ( !empty( $_GET['trp_rm_batch'] ) && (int) $_GET['trp_rm_batch'] > 0 ) {
 					$get_batch = (int)$_GET['trp_rm_batch'];
+				}else{
+					$get_batch = 1;
 				}
 				$batch = $batch_size * $get_batch;
 
@@ -188,7 +196,9 @@ class TRP_Settings{
 		$url = add_query_arg( array(
 			'page'                      => 'trp_remove_duplicate_rows',
 			'trp_rm_duplicates'         => $next_language,
-			'trp_rm_batch'              => $next_get_batch
+			'trp_rm_batch'              => $next_get_batch,
+			'trp_rm_batch_size'         => $batch_size,
+			'trp_rm_nonce'              => wp_create_nonce('tpremoveduplicaterows')
 		), site_url('wp-admin/admin.php') );
 		echo "<meta http-equiv='refresh' content='0; url={$url}' />";
 		echo "<br> " . __( 'If the page does not redirect automatically', 'translatepress-multilingual' ) . " <a href='$url' >" . __( 'click here', 'translatepress-multilingual' ) . ".</a>";
