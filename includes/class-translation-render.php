@@ -252,7 +252,7 @@ class TRP_Translation_Render{
     	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
 		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
 			foreach( $all_existing_translation_blocks as $existing_translation_block ){
-				if ( $this->trim_translation_block( $existing_translation_block->original ) == $trimmed_inner_text ){
+				if ( $existing_translation_block->trimmed_original == $trimmed_inner_text ){
 					return $existing_translation_block;
 				}
 			}
@@ -281,6 +281,11 @@ class TRP_Translation_Render{
      * @return string               Translated HTML page.
      */
     public function translate_page( $output ){
+
+        /* replace our special tags so we have valid html */
+        $output = str_replace('#!trpst#', '<', $output);
+        $output = str_replace('#!trpen#', '>', $output);
+
         $output = apply_filters('trp_before_translate_content', $output);
 
         if ( strlen( $output ) < 1 || $output == false ){
@@ -370,6 +375,10 @@ class TRP_Translation_Render{
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
         $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
+	    // trim every translation block original now, to avoid over-calling trim function later
+	    foreach ( $all_existing_translation_blocks as $key => $existing_tb ){
+		    $all_existing_translation_blocks[$key]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[$key]->original );
+	    }
 		$merge_rules = $this->translation_manager->get_merge_rules();
 
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);

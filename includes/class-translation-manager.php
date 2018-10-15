@@ -923,7 +923,6 @@ class TRP_Translation_Manager{
                         $callstack_function['function'] == 'get_bloginfo' ||
                         $callstack_function['function'] == 'wp_get_document_title' ||
                         $callstack_function['function'] == 'wp_title' ||
-                        $callstack_function['function'] == 'wptexturize' ||
                         $callstack_function['function'] == 'wp_trim_words'
                     ) {
                         return $translation;
@@ -943,7 +942,7 @@ class TRP_Translation_Manager{
             }
 
             if( ( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) )
-                $translation = '<trp-gettext data-trpgettextoriginal=\'' . $db_id . '\'>' . $translation . '</trp-gettext>';
+				$translation = '#!trpst#trp-gettext data-trpgettextoriginal=' . $db_id . '#!trpen#' . $translation . '#!trpst#/trp-gettext#!trpen#';//add special start and end tags so that it does not influence html in any way. we will replace them with < and > at the start of the translate function 
         }
 
         return $translation;
@@ -1034,77 +1033,6 @@ class TRP_Translation_Manager{
         }
     }
 
-    /* we need the esc_ functions for html and attributes not to escape our tags so we put them back */
-    function handle_esc_functions_for_gettext( $safe_text, $text ){
-        if( preg_match( '/(&lt;)trp-gettext (.*?)(&gt;)/', $safe_text, $matches ) ) {
-            if( !empty($matches[2]) ) {
-                $safe_text = preg_replace('/(&lt;)trp-gettext (.*?)(&gt;)/', "<trp-gettext " . htmlspecialchars_decode( $matches[2], ENT_QUOTES ) . ">", $safe_text);
-                $safe_text = preg_replace('/(&lt;)(.?)\/trp-gettext(&gt;)/', '</trp-gettext>', $safe_text);
-            }
-        }
-
-        return $safe_text;
-    }
-
-    /* let the trp-gettext wrap and data-trpgettextoriginal pass through kses filters */
-    function handle_kses_functions_for_gettext( $tags ){
-        if( is_array($tags) ){
-            $tags['trp-gettext'] = array( 'data-trpgettextoriginal' => true );
-        }
-        return $tags;
-    }
-
-	/**
-	 * Copy function of esc_attr, unfiltered.
-	 *
-	 * Needed because all esc functions are hooked to handle_esc_functions_for_gettext, which will not escape trp-gettext tags
-	 *
-	 * @param $text string      Text to escape
-	 *
-	 * @return string           Escaped text
-	 */
-    function esc_attr_unfilttered( $text ){
-	    $safe_text = wp_check_invalid_utf8( $text );
-	    $safe_text = _wp_specialchars( $safe_text, ENT_QUOTES );
-	    return $safe_text;
-    }
-
-	/**
-	 * Escape attributes containing trp-gettext tag before passing to wp_kses.
-	 *
-	 * wp_kses will accidentally escape the parent tag, if another unescaped tag is present withing its attribute
-	 * Ex. <img alt="<trp-gettext>Placeholder</trp-gettext">"/> will be transformed by trp-gettext like this: &lt;img alt=&quot;<trp-gettext>Placeholder</trp-gettext">"/>
-	 *
-	 * As a side consequence this function will disable translation of the string contained in the trp-gettext tag because there is no hook available that will allow us to undo the escaping the tags, after wp_kses is finished
-	 *
-	 * @param $string
-	 * @param $allowed_html
-	 * @param $allowed_protocols
-	 *
-	 * @return mixed
-	 */
-    function escape_gettext_from_attributes_kses( $string, $allowed_html, $allowed_protocols ){
-	    /* remove trp-gettext tag from attributes of other tags in kses functions*/
-	    $html_modified = false;
-		if ( !is_admin () && strpos( $string, 'trp-gettext' ) !== false ) {
-			$html = trp_str_get_html($string, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
-			foreach ( $html->find("*[!nuartrebuisaexiteatributulasta]") as $k => $row ) {
-				$all_attributes = $row->getAllAttributes();
-				if ( ! empty( $all_attributes ) ) {
-					foreach ( $all_attributes as $attr_name => $attr_value ) {
-						if ( strpos( $attr_value, 'trp-gettext' ) !== false ) {
-							$row->setAttribute($attr_name, $this->esc_attr_unfilttered($attr_value));
-							$html_modified = true;
-						}
-					}
-				}
-			}
-			if ( $html_modified ){
-				$string = $html->save();
-			}
-		}
-		return $string;
-    }
 
 
     /**
@@ -1114,8 +1042,8 @@ class TRP_Translation_Manager{
     function handle_date_i18n_function_for_gettext( $j, $dateformatstring, $unixtimestamp, $gmt ){
 
         /* remove trp-gettext wrap */
-        $dateformatstring = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $dateformatstring );
-        $dateformatstring = preg_replace( '/(<|&lt;)(.?)\/trp-gettext(>|&gt;)/', '', $dateformatstring );
+        $dateformatstring = preg_replace( '/#!tst#trp-gettext (.*?)#!ten#/', '', $dateformatstring );
+        $dateformatstring = preg_replace( '/#!tst#(.?)\/trp-gettext#!ten#/', '', $dateformatstring );
 
 
         global $wp_locale;

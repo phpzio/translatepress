@@ -67,10 +67,18 @@ function trp_x( $text, $context, $domain, $language ){
     /* try to find the correct path for the textdomain */
     $path = trp_find_translation_location_for_domain( $domain, $language );
 
-    $mo_file = new MO();
-
     if( !empty( $path ) ) {
-        if (!$mo_file->import_from_file( $path )) return $text;
+
+        $mo_file = wp_cache_get( 'trp_x_' . $domain .'_'. $language );
+
+        if( false === $mo_file ){
+            $mo_file = new MO();
+            $mo_file->import_from_file( $path );
+            wp_cache_set( 'trp_x_' . $domain .'_'. $language, $mo_file );
+        }
+
+        if ( !$mo_file ) return $text;
+
 
         if (!empty($mo_file->entries[$context . '' . $text]))
             $text = $mo_file->entries[$context . '' . $text]->translations[0];
@@ -533,3 +541,18 @@ function trp_remove_accents( $string ){
 
     return $string;
 };
+
+/**
+ * Filter ginger_iframe_banner and ginger_text_banner to use shortcodes so our conditional lang shortcode works.
+ *
+ * @since 1.3.1
+ *
+ * @param string $content
+ * @return string
+ */
+
+add_filter('ginger_iframe_banner', 'trpc_do_shortcode', 999 );
+add_filter('ginger_text_banner', 'trpc_do_shortcode', 999 );
+function trpc_do_shortcode($content){
+    return do_shortcode(stripcslashes($content));
+}
