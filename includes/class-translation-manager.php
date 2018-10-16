@@ -1042,8 +1042,8 @@ class TRP_Translation_Manager{
     function handle_date_i18n_function_for_gettext( $j, $dateformatstring, $unixtimestamp, $gmt ){
 
         /* remove trp-gettext wrap */
-        $dateformatstring = preg_replace( '/#!tst#trp-gettext (.*?)#!ten#/', '', $dateformatstring );
-        $dateformatstring = preg_replace( '/#!tst#(.?)\/trp-gettext#!ten#/', '', $dateformatstring );
+        $dateformatstring = preg_replace( '/#!trpst#trp-gettext (.*?)#!trpen#/', '', $dateformatstring );
+        $dateformatstring = preg_replace( '/#!trpst#(.?)\/trp-gettext#!trpen#/', '', $dateformatstring );		
 
 
         global $wp_locale;
