@@ -68,6 +68,7 @@ class TRP_Settings{
         add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
         add_submenu_page( 'TRPHidden', 'TranslatePress Addons', 'TRPHidden', 'manage_options', 'trp_addons_page', array($this, 'addons_page_content') );
         add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array($this, 'test_google_key_page_content') );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Remove Duplicate Rows', 'TRPHidden', 'manage_options', 'trp_remove_duplicate_rows', array($this, 'trp_remove_duplicate_rows') );
     }
 
     /**
@@ -90,11 +91,119 @@ class TRP_Settings{
     }
 
     /**
-     * Addons page content.
+     * Test Google Key page content.
      */
     public function test_google_key_page_content(){
         require_once TRP_PLUGIN_DIR . 'partials/test-google-key-settings-page.php';
     }
+
+	/**
+	 * Remove duplicate rows from DB for trp_dictionary tables.
+	 * Removes untranslated strings if there is a translated version.
+	 *
+	 * Iterates over languages. Each language is iterated in batches of 10 000
+	 */
+	public function trp_remove_duplicate_rows(){
+		if ( ! current_user_can( 'manage_options' ) ){
+			return;
+		}
+		// prepare page structure
+		require_once TRP_PLUGIN_DIR . 'partials/trp-remove-duplicate-rows.php';
+
+		if ( empty( $_GET['trp_rm_duplicates'] ) ){
+			// iteration not started
+			return;
+		}
+		if ( $_GET['trp_rm_duplicates'] === 'done' ){
+			// iteration finished
+			echo __('Done.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+			return;
+		}
+		$nonce = wp_verify_nonce( $_GET['trp_rm_nonce'], 'tpremoveduplicaterows' );
+		if ( $nonce === false ){
+			echo __('Invalid nonce.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+			return;
+		}
+
+		$next_get_batch = 1;
+		$batch_size = apply_filters( 'trp_rm_duplicate_batch_size', 10000 );
+		if ( !empty( $_GET['trp_rm_batch_size'] )  && (int) $_GET['trp_rm_batch'] > 0 ){
+			$batch_size = (int) $_GET['trp_rm_batch_size'];
+		}
+		if ( in_array( $_GET['trp_rm_duplicates'], $this->settings['translation-languages'] ) ) {
+			// language code found in array
+			$language_code = $_GET['trp_rm_duplicates'];
+			// skip default language since it doesn't have a table
+			if ( $language_code != $this->settings['default-language'] ) {
+				if ( ! $this->trp_query ) {
+					$trp = TRP_Translate_Press::get_trp_instance();
+					/* @var TRP_Query */
+					$this->trp_query = $trp->get_component( 'query' );
+				}
+				$table_name = $this->trp_query->get_table_name( $language_code );
+				echo '<div>' . sprintf( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), $table_name ) . '</div>';
+
+				$last_id = $this->trp_query->get_last_id( $table_name );
+				if ( !empty( $_GET['trp_rm_batch'] ) && (int) $_GET['trp_rm_batch'] > 0 ) {
+					$get_batch = (int)$_GET['trp_rm_batch'];
+				}else{
+					$get_batch = 1;
+				}
+				$batch = $batch_size * $get_batch;
+
+				/* Execute this query only for string with ID < $batch. This ensures that the query is fast.
+				 * Deleting duplicate rows for the first 20k rows might take too long.
+				 * As a solution we are deleting the duplicates of the first 10k rows ( 1 to 10 000),
+				 * then delete duplicates of the first 20k rows( 1 to 20 000, not 10 000 to 20 000 because we there could still be duplicates).
+				 * Same goes for higher numbers.
+				 */
+				$result1 = $this->trp_query->remove_duplicate_rows_in_dictionary_table( $language_code, $batch );
+				$result2 = 0;
+				if ( $batch > $last_id ){
+					// execute this query only when we do not have any more duplicate rows
+					$result2 = $this->trp_query->remove_untranslated_strings_if_translation_available( $language_code );
+				}else{
+					$next_get_batch = $get_batch + 1;
+				}
+
+				if ( ( $result1 === false ) || ( $result2 === false ) ) {
+					// if query outputted error do not continue iteration
+					return;
+				}else{
+					$result = $result1 + $result2;
+					echo '<div>' . sprintf( __( '%s duplicates removed', 'translatepress-multilingual' ), $result ) . '</div>';
+				}
+			}
+			if ( $next_get_batch == 1 ) {
+				// finished with the current language
+				$index = array_search( $language_code, $this->settings['translation-languages'] );
+				if ( isset ( $this->settings['translation-languages'][ $index + 1 ] ) ) {
+					// next language code in array
+					$next_language = $this->settings['translation-languages'][ $index + 1 ];
+				} else {
+					// finish iteration due to completing all the translation languages
+					$next_language = 'done';
+				}
+			}else{
+				$next_language = $language_code;
+			}
+		}else{
+			// finish iteration due to incorrect translation language
+			$next_language = 'done';
+		}
+
+		// construct and redirect to next url
+		$url = add_query_arg( array(
+			'page'                      => 'trp_remove_duplicate_rows',
+			'trp_rm_duplicates'         => $next_language,
+			'trp_rm_batch'              => $next_get_batch,
+			'trp_rm_batch_size'         => $batch_size,
+			'trp_rm_nonce'              => wp_create_nonce('tpremoveduplicaterows')
+		), site_url('wp-admin/admin.php') );
+		echo "<meta http-equiv='refresh' content='0; url={$url}' />";
+		echo "<br> " . __( 'If the page does not redirect automatically', 'translatepress-multilingual' ) . " <a href='$url' >" . __( 'click here', 'translatepress-multilingual' ) . ".</a>";
+		exit;
+	}
 
     /**
      * Register settings option.

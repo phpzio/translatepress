@@ -541,3 +541,18 @@ function trp_remove_accents( $string ){
 
     return $string;
 };
+
+/**
+ * Filter ginger_iframe_banner and ginger_text_banner to use shortcodes so our conditional lang shortcode works.
+ *
+ * @since 1.3.1
+ *
+ * @param string $content
+ * @return string
+ */
+
+add_filter('ginger_iframe_banner', 'trpc_do_shortcode', 999 );
+add_filter('ginger_text_banner', 'trpc_do_shortcode', 999 );
+function trpc_do_shortcode($content){
+    return do_shortcode(stripcslashes($content));
+}

@@ -129,18 +129,17 @@ function TRP_Translator(){
                     if ( mutation.addedNodes[i].textContent && _this.trim( mutation.addedNodes[i].textContent.trim(), except_characters ) != '' ) {
                         var node = jQuery( mutation.addedNodes[i] );
 
-                        var noTranslation = node.attr( 'data-no-translation' );
-                        if ( (typeof noTranslation !== typeof undefined && noTranslation !== false) || node.parents( '[data-no-translation]').length > 0 ){
-                            continue;
+                        // skip nodes containing these attributes
+                        var attr_array = ['data-no-translation', 'data-no-dynamic-translation', 'data-trpgettextoriginal', 'data-trp-translate-id'];
+                        var skip_string = false;
+                        for (var at = 0; at < attr_array.length ; at++ ){
+                            var current_attribute = node.attr( attr_array[ at ] );
+                            if ( (typeof current_attribute !== typeof undefined && current_attribute !== false) || node.parents( '[' + attr_array[ at ] + ']').length > 0 ){
+                                skip_string = true;
+                                break;
+                            }
                         }
-
-                        var gettextString = node.attr( 'data-trpgettextoriginal' );
-                        if ( (typeof gettextString !== typeof undefined && gettextString !== false) || node.parents( '[data-trpgettextoriginal]').length > 0 ){
-                            continue;
-                        }
-
-                        var simpleString = node.attr( 'data-trp-translate-id' );
-                        if ( (typeof simpleString !== typeof undefined && simpleString !== false) || node.parents( '[data-trp-translate-id]').length > 0 ){
+                        if ( skip_string ){
                             continue;
                         }
 
