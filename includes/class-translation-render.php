@@ -36,10 +36,6 @@ class TRP_Translation_Render{
             return;
         }
 
-
-        /*if($_SERVER['REQUEST_URI'] == '/it/wp-json/wp/v2/posts/')
-            return;*/
-
         mb_http_output("UTF-8");
         ob_start(array($this, 'translate_page'));
     }
