@@ -46,7 +46,7 @@ class TRP_Ajax{
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
                 if ( isset($string->original ) ) {
-                    $original_array[$key] = filter_var( $string->original, FILTER_SANITIZE_STRING );
+	                $original_array[$key] = mysqli_real_escape_string(filter_var( $string->original, FILTER_SANITIZE_STRING ), $this->connection);
                 }
             }
         }
