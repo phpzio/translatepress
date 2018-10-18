@@ -23,7 +23,7 @@ class TRP_Ajax{
 
         if ( $this->connect_to_db() ){
 
-            $this->output_translations( $this->sanitize_strings( $_POST['strings'] ), filter_var( $_POST['language'], FILTER_SANITIZE_STRING ), filter_var( $_POST['original_language'], FILTER_SANITIZE_STRING ) );
+            $this->output_translations( $this->sanitize_strings( $_POST['strings'] ), mysqli_real_escape_string(filter_var( $_POST['language'], FILTER_SANITIZE_STRING), $this->connection), mysqli_real_escape_string(filter_var( $_POST['language'], FILTER_SANITIZE_STRING ), $this->connection));
             //Successful connection to DB
             mysqli_close($this->connection);
         }else{
@@ -46,7 +46,7 @@ class TRP_Ajax{
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
                 if ( isset($string->original ) ) {
-                    $original_array[$key] = filter_var( $string->original, FILTER_SANITIZE_STRING );
+	                $original_array[$key] = mysqli_real_escape_string(filter_var( $string->original, FILTER_SANITIZE_STRING ), $this->connection);
                 }
             }
         }
