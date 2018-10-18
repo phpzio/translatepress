@@ -233,35 +233,35 @@ msgstr ""
 msgid "Security check"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:163
+#: ../translatepress/includes/class-translation-render.php:159
 msgid "Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:169
+#: ../translatepress/includes/class-translation-render.php:165
 msgid "OG Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:175
+#: ../translatepress/includes/class-translation-render.php:171
 msgid "OG Site Name"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:181
+#: ../translatepress/includes/class-translation-render.php:177
 msgid "OG Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:187
+#: ../translatepress/includes/class-translation-render.php:183
 msgid "Twitter Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:193
+#: ../translatepress/includes/class-translation-render.php:189
 msgid "Twitter Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:199
+#: ../translatepress/includes/class-translation-render.php:195
 msgid "Post Slug"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:203
+#: ../translatepress/includes/class-translation-render.php:199
 msgid "Page Title"
 msgstr ""
 
