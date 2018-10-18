@@ -551,8 +551,8 @@ function trp_remove_accents( $string ){
  * @return string
  */
 
-add_filter('ginger_iframe_banner', 'trpc_do_shortcode', 999 );
-add_filter('ginger_text_banner', 'trpc_do_shortcode', 999 );
-function trpc_do_shortcode($content){
+add_filter('ginger_iframe_banner', 'trp_do_shortcode', 999 );
+add_filter('ginger_text_banner', 'trp_do_shortcode', 999 );
+function trp_do_shortcode($content){
     return do_shortcode(stripcslashes($content));
 }
