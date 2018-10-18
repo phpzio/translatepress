@@ -2,7 +2,7 @@
  * Handle Editor interface
  */
 function TRP_Editor(){
-    trp_action_button_html = '<trp-span><trp-merge  title="' + trp_localized_text['merge'] + '" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split  title="' + trp_localized_text['split'] + '" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="' + trp_localized_text['edit'] + '" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>';
+    trp_action_button_html = '<trp-span><trp-merge  title="' + trp_localized_text['merge'] + '" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split  title="' + trp_localized_text['split'] + '" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="' + trp_localized_text['edit'] + '" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit><trp-image title="' + trp_localized_text['image'] + '" class="trp-icon trp-image dashicons dashicons-format-image"></trp-image></trp-span>';
     var _this = this;
     this.preview_iframe = null;
     var strings;
@@ -934,6 +934,7 @@ function TRP_String( language, array_index ){
     this.original = null;
     this.translated = null;
     this.status = null;
+    this.block_type = null;
     this.node_type = trp_localized_text['dynamicstrings'];
     this.node_description = '';
     this.jquery_object = null;
@@ -1038,19 +1039,18 @@ function TRP_String( language, array_index ){
      * Wrap buttons and placeholders so that we can display the pencil button and also replace with translation.
      */
     this.wrap_special_html_elements = function(){
-        if( _this.jquery_object.is('button') ){
-            _this.jquery_object.unwrap('trp-highlight');
-            _this.jquery_object.wrap('<trp-highlight data-trp-button="true"></trp-highlight>');
-            _this.jquery_object = _this.jquery_object.parent();
+        var extra_attribute = false;
+        if( _this.jquery_object.is('button') ) {
+            extra_attribute = 'data-trp-button="true"';
+        }else if ( _this.jquery_object.attr( 'type' ) == 'submit' || _this.jquery_object.attr( 'type' ) == 'button'  ) {
+            extra_attribute = 'data-trp-attr="value"';
+        }else if ( ( _this.jquery_object.attr( 'type' ) == 'text' || _this.jquery_object.attr( 'type' ) == 'search' ) && ( typeof _this.jquery_object.attr( 'placeholder' ) != 'undefined' ) ) {
+            extra_attribute = 'data-trp-attr="placeholder"';
+        }else if ( _this.jquery_object.is( 'img' ) ){
+            extra_attribute = '';
         }
-        else if ( _this.jquery_object.attr( 'type' ) == 'submit' || _this.jquery_object.attr( 'type' ) == 'button'  ) {
-            _this.jquery_object.unwrap('trp-highlight');
-            _this.jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
-            _this.jquery_object = _this.jquery_object.parent();
-        }
-        else if ( ( _this.jquery_object.attr( 'type' ) == 'text' || _this.jquery_object.attr( 'type' ) == 'search' ) && ( typeof _this.jquery_object.attr( 'placeholder' ) != 'undefined' ) ) {
-            _this.jquery_object.unwrap('trp-highlight');
-            _this.jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
+        if ( extra_attribute !== false ) {
+            _this.jquery_object.wrap('<trp-highlight ' + extra_attribute + '></trp-highlight>');
             _this.jquery_object = _this.jquery_object.parent();
         }
     };
@@ -1071,11 +1071,11 @@ function TRP_String( language, array_index ){
 
         trpEditor.remove_pencil_icon();
 
+        _this.wrap_special_html_elements();
         if ( ! trpEditor.edit_translation_button ){
             this_jquery_object.prepend( trp_action_button_html );
             trpEditor.edit_translation_button = this_jquery_object.children('trp-span');
         }else{
-            _this.wrap_special_html_elements();
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
             this_jquery_object.prepend(trpEditor.edit_translation_button);
         }
@@ -1084,6 +1084,12 @@ function TRP_String( language, array_index ){
         if ( merge_or_split != 'none' ) {
             trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
         }
+        if ( _this.jquery_object.children( 'img' ).length > 0 && ( _this.block_type == null || _this.block_type == 0 ) ){
+            trpEditor.edit_translation_button.children( 'trp-image' ).addClass( 'trp-active-icon' );
+        }else{
+            trpEditor.edit_translation_button.children( 'trp-edit' ).addClass( 'trp-active-icon' );
+        }
+
 
         trpEditor.make_sure_pencil_icon_is_inside_view( this_jquery_object[0] );
 
@@ -1558,6 +1564,7 @@ jQuery(function(){
                 trpEditor.edit_translation_button = jQuery( trp_action_button_html );
             }
             trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
+            trpEditor.edit_translation_button.children( 'trp-edit').addClass( 'trp-active-icon' );
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
 
             if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' ) {

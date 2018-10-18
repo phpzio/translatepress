@@ -79,6 +79,7 @@ class TRP_Translation_Manager{
 			'edit'                          => __( 'Translate', 'translatepress-multilingual' ),
 			'merge'                         => __( 'Translate entire block element', 'translatepress-multilingual' ),
 			'split'                         => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
+			'image'                         => __( 'Change image for language', 'translatepress-multilingual' ),
 			'translationblock'              => __( 'Translation block', 'translatepress-multilingual' ),
 			'areyousuresplittb'             => __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ),
 			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
