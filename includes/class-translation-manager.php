@@ -90,7 +90,8 @@ class TRP_Translation_Manager{
 			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
 			'gettextgettranslationsnonce'   => wp_create_nonce('gettext_get_translations'),
 			'gettextsavetranslationsnonce'  => wp_create_nonce('gettext_save_translations'),
-			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
+			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false ),
+			'trp_languages'                 => json_encode( $this->settings['translation-languages'] )
 		);
 		return $text;
 	}

@@ -118,15 +118,35 @@
                                 <div class="trp-language-name" data-trp-gettext-language-name="<?php echo sprintf( __( 'To %s', 'translatepress-multilingual' ), $default_language_name ); ?>" data-trp-default-language-name="<?php echo sprintf( __( 'From %s', 'translatepress-multilingual' ), $default_language_name ); ?>">
                                     <?php echo sprintf( __( 'From %s', 'translatepress-multilingual' ), $default_language_name ); ?>
                                 </div>
-                                <textarea id="trp-original" data-trp-language-code="<?php echo esc_attr( $trp_settings['default-language'] ); ?>" readonly="readonly"></textarea>
-                                <div class="trp-discard-changes trp-discard-on-default-language" style="display:none;"><?php _e( 'Discard changes', 'translatepress-multilingual' );?></div>
+                                <div class="trp-string-type" data-trp-string-attribute="regular">
+                                    <textarea id="trp-original" data-trp-language-code="<?php echo esc_attr( $trp_settings['default-language'] ); ?>" readonly="readonly"></textarea>
+                                    <div class="trp-discard-changes trp-discard-on-default-language" style="display:none;"><?php _e( 'Discard changes', 'translatepress-multilingual' );?></div>
+                                </div>
+                                <div style="display: none" class="trp-string-type" data-trp-string-attribute="alt">
+		                            <?php _e( 'Alternative text (alt)', 'translatepress-multilingual' ); ?>
+                                    <input type="text" data-trp-translate-id="">
+                                </div>
+                                <div style="display: none" class="trp-string-type" data-trp-string-attribute="src">
+		                            <?php _e( 'Image source (src)', 'translatepress-multilingual' ); ?>
+                                    <input type="text" data-trp-translate-id="">
+                                </div>
                             </div>
                             <?php
                             foreach( $translation_languages as $language ){?>
                                 <div id="trp-language-<?php echo $language;?>" class="trp-language-text <?php echo ( $TRP_LANGUAGE == $trp_settings['default-language'] || $language == $TRP_LANGUAGE ) ? 'trp-current-language' : 'trp-other-language' ?>">
                                     <div class="trp-language-name"><?php echo sprintf( __( 'To %s', 'translatepress-multilingual' ), $available_languages[ $language ] ); ?></div>
-                                    <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id="" data-trp-language-code="<?php echo esc_attr( $language ); ?>"></textarea>
-                                    <div class="trp-discard-changes"><?php _e( 'Discard changes', 'translatepress-multilingual' );?></div>
+                                    <div class="trp-string-type" data-trp-string-attribute="regular">
+                                        <textarea id="trp-translated-<?php echo $language; ?>" data-trp-translate-id="" data-trp-language-code="<?php echo esc_attr( $language ); ?>"></textarea>
+                                        <div class="trp-discard-changes"><?php _e( 'Discard changes', 'translatepress-multilingual' );?></div>
+                                    </div>
+                                    <div style="display: none" class="trp-string-type" data-trp-string-attribute="alt">
+		                                <?php _e( 'Alternative text (alt)', 'translatepress-multilingual' ); ?>
+                                        <input type="text" data-trp-translate-id="">
+                                    </div>
+                                    <div style="display: none" class="trp-string-type" data-trp-string-attribute="src">
+		                                <?php _e( 'Image source (src)', 'translatepress-multilingual' ); ?>
+                                        <input type="text" data-trp-translate-id="">
+                                    </div>
                                 </div>
                                 <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
                                     $other_languages = __( 'Other languages', 'translatepress-multilingual' );
