@@ -156,16 +156,19 @@
                 ?>
                 <div class="trp-controls-section wp-core-ui">
                     <div id="trp-upsell-section" class="trp-controls-section-content">
-                        <h3><?php _e('Your Website <br/> Multiple Languages', 'translatepress-multilingual' ); ?></h3>
+                        <h3><?php _e('Extra Translation Features', 'translatepress-multilingual' ); ?></h3>
                         <ul>
-                            <li><?php _e('Support for 221 Languages', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Support for 221 Extra Languages', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Yoast SEO support', 'translatepress-multilingual' ); ?></li>
                             <li><?php _e('Translate SEO Title, Description, Slug', 'translatepress-multilingual' ); ?></li>
-                            <li><?php _e('Translate Facebook Tags', 'translatepress-multilingual' ); ?></li>
                             <li><?php _e('Create Translator Accounts', 'translatepress-multilingual' ); ?></li>
-                            <li><?php _e('Publish when the translation is done', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Publish only when translation is done', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Translate by Browsing as User Role', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Different Menus Items per Language', 'translatepress-multilingual' ); ?></li>
+                            <li><?php _e('Automatic User Language Detection', 'translatepress-multilingual' ); ?></li>
                         </ul>
                         <p><span style="background: #f5fb9d;"><?php _e('Supported By Real People', 'translatepress-multilingual' ); ?></span></p>
-                        <p><a class="button-primary" target="_blank" href=" <?php echo trp_add_affiliate_id_to_link('https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree')?> "><?php _e('Learn More', 'translatepress-multilingual' ); ?></a></p>
+                        <p><a class="button-primary" target="_blank" href=" <?php echo trp_add_affiliate_id_to_link('https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree')?> "><?php _e('Find Out More', 'translatepress-multilingual' ); ?></a></p>
                     </div>
                 </div>
                 <?php endif; ?>

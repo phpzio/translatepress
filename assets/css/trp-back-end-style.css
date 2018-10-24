@@ -139,6 +139,11 @@ input.trp-translation-published{
     max-width:800px;
 }
 
-.trp-settings-delimiter-border{
+.trp-settings-delimiter-border {
     border-top: 1px solid #d9d9d9;
+}
+
+.trp-plugins-gopro{
+    color: #39b54a;
+    font-weight: bold;
 }
