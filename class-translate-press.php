@@ -38,6 +38,7 @@ class TRP_Translate_Press{
     public function __construct() {
         define( 'TRP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+        define( 'TRP_PLUGIN_BASE', plugin_basename( __DIR__ . '/index.php' ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
         define( 'TRP_PLUGIN_VERSION', '1.3.3' );
 
@@ -102,6 +103,7 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'admin_init', $this->settings, 'register_setting' );
         $this->loader->add_action( 'admin_notices', $this->settings, 'admin_notices' );
         $this->loader->add_action( 'admin_enqueue_scripts', $this->settings, 'enqueue_scripts_and_styles', 10, 1 );
+        $this->loader->add_filter( 'plugin_action_links_' . TRP_PLUGIN_BASE , $this->settings, 'plugin_action_links', 10, 1 );
         $this->loader->add_action( 'trp_settings_navigation_tabs', $this->settings, 'add_navigation_tabs' );
         $this->loader->add_action( 'trp_language_selector', $this->settings, 'languages_selector', 10, 1 );
 
