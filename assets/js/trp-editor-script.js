@@ -532,10 +532,30 @@ function TRP_Editor(){
     };
 
     /*
+     * https://wordpress.stackexchange.com/questions/112592/add-media-button-in-custom-plugin
+     */
+    this.set_upload_image_event = function(){
+        if (jQuery('.trp-add-media').length > 0) {
+            if ( wp.media && wp.media.editor) {
+                jQuery(document).on('click', '.trp-add-media', function(e) {
+                    e.preventDefault();
+                    var button = jQuery(this);
+                    var text_box = button.siblings('.trp-translation-box');
+                    wp.media.editor.send.attachment = function(props, attachment) {
+                        text_box.val(attachment.url);
+                    };
+                    wp.media.editor.open(button);
+                    return false;
+                });
+            }
+        }
+    };
+
+    /*
      *
      */
     this.show_specific_attributes = function ( trp_string ) {
-
+        _this.set_upload_image_event();
         var trp_languages = JSON.parse( trp_localized_text[ 'trp_languages' ] );
         var attr_list = ['src','alt'];
         for ( var i = 0; i < attr_list.length; i++ ){
@@ -546,7 +566,17 @@ function TRP_Editor(){
                 if ( attribute ) {
                     for ( var j = 0; j < trp_languages.length; j++ ) {
                         var language_container = jQuery( 'div#trp-language-' + trp_languages[j] );
-                        language_container.find( '.trp-string-type[data-trp-string-attribute="' + attr_list[i] + '"]' ).show();
+                        var attribute_container = language_container.find( '.trp-string-type[data-trp-string-attribute="' + attr_list[i] + '"]' ).first();
+                        attribute_container.show();
+
+                        // mockup
+                        if ( trp_languages[j] == 'en_US' ){
+                            attribute_container.find('.trp-translation-box').first().val( jQuery( list_of_objects[o] ).attr( attr_list[i] ) );
+                        }
+                        if ( trp_languages[j] == 'ro_RO') {
+                            attribute_container.find('.trp-translation-box').first().val( attribute );
+                        }
+
                     }
                 }
             }
@@ -1351,7 +1381,7 @@ function TRP_Lister( current_dictionary ) {
         jQuery( '#trp-controls .trp-language-text textarea' ).each(function(){
             textarea = this;
 
-            if( jQuery(textarea).parent().hasClass('trp-default-language') ) {
+            if( jQuery(textarea).parents().hasClass('trp-default-language') ) {
                 jQuery(textarea).removeAttr('readonly');
             }
 
@@ -1446,7 +1476,7 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
      * @param key
      */
     this.show_unsaved_changes = function( key ){
-        check_translated_textareas[key].parent().addClass('trp-unsaved-changes');
+        check_translated_textareas[key].parents('.trp-language-text').addClass('trp-unsaved-changes');
     };
 
     /**
@@ -1486,7 +1516,7 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
     this.initialize = function(){
 
         for ( var key in check_translated_textareas ) {
-            check_translated_textareas[key].parent().removeClass('trp-unsaved-changes');
+            check_translated_textareas[key].parents('.trp-language-text').removeClass('trp-unsaved-changes');
         }
         jQuery('.trp-language-text:not(.trp-default-text) textarea').off().on('input propertychange paste', _this.change_detected );
     };
@@ -1495,7 +1525,7 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
      * Restore initial translation.
      */
     this.discard_changes = function( ){
-        var language = jQuery(this).parent().attr( 'id' ).replace( 'trp-language-', '' );
+        var language = jQuery(this).parents('.trp-language-text').attr( 'id' ).replace( 'trp-language-', '' );
 
         if( jQuery("#trp-gettext-original-textarea").is(":visible") ){
             //gettext case here
@@ -1514,10 +1544,10 @@ function TRP_Change_Tracker( _original_textarea, _translated_textareas ){
         }
         check_translated_textareas[language].val( string.translated ).change();
         check_translated_textareas[language].on('input propertychange paste', _this.change_detected );
-        check_translated_textareas[language].parent().removeClass('trp-unsaved-changes');
+        check_translated_textareas[language].parents('.trp-language-text').removeClass('trp-unsaved-changes');
         changes_saved = true;
         for ( var key in check_translated_textareas ){
-            if ( check_translated_textareas[key].parent().hasClass( 'trp-unsaved-changes' ) ){
+            if ( check_translated_textareas[key].parents('.trp-language-text').hasClass( 'trp-unsaved-changes' ) ){
                 changes_saved = false;
             }
         }

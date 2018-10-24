@@ -124,11 +124,11 @@
                                 </div>
                                 <div style="display: none" class="trp-string-type" data-trp-string-attribute="alt">
 		                            <?php _e( 'Alternative text (alt)', 'translatepress-multilingual' ); ?>
-                                    <input type="text" data-trp-translate-id="">
+                                    <input type="text" readonly="readonly" class="trp-translation-box" data-trp-translate-id="">
                                 </div>
                                 <div style="display: none" class="trp-string-type" data-trp-string-attribute="src">
 		                            <?php _e( 'Image source (src)', 'translatepress-multilingual' ); ?>
-                                    <input type="text" data-trp-translate-id="">
+                                    <input type="text" readonly="readonly" class="trp-translation-box" data-trp-translate-id="">
                                 </div>
                             </div>
                             <?php
@@ -141,11 +141,12 @@
                                     </div>
                                     <div style="display: none" class="trp-string-type" data-trp-string-attribute="alt">
 		                                <?php _e( 'Alternative text (alt)', 'translatepress-multilingual' ); ?>
-                                        <input type="text" data-trp-translate-id="">
+                                        <input type="text" class="trp-translation-box" data-trp-translate-id="">
                                     </div>
                                     <div style="display: none" class="trp-string-type" data-trp-string-attribute="src">
 		                                <?php _e( 'Image source (src)', 'translatepress-multilingual' ); ?>
-                                        <input type="text" data-trp-translate-id="">
+                                        <input type="button" class="trp-add-media" value="<?php _e( 'Add Media', 'translatepress-multilingual' ); ?>">
+                                        <input type="text" class="trp-translation-box" data-trp-translate-id="">
                                     </div>
                                 </div>
                                 <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){
@@ -195,7 +196,11 @@
                 <iframe id="trp-preview-iframe" onload="trpEditor.initialize();" src="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>" width="100%" height="100%"></iframe>
         </div>
     </div>
-    <?php do_action( 'trp_translation_manager_footer' ); ?>
+    <?php do_action( 'trp_translation_manager_footer' );
+    //todo move this in action above
+    print_footer_scripts();
+    print_late_styles();?>
+
 </body>
 </html>
 
