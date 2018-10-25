@@ -586,7 +586,7 @@ function TRP_Editor(){
                         if ( trp_languages[j] == 'en_US' ){
                             attribute_container.find('.trp-translation-box').first().val( jQuery( list_of_objects[o] ).attr( attr_list[i] ) );
                         }
-                        if ( trp_languages[j] == 'ro_RO') {
+                        if ( trp_languages[j] == 'es_ES') {
                             attribute_container.find('.trp-translation-box').first().val( attribute );
                         }
 

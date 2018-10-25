@@ -5,7 +5,7 @@
 .trp-icon {
     width: 30px !important;
     height: 30px !important;
-    display: none;
+    display: none !important;
     position: absolute !important;
     margin-left: -30px !important;
     cursor: pointer !important;
@@ -88,7 +88,7 @@ translate-press{
  * Edit pencil icon
  */
 .trp-icon.trp-edit-translation.trp-active-icon, .trp-icon.trp-edit-translation.trp-active-icon:hover{
-    display: inline-block;
+    display: inline-block !important;
 }
 
 /*
@@ -105,7 +105,7 @@ translate-press{
 }
 
 .trp-icon.trp-merge.trp-active-icon, .trp-icon.trp-merge.trp-active-icon:hover{
-    display: inline-block;
+    display: inline-block !important;
 }
 
 /*
@@ -122,12 +122,12 @@ translate-press{
 }
 
 .trp-icon.trp-split.trp-active-icon, .trp-icon.trp-split.trp-active-icon:hover{
-    display: inline-block;
+    display: inline-block !important;
 }
 
 /*
  * Image icon
  */
 .trp-icon.trp-image.trp-active-icon, .trp-icon.trp-image.trp-active-icon:hover{
-    display: inline-block;
+    display: inline-block !important;
 }
