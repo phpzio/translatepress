@@ -529,6 +529,9 @@ class TRP_Translation_Render{
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     if( $row->parent()->tag == 'button') {
                         array_push($nodes, array('node' => $row, 'type' => 'button'));
+                    }
+                    if( $row->parent()->tag == 'option') {
+                        array_push($nodes, array('node' => $row, 'type' => 'option'));
                     }else{
                         array_push($nodes, array('node' => $row, 'type' => 'text'));
                     }
@@ -607,6 +610,10 @@ class TRP_Translation_Render{
             'button' => array(
                 'accessor' => 'outertext',
                 'attribute' => false
+            ),
+            'option' => array(
+                'accessor' => 'innertext',
+                'attribute' => false
             )
         ));
 
@@ -645,7 +652,7 @@ class TRP_Translation_Render{
                     $outertext_details .= '>' . $nodes[$i]['node']->outertext . '</translate-press>';
                     $nodes[$i]['node']->outertext = $outertext_details;
                 } else {
-                    if( $nodes[$i]['type'] == 'button' ){
+                    if( $nodes[$i]['type'] == 'button' || $nodes[$i]['type'] == 'option' ){
                         $nodes[$i]['node'] = $nodes[$i]['node']->parent();
                     }
                     $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
