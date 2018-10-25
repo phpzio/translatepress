@@ -36,10 +36,6 @@ class TRP_Translation_Render{
             return;
         }
 
-
-        /*if($_SERVER['REQUEST_URI'] == '/it/wp-json/wp/v2/posts/')
-            return;*/
-
         mb_http_output("UTF-8");
         ob_start(array($this, 'translate_page'));
     }
@@ -684,7 +680,7 @@ class TRP_Translation_Render{
 				$a_href->setAttribute( 'data-trp-original-href', $url );
 	        }
 
-            if ( $this->settings['force-language-to-custom-links'] == 'yes' && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$is_admin_link && strpos($url, '#TRPLINKPROCESSED') === false ){
+            if ( $TRP_LANGUAGE != $this->settings['default-language'] && $this->settings['force-language-to-custom-links'] == 'yes' && !$is_external_link && $this->url_converter->get_lang_from_url_string( $url ) == null && !$is_admin_link && strpos($url, '#TRPLINKPROCESSED') === false ){
                 $a_href->href = apply_filters( 'trp_force_custom_links', $this->url_converter->get_url_for_language( $TRP_LANGUAGE, $url ), $url, $TRP_LANGUAGE, $a_href );
                 $url = $a_href->href;
             }

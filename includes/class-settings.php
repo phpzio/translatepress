@@ -516,5 +516,27 @@ class TRP_Settings{
 
         require ( TRP_PLUGIN_DIR . 'partials/settings-navigation-tabs.php');
     }
+
+    /**
+     * Plugin action links.
+     *
+     * Adds action links to the plugin list table
+     *
+     * Fired by `plugin_action_links` filter.
+     *
+     * @param array $links An array of plugin action links.
+     *
+     * @return array An array of plugin action links.
+     */
+    public function plugin_action_links( $links ) {
+        $settings_link = sprintf( '<a href="%1$s">%2$s</a>', admin_url( 'options-general.php?page=translate-press' ), __( 'Settings', 'translatepress-multilingual' ) );
+
+        array_unshift( $links, $settings_link );
+
+        $links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" style="color: #e76054; font-weight: bold;">%2$s</a>', trp_add_affiliate_id_to_link('https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree'), __( 'Pro Features', 'translatepress-multilingual' ) );
+
+        return $links;
+    }
+
 }
 

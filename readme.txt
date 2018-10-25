@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.8
-Stable tag: 1.3.1
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,21 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.3.3 =
+* Fixed issue with Woocommerce ajax strings that were broken in editor on default language in some cases
+* Speed improvements
+
+= 1.3.2 =
+* Speed improvements
+* Add support for the Ginger – EU Cookie Law plugin
+* Add support for data-no-dynamic-translation attribute that skips dynamic strings from being translated by dom changes detector
+* Fixed Edit Pencil icon css in Translation Editor for some sites
+* Refactored the way we add trp-gettext tag. This should have a lot of benefits in compatibility with other plugins
+* Optimized block translation detection
+* Added caching to trp_x function when reading external .mo files
+* Fixed issue with translatepress icon css that was broken on wpforms forms
+* Added secret page for removing duplicate rows from database: wp-admin/admin.php?page=trp_remove_duplicate_rows
+
 = 1.3.1 =
 * Fixed Woocommerce translation of permalinks
 * Added support for remove_accents to be based on default language when called from the sanitize_title function

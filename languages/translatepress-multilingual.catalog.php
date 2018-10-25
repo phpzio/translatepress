@@ -31,6 +31,13 @@
 <?php __("Flags with Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Flags with Short Language Names", "translatepress-multilingual"); ?>
 <?php __("Only Flags", "translatepress-multilingual"); ?>
+<?php __("Done.", "translatepress-multilingual"); ?>
+<?php __("Back to TranslatePress Settings page", "translatepress-multilingual"); ?>
+<?php __("Invalid nonce.", "translatepress-multilingual"); ?>
+<?php __("Querying table <strong>%s</strong>", "translatepress-multilingual"); ?>
+<?php __("%s duplicates removed", "translatepress-multilingual"); ?>
+<?php __("If the page does not redirect automatically", "translatepress-multilingual"); ?>
+<?php __("click here", "translatepress-multilingual"); ?>
 <?php __("Current Language", "translatepress-multilingual"); ?>
 <?php __("General", "translatepress-multilingual"); ?>
 <?php __("Translate Site", "translatepress-multilingual"); ?>
@@ -118,6 +125,12 @@
 <?php __("Publish when the translation is done", "translatepress-multilingual"); ?>
 <?php __("Supported By Real People", "translatepress-multilingual"); ?>
 <?php __("Learn More", "translatepress-multilingual"); ?>
+<?php __("Remove duplicate rows from TranslatePress tables", "translatepress-multilingual"); ?>
+<?php __("<strong>IMPORTANT NOTE: Before performing this action it is strongly recommended to backup the database first.</strong><br><br>This feature can be used to cleanup duplicate entries in TranslatePress trp_dictionary tables. Such duplicates can appear in exceptional situations of unexpected behavior.", "translatepress-multilingual"); ?>
+<?php __("IMPORTANT: It is strongly recommended to backup the database first!\nAre you sure you want to continue?", "translatepress-multilingual"); ?>
+<?php __("Batch size", "translatepress-multilingual"); ?>
+<?php __("The number of rows to check at once.<br>Choosing a smaller number helps solve the 502 error \"Page took too long to respond\" on large databases.<br>May take several minutes depending on the database size.", "translatepress-multilingual"); ?>
+<?php __("Remove duplicate rows", "translatepress-multilingual"); ?>
 <?php __(" TranslatePress Settings", "translatepress-multilingual"); ?>
 <?php __("Translator", "translatepress-multilingual"); ?>
 <?php __("Allow this user to translate the website.", "translatepress-multilingual"); ?>
