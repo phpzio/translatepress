@@ -204,9 +204,13 @@ span.select2-container{
 #trp-previous{
     float: left;
 }
-#trp-next{
+#trp-next, .trp-add-media{
     float: right;
 }
+input.trp-add-media{
+    margin-right: -8px;
+}
+
 .trp-toggle-languages {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -227,8 +231,7 @@ span.select2-container{
     padding-bottom: 15px;
 }
 
-.trp-language-text textarea{
-    height: 80px;
+.trp-language-text textarea, .trp-translation-box{
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
     font-size: 14px;
     max-width: 100%;
@@ -238,8 +241,15 @@ span.select2-container{
     border: 1px solid  #aaa;
     border-radius:3px;
 }
+.trp-language-text textarea{
+    height: 80px;
+}
+.trp-translation-box{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
 
-.trp-language-text textarea[readonly="readonly"]{
+.trp-language-text textarea[readonly="readonly"], .trp-translation-box[readonly="readonly"]{
     background: #EBEBE4;
     border: 1px solid  #aaa;
     outline-width: 0;
@@ -272,7 +282,8 @@ span.select2-container{
 }
 
 .trp-toggle-languages span,
-.trp-next-previous-buttons {
+.trp-next-previous-buttons,
+.trp-add-media {
     display: inline-block;
     text-decoration: none;
     font-size: 13px;
@@ -294,7 +305,8 @@ span.select2-container{
 }
 
 .trp-toggle-languages span,
-.trp-next-previous-buttons {
+.trp-next-previous-buttons,
+.trp-add-media{
     color: #555;
     border-color: #cccccc;
     background: #f7f7f7;

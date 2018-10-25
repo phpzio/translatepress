@@ -146,7 +146,7 @@
                                     <div style="display: none" class="trp-string-type" data-trp-string-attribute="src">
 		                                <?php _e( 'Image source (src)', 'translatepress-multilingual' ); ?>
                                         <input type="button" class="trp-add-media" value="<?php _e( 'Add Media', 'translatepress-multilingual' ); ?>">
-                                        <input type="text" class="trp-translation-box" data-trp-translate-id="">
+                                        <input type="text" class="trp-translation-box" title="" data-trp-translate-id="">
                                     </div>
                                 </div>
                                 <?php if ( $language == $TRP_LANGUAGE && count( $translation_languages ) > 1 ){

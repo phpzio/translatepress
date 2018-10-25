@@ -543,6 +543,7 @@ function TRP_Editor(){
                     var text_box = button.siblings('.trp-translation-box');
                     wp.media.editor.send.attachment = function(props, attachment) {
                         text_box.val(attachment.url);
+                        text_box.tooltip({content: '<img class="trp-tooltip-image" src="' + attachment.url + '" />'});
                     };
                     wp.media.editor.open(button);
                     return false;
