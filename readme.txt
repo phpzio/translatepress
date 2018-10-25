@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.8
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,13 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.3.4 =
+* Fixed issue with options in select tag that couldn't be translated
+* Fixed force language in custom links
+* Fixed Woocommerce links fpr products or categories that were added by the user manually in a page
+* Added Settings link to the list of links displayed on Plugins page
+* Fixed issue with Kazakhstan flag
+
 = 1.3.3 =
 * Fixed issue with Woocommerce ajax strings that were broken in editor on default language in some cases
 * Speed improvements

@@ -189,6 +189,14 @@ msgstr ""
 msgid "Addons"
 msgstr ""
 
+#: ../translatepress/includes/class-settings.php:532, ../translatepress/includes/class-translation-manager.php:657
+msgid "Settings"
+msgstr ""
+
+#: ../translatepress/includes/class-settings.php:536
+msgid "Pro Features"
+msgstr ""
+
 #: ../translatepress/includes/class-translation-manager.php:79
 msgid "Translate"
 msgstr ""
@@ -223,10 +231,6 @@ msgstr ""
 
 #: ../translatepress/includes/class-translation-manager.php:638
 msgid "Translate Page"
-msgstr ""
-
-#: ../translatepress/includes/class-translation-manager.php:657
-msgid "Settings"
 msgstr ""
 
 #: ../translatepress/includes/class-translation-manager.php:1125
@@ -486,19 +490,19 @@ msgid "Strings that are user created can't be modified, only those from themes a
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:159
-msgid "Your Website <br/> Multiple Languages"
+msgid "Extra Translation Features"
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:161
-msgid "Support for 221 Languages"
+msgid "Support for 221 Extra Languages"
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:162
-msgid "Translate SEO Title, Description, Slug"
+msgid "Yoast SEO support"
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:163
-msgid "Translate Facebook Tags"
+msgid "Translate SEO Title, Description, Slug"
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:164
@@ -506,15 +510,27 @@ msgid "Create Translator Accounts"
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:165
-msgid "Publish when the translation is done"
+msgid "Publish only when translation is done"
+msgstr ""
+
+#: ../translatepress/partials/translation-manager.php:166
+msgid "Translate by Browsing as User Role"
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:167
-msgid "Supported By Real People"
+msgid "Different Menus Items per Language"
 msgstr ""
 
 #: ../translatepress/partials/translation-manager.php:168
-msgid "Learn More"
+msgid "Automatic User Language Detection"
+msgstr ""
+
+#: ../translatepress/partials/translation-manager.php:170
+msgid "Supported By Real People"
+msgstr ""
+
+#: ../translatepress/partials/translation-manager.php:171
+msgid "Find Out More"
 msgstr ""
 
 #: ../translatepress/partials/trp-remove-duplicate-rows.php:7
