@@ -2,7 +2,12 @@
  * Handle Editor interface
  */
 function TRP_Editor(){
-    trp_action_button_html = '<trp-span><trp-merge  title="' + trp_localized_text['merge'] + '" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split  title="' + trp_localized_text['split'] + '" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="' + trp_localized_text['edit'] + '" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit><trp-image title="' + trp_localized_text['image'] + '" class="trp-icon trp-image dashicons dashicons-format-image"></trp-image></trp-span>';
+    trp_action_button_html = '<trp-span>' +
+        '<trp-merge title="' + trp_localized_text['merge'] + '" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge>' +
+        '<trp-split title="' + trp_localized_text['split'] + '" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split>' +
+        '<trp-edit title="' + trp_localized_text['edit'] + '" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit>' +
+        '<trp-image title="' + trp_localized_text['image'] + '" class="trp-icon trp-image dashicons dashicons-format-image"></trp-image>' +
+        '</trp-span>';
     var _this = this;
     this.preview_iframe = null;
     var strings;
