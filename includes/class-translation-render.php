@@ -526,14 +526,17 @@ class TRP_Translation_Render{
                 && $row->parent()->tag != 'title'
                 && strpos($row->outertext,'[vc_') === false )
             {
+            	    // $translateable_strings array needs to be in sync in $nodes array
                     array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
                     if( $row->parent()->tag == 'button') {
                         array_push($nodes, array('node' => $row, 'type' => 'button'));
                     }
-                    if( $row->parent()->tag == 'option') {
-                        array_push($nodes, array('node' => $row, 'type' => 'option'));
-                    }else{
-                        array_push($nodes, array('node' => $row, 'type' => 'text'));
+                    else {
+	                    if ( $row->parent()->tag == 'option' ) {
+		                    array_push( $nodes, array( 'node' => $row, 'type' => 'option' ) );
+	                    } else {
+		                    array_push( $nodes, array( 'node' => $row, 'type' => 'text' ) );
+	                    }
                     }
             }
         }
