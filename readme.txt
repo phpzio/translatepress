@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.8
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,10 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.3.5 =
+* Fixed translation problems introduced in the last two versions
+* Added a console message when trp-ajax request uses fall back to admin ajax for debugging purposes.
+
 = 1.3.4 =
 * Fixed issue with options in select tag that couldn't be translated
 * Fixed force language in custom links
