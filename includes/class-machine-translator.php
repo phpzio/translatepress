@@ -39,8 +39,10 @@ class TRP_Machine_Translator{
     public function translate_array( $new_strings, $trp_language_code ){
         /* we need these settings to go on */
         $language_code = $this->settings['google-translate-codes'][$trp_language_code];
-        if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['google-translate-codes'][$this->settings['default-language']] ) || empty( $language_code ) )
-            return array();
+	    $source_language = $this->settings['google-translate-codes'][$this->settings['default-language']];
+        if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['google-translate-codes'][$this->settings['default-language']] ) || empty( $language_code ) || ( $language_code == $source_language ) ) {
+	        return array();
+        }
 
         $translated_strings = array();
 
@@ -51,7 +53,7 @@ class TRP_Machine_Translator{
             foreach( $new_strings_chunks as $new_strings_chunk ){
                 /* build our translation request */
                 $translation_request = 'key='.$this->settings['g-translate-key'];
-                $translation_request .= '&source='.$this->settings['google-translate-codes'][$this->settings['default-language']];
+                $translation_request .= '&source='.$source_language;
                 $translation_request .= '&target='.$language_code;
                 foreach( $new_strings_chunk as $new_string ){
                     $translation_request .= '&q='.rawurlencode(html_entity_decode( $new_string, ENT_QUOTES ));
