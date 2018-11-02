@@ -29,6 +29,53 @@ class TRP_Machine_Translator{
             return false;
     }
 
+	/**
+	 * Return referer to be sent in Google Translation request header
+	 *
+	 * @return string
+	 */
+	public function get_referer(){
+		if( ! $this->referer ) {
+			if( ! $this->url_converter ) {
+				$trp = TRP_Translate_Press::get_trp_instance();
+				$this->url_converter = $trp->get_component( 'url_converter' );
+			}
+			$this->referer = $this->url_converter->get_abs_home();
+		}
+		return $this->referer;
+	}
+
+	/**
+	 * Send request to Google Translation API
+	 *
+	 * @param string $source_language       Translate from language
+	 * @param string $language_code         Translate to language
+	 * @param array $strings_array          Array of string to translate
+	 *
+	 * @return array|WP_Error               Response
+	 */
+	public function send_request( $source_language, $language_code, $strings_array ){
+		/* build our translation request */
+		$translation_request = 'key='.$this->settings['g-translate-key'];
+		$translation_request .= '&source='.$source_language;
+		$translation_request .= '&target='.$language_code;
+		foreach( $strings_array as $new_string ){
+			$translation_request .= '&q='.rawurlencode(html_entity_decode( $new_string, ENT_QUOTES ));
+		}
+		$referer = $this->get_referer();
+
+		/* Due to url length restrictions we need so send a POST request faked as a GET request and send the strings in the body of the request and not in the URL */
+		$response = wp_remote_post( "https://www.googleapis.com/language/translate/v2", array(
+				'headers' => array(
+					'X-HTTP-Method-Override' => 'GET', //this fakes a GET request
+					'Referer' => $referer
+				),
+				'body' => $translation_request,
+			)
+		);
+		return $response;
+	}
+
     /**
      * Returns an array with the API provided translations of the $new_strings array.
      *
@@ -51,20 +98,8 @@ class TRP_Machine_Translator{
             $new_strings_chunks = array_chunk( $new_strings, 128, true );
             /* if there are more than 128 strings we make multiple requests */
             foreach( $new_strings_chunks as $new_strings_chunk ){
-                /* build our translation request */
-                $translation_request = 'key='.$this->settings['g-translate-key'];
-                $translation_request .= '&source='.$source_language;
-                $translation_request .= '&target='.$language_code;
-                foreach( $new_strings_chunk as $new_string ){
-                    $translation_request .= '&q='.rawurlencode(html_entity_decode( $new_string, ENT_QUOTES ));
-                }
 
-                /* Due to url length restrictions we need so send a POST request faked as a GET request and send the strings in the body of the request and not in the URL */
-                $response = wp_remote_post( "https://www.googleapis.com/language/translate/v2", array(
-                        'headers' => array( 'X-HTTP-Method-Override' => 'GET' ),//this fakes a GET request
-                        'body' => $translation_request,
-                    )
-                );
+            	$response = $this->send_request( $source_language, $language_code, $new_strings_chunk );
 
                 /* analyze the response */
                 if ( is_array( $response ) && ! is_wp_error( $response ) ) {

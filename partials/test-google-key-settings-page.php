@@ -1,16 +1,9 @@
 <?php
-$translation_request = 'key='.$this->settings['g-translate-key'];
-$translation_request .= '&source=en';
-$translation_request .= '&target=es';
-$translation_request .= '&q=about';
 
+$trp = TRP_Translate_Press::get_trp_instance();
+$machine_translator = $trp->get_component( 'machine_translator' );
+$response = $machine_translator->send_request( 'en', 'es', array( 'about' ) );
 
-/* Due to url length restrictions we need so send a POST request faked as a GET request and send the strings in the body of the request and not in the URL */
-$response = wp_remote_post( "https://www.googleapis.com/language/translate/v2", array(
-        'headers' => array( 'X-HTTP-Method-Override' => 'GET' ),//this fakes a GET request
-        'body' => $translation_request,
-    )
-);
 ?>
 <div id="trp-addons-page" class="wrap">
 
@@ -19,7 +12,10 @@ $response = wp_remote_post( "https://www.googleapis.com/language/translate/v2", 
 
     <div class="grid feat-header">
         <div class="grid-cell">
-            <h2><?php _e('Google API Key from settings page:', 'translatepress-multilingual');?> <span style="font-family:monospace"><?php echo $this->settings['g-translate-key']; ?></span></h2>
+            <h2><?php _e('Google API Key from settings page:', 'translatepress-multilingual');?> <span style="font-family:monospace"><?php echo esc_html( $this->settings['g-translate-key'] ); ?></span></h2>
+
+            <h2><?php _e('HTTP Referrer:', 'translatepress-multilingual');?> <span style="font-family:monospace"><?php echo esc_url( $machine_translator->get_referer() ); ?></span></h2>
+            <p><?php _e('Use this HTTP Referrer if you want to restrict usage of the API from Google Dashboard.', 'translatepress-multilingual'); ?></p>
 
             <h3><?php _e('Response:', 'translatepress-multilingual');?></h3>
             <pre>
