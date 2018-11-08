@@ -50,7 +50,7 @@ class TRP_Ajax{
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
                 if ( isset($string->original ) ) {
-	                $original_array[$key] = mysqli_real_escape_string( $this->connection, filter_var( $string->original, FILTER_SANITIZE_STRING ) );
+	                $original_array[$key] = mysqli_real_escape_string( $this->connection, $this->full_trim( filter_var( $string->original, FILTER_SANITIZE_STRING ) )  );
                 }
             }
         }
@@ -155,7 +155,7 @@ class TRP_Ajax{
      * @param string $original_language Language to translate from. Default language.
      */
     protected function output_translations( $strings, $language, $original_language ){
-        $sql = 'SELECT original, translated FROM ' . $this->table_prefix . 'trp_dictionary_' . strtolower( $original_language ) . '_' . strtolower( $language ) . ' WHERE original IN (\'' . implode( "','", array_map( array( $this, 'full_trim' ), $strings ) ).'\') AND status != 0';
+        $sql = 'SELECT original, translated FROM ' . $this->table_prefix . 'trp_dictionary_' . strtolower( $original_language ) . '_' . strtolower( $language ) . ' WHERE original IN (\'' . implode( "','", $strings ) .'\') AND status != 0';
         $result = mysqli_query( $this->connection, $sql );
         if ( $result === false ){
             $this->return_error();
