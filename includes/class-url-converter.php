@@ -219,7 +219,7 @@ class TRP_Url_Converter {
                  *  absolute: /something/another
                  *
                  */
-                $parsed_url = new \Enrise\Uri($url);
+                $parsed_url = new \TranslatePress\Uri($url);
                 if ($parsed_url->isSchemeless()){
                     $new_url = trailingslashit($new_language_root) . ltrim($url, '/');
                 }

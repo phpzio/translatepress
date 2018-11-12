@@ -1,5 +1,5 @@
 <?php
-namespace Enrise;
+namespace TranslatePress;
 
 class Uri
 {
