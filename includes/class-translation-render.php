@@ -667,7 +667,7 @@ class TRP_Translation_Render{
                     if( $nodes[$i]['type'] == 'button' || $nodes[$i]['type'] == 'option' ){
                         $nodes[$i]['node'] = $nodes[$i]['node']->parent();
                     }
-                    $nodes[$i]['node']->setAttribute('data-trp-translate-id-' + $accessor, $translated_string_ids[ $translateable_strings[$i] ]->id );
+                    $nodes[$i]['node']->setAttribute('data-trp-translate-id-' . $accessor, $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
 
                     if ( $this->get_node_description( $nodes[$i] ) ) {

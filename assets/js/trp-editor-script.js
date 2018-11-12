@@ -122,6 +122,10 @@ function TRP_Editor(){
         window.history.replaceState( null, null, location );
     };
 
+    this.search_for_ids = function( $data_trp_attribute ){
+
+    };
+
     /**
      * Search for strings in preview window.
      *
@@ -132,7 +136,7 @@ function TRP_Editor(){
         strings = [];
         dictionaries = [];
 
-        var all_strings = _this.preview_iframe.find( '[data-trp-translate-id]' );
+        var all_strings = _this.preview_iframe.find( '[data-trp-translate-id], [data-trp-translate-id-src]' );
         if( all_strings.length != 0 ){
             var title = document.getElementById("trp-preview-iframe").contentDocument.title;
             if ( /<[a-z][\s\S]*>/i.test( title ) ) {
