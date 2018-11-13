@@ -73,6 +73,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-machine-translator.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-query.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-url-converter.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-uri.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-plugin-notices.php';
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
