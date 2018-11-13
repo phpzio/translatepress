@@ -186,6 +186,8 @@ class TRP_Translate_Press{
 
         /* we need to treat the date_i18n function differently so we remove the gettext wraps */
         $this->loader->add_filter( 'date_i18n', $this->translation_manager, 'handle_date_i18n_function_for_gettext', 1, 4 );
+        /* make sure we do not insert gettext wraps in the database */
+        $this->loader->add_filter( 'query', $this->translation_manager, 'strip_added_gettext_tags_from_db_queries', 99 );
 
         /* define an update hook here */
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates', 10 );
