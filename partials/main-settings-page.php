@@ -92,6 +92,7 @@
                     <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="'.admin_url( 'admin.php?page=trp_test_google_key_page' ).'">'.__( "Test api key", 'translatepress-multilingual' ).'</a>'; ?>
                     <p class="description">
                         <?php _e( 'Visit this <a href="https://cloud.google.com/docs/authentication/api-keys" target="_blank">link</a> to see how you can set up an API key. ', 'translatepress-multilingual' ); ?>
+                        <?php echo sprintf( __( '<br>If you want to restrict usage of the API from Google Dashboard use this HTTP referrer: %s', 'translatepress-multilingual' ), $gtranslate_referer ); ?>
                     </p>
                 </td>
 

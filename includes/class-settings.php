@@ -11,6 +11,7 @@ class TRP_Settings{
     protected $trp_query;
     protected $url_converter;
     protected $trp_languages;
+    protected $machine_translator;
 
     /**
      * Return array of customization options for language switchers.
@@ -75,11 +76,15 @@ class TRP_Settings{
      * Settings page content.
      */
     public function settings_page_content(){
-        if ( ! $this->trp_languages ){
-            $trp = TRP_Translate_Press::get_trp_instance();
+	    $trp = TRP_Translate_Press::get_trp_instance();
+	    if ( ! $this->trp_languages ){
             $this->trp_languages = $trp->get_component( 'languages' );
         }
+	    if ( ! $this->machine_translator ){
+		    $this->machine_translator = $trp->get_component( 'machine_translator' );
+	    }
         $languages = $this->trp_languages->get_languages( 'english_name' );
+	    $gtranslate_referer = $this->machine_translator->get_referer();
         require_once TRP_PLUGIN_DIR . 'partials/main-settings-page.php';
     }
 

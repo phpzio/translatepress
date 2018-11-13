@@ -209,6 +209,21 @@ class TRP_Url_Converter {
             if( $this->get_lang_from_url_string($url) === null ){
                 // this is for forcing the custom url's. We expect them to not have a language in them.
                 $new_url = str_replace(untrailingslashit($abs_home), $new_language_root, $url);
+
+                /*
+                 *  WARNING!
+                 *
+                 *  I'm intentionally braking absolute links for translated pages.
+                 *  There is no way that I know to make sure of the end-user intent for an absolute link or a relative one
+                 *  relative: something/another/
+                 *  absolute: /something/another
+                 *
+                 */
+                $parsed_url = new \TranslatePress\Uri($url);
+                if ($parsed_url->isSchemeless()){
+                    $new_url = trailingslashit($new_language_root) . ltrim($url, '/');
+                }
+
             } else {
                 $new_url = str_replace($current_lang_root, $new_language_root, $url);
             }
