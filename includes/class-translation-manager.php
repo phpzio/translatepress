@@ -753,6 +753,11 @@ class TRP_Translation_Manager{
      * @return bool
      */
     static function is_ajax_on_frontend(){
+
+        /* for our own actions return false */
+        if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
+            return false;
+
         $trp = TRP_Translate_Press::get_trp_instance();
         $url_converter = $trp->get_component("url_converter");
 
