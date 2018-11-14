@@ -8,6 +8,7 @@
 class TRP_Settings{
 
     protected $settings;
+    protected $settings_automated_translations;
     protected $trp_query;
     protected $url_converter;
     protected $trp_languages;
@@ -63,11 +64,24 @@ class TRP_Settings{
     }
 
     /**
+     * Returns settings_option.
+     *
+     * @return array        Settings option.
+     */
+    public function get_automated_translation_settings(){
+        if ( $this->settings_automated_translations == null ){
+            $this->set_automated_translation_options();
+        }
+        return $this->settings_automated_translations;
+    }
+
+    /**
      * Register Settings subpage for TranslatePress
      */
     public function register_menu_page(){
         add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
         add_submenu_page( 'TRPHidden', 'TranslatePress Addons', 'TRPHidden', 'manage_options', 'trp_addons_page', array($this, 'addons_page_content') );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Automated Translations', 'TRPHidden', 'manage_options', 'trp_automated_translation_page', array($this, 'automated_translation_page_content') );
         add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array($this, 'test_google_key_page_content') );
         add_submenu_page( 'TRPHidden', 'TranslatePress Remove Duplicate Rows', 'TRPHidden', 'manage_options', 'trp_remove_duplicate_rows', array($this, 'trp_remove_duplicate_rows') );
     }
@@ -93,6 +107,19 @@ class TRP_Settings{
      */
     public function addons_page_content(){
         require_once TRP_PLUGIN_DIR . 'partials/addons-settings-page.php';
+    }
+
+    /**
+     * Automated Translations page content.
+     */
+    public function automated_translation_page_content(){
+        $trp = TRP_Translate_Press::get_trp_instance();
+        if ( ! $this->machine_translator ){
+            $this->machine_translator = $trp->get_component( 'machine_translator' );
+        }
+        $gtranslate_referer = $this->machine_translator->get_referer();
+        $this->settings_automated_translations = $this->get_automated_translation_settings();
+        require_once TRP_PLUGIN_DIR . 'partials/automated-translation-settings-page.php';
     }
 
     /**
@@ -215,6 +242,7 @@ class TRP_Settings{
      */
     public function register_setting(){
         register_setting( 'trp_settings', 'trp_settings', array( $this, 'sanitize_settings' ) );
+        register_setting( 'trp_automated_translation_settings', 'trp_automated_translation_settings', array( $this, 'sanitize_automatic_translation_settings' ) );
     }
 
     /**
@@ -344,6 +372,27 @@ class TRP_Settings{
     }
 
     /**
+     * Sanitizes automated translation settings option after save.
+     *
+     * Updates menu items for languages to be used in Menus.
+     *
+     * @param array $settings       Raw settings option.
+     * @return array                Sanitized option page.
+     */
+    public function sanitize_automatic_translation_settings( $settings ){
+        if( !empty( $settings['translator'] ) )
+            $settings['translator'] = sanitize_text_field( $settings['translator']);
+
+        if( !empty( $settings['google-key'] ) )
+            $settings['google-key'] = sanitize_text_field( $settings['google-key']);
+
+        if( !empty( $settings['deepl-key'] ) )
+            $settings['deepl-key'] = sanitize_text_field( $settings['deepl-key']);
+
+        return $settings;
+    }
+
+    /**
      * Output admin notices after saving settings.
      */
     public function admin_notices(){
@@ -391,12 +440,37 @@ class TRP_Settings{
     }
 
     /**
+     * Set options array variable to be used across plugin.
+     *
+     * Sets a default option if it does not exist.
+     */
+    protected function set_automated_translation_options(){
+        $settings_option = get_option( 'trp_automated_translation_settings', 'not_set' );
+
+        $default_settings = array(
+            'translator'    => 'disabled',
+            'google-key'    => '',
+            'deepl-key'     => '',
+        );
+        if ( 'not_set' == $settings_option ){
+            update_option ( 'trp_automated_translation_settings', $default_settings );
+            $settings_option = $default_settings;
+        }else{
+            foreach ( $default_settings as $key => $value ){
+                if ( !isset ( $settings_option[$key] ) ) {
+                    $settings_option[$key] = $value;
+                }
+            }
+        }
+        $this->settings_automated_translations = $settings_option;
+    }
+    /**
      * Enqueue scripts and styles for settings page.
      *
      * @param string $hook          Admin page.
      */
     public function enqueue_scripts_and_styles( $hook ) {
-        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_license_key' || $hook == 'admin_page_trp_addons_page' ) {
+        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_license_key' || $hook == 'admin_page_trp_addons_page' || $hook == 'admin_page_trp_automated_translation_page' ) {
             wp_enqueue_style(
                 'trp-settings-style',
                 TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css',
@@ -508,6 +582,13 @@ class TRP_Settings{
                 'page'  => 'trp_license_key'
             );
         }
+
+        $tabs[] = array(
+            'name'  => __( 'Automated Translations', 'translatepress-multilingual' ),
+            'url'   => admin_url( 'admin.php?page=trp_automated_translation_page' ),
+            'page'  => 'trp_automated_translation_page'
+        );
+
         $tabs[] = array(
             'name'  => __( 'Addons', 'translatepress-multilingual' ),
             'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
