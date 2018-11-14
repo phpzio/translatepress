@@ -1097,18 +1097,6 @@ class TRP_Translation_Manager{
     }
 
 	/**
-	 * Remove trp tags from database queries
-	 * @param $query
-	 * @return mixed
-	 */
-	function strip_added_gettext_tags_from_db_queries( $query ){
-		if( strpos( $query, 'INSERT' ) === 0 || strpos( $query, 'UPDATE' ) === 0 || strpos( $query, 'REPLACE' ) === 0 ) {
-			$query = $this::strip_gettext_tags( $query );
-		}
-		return $query;
-	}
-
-	/**
 	 * function that strips the gettext tags from a string
 	 * @param $string
 	 * @return mixed
