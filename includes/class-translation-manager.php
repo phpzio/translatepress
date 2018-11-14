@@ -1111,6 +1111,7 @@ class TRP_Translation_Manager{
 			$string = preg_replace('/ data-trpgettextoriginal=\d+#!trpen#/', '', $string);
 			$string = str_replace('#!trpst#trp-gettext', '', $string);
 			$string = str_replace('#!trpst#/trp-gettext', '', $string);
+			$string = str_replace('#!trpst#\/trp-gettext', '', $string);
 			$string = str_replace('#!trpen#', '', $string);
 		}
 
