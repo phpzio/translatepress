@@ -1068,6 +1068,7 @@ function TRP_String( language, array_index ){
         var old_jquery_object = null;
         var tb_parent = _this.jquery_object.parents( '.trp-create-translation-block' );
         if ( tb_parent.length > 0 ){
+            // we are creating a new block
             old_jquery_object = _this.jquery_object;
             _this.jquery_object = tb_parent.first();
         }
@@ -1082,6 +1083,10 @@ function TRP_String( language, array_index ){
         }
         trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
         var merge_or_split = trpEditor.decide_if_merge_or_split( _this );
+        if ( old_jquery_object ){
+            // we are creating a new block
+            merge_or_split = 'merge';
+        }
         if ( merge_or_split != 'none' ) {
             trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
         }
@@ -1089,6 +1094,7 @@ function TRP_String( language, array_index ){
         trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );
 
         if ( old_jquery_object ){
+            // we are creating a new block
             _this.jquery_object = old_jquery_object;
         }
         trpEditor.edit_translation_button.off( 'click' );
