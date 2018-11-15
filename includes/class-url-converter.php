@@ -124,6 +124,15 @@ class TRP_Url_Converter {
         return $output;
     }
 
+    /**
+     * Returns language-specific url for given language.
+     *
+     * Defaults to current Url and current language.
+     *
+     * @param string $language      Language code that we want to translate into.
+     * @param string $url           Url to encode.
+     * @return string
+     */
 
     public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
         // initializations
@@ -142,9 +151,17 @@ class TRP_Url_Converter {
             $trp_link_is_processed = '';
         }
 
-        // actual logic of the function
+        // actual logic of the funct1ion
         if ( $this->url_is_file($url) ){
-            return $url . $trp_link_is_processed;
+            return $url . $trp_link_is_processed; //abort for files
+        }
+
+        if ( !$url_obj->isSchemeless() && $url_obj->getScheme() != 'http' && $url_obj->getScheme() != 'https' ){
+            return $url . $trp_link_is_processed; // abort for non-http/https links
+        }
+
+        if( $language == $this->get_lang_from_url_string($url) || ($this->get_lang_from_url_string($url) === null && $language == $this->settings['default-language'] ) ){
+            //return $url . $trp_link_is_processed; //abort if we would basically need to add a language the url already has
         }
 
         // maybe find the post_id for the current URL
@@ -152,7 +169,8 @@ class TRP_Url_Converter {
             $post_id = url_to_postid($url);
         } elseif ( $trp_backup_post_id ){
             $post_id = $trp_backup_post_id;
-        } else{ // try again but with the default language home_url
+        } else{
+            // try again but with the default language home_url
             $TRP_LANGUAGE = $this->settings['default-language'];
             $post_id      = url_to_postid( $url );
             $TRP_LANGUAGE = $trp_language_copy;
@@ -169,15 +187,46 @@ class TRP_Url_Converter {
         } else {
             // we're just adding the new language to the url
             $new_url_obj = new \TranslatePress\Uri( $url );
+            $abs_home_url_obj = new \TranslatePress\Uri( $this->get_abs_home() );
+
+
+
+            /*
+             * get_lang_from_url_string() fails dramatically with relative URL's
+             * /tpdemo/ro/shop/?action=suspend_transients&#038;_wpnonce=7461aae4c4
+             */
+
             if( $this->get_lang_from_url_string($url) === null ){
                 // these are the custom url. They don't have language
-                $new_url_obj->setPath( '/' . $this->get_url_slug( $language ) . '/' . ltrim($new_url_obj->getPath(), '/') );
+                $abs_home_considered_path = trim(str_replace($abs_home_url_obj->getPath(), '', $url_obj->getPath()), '/');
+                $new_url_obj->setPath( trailingslashit($abs_home_url_obj->getPath()) . trailingslashit($this->get_url_slug( $language )) . $abs_home_considered_path );
                 $new_url = $new_url_obj->getUri();
+
+                error_log('****************************************');
+                error_log('url:     ' . $url);
+                error_log('lang:    ' . $language);
+                error_log('post_id: ' . $post_id);
+                error_log('new url: ' . $new_url);
             } else {
-                // these have language and we need to replace the new language
-                $current_url_language = $this->get_lang_from_url_string( $url );
-                $new_url_obj->setPath( str_replace( $current_url_language, $this->get_url_slug( $language ), $new_url_obj->getPath() ) );
+                // these have language param in them and we need to replace them with the new language
+                $orig_path = $url_obj->getPath();
+                $abs_home_considered_path = trim(str_replace($abs_home_url_obj->getPath(), '', $url_obj->getPath()), '/');
+                error_log('orig_path: ' . $abs_home_considered_path);
+                $no_lang_orig_path = explode('/', $abs_home_considered_path);
+                error_log('explode: ' . serialize($no_lang_orig_path));
+                unset($no_lang_orig_path[0]);
+                error_log('explode: ' . serialize($no_lang_orig_path));
+                $no_lang_orig_path = implode('/', $no_lang_orig_path );
+
+                $new_url_obj->setPath( trailingslashit($abs_home_url_obj->getPath()) .trailingslashit( $this->get_url_slug( $language ) ) . ltrim($no_lang_orig_path, '/') );
                 $new_url = $new_url_obj->getUri();
+
+                error_log('****************************************');
+                error_log('url:     ' . $url);
+                error_log('lang:    ' . $language);
+                error_log('post_id: ' . $post_id);
+                error_log('new url: ' . $new_url);
+                error_log('orig_path: ' . $no_lang_orig_path);
             }
         }
 
@@ -203,136 +252,6 @@ class TRP_Url_Converter {
 
         return $new_url . $trp_link_is_processed ;
 
-    }
-
-        /**
-     * Returns language-specific url for given language.
-     *
-     * Defaults to current Url and current language.
-     *
-     * @param string $language      Language code.
-     * @param string $url           Url to encode.
-     * @return string
-     */
-    public function get_url_for_language2 ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
-        global $TRP_LANGUAGE;
-        global $trp_backup_post_id;
-        $new_url = '';
-
-        // we're appending $trp_link_is_processed string to the end of each processed link so we don't process them again in the render class.
-        // we're stripping this from each url in the render class
-        // $trp_link_is_processed is part of the function params so we can pass an empty link in case we need get_url_for_language() in other places that don't go through the render.
-        // since the render doesn't work on the default language, we're striping the processed tag.
-        if( $TRP_LANGUAGE == $this->settings['default-language'] ){
-            $trp_link_is_processed = '';
-        }
-
-        if ( $this->url_is_file($url) ){
-            return $url . $trp_link_is_processed;
-        }
-
-        $trp_language_copy = $TRP_LANGUAGE;
-
-        if ( empty( $language ) ) {
-            $language = $TRP_LANGUAGE;
-        }
-
-        /* @ TO-DO
-         * need our own url_to_postid()This is due to the fact that we're using get_permalink that's filtered to get the correct url based on language with SEO Addon.
-         * url_to_postid() can be slow because it's doing a query for each bloody url.
-         * this is not a problem with pages that have fewer links, however, it is a problem
-         * with pages that list a ton of links
-         */
-        $post_id = url_to_postid( $url );
-
-        if( empty( $url ) ) {
-            $url = $this->cur_page_url();
-            $post_id = ( url_to_postid( $url ) ) ? ( url_to_postid( $url ) ) : ( $trp_backup_post_id );
-        }
-
-        if ( $post_id == 0 ) {
-            $TRP_LANGUAGE = $this->settings['default-language'];
-            $post_id      = url_to_postid( $url );
-            $TRP_LANGUAGE = $trp_language_copy;
-        }
-
-        if( $post_id ){
-            /*
-             * We need to find if the current URL (either passed as parameter or found via cur_page_url)
-             * has extra arguments compared to it's permalink.
-             * We need the permalink based on the language IN THE URL, not the one passed to this function,
-             * as that represents the language to be translated into.
-             */
-            $TRP_LANGUAGE = $this->get_lang_from_url_string( $url );
-            $processed_permalink = get_permalink($post_id);
-            $arguments = str_replace($processed_permalink, '', $url);
-            // if nothing was replaced, something was wrong, just use the normal permalink without any arguments.
-            if( $arguments == $url ) $arguments = '';
-
-            /*
-             * Transform the global language into the language to be translated,
-             * so we can get the correct permalink (slug and all) and add the remaining arguments that might exist.
-             */
-            $TRP_LANGUAGE = $language;
-            if ( !empty ( $arguments ) ) {
-                $arguments = apply_filters('trp_get_url_for_language_custom_arguments', $arguments, $language, $url, $post_id);
-            }
-            $new_url = get_permalink( $post_id ) . $arguments;
-            $TRP_LANGUAGE = $trp_language_copy;
-        } else {
-            // If no $post_id is set we simply replace the current language root with the new language root.
-            // we can't assume the URL's have / at the end so we need to untrailingslashit both $abs_home and $new_language_root
-            $abs_home = trailingslashit( $this->get_abs_home() );
-	        $current_url_language = $this->get_lang_from_url_string( $url );
-            $current_lang_root =  untrailingslashit($abs_home . $this->get_url_slug( $current_url_language ));
-            $new_language_root =  untrailingslashit($abs_home . $this->get_url_slug( $language ) );
-
-            if( $this->get_lang_from_url_string($url) === null ){
-                // this is for forcing the custom url's. We expect them to not have a language in them.
-                $new_url = str_replace(untrailingslashit($abs_home), $new_language_root, $url);
-
-                /*
-                 *  WARNING!
-                 *
-                 *  I'm intentionally braking absolute links for translated pages.
-                 *  There is no way that I know to make sure of the end-user intent for an absolute link or a relative one
-                 *  relative: something/another/
-                 *  absolute: /something/another
-                 *
-                 */
-                $parsed_url = new \TranslatePress\Uri($url);
-                if ($parsed_url->isSchemeless()){
-                    $new_url = trailingslashit($new_language_root) . ltrim($url, '/');
-                }
-
-            } else {
-                $new_url = str_replace($current_lang_root, $new_language_root, $url);
-            }
-	        $new_url = apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $abs_home, $current_lang_root, $new_language_root );
-        }
-
-
-        /* fix links for woocommerce on language switcher for product categories and product tags */
-        if( class_exists( 'WooCommerce' ) ){
-            $default_woocommerce_slugs = array('product-category', 'product-tag', 'product');
-            foreach ($default_woocommerce_slugs as $default_woocommerce_slug){
-                // if $language is provided, like on the language switcher
-                $current_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $TRP_LANGUAGE );
-                $translated_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $language );
-                $new_url = str_replace( '/'.$current_slug.'/', '/'.$translated_slug.'/', $new_url );
-
-                // if $language is initially empty, like the link was found in the menu, manually added
-                $current_slug = $default_woocommerce_slug;
-                $translated_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $language );
-                $new_url = str_replace( '/'.$current_slug.'/', '/'.$translated_slug.'/', $new_url );
-            }
-        }
-
-        if ( empty( $new_url ) ) {
-            $new_url = $url;
-        }
-
-        return $new_url . $trp_link_is_processed ;
     }
 
     /**
