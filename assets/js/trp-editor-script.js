@@ -1014,6 +1014,7 @@ function TRP_String( language, array_index ){
         }
 
         if ( _this.jquery_object && _this.block_type != 2 ) {
+            _this.wrap_special_html_elements();
             if ( trp_language == trp_on_screen_language ) {
                 var text_to_set = null;
                 if (new_settings.hasOwnProperty('translated') && new_settings.translated != _this.translated) {
@@ -1022,7 +1023,6 @@ function TRP_String( language, array_index ){
                 if (new_settings.hasOwnProperty('status') && new_settings.status == 0) {
                     text_to_set = _this.original;
                 }
-                _this.wrap_special_html_elements();
                 _this.set_text_in_iframe( text_to_set, _this.jquery_object );
             }
 
@@ -1038,19 +1038,23 @@ function TRP_String( language, array_index ){
      * Wrap buttons and placeholders so that we can display the pencil button and also replace with translation.
      */
     this.wrap_special_html_elements = function(){
-        if( _this.jquery_object.is('button') ){
-            _this.jquery_object.unwrap('trp-highlight');
-            _this.jquery_object.wrap('<trp-highlight data-trp-button="true"></trp-highlight>');
+        if ( _this.jquery_object.parent().is('trp-highlight') ){
+            // if the iframe lookup is triggered a second time, the same string will be recognized again as the image and jquery_object is set as an image, not the trp-highlight wrapping. Fix this by assigning it to parent if exists.
             _this.jquery_object = _this.jquery_object.parent();
+            return;
         }
-        else if ( _this.jquery_object.attr( 'type' ) == 'submit' || _this.jquery_object.attr( 'type' ) == 'button'  ) {
-            _this.jquery_object.unwrap('trp-highlight');
-            _this.jquery_object.wrap('<trp-highlight data-trp-attr="value"></trp-highlight>');
-            _this.jquery_object = _this.jquery_object.parent();
+        var extra_attribute = false;
+        if( _this.jquery_object.is('button') ) {
+            extra_attribute = 'data-trp-button="true"';
+        }else if ( ( _this.jquery_object.attr( 'type' ) == 'submit' || _this.jquery_object.attr( 'type' ) == 'button'  ) ) {
+            extra_attribute = 'data-trp-attr="value"';
+        }else if ( ( _this.jquery_object.attr( 'type' ) == 'text' || _this.jquery_object.attr( 'type' ) == 'search' || _this.jquery_object.is( 'textarea' ) ) && ( typeof _this.jquery_object.attr( 'placeholder' ) != 'undefined' ) ) {
+            extra_attribute = 'data-trp-attr="placeholder"';
+        }else if ( _this.jquery_object.is( 'img' ) ){
+            extra_attribute = 'data-trp-attr="alt"';
         }
-        else if ( ( _this.jquery_object.attr( 'type' ) == 'text' || _this.jquery_object.attr( 'type' ) == 'search' ) && ( typeof _this.jquery_object.attr( 'placeholder' ) != 'undefined' ) ) {
-            _this.jquery_object.unwrap('trp-highlight');
-            _this.jquery_object.wrap('<trp-highlight data-trp-attr="placeholder"></trp-highlight>');
+        if ( extra_attribute !== false ) {
+            _this.jquery_object.wrap('<trp-highlight ' + extra_attribute + '></trp-highlight>');
             _this.jquery_object = _this.jquery_object.parent();
         }
     };
@@ -1061,23 +1065,20 @@ function TRP_String( language, array_index ){
      */
     this.highlight = function (e){
         e.stopPropagation();
-        var this_jquery_object;
+        var old_jquery_object = null;
         var tb_parent = _this.jquery_object.parents( '.trp-create-translation-block' );
         if ( tb_parent.length > 0 ){
-            this_jquery_object = tb_parent.first();
-        }else{
-            this_jquery_object = _this.jquery_object;
+            old_jquery_object = _this.jquery_object;
+            _this.jquery_object = tb_parent.first();
         }
 
         trpEditor.remove_pencil_icon();
-
         if ( ! trpEditor.edit_translation_button ){
-            this_jquery_object.prepend( trp_action_button_html );
-            trpEditor.edit_translation_button = this_jquery_object.children('trp-span');
+            _this.jquery_object.prepend( trp_action_button_html );
+            trpEditor.edit_translation_button = _this.jquery_object.children('trp-span');
         }else{
-            _this.wrap_special_html_elements();
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
-            this_jquery_object.prepend(trpEditor.edit_translation_button);
+            _this.jquery_object.prepend(trpEditor.edit_translation_button);
         }
         trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
         var merge_or_split = trpEditor.decide_if_merge_or_split( _this );
@@ -1085,8 +1086,11 @@ function TRP_String( language, array_index ){
             trpEditor.edit_translation_button.children('trp-' + merge_or_split ).addClass( 'trp-active-icon' );
         }
 
-        trpEditor.make_sure_pencil_icon_is_inside_view( this_jquery_object[0] );
+        trpEditor.make_sure_pencil_icon_is_inside_view( _this.jquery_object[0] );
 
+        if ( old_jquery_object ){
+            _this.jquery_object = old_jquery_object;
+        }
         trpEditor.edit_translation_button.off( 'click' );
         trpEditor.edit_translation_button.on( 'click',  function(e){
             e.preventDefault();
@@ -1560,7 +1564,7 @@ jQuery(function(){
             trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
 
-            if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' ) {
+            if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' || jQuery(this).attr('placeholder') ) {
                 if( jQuery(this).parent('trp-wrap').length == 0 )
                     jQuery(this).wrap('<trp-wrap class="trpgettext-wrap"></trp-wrap>');
                 jQuery(this).parent().prepend(trpEditor.edit_translation_button);
