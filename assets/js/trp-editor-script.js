@@ -1570,7 +1570,7 @@ jQuery(function(){
             trpEditor.edit_translation_button.children( ).removeClass( 'trp-active-icon' );
             trpEditor.maybe_overflow_fix(trpEditor.edit_translation_button);
 
-            if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' || jQuery(this).attr('placeholder') ) {
+            if ( jQuery(this).attr( 'type' ) == 'submit' || jQuery(this).attr( 'type' ) == 'button' || jQuery(this).attr('type') == 'search' || jQuery(this).attr('placeholder') || jQuery(this).attr('alt')) {
                 if( jQuery(this).parent('trp-wrap').length == 0 )
                     jQuery(this).wrap('<trp-wrap class="trpgettext-wrap"></trp-wrap>');
                 jQuery(this).parent().prepend(trpEditor.edit_translation_button);
