@@ -165,6 +165,30 @@ function trp_sanitize_string( $filtered ){
 }
 
 
+/**
+ * function that checks if $_REQUEST['trp-edit-translation'] is set or if it has a certain value
+ */
+function trp_is_translation_editor( $value = '' ){
+    if( isset( $_REQUEST['trp-edit-translation'] ) ){
+        if( !empty( $value ) ) {
+            if( $_REQUEST['trp-edit-translation'] === $value ) {
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            $possible_values = array ('preview', 'true');
+            if( in_array( $_REQUEST['trp-edit-translation'], $possible_values ) ) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 
 /** Compatibility functions */
 

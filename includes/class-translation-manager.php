@@ -753,6 +753,11 @@ class TRP_Translation_Manager{
      * @return bool
      */
     static function is_ajax_on_frontend(){
+
+        /* for our own actions return false */
+        if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
+            return false;
+
         $trp = TRP_Translate_Press::get_trp_instance();
         $url_converter = $trp->get_component("url_converter");
 
@@ -941,8 +946,11 @@ class TRP_Translation_Manager{
                 }
             }
 
-            if( ( !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) )
-				$translation = '#!trpst#trp-gettext data-trpgettextoriginal=' . $db_id . '#!trpen#' . $translation . '#!trpst#/trp-gettext#!trpen#';//add special start and end tags so that it does not influence html in any way. we will replace them with < and > at the start of the translate function 
+			if( did_action('init') || did_action('admin_init') ) {
+				if ((!empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE) || (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview')) {
+					$translation = '#!trpst#trp-gettext data-trpgettextoriginal=' . $db_id . '#!trpen#' . $translation . '#!trpst#/trp-gettext#!trpen#';//add special start and end tags so that it does not influence html in any way. we will replace them with < and > at the start of the translate function
+				}
+			}
         }
 
         return $translation;
@@ -1092,6 +1100,23 @@ class TRP_Translation_Manager{
         return $j;
         
     }
+
+	/**
+	 * function that strips the gettext tags from a string
+	 * @param $string
+	 * @return mixed
+	 */
+	static function strip_gettext_tags( $string ){
+		if( strpos( $string, ' data-trpgettextoriginal=' ) !== false ) {
+			$string = preg_replace('/ data-trpgettextoriginal=\d+#!trpen#/', '', $string);
+			$string = str_replace('#!trpst#trp-gettext', '', $string);
+			$string = str_replace('#!trpst#/trp-gettext', '', $string);
+			$string = str_replace('#!trpst#\/trp-gettext', '', $string);
+			$string = str_replace('#!trpen#', '', $string);
+		}
+
+		return $string;
+	}
 
     /**
      * Add the current language as a class to the body

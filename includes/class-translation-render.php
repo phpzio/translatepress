@@ -28,16 +28,18 @@ class TRP_Translation_Render{
      */
     public function start_output_buffer(){
         global $TRP_LANGUAGE;
-        if( TRP_Translation_Manager::is_ajax_on_frontend() ){
-            //in this case move forward
-        }else if( is_admin() ||
-            ( $TRP_LANGUAGE == $this->settings['default-language'] && ( ! isset( $_REQUEST['trp-edit-translation'] ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] != 'preview' ) ) )  ||
-            ( isset( $_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'true' ) ) {
-            return;
-        }
 
-        mb_http_output("UTF-8");
-        ob_start(array($this, 'translate_page'));
+        if( ( is_admin() && !TRP_Translation_Manager::is_ajax_on_frontend() ) || trp_is_translation_editor( 'true' ) ){
+            return;//we have two cases where we don't do anything: we are on the admin side and we are not in an ajax call or we are in the left side of the translation editor
+        }
+        else {
+            mb_http_output("UTF-8");
+            if ( $TRP_LANGUAGE == $this->settings['default-language'] && !trp_is_translation_editor() ) {
+                ob_start(array($this, 'clear_trp_tags'));//on default language when we are not in editor we just need to clear any trp tags that could still be present
+            } else {
+                ob_start(array($this, 'translate_page'));//everywhere else translate the page
+            }
+        }
     }
 
     /**
@@ -728,6 +730,16 @@ class TRP_Translation_Render{
         }
 
         return $html->save();
+    }
+
+    /**
+     * Function that should be called only on the default language and when we are not in the editor mode and it is designed as a fallback to clear
+     * any trp gettext tags that we added and for some reason show up  although they should not
+     * @param $output
+     * @return mixed
+     */
+    function clear_trp_tags( $output ){
+        return TRP_Translation_Manager::strip_gettext_tags($output);
     }
 
     /**
