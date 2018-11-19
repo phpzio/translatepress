@@ -135,10 +135,9 @@ class TRP_Url_Converter {
      */
 
     public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
-        $debug = false;
+        $debug = true;
         // initializations
         global $TRP_LANGUAGE;
-        //global $trp_backup_post_id;
         $trp_language_copy = $TRP_LANGUAGE;
         if ( empty( $language ) ) {
             $language = $TRP_LANGUAGE;
@@ -174,6 +173,14 @@ class TRP_Url_Converter {
             return $url; // abort for external url's
         }
 
+        if( $this->get_lang_from_url_string($url) === null && $this->settings['default-language'] === $language ){
+            return $url;
+        }
+
+        if( $this->get_lang_from_url_string($url) === $language ){
+            return $url;
+        }
+
         // maybe find the post_id for the current URL
         $possible_post_id = url_to_postid($url);
         if ( $possible_post_id ){
@@ -189,17 +196,37 @@ class TRP_Url_Converter {
         }
 
         if( $post_id ){
-            // we're now using the permalink to generate our translated url based on the new language
-            $current_lang_permalink_obj = new \TranslatePress\Uri(get_permalink( $post_id ));
-            $TRP_LANGUAGE = $language;
-            $new_url_obj = new \TranslatePress\Uri(get_permalink( $post_id ));
-            $new_url_obj->setPath( str_replace($current_lang_permalink_obj->getPath(), $new_url_obj->getPath(), $url_obj->getPath() ) );
-            $new_url_obj->setQuery( $url_obj->getQuery() );
-            $new_url_obj->setFragment( $url_obj->getFragment() );
-            $new_url = $new_url_obj->getUri();
 
-            trp_bulk_debug($debug, array('url' => $url, 'new url' => $new_url, 'found post id' => $post_id, 'url type' => 'based on permalink', 'for language' => $TRP_LANGUAGE));
+            /*
+             * We need to find if the current URL (either passed as parameter or found via cur_page_url)
+             * has extra arguments compared to it's permalink.
+             * We need the permalink based on the language IN THE URL, not the one passed to this function,
+             * as that represents the language to be translated into.
+             */
+
+            /*
+             * WE ARE NOT USING \TranslatePress\Uri
+             * due to URL's having extra path elements after the permalink slug. Using the class would strip those end points.
+             *
+             */
+
+            $TRP_LANGUAGE = $this->get_lang_from_url_string( $url );
+            $processed_permalink = get_permalink($post_id);
+
+            if($url_obj->isSchemeless()){
+                $arguments = str_replace($processed_permalink, '', trailingslashit( home_url() ) . ltrim($url, '/') );
+            } else {
+                $arguments = str_replace($processed_permalink, '', $url );
+            }
+
+            // if nothing was replaced, something was wrong, just use the normal permalink without any arguments.
+            if( $arguments == $url ) $arguments = '';
+
+            $TRP_LANGUAGE = $language;
+            $new_url = get_permalink( $post_id ) . $arguments;
+            trp_bulk_debug($debug, array('url' => $url, 'new url' => $new_url, 'found post id' => $post_id, 'isSchemeless' => 'true', 'url type' => 'based on permalink', 'for language' => $TRP_LANGUAGE));
             $TRP_LANGUAGE = $trp_language_copy;
+
         } else {
             // we're just adding the new language to the url
             $new_url_obj = new \TranslatePress\Uri( $url );
