@@ -135,7 +135,7 @@ class TRP_Url_Converter {
      */
 
     public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
-        $debug = true;
+        $debug = false;
         // initializations
         global $TRP_LANGUAGE;
         $trp_language_copy = $TRP_LANGUAGE;
