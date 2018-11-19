@@ -135,7 +135,7 @@ class TRP_Url_Converter {
      */
 
     public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
-        $debug = true;
+        $debug = false;
         // initializations
         global $TRP_LANGUAGE;
         //global $trp_backup_post_id;
@@ -196,7 +196,7 @@ class TRP_Url_Converter {
             $new_url_obj->setFragment( $url_obj->getFragment() );
             $new_url = $new_url_obj->getUri();
 
-            trp_bulk_debug($debug, array('url' => $url, 'new url' => $new_url, 'found post id' => $post_id, 'url type' => 'based on permalink'));
+            trp_bulk_debug($debug, array('url' => $url, 'new url' => $new_url, 'found post id' => $post_id, 'url type' => 'based on permalink', 'for language' => $TRP_LANGUAGE));
             $TRP_LANGUAGE = $trp_language_copy;
         } else {
             // we're just adding the new language to the url
