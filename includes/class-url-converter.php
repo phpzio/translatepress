@@ -190,8 +190,10 @@ class TRP_Url_Converter {
 
         if( $post_id ){
             // we're now using the permalink to generate our translated url based on the new language
+            $current_lang_permalink_obj = new \TranslatePress\Uri(get_permalink( $post_id ));
             $TRP_LANGUAGE = $language;
             $new_url_obj = new \TranslatePress\Uri(get_permalink( $post_id ));
+            $new_url_obj->setPath( str_replace($current_lang_permalink_obj->getPath(), $new_url_obj->getPath(), $url_obj->getPath() ) );
             $new_url_obj->setQuery( $url_obj->getQuery() );
             $new_url_obj->setFragment( $url_obj->getFragment() );
             $new_url = $new_url_obj->getUri();
