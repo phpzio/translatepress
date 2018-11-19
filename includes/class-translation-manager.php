@@ -946,7 +946,7 @@ class TRP_Translation_Manager{
                 }
             }
 
-			if( did_action('init') || did_action('admin_init') ) {
+			if( did_action('init') ) {
 				if ((!empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE) || (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview')) {
 					$translation = '#!trpst#trp-gettext data-trpgettextoriginal=' . $db_id . '#!trpen#' . $translation . '#!trpst#/trp-gettext#!trpen#';//add special start and end tags so that it does not influence html in any way. we will replace them with < and > at the start of the translate function
 				}
