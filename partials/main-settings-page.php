@@ -36,7 +36,7 @@
             <tr>
                 <th scope="row"><?php _e( 'Native language name', 'translatepress-multilingual' ); ?> </th>
                 <td>
-                    <select id="trp-g-translate" name="trp_settings[native_or_english_name]" class="trp-select">
+                    <select id="trp-native-language-name" name="trp_settings[native_or_english_name]" class="trp-select">
                         <option value="english_name" <?php selected( $this->settings['native_or_english_name'], 'english_name' ); ?>><?php _e( 'No', 'translatepress-multilingual') ?></option>
                         <option value="native_name" <?php selected( $this->settings['native_or_english_name'], 'native_name' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
@@ -49,7 +49,7 @@
             <tr>
                 <th scope="row"><?php _e( 'Use subdirectory for default language', 'translatepress-multilingual' ); ?> </th>
                 <td>
-                    <select id="trp-g-translate" name="trp_settings[add-subdirectory-to-default-language]" class="trp-select">
+                    <select id="trp-subdirectory-for-default-language" name="trp_settings[add-subdirectory-to-default-language]" class="trp-select">
                         <option value="no" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'no' ); ?>><?php _e( 'No', 'translatepress-multilingual') ?></option>
                         <option value="yes" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
@@ -62,7 +62,7 @@
             <tr>
                 <th scope="row"><?php _e( 'Force language in custom links', 'translatepress-multilingual' ); ?> </th>
                 <td>
-                    <select id="trp-g-translate" name="trp_settings[force-language-to-custom-links]" class="trp-select">
+                    <select id="trp-force-language-in-custom-links" name="trp_settings[force-language-to-custom-links]" class="trp-select">
                         <option value="no" <?php selected( $this->settings['force-language-to-custom-links'], 'no' ); ?>><?php _e( 'No', 'translatepress-multilingual') ?></option>
                         <option value="yes" <?php selected( $this->settings['force-language-to-custom-links'], 'yes' ); ?>><?php _e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
@@ -89,10 +89,10 @@
                 <th scope="row"><?php _e( 'Google Translate API Key', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <input type="text" id="trp-g-translate-key" class="trp-text-input" name="trp_settings[g-translate-key]" value="<?php if( !empty( $this->settings['g-translate-key'] ) ) echo esc_attr( $this->settings['g-translate-key']);?>"/>
-                    <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="'.admin_url( 'admin.php?page=trp_test_google_key_page' ).'">'.__( "Test api key", 'translatepress-multilingual' ).'</a>'; ?>
+                    <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="'.admin_url( 'admin.php?page=trp_test_google_key_page' ).'">'.__( "Test API key", 'translatepress-multilingual' ).'</a>'; ?>
                     <p class="description">
-                        <?php _e( 'Visit this <a href="https://cloud.google.com/docs/authentication/api-keys" target="_blank">link</a> to see how you can set up an API key. ', 'translatepress-multilingual' ); ?>
-                        <?php echo sprintf( __( '<br>If you want to restrict usage of the API from Google Dashboard use this HTTP referrer: %s', 'translatepress-multilingual' ), $gtranslate_referer ); ?>
+                        <?php _e( 'Visit <a href="https://cloud.google.com/docs/authentication/api-keys" target="_blank">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions.', 'translatepress-multilingual' ); ?>
+                        <?php echo sprintf( __( '<br>Your HTTP referrer is: %s', 'translatepress-multilingual' ), $gtranslate_referer ); ?>
                     </p>
                 </td>
 
