@@ -326,14 +326,16 @@ class TRP_Translation_Render{
 		        foreach ( $json_array as $key => $value ) {
 			        if ( ! empty( $value ) ) {
 				        if ( ! is_array( $value ) ) { //if the current element is not an array check if it a html text and translate
-					        if ( html_entity_decode( (string) $value ) != strip_tags( html_entity_decode( (string) $value ) ) ) {
+                            $html_decoded_value = html_entity_decode( (string) $value );
+					        if ( $html_decoded_value != strip_tags( $html_decoded_value ) ) {
 						        $json_array[ $key ] = $this->translate_page( stripslashes( $value ) );
 					        }
 				        } else {//look for the html elements
 					        foreach ( $value as $k => $v ) {
 						        if ( ! empty( $v ) ) {
 							        if ( ! is_array( $v ) ) {
-								        if ( html_entity_decode( (string) $v ) != strip_tags( html_entity_decode( (string) $v ) ) ) {
+                                        $html_decoded_v = html_entity_decode( (string) $v );
+								        if ( $html_decoded_v != strip_tags( $html_decoded_v ) ) {
 									        $json_array[ $key ][ $k ] = $this->translate_page( stripslashes( $v ) );
 								        }
 							        }
