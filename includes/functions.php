@@ -580,3 +580,28 @@ add_filter('ginger_text_banner', 'trp_do_shortcode', 999 );
 function trp_do_shortcode($content){
     return do_shortcode(stripcslashes($content));
 }
+
+/**
+ * Debuger function. Mainly designed for the get_url_for_language() function
+ *
+ * @since 1.3.6
+ *
+ * @param bool $enabled
+ * @param array $logger
+ */
+function trp_bulk_debug($debug = false, $logger = array()){
+    if(!$debug){
+        return;
+    }
+    error_log('---------------------------------------------------------');
+    $key_length = '';
+    foreach ($logger as $key => $value){
+        if ( strlen($key) > $key_length)
+            $key_length = strlen($key);
+    }
+
+    foreach ($logger as $key => $value){
+        error_log("$key :   " . str_repeat(' ', $key_length - strlen($key)) . $value);
+    }
+    error_log('---------------------------------------------------------');
+}
