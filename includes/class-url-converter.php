@@ -163,12 +163,12 @@ class TRP_Url_Converter {
             return $url . $trp_link_is_processed; // abort for non-http/https links
         }
 
-        if ( $url_obj->isSchemeless() && empty($url_obj->getPath()) && empty($url_obj->getQuery()) ){
+        if ( $url_obj->isSchemeless() && !$url_obj->getPath() && !$url_obj->getQuery() ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => "is anchor"));
             return $url; // abort for anchors
         }
 
-        if ( !empty($url_obj->getHost()) && !empty($abs_home_url_obj->getHost()) && $url_obj->getHost() != $abs_home_url_obj->getHost() ){
+        if ( $url_obj->getHost() && $abs_home_url_obj->getHost() && $url_obj->getHost() != $abs_home_url_obj->getHost() ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => "is external url "));
             return $url; // abort for external url's
         }
@@ -245,7 +245,7 @@ class TRP_Url_Converter {
                 unset($no_lang_orig_path[0]);
                 $no_lang_orig_path = implode('/', $no_lang_orig_path );
 
-                if ( empty($this->get_url_slug( $language )) ){
+                if ( !$this->get_url_slug( $language ) ){
                     $url_lang_slug = '';
                 } else {
                     $url_lang_slug = trailingslashit($this->get_url_slug( $language ));
@@ -369,7 +369,7 @@ class TRP_Url_Converter {
         $url_obj = new \TranslatePress\Uri($url);
         $abs_home_url_obj = new \TranslatePress\Uri( $this->get_abs_home() );
 
-        if(!empty($url_obj->getPath())){
+        if( $url_obj->getPath() ){
             $possible_path = str_replace($abs_home_url_obj->getPath(), '', $url_obj->getPath());
             $lang = ltrim( $possible_path,'/' );
             $lang = explode('/', $lang);
