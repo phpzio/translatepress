@@ -173,11 +173,13 @@ class TRP_Url_Converter {
             return $url; // abort for external url's
         }
 
-        if( $this->get_lang_from_url_string($url) === null && $this->settings['default-language'] === $language ){
+        if( $this->get_lang_from_url_string($url) === null && $this->settings['default-language'] === $language && $this->settings['add-subdirectory-to-default-language'] !== 'yes' ){
+            trp_bulk_debug($debug, array('url' => $url, 'abort' => "URL already has the correct language added to it and default language has subdir"));
             return $url;
         }
 
         if( $this->get_lang_from_url_string($url) === $language ){
+            trp_bulk_debug($debug, array('url' => $url, 'abort' => "URL already has the correct language added to it"));
             return $url;
         }
 
