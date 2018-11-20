@@ -23,7 +23,6 @@ function TRP_Translator(){
             dataType: 'json',
             data: {
                 action: 'trp_get_translations',
-                async: false,
                 security: trp_localized_text['gettranslationsnonce'],
                 language: language_to_query,
                 original_language: original_language,
