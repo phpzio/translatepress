@@ -85,8 +85,9 @@
 <?php __("Google Translate", "translatepress-multilingual"); ?>
 <?php __("Enable or disable the automatic translation of the site with Google Translate. Only untranslated strings will receive a translation.<br>You can later edit these automatic translations.<br>Note: Not all languages support automatic translation. Please consult the <a href=\"https://cloud.google.com/translate/docs/languages\" target=\"_blank\" title=\"Automatic translation supported languages.\">supported languages list</a>. ", "translatepress-multilingual"); ?>
 <?php __("Google Translate API Key", "translatepress-multilingual"); ?>
-<?php __("Test api key", "translatepress-multilingual"); ?>
-<?php __("Visit this <a href=\"https://cloud.google.com/docs/authentication/api-keys\" target=\"_blank\">link</a> to see how you can set up an API key. ", "translatepress-multilingual"); ?>
+<?php __("Test API key", "translatepress-multilingual"); ?>
+<?php __("Visit <a href=\"https://cloud.google.com/docs/authentication/api-keys\" target=\"_blank\">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions.", "translatepress-multilingual"); ?>
+<?php __("<br>Your HTTP referrer is: %s", "translatepress-multilingual"); ?>
 <?php __("Language Switcher", "translatepress-multilingual"); ?>
 <?php __("Shortcode ", "translatepress-multilingual"); ?>
 <?php __("Use shortcode on any page or widget.", "translatepress-multilingual"); ?>
@@ -96,6 +97,8 @@
 <?php __("Floating language selection", "translatepress-multilingual"); ?>
 <?php __("Have a floating dropdown following the user on every page.", "translatepress-multilingual"); ?>
 <?php __("Google API Key from settings page:", "translatepress-multilingual"); ?>
+<?php __("HTTP Referrer:", "translatepress-multilingual"); ?>
+<?php __("Use this HTTP Referrer if you want to restrict usage of the API from Google Dashboard.", "translatepress-multilingual"); ?>
 <?php __("Response:", "translatepress-multilingual"); ?>
 <?php __("Response Body:", "translatepress-multilingual"); ?>
 <?php __("Entire Response From wp_remote_get():", "translatepress-multilingual"); ?>
@@ -135,6 +138,3 @@
 <?php __("Batch size", "translatepress-multilingual"); ?>
 <?php __("The number of rows to check at once.<br>Choosing a smaller number helps solve the 502 error \"Page took too long to respond\" on large databases.<br>May take several minutes depending on the database size.", "translatepress-multilingual"); ?>
 <?php __("Remove duplicate rows", "translatepress-multilingual"); ?>
-<?php __(" TranslatePress Settings", "translatepress-multilingual"); ?>
-<?php __("Translator", "translatepress-multilingual"); ?>
-<?php __("Allow this user to translate the website.", "translatepress-multilingual"); ?>

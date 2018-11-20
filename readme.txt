@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.8
-Stable tag: 1.3.5
+Stable tag: 1.3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,18 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.3.6 =
+* Refactored the get_url_for_language() function which should fix a lot of problems with links
+* Speed improvements
+* Fixed translation block icon when creating a new block
+* Fixed issues with trp tags leftovers in html
+* Fixed issues with gettext strings that weren't detected correctly
+* Add support for relative url's
+* Added warning in settings about controlling costs of Google API
+* Changed API key field description. Added feature to show/hide API key field based on Google Translate Active Yes/No
+* Fixed Translated-dom-changes string not translated through trp-ajax.
+* Fixed 400 errors in google translate API
+
 = 1.3.5 =
 * Fixed translation problems introduced in the last two versions
 * Added a console message when trp-ajax request uses fall back to admin ajax for debugging purposes.
