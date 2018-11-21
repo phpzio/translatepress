@@ -12,7 +12,7 @@
                     <select id="trp-default-language" name="trp_settings[default-language]" class="trp-select2">
                         <?php
                         foreach( $languages as $language_code => $language_name ){ ?>
-                            <option value="<?php echo $language_code; ?>" <?php echo ( $this->settings['default-language'] == $language_code ? 'selected' : '' ); ?> >
+                            <option title="<?php echo $language_code; ?>" value="<?php echo $language_code; ?>" <?php echo ( $this->settings['default-language'] == $language_code ? 'selected' : '' ); ?> >
                                 <?php echo $language_name; ?>
                             </option>
                         <?php }?>
