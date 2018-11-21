@@ -695,10 +695,10 @@ class TRP_Translation_Manager{
      * Create a global with the gettext strings that exist in the database
      */
     public function create_gettext_translated_global(){
+        global $trp_translated_gettext_texts;
         if( !is_admin() || $this::is_ajax_on_frontend() ) {
             global $TRP_LANGUAGE;
 
-            global $trp_translated_gettext_texts;
             if (!$this->trp_query) {
                 $trp = TRP_Translate_Press::get_trp_instance();
                 $this->trp_query = $trp->get_component('query');
@@ -707,6 +707,11 @@ class TRP_Translation_Manager{
             $strings = $this->trp_query->get_all_gettext_strings($TRP_LANGUAGE);
             if (!empty($strings))
                 $trp_translated_gettext_texts = $strings;
+
+            foreach( $trp_translated_gettext_texts as $key => $value ){
+                $trp_strings[$value['domain'] . '::' . $value['original']] = $value;
+            }
+            $trp_translated_gettext_texts = $trp_strings;
         }
     }
 
@@ -832,7 +837,6 @@ class TRP_Translation_Manager{
      */
     public function process_gettext_strings( $translation, $text, $domain ){
         global $TRP_LANGUAGE;
-
         /* don't do anything if we don't have extra languages on the site */
         if( count( $this->settings['publish-languages'] ) < 1 )
             return $translation;
@@ -848,6 +852,7 @@ class TRP_Translation_Manager{
         if ( !defined( 'DOING_AJAX' ) || $this::is_ajax_on_frontend() ) {
 
             global $trp_translated_gettext_texts, $trp_all_gettext_texts;
+
             $found_in_db = false;
             $db_id = '';
 
@@ -861,19 +866,17 @@ class TRP_Translation_Manager{
                 $trp_all_gettext_texts = array();
 
             if( !empty( $trp_translated_gettext_texts ) ){
-                foreach( $trp_translated_gettext_texts as $trp_translated_gettext_text ){
-                    if( $text == $trp_translated_gettext_text['original'] && $domain == $trp_translated_gettext_text['domain'] ){
-                        if( !empty( $trp_translated_gettext_text['translated'] ) && $translation != $trp_translated_gettext_text['translated'] ) {
-                            $translation = $trp_translated_gettext_text['translated'];
-                        }
-                        $db_id = $trp_translated_gettext_text['id'];
-                        $found_in_db = true;
-                        /* update the db if a translation appeared in the po file later */
-                        if( empty( $trp_translated_gettext_text['translated'] ) && $translation != $text ) {
-                            $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => $this->trp_query->get_constant_human_reviewed() ), get_locale() );
-                        }
+                if (isset($trp_translated_gettext_texts[$domain . '::' . $text])){
+                    $trp_translated_gettext_text = $trp_translated_gettext_texts[$domain . '::' . $text];
 
-                        break;
+                    if( !empty( $trp_translated_gettext_text['translated'] ) && $translation != $trp_translated_gettext_text['translated'] ) {
+                        $translation = $trp_translated_gettext_text['translated'];
+                    }
+                    $db_id = $trp_translated_gettext_text['id'];
+                    $found_in_db = true;
+                    // update the db if a translation appeared in the po file later
+                    if( empty( $trp_translated_gettext_text['translated'] ) && $translation != $text ) {
+                        $this->trp_query->update_gettext_strings( array( array( 'id' => $db_id, 'original' => $text, 'translated' => $translation, 'domain' => $domain), 'status' => $this->trp_query->get_constant_human_reviewed() ), get_locale() );
                     }
                 }
             }
@@ -883,7 +886,7 @@ class TRP_Translation_Manager{
                     $trp_all_gettext_texts[] = array('original' => $text, 'translated' => $translation, 'domain' => $domain);
                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $text, 'translated' => $translation, 'domain' => $domain) ), get_locale() );
                     /* insert it in the global of translated because now it is in the database */
-                    $trp_translated_gettext_texts[] = array( 'id' => $db_id, 'original' => $text, 'translated' => ( $translation != $text ) ? $translation : '', 'domain' => $domain );
+                    $trp_translated_gettext_texts[$domain . '::' . $text] = array( 'id' => $db_id, 'original' => $text, 'translated' => ( $translation != $text ) ? $translation : '', 'domain' => $domain );
                 }
             }
 
@@ -1027,7 +1030,6 @@ class TRP_Translation_Manager{
                 }
 
                 $this->trp_query->update_gettext_strings( $trp_gettext_strings_for_machine_translation, $TRP_LANGUAGE );
-
             }
         }
     }
