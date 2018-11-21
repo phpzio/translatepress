@@ -68,6 +68,9 @@ jQuery( function() {
             url_slug.val( _this.get_default_url_slug( new_language ) );
             url_slug.attr('name', 'trp_settings[url-slugs][' + new_language + ']' );
 
+            var language_code = new_option.find( 'input.trp-language-code' );
+            language_code.val( new_language);
+
             var remove = new_option.find( '.trp-remove-language' ).toggle();
 
             new_option = jQuery( '#trp-sortable-languages' ).append( new_option );
@@ -122,6 +125,7 @@ jQuery( function() {
             var new_language = select.val();
             var row = jQuery( select ).parents( '.trp-language' ) ;
             row.find( '.trp-language-slug' ).attr( 'name', 'trp_settings[url-slugs][' + new_language + ']').val( '' ).val( _this.get_default_url_slug( new_language ) );
+            row.find( '.trp-language-code' ).val( '' ).val( new_language );
             row.find( '.trp-translation-published' ).val( new_language );
         };
 
