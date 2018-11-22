@@ -1525,7 +1525,7 @@ jQuery( function() {
 var gettext_dictionaries = null;
 jQuery(function(){
     /* initial load and populate the dropdown with gettext strings */
-    jQuery( "#trp-preview-iframe" ).load(function(){
+    function trp_initialize_gettext() {
         /* get the gettext texts ids from the page and pass them to a ajax call to construct the dictonaries */
         var gettext_strings = jQuery( '#trp-preview-iframe').contents().find( '[data-trpgettextoriginal]' );
         gettext_string_ids = [];
@@ -1597,7 +1597,11 @@ jQuery(function(){
 
 
 
-    });
+    }
+    //trp_initialize_gettext();
+    //jQuery( "#trp-preview-iframe" ).load(function(){
+    jQuery( "#trp-preview-iframe" ).load( trp_initialize_gettext );
+    jQuery( "#trp-preview-iframe" ).on( 'trp_page_loaded', trp_initialize_gettext );
 
     /* handle saving gettext strings */
     jQuery( '#trp-editor' ).on( 'click', '#trp-save-gettext', function(){

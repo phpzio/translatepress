@@ -268,7 +268,7 @@ function TRP_Translator(){
             if( window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
                 var settingsdata = "" + settings.data;
                 if( typeof settings.data == 'undefined' || jQuery.isEmptyObject( settings.data ) || settingsdata.indexOf('action=trp_') === -1 ) {
-                    window.parent.jQuery('#trp-preview-iframe').trigger('load');
+                    window.parent.jQuery('#trp-preview-iframe').trigger('trp_page_loaded');
                     jQuery( window ).trigger('trp_page_loaded');
                 }
             }
