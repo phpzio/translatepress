@@ -138,6 +138,12 @@ class TRP_Url_Converter {
         $debug = false;
         // initializations
         global $TRP_LANGUAGE;
+        $hash = hash('md4', print_r($language, TRUE) . print_r($url, TRUE) .  print_r($trp_link_is_processed, TRUE) . print_r($TRP_LANGUAGE, TRUE));
+        $new_url = wp_cache_get('get_url_for_language_' . $hash, 'trp');
+        if ( $new_url !== false ){
+            return $new_url;
+        }
+
         $trp_language_copy = $TRP_LANGUAGE;
         if ( empty( $language ) ) {
             $language = $TRP_LANGUAGE;
@@ -145,8 +151,18 @@ class TRP_Url_Converter {
         if ( empty($url) ){
             $url = $this->cur_page_url();
         }
-        $url_obj = new \TranslatePress\Uri($url);
-        $abs_home_url_obj = new \TranslatePress\Uri( $this->get_abs_home() );
+
+        $url_obj = wp_cache_get('url_obj_' . hash('md4', $url), 'trp');
+        if( $url_obj === false ){
+            $url_obj = new \TranslatePress\Uri($url);
+            wp_cache_set('url_obj_' . hash('md4', $url), $url_obj, 'trp' );
+        }
+
+        $abs_home_url_obj = wp_cache_get('url_obj_' . hash('md4',  $this->get_abs_home() ), 'trp');
+        if( $abs_home_url_obj === false ){
+            $abs_home_url_obj = new \TranslatePress\Uri( $this->get_abs_home() );
+            wp_cache_set('url_obj_' . hash('md4', $this->get_abs_home()), $abs_home_url_obj, 'trp' );
+        }
 
         if( $TRP_LANGUAGE == $this->settings['default-language'] ){
             $trp_link_is_processed = '';
@@ -155,31 +171,37 @@ class TRP_Url_Converter {
         // actual logic of the function
         if ( $this->url_is_file($url) ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => 'is file'));
+            wp_cache_set('get_url_for_language_' . $hash, $url . $trp_link_is_processed, 'trp');
             return $url . $trp_link_is_processed; //abort for files
         }
 
         if ( !$url_obj->isSchemeless() && $url_obj->getScheme() != 'http' && $url_obj->getScheme() != 'https' ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => "is different scheme ".$url_obj->getScheme()));
+            wp_cache_set('get_url_for_language_' . $hash, $url . $trp_link_is_processed, 'trp');
             return $url . $trp_link_is_processed; // abort for non-http/https links
         }
 
         if ( $url_obj->isSchemeless() && !$url_obj->getPath() && !$url_obj->getQuery() ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => "is anchor"));
+            wp_cache_set('get_url_for_language_' . $hash, $url, 'trp');
             return $url; // abort for anchors
         }
 
         if ( $url_obj->getHost() && $abs_home_url_obj->getHost() && $url_obj->getHost() != $abs_home_url_obj->getHost() ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => "is external url "));
+            wp_cache_set('get_url_for_language_' . $hash, $url, 'trp');
             return $url; // abort for external url's
         }
 
         if( $this->get_lang_from_url_string($url) === null && $this->settings['default-language'] === $language && $this->settings['add-subdirectory-to-default-language'] !== 'yes' ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => "URL already has the correct language added to it and default language has subdir"));
+            wp_cache_set('get_url_for_language_' . $hash, $url, 'trp');
             return $url;
         }
 
         if( $this->get_lang_from_url_string($url) === $language ){
             trp_bulk_debug($debug, array('url' => $url, 'abort' => "URL already has the correct language added to it"));
+            wp_cache_set('get_url_for_language_' . $hash, $url, 'trp');
             return $url;
         }
 
@@ -232,7 +254,7 @@ class TRP_Url_Converter {
 
         } else {
             // we're just adding the new language to the url
-            $new_url_obj = new \TranslatePress\Uri( $url );
+            $new_url_obj = $url_obj;
 
             if( $this->get_lang_from_url_string($url) === null ){
                 // these are the custom url. They don't have language
@@ -281,6 +303,7 @@ class TRP_Url_Converter {
             $new_url = $url;
         }
 
+        wp_cache_set('get_url_for_language_' . $hash, $new_url . $trp_link_is_processed, 'trp');
         return $new_url . $trp_link_is_processed ;
 
     }
@@ -369,14 +392,30 @@ class TRP_Url_Converter {
         if ( ! $url ){
             $url = $this->cur_page_url();
         }
-        $url_obj = new \TranslatePress\Uri($url);
-        $abs_home_url_obj = new \TranslatePress\Uri( $this->get_abs_home() );
+
+        $language = wp_cache_get('url_language_' . hash('md4', $url) , 'trp' );
+        if ( $language !== false ){
+            return $language;
+        }
+
+        $url_obj = wp_cache_get('url_obj_' . hash('md4', $url), 'trp');
+        if( $url_obj === false ){
+            $url_obj = new \TranslatePress\Uri($url);
+            wp_cache_set('url_obj_' . hash('md4', $url), $url_obj, 'trp' );
+        }
+
+        $abs_home_url_obj = wp_cache_get('url_obj_' . hash('md4',  $this->get_abs_home() ), 'trp');
+        if( $abs_home_url_obj === false ){
+            $abs_home_url_obj = new \TranslatePress\Uri( $this->get_abs_home() );
+            wp_cache_set('url_obj_' . hash('md4', $this->get_abs_home()), $abs_home_url_obj, 'trp' );
+        }
 
         if( $url_obj->getPath() ){
             $possible_path = str_replace($abs_home_url_obj->getPath(), '', $url_obj->getPath());
             $lang = ltrim( $possible_path,'/' );
             $lang = explode('/', $lang);
             if( $lang == false ){
+                wp_cache_set('url_language_' . hash('md4', $url), null, 'trp');
                 return null;
             }
             // If we have a language in the URL, the first element of the array should be it.
@@ -386,10 +425,12 @@ class TRP_Url_Converter {
 
             // the lang slug != actual lang. So we need to do array_search so we don't end up with en instead of en_US
             if( isset($this->settings['url-slugs']) && in_array($lang, $this->settings['url-slugs']) ){
-                return array_search($lang, $this->settings['url-slugs']);
+                $language = array_search($lang, $this->settings['url-slugs']);
+                wp_cache_set('url_language_' . hash('md4', $url), $language, 'trp');
+                return $language;
             }
         }
-
+        wp_cache_set('url_language_' . hash('md4', $url), null, 'trp');
         return null;
     }
 
