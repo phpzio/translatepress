@@ -135,7 +135,7 @@ class TRP_Url_Converter {
      */
 
     public function get_url_for_language ( $language = null, $url = null, $trp_link_is_processed = '#TRPLINKPROCESSED') {
-        $debug = false;
+        $debug = true;
         // initializations
         global $TRP_LANGUAGE;
         $trp_language_copy = $TRP_LANGUAGE;
@@ -184,15 +184,15 @@ class TRP_Url_Converter {
         }
 
         // maybe find the post_id for the current URL
-        $possible_post_id = url_to_postid($url);
+        $possible_post_id = wp_cache_get( 'possible_post_id_'. hash('md4', $url ), 'trp' );
         if ( $possible_post_id ){
             $post_id = $possible_post_id;
-
             trp_bulk_debug($debug, array('url' => $url, 'found post id' => $post_id, 'for language' => $TRP_LANGUAGE));
         } else {
             // try again but with the default language home_url
             $TRP_LANGUAGE = $this->settings['default-language'];
-            $post_id      = url_to_postid( $url );
+            $post_id = url_to_postid( $url );
+            wp_cache_set( 'possible_post_id_' . hash('md4', $url ), $post_id, 'trp' );
             if($post_id){ trp_bulk_debug($debug, array('url' => $url, 'found post id' => $post_id, 'for default language' => $TRP_LANGUAGE)); }
             $TRP_LANGUAGE = $trp_language_copy;
         }
@@ -213,6 +213,7 @@ class TRP_Url_Converter {
              */
 
             $TRP_LANGUAGE = $this->get_lang_from_url_string( $url );
+
             $processed_permalink = get_permalink($post_id);
 
             if($url_obj->isSchemeless()){
@@ -226,7 +227,7 @@ class TRP_Url_Converter {
 
             $TRP_LANGUAGE = $language;
             $new_url = get_permalink( $post_id ) . $arguments;
-            trp_bulk_debug($debug, array('url' => $url, 'new url' => $new_url, 'found post id' => $post_id, 'isSchemeless' => 'true', 'url type' => 'based on permalink', 'for language' => $TRP_LANGUAGE));
+            trp_bulk_debug($debug, array('url' => $url, 'new url' => $new_url, 'found post id' => $post_id, 'url type' => 'based on permalink', 'for language' => $TRP_LANGUAGE));
             $TRP_LANGUAGE = $trp_language_copy;
 
         } else {
