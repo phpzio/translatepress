@@ -132,7 +132,19 @@ class TRP_Translate_Press{
      * Hooks methods used in front-end
      */
     protected function define_frontend_hooks(){
-        $this->loader->add_action( 'init', $this->translation_render, 'start_output_buffer', 0 );
+        /* it matters on what hook we start the output buffer for performance, so we can start it at a much later hook
+        on the default language to perform a trp tag cleanup */
+        global $TRP_LANGUAGE;
+        $trp_settings = $this->settings->get_settings();
+        if ( $TRP_LANGUAGE == $trp_settings['default-language'] && !trp_is_translation_editor() ) {
+            if ( !did_action('wp_print_scripts') ) {
+                $this->loader->add_action('wp_print_scripts', $this->translation_render, 'start_output_buffer', 9999 );
+            }
+        }
+        else{
+            $this->loader->add_action( 'init', $this->translation_render, 'start_output_buffer', 0 );
+        }
+
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );
         $this->loader->add_filter( 'wp_redirect', $this->translation_render, 'force_preview_on_url_redirect', 99, 2 );
         $this->loader->add_filter( 'wp_redirect', $this->translation_render, 'force_language_on_form_url_redirect', 99, 2 );
