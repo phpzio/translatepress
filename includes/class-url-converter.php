@@ -217,7 +217,7 @@ class TRP_Url_Converter {
             $processed_permalink = get_permalink($post_id);
 
             if($url_obj->isSchemeless()){
-                $arguments = str_replace($processed_permalink, '', trailingslashit( home_url() ) . ltrim($url, '/') );
+                $arguments = str_replace(trailingslashit($processed_permalink), '', trailingslashit(trailingslashit( home_url() ) . ltrim($url, '/') );
             } else {
                 $arguments = str_replace($processed_permalink, '', $url );
             }
