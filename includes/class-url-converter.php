@@ -400,6 +400,11 @@ class TRP_Url_Converter {
      */
     public function cur_page_url() {
 
+        $req_uri = wp_cache_get('cur_page_url', 'trp');
+        if ( $req_uri ){
+            return $req_uri;
+        }
+
         $req_uri = $_SERVER['REQUEST_URI'];
 
         $home_path = trim( parse_url( $this->get_abs_home(), PHP_URL_PATH ), '/' );
@@ -412,7 +417,7 @@ class TRP_Url_Converter {
 
 
         if ( function_exists('apply_filters') ) $pageURL = apply_filters('trp_curpageurl', $req_uri);
-
+        wp_cache_set('cur_page_url', $req_uri, 'trp');
         return $req_uri;
     }
 
