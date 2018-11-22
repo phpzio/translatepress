@@ -137,8 +137,8 @@ class TRP_Translate_Press{
         global $TRP_LANGUAGE;
         $trp_settings = $this->settings->get_settings();
         if ( $TRP_LANGUAGE == $trp_settings['default-language'] && !trp_is_translation_editor() ) {
-            if ( !did_action('wp_print_scripts') ) {
-                $this->loader->add_action('wp_print_scripts', $this->translation_render, 'start_output_buffer', 9999 );
+            if ( !did_action('loop_start') ) {
+                $this->loader->add_action('loop_start', $this->translation_render, 'start_output_buffer', 9999 );
             }
         }
         else{
