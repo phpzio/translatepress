@@ -138,7 +138,7 @@ class TRP_Url_Converter {
         $debug = false;
         // initializations
         global $TRP_LANGUAGE;
-        $hash = hash('md4', print_r($language, TRUE) . print_r($url, TRUE) .  print_r($trp_link_is_processed, TRUE) . print_r($TRP_LANGUAGE, TRUE));
+        $hash = hash( 'md4', (string)$language . (string)$url . (string)$trp_link_is_processed . (string)$TRP_LANGUAGE );
         $new_url = wp_cache_get('get_url_for_language_' . $hash, 'trp');
         if ( $new_url !== false ){
             return $new_url;
