@@ -285,16 +285,15 @@ class TRP_Url_Converter {
 
         /* fix links for woocommerce on language switcher for product categories and product tags */
         if( class_exists( 'WooCommerce' ) ){
-            $default_woocommerce_slugs = array('product-category', 'product-tag', 'product');
-            foreach ($default_woocommerce_slugs as $default_woocommerce_slug){
-                // if $language is provided, like on the language switcher
-                $current_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $TRP_LANGUAGE );
-                $translated_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $language );
-                $new_url = str_replace( '/'.$current_slug.'/', '/'.$translated_slug.'/', $new_url );
+            $english_woocommerce_slugs = array('product-category', 'product-tag', 'product');
+            foreach ($english_woocommerce_slugs as $english_woocommerce_slug){
+                // current woo slugs are based on the localized default language OR the current language
+                $current_slug = trp_x( $english_woocommerce_slug, 'slug', 'woocommerce', $this->settings['default-language'] );
+                if( strpos($new_url, '/'.$current_slug.'/') === false){
+                    $current_slug = trp_x( $english_woocommerce_slug, 'slug', 'woocommerce', $TRP_LANGUAGE );
+                }
 
-                // if $language is initially empty, like the link was found in the menu, manually added
-                $current_slug = $default_woocommerce_slug;
-                $translated_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $language );
+                $translated_slug = trp_x( $english_woocommerce_slug, 'slug', 'woocommerce', $language );
                 $new_url = str_replace( '/'.$current_slug.'/', '/'.$translated_slug.'/', $new_url );
             }
         }
