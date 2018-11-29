@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 4.9.8
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,14 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.3.7 =
+* Fixed an issue with Woocommerce and redirects when the default language is not English
+* Speed improvements
+* Fix relative url without a trailingslash not getting a proper link back
+* Add ?trp=edit-translation=preview to ajax loaded content. Also add it to all dynamic content.
+* Added language code column in settings
+* Removed async false from JS translate-dom-changes
+
 = 1.3.6 =
 * Refactored the get_url_for_language() function which should fix a lot of problems with links
 * Speed improvements
