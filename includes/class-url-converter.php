@@ -352,7 +352,12 @@ class TRP_Url_Converter {
      * @return string
      */
     public function get_abs_home() {
-        global $wpdb;
+	    $this->absolute_home = wp_cache_get('get_abs_home', 'trp');
+	    if ( $this->absolute_home !== false ){
+		    return $this->absolute_home;
+	    }
+
+	    global $wpdb;
 
         // returns the unfiltered home_url by directly retrieving it from wp_options.
         $this->absolute_home = $this->absolute_home
@@ -375,7 +380,16 @@ class TRP_Url_Converter {
         if( empty($this->absolute_home) ){
             $this->absolute_home = get_option("siteurl");
         }
-        
+
+	    // always return absolute_home based on the http or https version of the current page request. This means no more redirects.
+	    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+		    $this->absolute_home = str_replace( 'http://', 'https://', $this->absolute_home );
+	    } else {
+		    $this->absolute_home = str_replace( 'https://', 'http://', $this->absolute_home );
+	    }
+
+	    wp_cache_set( 'get_abs_home', $this->absolute_home, 'trp' );
+
         return $this->absolute_home;
     }
 
