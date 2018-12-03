@@ -148,7 +148,9 @@ class TRP_Url_Converter {
         if ( empty( $language ) ) {
             $language = $TRP_LANGUAGE;
         }
+        $url_was_empty = false;
         if ( empty($url) ){
+            $url_was_empty = true;
             $url = $this->cur_page_url();
         }
 
@@ -222,6 +224,14 @@ class TRP_Url_Converter {
                 wp_cache_set( 'possible_post_id_' . hash('md4', $url ), $post_id, 'trp' );
                 if($post_id){ trp_bulk_debug($debug, array('url' => $url, 'found post id' => $post_id, 'for default language' => $TRP_LANGUAGE)); }
                 $TRP_LANGUAGE = $trp_language_copy;
+            }
+
+            global $trp_post_id_backup;
+            if( is_single() && $trp_post_id_backup !== 0 &&
+                ( $url_was_empty || (!$url_was_empty && $url == $this->cur_page_url() ) )
+            ){
+                $post_id = $trp_post_id_backup;
+                wp_cache_set( 'possible_post_id_' . hash('md4', $url ), $trp_post_id_backup, 'trp' );
             }
         }
 
