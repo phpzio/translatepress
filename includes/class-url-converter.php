@@ -138,7 +138,7 @@ class TRP_Url_Converter {
         $debug = false;
         // initializations
         global $TRP_LANGUAGE;
-        $hash = hash('md4', print_r($language, TRUE) . print_r($url, TRUE) .  print_r($trp_link_is_processed, TRUE) . print_r($TRP_LANGUAGE, TRUE));
+        $hash = hash( 'md4', (string)$language . (string)$url . (string)$trp_link_is_processed . (string)$TRP_LANGUAGE );
         $new_url = wp_cache_get('get_url_for_language_' . $hash, 'trp');
         if ( $new_url !== false ){
             return $new_url;
@@ -285,16 +285,15 @@ class TRP_Url_Converter {
 
         /* fix links for woocommerce on language switcher for product categories and product tags */
         if( class_exists( 'WooCommerce' ) ){
-            $default_woocommerce_slugs = array('product-category', 'product-tag', 'product');
-            foreach ($default_woocommerce_slugs as $default_woocommerce_slug){
-                // if $language is provided, like on the language switcher
-                $current_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $TRP_LANGUAGE );
-                $translated_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $language );
-                $new_url = str_replace( '/'.$current_slug.'/', '/'.$translated_slug.'/', $new_url );
+            $english_woocommerce_slugs = array('product-category', 'product-tag', 'product');
+            foreach ($english_woocommerce_slugs as $english_woocommerce_slug){
+                // current woo slugs are based on the localized default language OR the current language
+                $current_slug = trp_x( $english_woocommerce_slug, 'slug', 'woocommerce', $this->settings['default-language'] );
+                if( strpos($new_url, '/'.$current_slug.'/') === false){
+                    $current_slug = trp_x( $english_woocommerce_slug, 'slug', 'woocommerce', $TRP_LANGUAGE );
+                }
 
-                // if $language is initially empty, like the link was found in the menu, manually added
-                $current_slug = $default_woocommerce_slug;
-                $translated_slug = trp_x( $default_woocommerce_slug, 'slug', 'woocommerce', $language );
+                $translated_slug = trp_x( $english_woocommerce_slug, 'slug', 'woocommerce', $language );
                 $new_url = str_replace( '/'.$current_slug.'/', '/'.$translated_slug.'/', $new_url );
             }
         }
@@ -353,7 +352,12 @@ class TRP_Url_Converter {
      * @return string
      */
     public function get_abs_home() {
-        global $wpdb;
+	    $this->absolute_home = wp_cache_get('get_abs_home', 'trp');
+	    if ( $this->absolute_home !== false ){
+		    return $this->absolute_home;
+	    }
+
+	    global $wpdb;
 
         // returns the unfiltered home_url by directly retrieving it from wp_options.
         $this->absolute_home = $this->absolute_home
@@ -376,7 +380,16 @@ class TRP_Url_Converter {
         if( empty($this->absolute_home) ){
             $this->absolute_home = get_option("siteurl");
         }
-        
+
+	    // always return absolute_home based on the http or https version of the current page request. This means no more redirects.
+	    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+		    $this->absolute_home = str_replace( 'http://', 'https://', $this->absolute_home );
+	    } else {
+		    $this->absolute_home = str_replace( 'https://', 'http://', $this->absolute_home );
+	    }
+
+	    wp_cache_set( 'get_abs_home', $this->absolute_home, 'trp' );
+
         return $this->absolute_home;
     }
 

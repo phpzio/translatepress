@@ -35,7 +35,7 @@ class TRP_Translation_Render{
         else {
             mb_http_output("UTF-8");
             if ( $TRP_LANGUAGE == $this->settings['default-language'] && !trp_is_translation_editor() ) {
-                ob_start(array($this, 'clear_trp_tags'));//on default language when we are not in editor we just need to clear any trp tags that could still be present
+                ob_start(array($this, 'clear_trp_tags'), 4096);//on default language when we are not in editor we just need to clear any trp tags that could still be present
             } else {
                 ob_start(array($this, 'translate_page'));//everywhere else translate the page
             }
