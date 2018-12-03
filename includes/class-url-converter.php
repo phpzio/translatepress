@@ -211,12 +211,18 @@ class TRP_Url_Converter {
             $post_id = $possible_post_id;
             trp_bulk_debug($debug, array('url' => $url, 'found post id' => $post_id, 'for language' => $TRP_LANGUAGE));
         } else {
-            // try again but with the default language home_url
-            $TRP_LANGUAGE = $this->settings['default-language'];
             $post_id = url_to_postid( $url );
             wp_cache_set( 'possible_post_id_' . hash('md4', $url ), $post_id, 'trp' );
-            if($post_id){ trp_bulk_debug($debug, array('url' => $url, 'found post id' => $post_id, 'for default language' => $TRP_LANGUAGE)); }
-            $TRP_LANGUAGE = $trp_language_copy;
+            if ( $post_id ) { trp_bulk_debug($debug,git  array('url' => $url, 'found post id' => $post_id, 'for default language' => $TRP_LANGUAGE)); }
+
+            if ( $post_id == 0 ) {
+                // try again but with the default language home_url
+                $TRP_LANGUAGE = $this->settings['default-language'];
+                $post_id = url_to_postid( $url );
+                wp_cache_set( 'possible_post_id_' . hash('md4', $url ), $post_id, 'trp' );
+                if($post_id){ trp_bulk_debug($debug, array('url' => $url, 'found post id' => $post_id, 'for default language' => $TRP_LANGUAGE)); }
+                $TRP_LANGUAGE = $trp_language_copy;
+            }
         }
 
         if( $post_id ){
