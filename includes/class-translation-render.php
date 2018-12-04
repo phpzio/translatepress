@@ -29,7 +29,10 @@ class TRP_Translation_Render{
     public function start_output_buffer(){
         global $TRP_LANGUAGE;
 
-        if( ( is_admin() && !TRP_Translation_Manager::is_ajax_on_frontend() ) || trp_is_translation_editor( 'true' ) ){
+        //when we check if is an ajax request in frontend we also set proper REQUEST variables and language global so we need to run this for every buffer
+        $ajax_on_frontend = TRP_Translation_Manager::is_ajax_on_frontend();//TODO refactor this function si it just checks and does not set variables
+
+        if( ( is_admin() && !$ajax_on_frontend ) || trp_is_translation_editor( 'true' ) ){
             return;//we have two cases where we don't do anything: we are on the admin side and we are not in an ajax call or we are in the left side of the translation editor
         }
         else {
@@ -308,14 +311,14 @@ class TRP_Translation_Render{
 
 	    $preview_mode = isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview';
 
-	    $is_json = is_array( $json_array = json_decode( $output, true ) );
+        $json_array = json_decode( $output, true );
 	    /* If we have a json response we need to parse it and only translate the nodes that contain html
 	     *
 	     * Removed is_ajax_on_frontend() check because we need to capture custom ajax events.
 		 * Decided that if $output is json decodable it's a good enough check to handle it this way.
 		 * We have necessary checks so that we don't get to this point when is_admin(), or when language is not default. 
 	     */
-	    if( $is_json ) {
+	    if( $json_array && $json_array != $output ) {
 		    /* if it's one of our own ajax calls don't do nothing */
 	        if ( ! empty( $_REQUEST['action'] ) && strpos( $_REQUEST['action'], 'trp_' ) === 0 && $_REQUEST['action'] != 'trp_split_translation_block' ) {
 		        return $output;
@@ -323,27 +326,9 @@ class TRP_Translation_Render{
 
 	        //check if we have a json response
 	        if ( ! empty( $json_array ) ) {
-		        foreach ( $json_array as $key => $value ) {
-			        if ( ! empty( $value ) ) {
-				        if ( ! is_array( $value ) ) { //if the current element is not an array check if it a html text and translate
-                            $html_decoded_value = html_entity_decode( (string) $value );
-					        if ( $html_decoded_value != strip_tags( $html_decoded_value ) ) {
-						        $json_array[ $key ] = $this->translate_page( stripslashes( $value ) );
-					        }
-				        } else {//look for the html elements
-					        foreach ( $value as $k => $v ) {
-						        if ( ! empty( $v ) ) {
-							        if ( ! is_array( $v ) ) {
-                                        $html_decoded_v = html_entity_decode( (string) $v );
-								        if ( $html_decoded_v != strip_tags( $html_decoded_v ) ) {
-									        $json_array[ $key ][ $k ] = $this->translate_page( stripslashes( $v ) );
-								        }
-							        }
-						        }
-					        }
-				        }
-			        }
-		        }
+	            if( !is_array( $json_array ) )//make sure we send an array as json_decode even with true parameter might not return one
+                    $json_array = array( $json_array );
+                array_walk_recursive( $json_array, array( $this, 'translate_json' ) );
 	        }
 
 	        return trp_safe_json_encode( $json_array );
@@ -735,6 +720,22 @@ class TRP_Translation_Render{
     }
 
     /**
+     * Callback for the array_walk_recursive to translate json. It translates the values in the resulting json array if they contain html
+     * @param $value
+     */
+    function translate_json (&$value) {
+        //check if it a html text and translate
+        $html_decoded_value = html_entity_decode( (string) $value );
+        if ( $html_decoded_value != strip_tags( $html_decoded_value ) ) {
+            $value =   $this->translate_page( stripslashes( $value ) );
+            /*the translate-press tag can appear on a gettext string without html and should not be left in the json
+            as we don't know how it will be inserted into the page by js */
+            $value = preg_replace( '/(<|&lt;)translate-press (.*?)(>|&gt;)/', '', $value );
+            $value = preg_replace( '/(<|&lt;)(\\\\)*\/translate-press(>|&gt;)/', '', $value );
+        }
+    }
+
+    /**
      * Function that should be called only on the default language and when we are not in the editor mode and it is designed as a fallback to clear
      * any trp gettext tags that we added and for some reason show up  although they should not
      * @param $output
@@ -1088,6 +1089,8 @@ class TRP_Translation_Render{
         if ( TRP_Translation_Manager::is_ajax_on_frontend() && isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] === 'preview' && $output != false ) {
             $result = json_decode($output, TRUE);
             if ( json_last_error() === JSON_ERROR_NONE) {
+                if( !is_array( $result ) )//make sure we send an array as json_decode even with true parameter might not return one
+                    $result = array($result);
                 array_walk_recursive($result, array($this, 'callback_add_preview_arg'));
                 $output = trp_safe_json_encode($result);
             } //endif
