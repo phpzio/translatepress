@@ -117,7 +117,7 @@ class TRP_Url_Converter {
     public function change_lang_attr_in_html_tag( $output ){
         global $TRP_LANGUAGE;
         $lang = get_bloginfo('language');
-        if ( $lang && !empty($TRP_LANGUAGE) && $this->settings["default-language"] != $TRP_LANGUAGE ) {
+        if ( $lang && !empty($TRP_LANGUAGE) ) {
             $output = str_replace( 'lang="'. $lang .'"', 'lang="'. str_replace('_', '-', $TRP_LANGUAGE ) .'"', $output );
         }
 
