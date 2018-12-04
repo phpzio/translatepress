@@ -42,6 +42,8 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
         define( 'TRP_PLUGIN_VERSION', '1.3.7' );
 
+	    wp_cache_add_non_persistent_groups(array('trp'));
+
         $this->load_dependencies();
         $this->initialize_components();
         $this->define_admin_hooks();
