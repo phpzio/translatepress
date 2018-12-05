@@ -188,6 +188,10 @@ class TRP_Translate_Press{
 
         /* we need to treat the date_i18n function differently so we remove the gettext wraps */
         $this->loader->add_filter( 'date_i18n', $this->translation_manager, 'handle_date_i18n_function_for_gettext', 1, 4 );
+	    /* strip esc_url() from gettext wraps */
+	    $this->loader->add_filter( 'clean_url', $this->translation_manager, 'trp_strip_gettext_tags_from_esc_url', 1, 3 );
+	    /* strip sanitize_title() from gettext wraps and apply custom trp_remove_accents */
+	    $this->loader->add_filter( 'sanitize_title', $this->translation_manager, 'trp_sanitize_title', 1, 3 );
 
         /* define an update hook here */
         $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates', 10 );
