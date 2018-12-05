@@ -148,9 +148,8 @@ class TRP_Url_Converter {
         if ( empty( $language ) ) {
             $language = $TRP_LANGUAGE;
         }
-        $url_was_empty = false;
+
         if ( empty($url) ){
-            $url_was_empty = true;
             $url = $this->cur_page_url();
         }
 
