@@ -386,7 +386,8 @@ class TRP_Translation_Render{
                 $trp_rows[count( $row->children )][] = $row;
             }
             else{
-                $trp_attr_rows[] = $row;
+                if( $row->nodetype !== 5 && $row->nodetype !== 3 )//add all tags that are not root or text, text nodes can't have attributes
+                    $trp_attr_rows[] = $row;
 
 	            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules );
 	            if ( $translation_block ){
