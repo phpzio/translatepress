@@ -3,14 +3,14 @@
 Plugin Name: TranslatePress - Multilingual
 Plugin URI: https://translatepress.com/
 Description: Experience a better way of translating your WordPress site, with full support for WooCommerce and site builders.
-Version: 1.3.7
+Version: 1.3.8
 Author: Cozmoslabs, Razvan Mocanu, Madalin Ungureanu, Cristophor Hurduban
 Author URI: https://cozmoslabs.com/
 Text Domain: translatepress-multilingual
 Domain Path: /languages
 License: GPL2
 WC requires at least: 2.5.0
-WC tested up to: 3.4
+WC tested up to: 3.5
 
 == Copyright ==
 Copyright 2017 Cozmoslabs (www.cozmoslabs.com)
