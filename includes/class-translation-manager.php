@@ -836,6 +836,9 @@ class TRP_Translation_Manager{
      * @return string
      */
     public function process_gettext_strings( $translation, $text, $domain ){
+	    // if we have nested gettexts strip previous ones, and consider only the outermost
+    	$text = TRP_Translation_Manager::strip_gettext_tags( $text );
+    	$translation = TRP_Translation_Manager::strip_gettext_tags( $translation );
         global $TRP_LANGUAGE;
         /* don't do anything if we don't have extra languages on the site */
         if( count( $this->settings['publish-languages'] ) < 1 )
