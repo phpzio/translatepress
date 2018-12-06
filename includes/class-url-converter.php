@@ -182,10 +182,10 @@ class TRP_Url_Converter {
             return $url . $trp_link_is_processed; // abort for non-http/https links
         }
 
-        if ( $url_obj->isSchemeless() && !$url_obj->getPath() && !$url_obj->getQuery() ){
-            trp_bulk_debug($debug, array('url' => $url, 'abort' => "is anchor"));
+        if ( $url_obj->isSchemeless() && !$url_obj->getPath() ){
+            trp_bulk_debug($debug, array('url' => $url, 'abort' => "is anchor or has get params"));
             wp_cache_set('get_url_for_language_' . $hash, $url, 'trp');
-            return $url; // abort for anchors
+            return $url; // abort for anchors or params only.
         }
 
         if ( $url_obj->getHost() && $abs_home_url_obj->getHost() && $url_obj->getHost() != $abs_home_url_obj->getHost() ){
