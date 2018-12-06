@@ -308,6 +308,12 @@ class TRP_Translation_Render{
         if ($language_code === false) {
             return $output;
         }
+        if ( $language_code == $this->settings['default-language'] ){
+        	// Don't translate regular strings (non-gettext) when we have no other translation languages except default language ( count( $this->settings['publish-languages'] ) > 1 )
+        	$translate_normal_strings = false;
+        }else{
+	        $translate_normal_strings = true;
+        }
 
 	    $preview_mode = isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview';
 
@@ -359,13 +365,14 @@ class TRP_Translation_Render{
 	    if ( ! $this->translation_manager ) {
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
-        $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
-	    // trim every translation block original now, to avoid over-calling trim function later
-	    foreach ( $all_existing_translation_blocks as $key => $existing_tb ){
-		    $all_existing_translation_blocks[$key]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[$key]->original );
+	    if ( $translate_normal_strings ) {
+		    $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
+		    // trim every translation block original now, to avoid over-calling trim function later
+		    foreach ( $all_existing_translation_blocks as $key => $existing_tb ) {
+			    $all_existing_translation_blocks[ $key ]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[ $key ]->original );
+		    }
+		    $merge_rules = $this->translation_manager->get_merge_rules();
 	    }
-		$merge_rules = $this->translation_manager->get_merge_rules();
-
         $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         /**
@@ -387,28 +394,29 @@ class TRP_Translation_Render{
             }
             else{
                 $trp_attr_rows[] = $row;
-
-	            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules );
-	            if ( $translation_block ){
-		            $existing_classes = $row->getAttribute( 'class' );
-		            if ( $translation_block->block_type == 1 ) {
-		            	$found_inner_translation_block = false;
-			            foreach( $row->children() as $child ){
-				            if ( $this->find_translation_block( $child, array( $translation_block ), $merge_rules ) != null ){
-				            	$found_inner_translation_block = true;
-				            	break;
+	            if ( $translate_normal_strings ) {
+		            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules );
+		            if ( $translation_block ) {
+			            $existing_classes = $row->getAttribute( 'class' );
+			            if ( $translation_block->block_type == 1 ) {
+				            $found_inner_translation_block = false;
+				            foreach ( $row->children() as $child ) {
+					            if ( $this->find_translation_block( $child, array( $translation_block ), $merge_rules ) != null ) {
+						            $found_inner_translation_block = true;
+						            break;
+					            }
 				            }
+				            if ( ! $found_inner_translation_block ) {
+					            // make sure we find it later exactly the way it is in DB
+					            $row->innertext = $translation_block->original;
+					            $row->setAttribute( 'class', $existing_classes . ' translation-block' );
+				            }
+			            } else if ( $preview_mode && $translation_block->block_type == 2 && $translation_block->status != 0 ) {
+				            // refactor to not do this for each
+				            $row->setAttribute( 'data-trp-translate-id', $translation_block->id );
+				            $row->setAttribute( 'data-trp-translate-id-deprecated', $translation_block->id );
+				            $row->setAttribute( 'class', $existing_classes . 'trp-deprecated-tb' );
 			            }
-		            	if ( !$found_inner_translation_block ) {
-				            // make sure we find it later exactly the way it is in DB
-				            $row->innertext = $translation_block->original;
-				            $row->setAttribute( 'class', $existing_classes . ' translation-block' );
-			            }
-		            }else if ( $preview_mode && $translation_block->block_type == 2 && $translation_block->status != 0 ) {
-		            	// refactor to not do this for each
-			            $row->setAttribute( 'data-trp-translate-id', $translation_block->id );
-			            $row->setAttribute( 'data-trp-translate-id-deprecated', $translation_block->id );
-			            $row->setAttribute( 'class', $existing_classes . 'trp-deprecated-tb' );
 		            }
 	            }
 
@@ -476,6 +484,11 @@ class TRP_Translation_Render{
         /* perform preg replace on the remaining trp-gettext tags */
 	    $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $trpremoved );
 	    $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
+
+	    if ( ! $translate_normal_strings ) {
+		    return $trpremoved;
+	    }
+
         $html = trp_str_get_html($trpremoved, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         $no_translate_selectors = apply_filters( 'trp_no_translate_selectors', array( '#wpadminbar' ), $TRP_LANGUAGE );

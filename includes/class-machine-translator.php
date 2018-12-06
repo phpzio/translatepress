@@ -7,7 +7,8 @@
  */
 class TRP_Machine_Translator{
     protected $settings;
-
+	protected $referer;
+	protected $url_converter;
     /**
      * TRP_Machine_Translator constructor.
      *
