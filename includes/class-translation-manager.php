@@ -911,31 +911,32 @@ class TRP_Translation_Manager{
                 }
             }
 
+            $blacklist_functions = apply_filters( 'trp_gettext_blacklist_functions', array(
+            	'wp_enqueue_script',
+	            'wp_enqueue_scripts',
+	            'wp_editor',
+	            'wp_enqueue_media',
+	            'wp_register_script',
+	            'wp_print_scripts',
+	            'wp_localize_script',
+	            'wp_print_media_templates',
+	            'get_bloginfo',
+	            'wp_get_document_title',
+	            'wp_title',
+	            'wp_trim_words',
+	            'sanitize_title',
+	            'sanitize_title_with_dashes',
+	            'esc_url',
+	            'wc_get_permalink_structure' // make sure we don't touch the woocommerce permalink rewrite slugs that are translated
+            ), $text, $translation, $domain );
             $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
             if( !empty( $callstack_functions ) ){
                 foreach( $callstack_functions as $callstack_function ){
-                    if( $callstack_function['function'] == 'wp_enqueue_script' ||
-                        $callstack_function['function'] == 'wp_enqueue_scripts' ||
-                        $callstack_function['function'] == 'wp_editor' ||
-                        $callstack_function['function'] == 'wp_enqueue_media' ||
-                        $callstack_function['function'] == 'wp_register_script' ||
-                        $callstack_function['function'] == 'wp_print_scripts'||
-                        $callstack_function['function'] == 'wp_localize_script'||
-                        $callstack_function['function'] == 'wp_print_media_templates' ||
-                        $callstack_function['function'] == 'get_bloginfo' ||
-                        $callstack_function['function'] == 'wp_get_document_title' ||
-                        $callstack_function['function'] == 'wp_title' ||
-                        $callstack_function['function'] == 'wp_trim_words'
-                    ) {
-                        return $translation;
-                    }
+	                if ( in_array( $callstack_function['function'], $blacklist_functions ) ){
+		                return $translation;
+	                }
 
-                    /* make sure we don't touch the woocommerce permalink rewrite slugs that are translated */
-                    if( $callstack_function['function'] == 'wc_get_permalink_structure' ){
-                        return $translation;
-                    }
-
-                    /* make sure we don't touch the woocommerce process_payment function in WC_Gateway_Stripe. It does a wp_remote_post() call to stripe with localized parameters */
+	                /* make sure we don't touch the woocommerce process_payment function in WC_Gateway_Stripe. It does a wp_remote_post() call to stripe with localized parameters */
                     if( $callstack_function['function'] == 'process_payment' && $callstack_function['class'] == 'WC_Gateway_Stripe' ){
                         return $translation;
                     }
@@ -1096,6 +1097,56 @@ class TRP_Translation_Manager{
         return $j;
         
     }
+
+	/**
+	 * Strip gettext tags from urls that were parsed by esc_url
+	 *
+	 * Esc_url() replaces spaces with %20. This is why it is not automatically stripped like the rest of the urls.
+	 *
+	 * @since 1.3.8
+	 *
+	 * @param $good_protocol_url
+	 * @param $original_url
+	 * @param $_context
+	 *
+	 * @return mixed
+	 */
+	function trp_strip_gettext_tags_from_esc_url( $good_protocol_url, $original_url, $_context ){
+		if( strpos( $good_protocol_url, '%20data-trpgettextoriginal=' ) !== false ) {
+			// first replace %20 with space  so that gettext tags can be stripped.
+			$good_protocol_url = str_replace( '%20data-trpgettextoriginal=', ' data-trpgettextoriginal=', $good_protocol_url );
+			$good_protocol_url = TRP_Translation_Manager::strip_gettext_tags( $good_protocol_url );
+		}
+
+		return $good_protocol_url;
+	}
+
+	/**
+	 * Filter sanitize_title() to use our own remove_accents() function so it's based on the default language, not current locale.
+	 *
+	 * Also removes trp gettext tags before running the filter because it strip # and ! and / making it impossible to strip the #trpst later
+	 *
+	 * @since 1.3.1
+	 *
+	 * @param string $title
+	 * @param string $raw_title
+	 * @param string $context
+	 * @return string
+	 */
+	public function trp_sanitize_title(  $title, $raw_title, $context ){
+		// remove trp_tags before sanitization, because otherwise some characters (#,!,/, spaces ) are stripped later, and it becomes impossible to strip trp-gettext later
+		$raw_title = TRP_Translation_Manager::strip_gettext_tags( $raw_title );
+
+		if ( 'save' == $context )
+			$title = trp_remove_accents( $raw_title );
+
+		remove_filter( 'sanitize_title', array( $this, 'trp_sanitize_title') , 1 );
+		$title = apply_filters( 'sanitize_title', $title, $raw_title, $context );
+		add_filter( 'sanitize_title', array( $this, 'trp_sanitize_title'), 1, 3 );
+
+		return $title;
+	}
+
 
 	/**
 	 * function that strips the gettext tags from a string
