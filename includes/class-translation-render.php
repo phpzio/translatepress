@@ -96,6 +96,8 @@ class TRP_Translation_Render{
      * @return string           Trimmed string.
      */
     public function full_trim( $string ) {
+	    /* Make sure you update full_trim function from trp-ajax too*/
+
         /* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
         Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
         Also removed \xA0 (the same as chr(160) for altering special characters */
