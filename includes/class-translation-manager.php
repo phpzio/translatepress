@@ -727,7 +727,8 @@ class TRP_Translation_Manager{
             add_action( 'wp_head', array( $this, 'apply_gettext_filter' ), 100 );
         }
 
-        if( class_exists( 'WooCommerce' ) ){
+        //if we have woocommerce installed and it is not an ajax request add a gettext hook starting from wp_loaded and remove it on wp_head
+        if( class_exists( 'WooCommerce' ) && !$this::is_ajax_on_frontend() ){
             // WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
             add_action( 'wp_loaded', array( $this, 'apply_woocommerce_gettext_filter' ), 19 );
         }
@@ -736,6 +737,7 @@ class TRP_Translation_Manager{
     /* apply the gettext filter here */
     public function apply_gettext_filter(){
 
+        //if we have wocommerce installed remove te hook that was added on wp_loaded
         if( class_exists( 'WooCommerce' ) ){
             // WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
             remove_action( 'wp_loaded', array( $this, 'apply_woocommerce_gettext_filter' ), 19 );
@@ -970,7 +972,13 @@ class TRP_Translation_Manager{
         return $translation;
     }
 
-
+    /**
+     * caller for woocommerce domain texts
+     * @param $translation
+     * @param $text
+     * @param $domain
+     * @return string
+     */
     function woocommerce_process_gettext_strings( $translation, $text, $domain ){
         if( $domain === 'woocommerce' ){
             $translation = $this->process_gettext_strings( $translation, $text, $domain );
@@ -991,6 +999,9 @@ class TRP_Translation_Manager{
         return $translation;
     }
 
+    /**
+     * caller for woocommerce domain texts with context
+     */
     function woocommerce_process_gettext_strings_with_context( $translation, $text, $context, $domain ){
         if( $domain === 'woocommerce' ) {
             $translation = $this->process_gettext_strings_with_context( $translation, $text, $context, $domain );
@@ -1016,6 +1027,9 @@ class TRP_Translation_Manager{
         return $translation;
     }
 
+    /**
+     * caller for woocommerce domain numeric texts
+     */
     function woocommerce_process_ngettext_strings($translation, $single, $plural, $number, $domain){
         if( $domain === 'woocommerce' ) {
             $translation = $this->process_ngettext_strings($translation, $single, $plural, $number, $domain);
@@ -1039,6 +1053,9 @@ class TRP_Translation_Manager{
         return $translation;
     }
 
+    /**
+     * caller for woocommerce domain numeric texts with context
+     */
     function woocommerce_process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain ){
         if( $domain === 'woocommerce' ) {
             $translation = $this->process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain );
