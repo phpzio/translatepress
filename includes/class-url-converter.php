@@ -262,7 +262,9 @@ class TRP_Url_Converter {
         } else {
             // we're just adding the new language to the url
             $new_url_obj = $url_obj;
-
+            if ($abs_home_url_obj->getPath() == "/"){
+                $abs_home_url_obj->setPath('');
+            }
             if( $this->get_lang_from_url_string($url) === null ){
                 // these are the custom url. They don't have language
                 $abs_home_considered_path = trim(str_replace($abs_home_url_obj->getPath(), '', $url_obj->getPath()), '/');
@@ -431,6 +433,9 @@ class TRP_Url_Converter {
         }
 
         if( $url_obj->getPath() ){
+            if ($abs_home_url_obj->getPath() == "/"){
+                $abs_home_url_obj->setPath('');
+            }
             $possible_path = str_replace($abs_home_url_obj->getPath(), '', $url_obj->getPath());
             $lang = ltrim( $possible_path,'/' );
             $lang = explode('/', $lang);
