@@ -1268,13 +1268,14 @@ class TRP_Translation_Manager{
 		global $trp_editor_notices;
 		if ( trp_is_translation_editor( 'preview' ) && is_array( $dictionary ) && count( $dictionary ) === 0 ){
 			if ( $this->has_bad_characters( $prepared_query ) ) {
-				$html = "<table class='trp-bad-encoded-strings'><thead><th>" . __(  'Warning: Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting.', 'translatepress-multilingual' ) . "</th></thead>";
+				$html = "<div class='trp-notice trp-notice-warning'><p class='trp-bad-encoded-strings'>" . __(  '<strong>Warning:</strong> Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting.', 'translatepress-multilingual' ) . "</p>";
+				$html .= "<ul class='trp-bad-encoded-strings-list'>";
 				foreach( $strings_array as $string ){
 					if ( $this->has_bad_characters( $string ) ){
-						$html .= "<tr><td>" . $string . "</td></tr>";
+						$html .= "<li>" . $string . "</li>";
 					}
 				}
-				$html .= "</table>";
+				$html .= "</ul></div>";
 
 				$trp_editor_notices .= $html;
 			}
