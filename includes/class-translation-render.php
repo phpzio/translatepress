@@ -734,8 +734,13 @@ class TRP_Translation_Render{
             $link->href = str_replace('#TRPLINKPROCESSED', '', $link->href);
         }
 
-        // Append an html table containing the errors
-	    return $trp_editor_notices . $html->save();
+	    // Append an html table containing the errors
+	    if ( trp_is_translation_editor('preview') && $trp_editor_notices != '' ){
+		    $body = $html->find('body', 0 );
+		    $body->innertext = '<div class="trp-editor-notices">' . $trp_editor_notices . "</div>" . $body->innertext;
+	    }
+
+	    return $html->save();
     }
 
     /**

@@ -1268,7 +1268,7 @@ class TRP_Translation_Manager{
 		global $trp_editor_notices;
 		if ( trp_is_translation_editor( 'preview' ) && is_array( $dictionary ) && count( $dictionary ) === 0 ){
 			if ( $this->has_bad_characters( $prepared_query ) ) {
-				$html = "<table style='position:relative;  z-index: 99999;  width: 100%;  height: 23px;'><thead><th>" . __(  'Warning: List of strings with possibly incorrectly encoded characters which may break the queries rendering the page untranslated. Consider revising string or method of outputting.', 'translatepress-multilingual' ) . "</th></thead>";
+				$html = "<table class='trp-bad-encoded-strings'><thead><th>" . __(  'Warning: Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting.', 'translatepress-multilingual' ) . "</th></thead>";
 				foreach( $strings_array as $string ){
 					if ( $this->has_bad_characters( $string ) ){
 						$html .= "<tr><td>" . $string . "</td></tr>";

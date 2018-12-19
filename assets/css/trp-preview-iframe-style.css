@@ -122,3 +122,13 @@ translate-press{
 .trp-icon.trp-split.trp-active-icon, .trp-icon.trp-split.trp-active-icon:hover{
     display: inline;
 }
+
+.trp-editor-notices{
+    font-size:12px;
+    position:relative;
+    z-index: 99999;
+    width: 100%;
+    max-height: 120px;
+    overflow: scroll;
+    background: #ffffff;
+}
