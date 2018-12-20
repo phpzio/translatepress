@@ -705,13 +705,14 @@ class TRP_Translation_Manager{
             }
 
             $strings = $this->trp_query->get_all_gettext_strings($TRP_LANGUAGE);
-            if (!empty($strings))
-                $trp_translated_gettext_texts = $strings;
+            if ( !empty( $strings ) ) {
+	            $trp_translated_gettext_texts = $strings;
 
-            foreach( $trp_translated_gettext_texts as $key => $value ){
-                $trp_strings[$value['domain'] . '::' . $value['original']] = $value;
+	            foreach ( $trp_translated_gettext_texts as $key => $value ) {
+		            $trp_strings[ $value['domain'] . '::' . $value['original'] ] = $value;
+	            }
+	            $trp_translated_gettext_texts = $trp_strings;
             }
-            $trp_translated_gettext_texts = $trp_strings;
         }
     }
 
