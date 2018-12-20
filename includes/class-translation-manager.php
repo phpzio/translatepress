@@ -150,7 +150,7 @@ class TRP_Translation_Manager{
         if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {
             	if ( is_object( $strings[$id] ) ){
-		            $original_array[] = $strings[ $id ]->original;
+		            $original_array[] = trp_full_trim( $strings[ $id ]->original );
 	            }
             }
         }
@@ -181,7 +181,7 @@ class TRP_Translation_Manager{
 		    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
 			    $id_array[$key] = (int)$string->id;
 		    } else if ( isset( $string->original ) ) {
-			    $original_array[$key] = trp_sanitize_string( $string->original );
+			    $original_array[$key] = trp_full_trim( trp_sanitize_string( $string->original ) );
 		    }
 	    }
 
@@ -396,7 +396,7 @@ class TRP_Translation_Manager{
 					    }
 					    array_push($update_strings[ $language ], array(
 						    'id' => (int)$string->id,
-						    'original' => trp_sanitize_string( $string->original ),
+						    'original' => trp_full_trim( trp_sanitize_string( $string->original ) ),
 						    'translated' => trp_sanitize_string( $string->translated ),
 						    'status' => (int)$string->status,
 						    'block_type' => (int)$string->block_type
@@ -513,7 +513,7 @@ class TRP_Translation_Manager{
 								}
 								$ajax_translated_string_list = $strings->$language;
 								foreach( $ajax_translated_string_list as $ajax_key => $ajax_string ) {
-									if ( trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
+									if ( trp_full_trim( trp_sanitize_string( $ajax_string->original ) ) == $dictionary_string->original ) {
 										if ( $ajax_string->translated != '' ) {
 											$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
 											$dictionaries[ $language ][ $dictionary_string_key ]->status     = (int) $ajax_string->status;
