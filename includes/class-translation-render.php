@@ -474,7 +474,7 @@ class TRP_Translation_Render{
             }
         }
         foreach ( $html->find('.translation-block') as $k => $row ){
-	        $trimmed_string = trp_full_trim($row->outertext);
+	        $trimmed_string = trp_full_trim($row->innertext);
             if( $trimmed_string!=""
                 && $row->parent()->tag!="script"
                 && $row->parent()->tag!="style"

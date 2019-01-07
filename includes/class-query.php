@@ -75,9 +75,6 @@ class TRP_Query{
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
 	    $prepared_query = $this->db->prepare( $query, $values );
         $dictionary = $this->db->get_results( $prepared_query, OBJECT_K  );
-	    foreach ( $dictionary as $string_key => $string ){
-		    $dictionary[$string_key]->original = trp_full_trim( $string->original );
-	    }
         return apply_filters( 'trp_get_existing_translations', $dictionary, $prepared_query );
     }
 
@@ -413,12 +410,6 @@ class TRP_Query{
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
         $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), $output  );
-        foreach( $dictionary as $original => $string ){
-        	$trimmed_original = trp_full_trim( $original );
-        	if ( $trimmed_original != $original ) {
-		        $dictionary[ $trimmed_original ] = $string;
-	        }
-        }
         return $dictionary;
     }
 
@@ -446,9 +437,6 @@ class TRP_Query{
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
         $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), OBJECT_K );
-	    foreach ( $dictionary as $string_key => $string ){
-		    $dictionary[$string_key]->original = trp_full_trim( $string->original );
-	    }
         return $dictionary;
     }
 
@@ -546,9 +534,6 @@ class TRP_Query{
 
 
         $dictionary = $this->db->get_results( $query, $output );
-	    foreach ( $dictionary as $string_key => $string ){
-		    $dictionary[$string_key]->original = trp_full_trim( $string->original );
-	    }
         return $dictionary;
     }
 

@@ -150,7 +150,7 @@ class TRP_Translation_Manager{
         if ( count( $strings ) > 0 ) {
             foreach ($id_array as $id) {
             	if ( is_object( $strings[$id] ) ){
-		            $original_array[] = trp_full_trim( $strings[ $id ]->original );
+		            $original_array[] = $strings[ $id ]->original;
 	            }
             }
         }
