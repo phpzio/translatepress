@@ -332,8 +332,10 @@ class TRP_Translation_Render{
 	    if ( ! $this->translation_manager ) {
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
+	    $count_translation_blocks = 0;
 	    if ( $translate_normal_strings ) {
 		    $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
+		    $count_translation_blocks = count( $all_existing_translation_blocks );
 		    // trim every translation block original now, to avoid over-calling trim function later
 		    foreach ( $all_existing_translation_blocks as $key => $existing_tb ) {
 			    $all_existing_translation_blocks[ $key ]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[ $key ]->original );
@@ -363,7 +365,7 @@ class TRP_Translation_Render{
                 if( $row->nodetype !== 5 && $row->nodetype !== 3 )//add all tags that are not root or text, text nodes can't have attributes
                     $trp_attr_rows[] = $row;
 
-	            if ( $translate_normal_strings ) {
+	            if ( $translate_normal_strings && $count_translation_blocks > 0 ) {
 		            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules );
 		            if ( $translation_block ) {
 			            $existing_classes = $row->getAttribute( 'class' );

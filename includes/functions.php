@@ -179,16 +179,19 @@ function trp_full_trim( $string ) {
 	//$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
 
 	/* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
-	$prefix = "\xc2\xa0";
-	$prefix_length = strlen($prefix);
+	/* Trim nbsp the same way as the whitespace (chr194 chr160) above */
+	$prefixes = apply_filters( 'trp_trim_characters', array( "\xc2\xa0", "&nbsp;" ) );
 	do{
 		$previous_iteration_string = $string;
-		$string = trim( $string," \t\n\r\0\x0B");
-		if ( substr( $string, 0, $prefix_length ) == $prefix ) {
-			$string = substr( $string, $prefix_length );
-		}
-		if ( substr( $string, - $prefix_length, $prefix_length ) == $prefix ) {
-			$string = substr( $string, 0, - $prefix_length );
+		$string = trim($string, " \t\n\r\0\x0B");
+		foreach( $prefixes as $prefix ) {
+			$prefix_length = strlen($prefix);
+			if (substr($string, 0, $prefix_length) == $prefix) {
+				$string = substr($string, $prefix_length);
+			}
+			if (substr($string, -$prefix_length, $prefix_length) == $prefix) {
+				$string = substr($string, 0, -$prefix_length);
+			}
 		}
 	}while( $string != $previous_iteration_string );
 
