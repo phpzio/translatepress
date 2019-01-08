@@ -17,12 +17,17 @@ function TRP_Translator(){
      * Ajax request to get translations for strings
      */
     this.ajax_get_translation = function( strings_to_query, url ) {
+        var all_languages_true_false = 'false';
+        if ( typeof parent.trpEditor !== 'undefined' ) {
+            all_languages_true_false = 'true';
+        }
         jQuery.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
             data: {
                 action: 'trp_get_translations',
+                all_languages: all_languages_true_false,
                 security: trp_localized_text['gettranslationsnonce'],
                 language: language_to_query,
                 original_language: original_language,
@@ -68,26 +73,24 @@ function TRP_Translator(){
      */
     this.update_strings = function( response, strings_to_query ) {
         if ( response != null && response[language_to_query] != null ){
-            var strings_to_store = {};
+            var dictionary = {};
             for ( var j in strings_to_query ) {
                 var queried_string = strings_to_query[j];
                 var translation_found = false;
                 var initial_value = queried_string.original;
                 for( var i in response[language_to_query] ) {
-                    if ( typeof strings_to_store[language_to_query] == 'undefined' ){
-                        strings_to_store[language_to_query] = {};
-                    }
                     var response_string = response[language_to_query][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
-                        strings_to_store[language_to_query][j] = {};
-                        strings_to_store[language_to_query][j].id = response[language_to_query][i].id;
-                        strings_to_store[language_to_query][j].original = response[language_to_query][i].original;
-                        strings_to_store[language_to_query][j].translated = response[language_to_query][i].translated;
-                        strings_to_store[language_to_query][j].status = response[language_to_query][i].status;
-                        strings_to_store[language_to_query][j].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
+                        // We use j instead of i index because the strings_to_query can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
+                        dictionary[j] = {};
+                        dictionary[j].id = response[language_to_query][i].id;
+                        dictionary[j].original = response[language_to_query][i].original;
+                        dictionary[j].translated = response[language_to_query][i].translated;
+                        dictionary[j].status = response[language_to_query][i].status;
+                        dictionary[j].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
                         if ( typeof parent.trpEditor !== 'undefined' ) {
-                            strings_to_store[language_to_query][j].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
-                            strings_to_store[language_to_query][j].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
+                            dictionary[j].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
+                            dictionary[j].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
                         }
 
                         if (response_string.translated != '' && language_to_query == current_language ) {
@@ -107,7 +110,8 @@ function TRP_Translator(){
             }
             // this should always be outside the for loop
             if ( typeof parent.trpEditor !== 'undefined' ) {
-                parent.trpEditor.populate_strings( strings_to_store );
+                response[language_to_query] = dictionary;
+                parent.trpEditor.populate_strings( response );
                 if ( parent.trpEditor.trp_lister != null ) {
                     parent.trpEditor.trp_lister.reload_list();
                 }
