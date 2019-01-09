@@ -215,31 +215,6 @@ class TRP_Query{
     }
 
 	/**
-	 * When changing plugin version, call certain database upgrade functions.
-	 *
-	 */
-    public function check_for_necessary_updates(){
-        $stored_database_version = get_option('trp_plugin_version');
-        if( empty($stored_database_version) || version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '>' ) ){
-            $this->check_if_gettext_tables_exist();
-            $this->check_for_block_type_column();
-        }
-
-        update_option( 'trp_plugin_version', TRP_PLUGIN_VERSION );
-    }
-
-	/**
-	 * Iterates over all languages to call gettext table checking
-	 */
-    public function check_if_gettext_tables_exist(){
-        if( !empty( $this->settings['translation-languages'] ) ){
-            foreach( $this->settings['translation-languages'] as $site_language_code ){
-                $this->check_gettext_table($site_language_code);
-            }
-        }
-    }
-
-	/**
 	 * Add block_type column to dictionary tables, if it doesn't exist.
 	 *
 	 * Affects all existing tables, including deactivated languages
