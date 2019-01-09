@@ -89,6 +89,18 @@ class TRP_Translation_Render{
         return false;
     }
 
+	/**
+	 * Trim strings.
+	 * This function is kept for backwards compatibility for earlier versions of SEO Pack Add-on
+	 *
+	 * @deprecated
+	 * @param string $string      Raw string.
+	 * @return string           Trimmed string.
+	 */
+	public function full_trim( $string ) {
+		return trp_full_trim( $string );
+	}
+
     /**
      * Preview mode string category name for give node type.
      *

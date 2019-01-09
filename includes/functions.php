@@ -180,7 +180,7 @@ function trp_full_trim( $string ) {
 
 	/* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
 	/* Trim nbsp the same way as the whitespace (chr194 chr160) above */
-	$prefixes = apply_filters( 'trp_trim_characters', array( "\xc2\xa0", "&nbsp;" ) );
+	$prefixes = array( "\xc2\xa0", "&nbsp;" );
 	do{
 		$previous_iteration_string = $string;
 		$string = trim($string, " \t\n\r\0\x0B");
