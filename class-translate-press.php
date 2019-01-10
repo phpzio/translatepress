@@ -133,6 +133,8 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
 
 	    $this->loader->add_action( 'admin_menu', $this->upgrade, 'register_menu_page' );
+	    $this->loader->add_action( 'admin_init', $this->upgrade, 'show_admin_notice' );
+
     }
 
     /**

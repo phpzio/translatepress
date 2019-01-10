@@ -267,18 +267,20 @@ class TRP_Query{
     /**
      * Insert translations and new strings in DB.
      *
-     * @param array $new_strings            Array of strings for which we do not have a translation. Only inserts original.
-     * @param array $update_strings         Array of arrays, each containing an entry to update.
-     * @param string $language_code         Language code of table where it should be inserted.
-     */
-    public function insert_strings( $new_strings, $update_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING ){
-	    if ( $block_type == null ){
-		    $block_type = self::BLOCK_TYPE_REGULAR_STRING;
-	    }
-        if ( count( $new_strings ) == 0 && count( $update_strings ) == 0 ){
-            return;
-        }
-        $query = "INSERT INTO `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` ( id, original, translated, status, block_type ) VALUES ";
+     * @param array $new_strings Array of strings for which we do not have a translation. Only inserts original.
+	 * @param array $update_strings Array of arrays, each containing an entry to update.
+	 * @param string $language_code Language code of table where it should be inserted.
+	 * @param int $block_type
+	 * @param string $on_duplicate
+	 */
+	public function insert_strings( $new_strings, $update_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING, $on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status), block_type=VALUES(block_type)' ) {
+        if ( $block_type == null ) {
+			$block_type = self::BLOCK_TYPE_REGULAR_STRING;
+		}
+		if ( count( $new_strings ) == 0 && count( $update_strings ) == 0 ) {
+			return;
+		}
+		$query = "INSERT INTO `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` ( id, original, translated, status, block_type ) VALUES ";
 
         $values = array();
         $place_holders = array();
@@ -296,10 +298,8 @@ class TRP_Query{
             $place_holders[] = "( '%d', '%s', '%s', '%d', '%d')";
         }
 
-        $on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status), block_type=VALUES(block_type)';
-
-        $query .= implode(', ', $place_holders);
-        $query .= $on_duplicate;
+		$query .= implode( ', ', $place_holders );
+		$query .= $on_duplicate;
 
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.
@@ -639,5 +639,24 @@ class TRP_Query{
 	public function get_last_id( $table_name ){
 		$last_id = $this->db->get_var("SELECT MAX(id) FROM " . $table_name );
 		return $last_id;
+	}
+
+	/**
+	 * Returns a selection of rows from a specific location.
+	 * Only id and original are selected.
+	 *
+	 * Ex. if $inferior_limit = 400 and $batch_size = 10
+	 * You will get rows 401 to 411
+	 *
+	 * @param $language_code
+	 * @param $inferior_limit
+	 * @param $batch_size
+	 *
+	 * @return array|null|object
+	 */
+	public function get_rows_from_location( $language_code, $inferior_limit, $batch_size ) {
+		$query = "SELECT id, original FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . " ORDER BY id LIMIT " . $inferior_limit . ", " . $batch_size;
+		$dictionary = $this->db->get_results( $this->db->prepare( $query ), ARRAY_A );
+		return $dictionary;
 	}
 }
