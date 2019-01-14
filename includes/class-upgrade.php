@@ -121,7 +121,7 @@ class TRP_Upgrade {
 		}
 		if ( $_GET['trp_updb_lang'] === 'done' ){
 			// iteration finished
-			echo __('Done.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+			echo __( '<p><strong>Successfully updated database!</strong></p>', 'translatepress-multilingual' ) . '<br><a href="' . site_url( 'wp-admin/options-general.php?page=translate-press' ) . '"> <input type="button" value="' . __( 'Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
 			return;
 		}
 		$nonce = wp_verify_nonce( $_GET['trp_updb_nonce'], 'tpupdatedatabase' );
