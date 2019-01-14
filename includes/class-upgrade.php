@@ -108,6 +108,7 @@ class TRP_Upgrade {
 	 * http://example.com/wp-admin/admin.php?page=trp_remove_duplicate_rows
 	 */
 	public function trp_full_trim_originals(){
+		$start_time = microtime(true);
 		if ( ! current_user_can( 'manage_options' ) ){
 			return;
 		}
@@ -130,7 +131,7 @@ class TRP_Upgrade {
 		}
 
 		$next_get_batch = 0;
-		$batch_size = apply_filters( 'trp_updb_batch_size', 10000 );
+		$batch_size = apply_filters( 'trp_updb_batch_size', 200 );
 		if ( !empty( $_GET['trp_updb_batch_size'] )  && (int) $_GET['trp_updb_batch'] >= 0 ){
 			$batch_size = (int) $_GET['trp_updb_batch_size'];
 		}
@@ -151,16 +152,23 @@ class TRP_Upgrade {
 				}else{
 					$get_batch = 0;
 				}
-				$inferior_limit = $batch_size * $get_batch;
 
 				$table_name = $this->trp_query->get_table_name( $language_code );
 				echo '<div>' . sprintf( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), $table_name ) . '</div>';
-				$rows_inferior_limit = $inferior_limit + 1;
-				$rows_superior_limit = $rows_inferior_limit + $batch_size;
-				echo '<div>' . sprintf( __( 'Rows <strong>%s - %s</strong>', 'translatepress-multilingual' ), $rows_inferior_limit, $rows_superior_limit ) . '</div>';
-
-				$finished_with_language = $this->execute_full_trim( $language_code, $inferior_limit, $batch_size );
-				if ( !$finished_with_language ){
+				$start_time = microtime(true);
+				$duration = 0;
+				while( $duration < 2 ){
+					$inferior_limit = $batch_size * $get_batch;
+					$finished_with_language = $this->execute_full_trim( $language_code, $inferior_limit, $batch_size );
+					if ( $finished_with_language ) {
+						break;
+					}else {
+						$get_batch = $get_batch + 1;
+					}
+					$stop_time = microtime( true );
+					$duration = $stop_time - $start_time;
+				}
+				if ( ! $finished_with_language ) {
 					$next_get_batch = $get_batch + 1;
 				}
 			}
@@ -204,7 +212,7 @@ class TRP_Upgrade {
 			/* @var TRP_Query */
 			$this->trp_query = $trp->get_component( 'query' );
 		}
-		$strings = $this->trp_query->get_rows_from_location( $language_code, $inferior_limit, $batch_size );
+		$strings = $this->trp_query->get_rows_from_location( $language_code, $inferior_limit, $batch_size, array( 'id', 'original' ) );
 		if ( count( $strings ) == 0 ) {
 			return true;
 		}
@@ -213,9 +221,7 @@ class TRP_Upgrade {
 		}
 
 		// overwrite original only
-		$on_duplicate = ' ON DUPLICATE KEY UPDATE original=VALUES(original)';
-		$this->trp_query->insert_strings( array(), $strings, $language_code, null, $on_duplicate );
-
+		$this->trp_query->update_strings( $strings, $language_code, array( 'id', 'original' ), array( '%d', '%s' ) );
 		return false;
 	}
 

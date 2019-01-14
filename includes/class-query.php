@@ -273,7 +273,7 @@ class TRP_Query{
 	 * @param int $block_type
 	 * @param string $on_duplicate
 	 */
-	public function insert_strings( $new_strings, $update_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING, $on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status), block_type=VALUES(block_type)' ) {
+	public function insert_strings( $new_strings, $update_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING ) {
         if ( $block_type == null ) {
 			$block_type = self::BLOCK_TYPE_REGULAR_STRING;
 		}
@@ -288,17 +288,18 @@ class TRP_Query{
 
         foreach ( $new_strings as $string ) {
             array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED, $block_type );
-            $place_holders[] = "( '%d', '%s', '%s', '%d', '%d')";
+            $place_holders[] = "('%d','%s','%s','%d','%d')";
         }
         foreach ( $update_strings as $string ) {
         	if ( ! isset( $string['block_type'] ) ){
         		$string['block_type'] = self::BLOCK_TYPE_REGULAR_STRING;
 	        }
             array_push( $values, $string['id'], $string['original'], $string['translated'], $string['status'], $string['block_type'] );
-            $place_holders[] = "( '%d', '%s', '%s', '%d', '%d')";
+            $place_holders[] = "('%d','%s','%s','%d','%d')";
         }
-
 		$query .= implode( ', ', $place_holders );
+
+		$on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status), block_type=VALUES(block_type)';
 		$query .= $on_duplicate;
 
         // you cannot insert multiple rows at once using insert() method.
@@ -654,9 +655,71 @@ class TRP_Query{
 	 *
 	 * @return array|null|object
 	 */
-	public function get_rows_from_location( $language_code, $inferior_limit, $batch_size ) {
-		$query = "SELECT id, original FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . " ORDER BY id LIMIT " . $inferior_limit . ", " . $batch_size;
-		$dictionary = $this->db->get_results( $this->db->prepare( $query ), ARRAY_A );
+	public function get_rows_from_location( $language_code, $inferior_limit, $batch_size, $columns_to_retrieve ) {
+		$columns_query_part = '';
+		foreach ( $columns_to_retrieve as $column ) {
+			$columns_query_part .= $column . ',';
+		}
+		$columns_query_part = rtrim( $columns_query_part, ',' );
+		$query = "SELECT " .  $columns_query_part . " FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . " ORDER BY id LIMIT " . $inferior_limit . ", " . $batch_size;
+		$dictionary = $this->db->get_results( $query, ARRAY_A );
 		return $dictionary;
+	}
+
+	/**
+	 * Update non-gettext strings in DB
+	 *
+	 * @param array $update_strings                 Array of strings to update
+	 * @param string $language_code                 Language code
+	 * @param array $columns_to_update              Array with the name of columns to update id, original, translated, status, block_type
+	 * @param string $placeholders_query_part       For query on all columns  '%d', '%s', '%s', '%d', '%d'
+	 */
+	public function update_strings( $update_strings, $language_code, $columns_to_update, $placeholders ) {
+		if ( count( $update_strings ) == 0 ) {
+			return;
+		}
+
+		$columns_query_part = '';
+		foreach ( $columns_to_update as $column ) {
+			$columns_query_part .= $column . ',';
+		}
+		$columns_query_part = rtrim( $columns_query_part, ',' );
+
+		$query = "INSERT INTO `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` ( " . $columns_query_part . " ) VALUES ";
+
+		$values = array();
+		$place_holders = array();
+
+		$placeholders_query_part = '(';
+		foreach ( $placeholders as $placeholder ) {
+			$placeholders_query_part .= "'" . $placeholder . "',";
+		}
+		$placeholders_query_part = rtrim( $placeholders_query_part, ',' );
+		$placeholders_query_part .= ')';
+
+		foreach ( $update_strings as $string ) {
+			foreach( $columns_to_update as $column ) {
+				array_push( $values, $string[$column] );
+			}
+			$place_holders[] = $placeholders_query_part;
+		}
+
+		$on_duplicate = ' ON DUPLICATE KEY UPDATE ';
+		foreach ( $columns_to_update as $column ) {
+			if ( $column == 'id' ){
+				continue;
+			}
+			$on_duplicate .= $column . '=VALUES(' . $column . '),';
+		}
+		$query .= implode( ', ', $place_holders );
+
+		$on_duplicate = rtrim( $on_duplicate, ',' );
+		$query .= $on_duplicate;
+
+		// you cannot insert multiple rows at once using insert() method.
+		// but by using prepare you cannot insert NULL values.
+
+		$prepared_query = $this->db->prepare($query . ' ', $values);
+		$this->db->query( $prepared_query );
 	}
 }
