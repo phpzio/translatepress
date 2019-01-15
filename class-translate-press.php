@@ -17,6 +17,7 @@ class TRP_Translate_Press{
     protected $url_converter;
     protected $languages;
     protected $slug_manager;
+    protected $upgrade;
     public static $translate_press = null;
 
     /**
@@ -40,7 +41,7 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_BASE', plugin_basename( __DIR__ . '/index.php' ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.3.9' );
+        define( 'TRP_PLUGIN_VERSION', '1.4.0' );
 
 	    wp_cache_add_non_persistent_groups(array('trp'));
 
@@ -76,6 +77,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-query.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-url-converter.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-uri.php';
+	    require_once TRP_PLUGIN_DIR . 'includes/class-upgrade.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-plugin-notices.php';
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
@@ -96,6 +98,7 @@ class TRP_Translate_Press{
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings() );
         $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
         $this->notifications = new TRP_Trigger_Plugin_Notifications();
+        $this->upgrade = new TRP_Upgrade( $this->settings->get_settings() );
     }
 
     /**
@@ -128,6 +131,9 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp_ajax_trp_gettext_save_translations', $this->translation_manager, 'gettext_save_translations' );
         
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
+
+	    $this->loader->add_action( 'admin_menu', $this->upgrade, 'register_menu_page' );
+	    $this->loader->add_action( 'admin_init', $this->upgrade, 'show_admin_notice' );
 
     }
 
@@ -195,7 +201,7 @@ class TRP_Translate_Press{
 	    $this->loader->add_filter( 'sanitize_title', $this->translation_manager, 'trp_sanitize_title', 1, 3 );
 
         /* define an update hook here */
-        $this->loader->add_action( 'plugins_loaded', $this->query, 'check_for_necessary_updates', 10 );
+        $this->loader->add_action( 'plugins_loaded', $this->upgrade, 'check_for_necessary_updates', 10 );
 
         $this->loader->add_filter( 'trp_language_name', $this->languages, 'beautify_language_name', 10, 4 );
         $this->loader->add_filter( 'trp_languages', $this->languages, 'reorder_languages', 10, 2 );
