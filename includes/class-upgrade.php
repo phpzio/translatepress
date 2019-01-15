@@ -92,7 +92,7 @@ class TRP_Upgrade {
 
 		// maybe change notice color to blue #28B1FF
 		$html = '<div id="message" class="updated">';
-		$html .= '<p><strong>' . esc_html__( 'TranslatePress data update', 'translatepress-multilingual' ) . '</strong> &#8211; ' . esc_html__( 'We need to update your store database to the latest version.', 'translatepress-multilingual' ) . '</p>';
+		$html .= '<p><strong>' . esc_html__( 'TranslatePress data update', 'translatepress-multilingual' ) . '</strong> &#8211; ' . esc_html__( 'We need to update your translations database to the latest version.', 'translatepress-multilingual' ) . '</p>';
 		$html .= '<p class="submit"><a href="' . esc_url( $url ) . '" class="button-primary">' . esc_html__( 'Run the updater', 'translatepress-multilingual' ) . '</a></p>';
 		$html .= '</div>';
 		echo $html;
