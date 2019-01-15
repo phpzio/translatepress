@@ -121,6 +121,7 @@ class TRP_Upgrade {
 		}
 		if ( $_GET['trp_updb_lang'] === 'done' ){
 			// iteration finished
+			$this->print_queried_tables();
 			echo __( '<p><strong>Successfully updated database!</strong></p>', 'translatepress-multilingual' ) . '<br><a href="' . site_url( 'wp-admin/options-general.php?page=translate-press' ) . '"> <input type="button" value="' . __( 'Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
 			return;
 		}
@@ -153,8 +154,8 @@ class TRP_Upgrade {
 					$get_batch = 0;
 				}
 
-				$table_name = $this->trp_query->get_table_name( $language_code );
-				echo '<div>' . sprintf( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), $table_name ) . '</div>';
+				$this->print_queried_tables( $language_code );
+
 				$start_time = microtime(true);
 				$duration = 0;
 				while( $duration < 2 ){
@@ -206,6 +207,45 @@ class TRP_Upgrade {
 		exit;
 	}
 
+	/**
+	 * Prints all the tables in the translation languages array until the current language with Done.
+	 *
+	 * If current language is given, do not print Done for it.
+	 *
+	 * @param bool | string $current_language_code
+	 */
+	public function print_queried_tables( $current_language_code = false ){
+		if ( ! $this->trp_query ) {
+			$trp = TRP_Translate_Press::get_trp_instance();
+			/* @var TRP_Query */
+			$this->trp_query = $trp->get_component( 'query' );
+		}
+		foreach ( $this->settings['translation-languages'] as $language_code ){
+			if ( $language_code == $this->settings['default-language'] ){
+				continue;
+			}
+			$table_name = $this->trp_query->get_table_name( $language_code );
+			$html = '<div>' . sprintf( __( 'Querying table <strong>%s</strong>... ', 'translatepress-multilingual' ), $table_name );
+			if ( $language_code != $current_language_code ) {
+				$html .= __( 'Done.', 'translatepress-multilingual' );
+			}
+			$html .= '</div>';
+			echo $html;
+			if ( $language_code == $current_language_code ) {
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Get all originals from the table, trim them and update originals back into table
+	 *
+	 * @param string $language_code     Language code of the table
+	 * @param int $inferior_limit       Omit first X rows
+	 * @param int $batch_size           How many rows to query
+	 *
+	 * @return bool
+	 */
 	public function execute_full_trim( $language_code, $inferior_limit, $batch_size ){
 		if ( ! $this->trp_query ) {
 			$trp = TRP_Translate_Press::get_trp_instance();
