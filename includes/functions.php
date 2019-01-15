@@ -620,3 +620,20 @@ function trp_bulk_debug($debug = false, $logger = array()){
     }
     error_log('---------------------------------------------------------');
 }
+
+/**
+ * Compatibility with WooCommerce PDF Invoices & Packing Slips
+ * https://wordpress.org/plugins/woocommerce-pdf-invoices-packing-slips/
+ *
+ * @since 1.4.0
+ *
+ * @param string $html
+ * @param object $instance
+ */
+
+add_filter( 'wpo_wcpdf_get_html', 'trp_woo_pdf_invoices_and_packing_slips_compatibility', 10, 2);
+function trp_woo_pdf_invoices_and_packing_slips_compatibility($html, $instance){
+    $html = str_replace('#!trpst#', '<', $html);
+    $html = str_replace('#!trpen#', '>', $html);
+    return $html;
+}
