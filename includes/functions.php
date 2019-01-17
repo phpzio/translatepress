@@ -164,6 +164,43 @@ function trp_sanitize_string( $filtered ){
 	return $filtered;
 }
 
+/**
+ * Trim strings.
+ *
+ * @param string $string      Raw string.
+ * @return string           Trimmed string.
+ */
+function trp_full_trim( $string ) {
+	/* Make sure you update full_trim function from trp-ajax too*/
+
+	/* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
+	Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
+	Also removed \xA0 (the same as chr(160) for altering special characters */
+	//$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
+
+	/* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
+	/* Trim nbsp the same way as the whitespace (chr194 chr160) above */
+	$prefixes = array( "\xc2\xa0", "&nbsp;" );
+	do{
+		$previous_iteration_string = $string;
+		$string = trim($string, " \t\n\r\0\x0B");
+		foreach( $prefixes as $prefix ) {
+			$prefix_length = strlen($prefix);
+			if (substr($string, 0, $prefix_length) == $prefix) {
+				$string = substr($string, $prefix_length);
+			}
+			if (substr($string, -$prefix_length, $prefix_length) == $prefix) {
+				$string = substr($string, 0, -$prefix_length);
+			}
+		}
+	}while( $string != $previous_iteration_string );
+
+	if ( strip_tags( $string ) == "" || trim ($string, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
+		$string = '';
+	}
+
+	return $string;
+}
 
 /**
  * function that checks if $_REQUEST['trp-edit-translation'] is set or if it has a certain value
@@ -582,4 +619,21 @@ function trp_bulk_debug($debug = false, $logger = array()){
         error_log("$key :   " . str_repeat(' ', $key_length - strlen($key)) . $value);
     }
     error_log('---------------------------------------------------------');
+}
+
+/**
+ * Compatibility with WooCommerce PDF Invoices & Packing Slips
+ * https://wordpress.org/plugins/woocommerce-pdf-invoices-packing-slips/
+ *
+ * @since 1.4.0
+ *
+ * @param string $html
+ * @param object $instance
+ */
+
+add_filter( 'wpo_wcpdf_get_html', 'trp_woo_pdf_invoices_and_packing_slips_compatibility', 10, 2);
+function trp_woo_pdf_invoices_and_packing_slips_compatibility($html, $instance){
+    $html = str_replace('#!trpst#', '<', $html);
+    $html = str_replace('#!trpen#', '>', $html);
+    return $html;
 }

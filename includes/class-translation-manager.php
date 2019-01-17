@@ -181,7 +181,7 @@ class TRP_Translation_Manager{
 		    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
 			    $id_array[$key] = (int)$string->id;
 		    } else if ( isset( $string->original ) ) {
-			    $original_array[$key] = trp_sanitize_string( $string->original );
+			    $original_array[$key] = trp_full_trim( trp_sanitize_string( $string->original ) );
 		    }
 	    }
 
@@ -396,7 +396,7 @@ class TRP_Translation_Manager{
 					    }
 					    array_push($update_strings[ $language ], array(
 						    'id' => (int)$string->id,
-						    'original' => trp_sanitize_string( $string->original ),
+						    'original' => trp_full_trim( trp_sanitize_string( $string->original ) ),
 						    'translated' => trp_sanitize_string( $string->translated ),
 						    'status' => (int)$string->status,
 						    'block_type' => (int)$string->block_type
@@ -513,7 +513,7 @@ class TRP_Translation_Manager{
 								}
 								$ajax_translated_string_list = $strings->$language;
 								foreach( $ajax_translated_string_list as $ajax_key => $ajax_string ) {
-									if ( trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
+									if ( trp_full_trim( trp_sanitize_string( $ajax_string->original ) ) == $dictionary_string->original ) {
 										if ( $ajax_string->translated != '' ) {
 											$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
 											$dictionaries[ $language ][ $dictionary_string_key ]->status     = (int) $ajax_string->status;
@@ -1213,5 +1213,77 @@ class TRP_Translation_Manager{
             }
         }
     }
-    
+
+	/**
+	 * Return true if the string contains characters which are not allowed in the query
+	 *
+	 * Only valid for utf8.
+	 * Function is an extract of strip_invalid_text() function from wp-includes/wp-db.php
+	 *
+	 * @param $string
+	 *
+	 * @return bool
+	 */
+	public function has_bad_characters( $string ) {
+		$regex = '/
+					(
+						(?: [\x00-\x7F]                  # single-byte sequences   0xxxxxxx
+						|   [\xC2-\xDF][\x80-\xBF]       # double-byte sequences   110xxxxx 10xxxxxx
+						|   \xE0[\xA0-\xBF][\x80-\xBF]   # triple-byte sequences   1110xxxx 10xxxxxx * 2
+						|   [\xE1-\xEC][\x80-\xBF]{2}
+						|   \xED[\x80-\x9F][\x80-\xBF]
+						|   [\xEE-\xEF][\x80-\xBF]{2}';
+
+		$regex .= '
+						|    \xF0[\x90-\xBF][\x80-\xBF]{2} # four-byte sequences   11110xxx 10xxxxxx * 3
+						|    [\xF1-\xF3][\x80-\xBF]{3}
+						|    \xF4[\x80-\x8F][\x80-\xBF]{2}
+					';
+
+
+		$regex .= '){1,40}                          # ...one or more times
+					)
+					| .                                  # anything else
+					/x';
+		$stripped_string = preg_replace( $regex, '$1', $string );
+
+		if ( $stripped_string === $string ){
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	/**
+	 * Records a series of strings which may have encoding issues
+	 *
+	 * Does not alter dictionary.
+	 *
+	 * @param $dictionary
+	 * @param $prepared_query
+	 * @param $strings_array
+	 *
+	 * @return mixed
+	 */
+	public function display_possible_db_errors( $dictionary, $prepared_query, $strings_array ){
+		global $trp_editor_notices;
+		if ( trp_is_translation_editor( 'preview' ) && is_array( $dictionary ) && count( $dictionary ) === 0 ){
+			if ( $this->has_bad_characters( $prepared_query ) ) {
+				$html = "<div class='trp-notice trp-notice-warning'><p class='trp-bad-encoded-strings'>" . __(  '<strong>Warning:</strong> Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting.', 'translatepress-multilingual' ) . "</p>";
+				$html .= "<ul class='trp-bad-encoded-strings-list'>";
+				foreach( $strings_array as $string ){
+					if ( $this->has_bad_characters( $string ) ){
+						$html .= "<li>" . $string . "</li>";
+					}
+				}
+				$html .= "</ul></div>";
+
+				$trp_editor_notices .= $html;
+			}
+		}
+
+		// no modifications to the dictionary
+		return $dictionary;
+	}
+
 }
