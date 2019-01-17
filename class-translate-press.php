@@ -167,7 +167,7 @@ class TRP_Translate_Press{
 
 
         $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
-        $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor', 9999 );
+        $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor', 99999 );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
         $this->loader->add_action( 'admin_bar_menu', $this->translation_manager, 'add_shortcut_to_translation_editor', 90, 1 );
         $this->loader->add_action( 'admin_head', $this->translation_manager, 'add_styling_to_admin_bar_button', 10 );
