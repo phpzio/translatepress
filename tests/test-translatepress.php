@@ -10,8 +10,57 @@
  */
 class TranslatePressTest extends WP_UnitTestCase {
 
+    private $trp;
+    private $trp_url_converter;
+    private $trp_settings;
+    private $trp_query;
+    private $trp_render;
+
+
+    const NOT_TRANSLATED = 0;
+    const MACHINE_TRANSLATED = 1;
+    const HUMAN_REVIEWED = 2;
+    const BLOCK_TYPE_REGULAR_STRING = 0;
+    const BLOCK_TYPE_ACTIVE = 1;
+    const BLOCK_TYPE_DEPRECATED = 2;
+
+    public function get_new_strings(){
+        $new_strings = array(
+            'Normal strings',
+            '¿Here we have some characters that can be problematic when they are in the end of beginning¡',
+            '¡For good measure ¡¿ put some in the middle¿',
+            'This is regular string placeholder'
+        );
+        return $new_strings;
+    }
+
+    public function get_update_strings(){
+        $update_strings = array(
+            array( 'id' => 1, 'original' => 'Normal strings', 'translated' => 'one', 'status' => 2, 'block_type' => 0 ),
+            array( 'id' => 2, 'original' => '¿Here we have some characters that can be problematic when they are in the end of beginning¡', 'translated' => 'two', 'status' => 2, 'block_type' => 0 ),
+            array( 'id' => 3, 'original' => '¡For good measure ¡¿ put some in the middle¿', 'translated' => 'three', 'status' => 2, 'block_type' => 0 ),
+            array( 'id' => 4, 'original' => 'This is regular string placeholder', 'translated' => 'four', 'status' => 2, 'block_type' => 0 ),
+        );
+        return $update_strings;
+    }
+
+    /*public function get_gettext_strings(){
+        $gettext_strings = array(
+            array( 'original' => 'Gettext strings', 'translated' => 'Translated Gettext String', 'domain' => 'phpunit', 'status' => 2 ),
+        );
+        return $gettext_strings;
+    }*/
+
     public function setUp() {
         parent::setUp();
+
+        $this->trp = TRP_Translate_Press::get_trp_instance();
+        $this->trp_url_converter = $this->trp->get_component('url_converter');
+        $this->trp_settings = $this->trp->get_component('settings');
+        $this->trp_query = $this->trp->get_component( 'query' );
+        $this->trp_render = $this->trp->get_component( 'translation_render' );
+
+
     }
 
 	/**
@@ -24,11 +73,7 @@ class TranslatePressTest extends WP_UnitTestCase {
         ) );
 
 
-        //initialize Translate Press Components
-        $trp = TRP_Translate_Press::get_trp_instance();
-        $trp_url_converter = $trp->get_component('url_converter');
-        $trp_settings = $trp->get_component('settings');
-        $settings = $trp_settings->get_settings();
+        $settings = $this->trp_settings->get_settings();
 
         //get the secondary language
         $secondary_language = $settings['translation-languages'][1];
@@ -38,28 +83,41 @@ class TranslatePressTest extends WP_UnitTestCase {
         $TRP_LANGUAGE_copy = $TRP_LANGUAGE;
         $default_home_url = home_url();
         $this->assertEquals( $default_home_url, 'http://example.org/en/' ) ;
+        $this->go_to( $default_home_url );
+        $this->assertTrue( !is_404() );
         $TRP_LANGUAGE = $secondary_language;
         $secondary_home_url = home_url();
         $this->assertEquals( $secondary_home_url, 'http://example.org/it/' ) ;
+        $this->go_to( $secondary_home_url );
+        $this->assertTrue( !is_404() );
         $TRP_LANGUAGE = $TRP_LANGUAGE_copy;
 
-        $default_language_post_url = $trp_url_converter->get_url_for_language( $settings['default-language'], get_permalink($post_id) );
+        $default_language_post_url = $this->trp_url_converter->get_url_for_language( $settings['default-language'], get_permalink($post_id) );
         $this->assertEquals( $default_language_post_url, 'http://example.org/en/this-is-a-translation-post-test/' ) ;
+        $this->go_to( $default_language_post_url );
+        $this->assertTrue( !is_404() );
 
-        $secondary_language_post_url = $trp_url_converter->get_url_for_language( $secondary_language, get_permalink($post_id) );
+        $secondary_language_post_url = $this->trp_url_converter->get_url_for_language( $secondary_language, get_permalink($post_id) );
         $this->assertEquals( $secondary_language_post_url, 'http://example.org/it/this-is-a-translation-post-test/' ) ;
+        $TRP_LANGUAGE = $secondary_language;
+        $this->go_to( $secondary_language_post_url );
+        $this->assertTrue( !is_404() );
+        $TRP_LANGUAGE = $TRP_LANGUAGE_copy;
 
-        $default_home_url_from_secondary_language = $trp_url_converter->get_url_for_language( $settings['default-language'], $secondary_home_url );
+        $default_home_url_from_secondary_language = $this->trp_url_converter->get_url_for_language( $settings['default-language'], $secondary_home_url );
         $this->assertEquals( $default_home_url_from_secondary_language, 'http://example.org/en/' ) ;
+        $this->go_to( $default_home_url_from_secondary_language );
+        $this->assertTrue( !is_404() );
 
 
-        $secondary_language_custom_url = $trp_url_converter->get_url_for_language( $secondary_language, 'http://example.org/en/this-is-a-custom-link/' );
+        $secondary_language_custom_url = $this->trp_url_converter->get_url_for_language( $secondary_language, 'http://example.org/en/this-is-a-custom-link/' );
         $this->assertEquals( $secondary_language_custom_url, 'http://example.org/it/this-is-a-custom-link/' ) ;
 
-        $secondary_language_custom_url_with_param = $trp_url_converter->get_url_for_language( $secondary_language, 'http://example.org/en/this-is-a-custom-link/?param=true' );
+        $secondary_language_custom_url_with_param = $this->trp_url_converter->get_url_for_language( $secondary_language, 'http://example.org/en/this-is-a-custom-link/?param=true' );
         $this->assertEquals( $secondary_language_custom_url_with_param, 'http://example.org/it/this-is-a-custom-link/?param=true' );
 
-        $secondary_language_custom_url_with_parameters = $trp_url_converter->get_url_for_language( $secondary_language, 'http://example.org/en/this-is-a-custom-link/?param=true&param2=false' );
+
+        $secondary_language_custom_url_with_parameters = $this->trp_url_converter->get_url_for_language( $secondary_language, 'http://example.org/en/this-is-a-custom-link/?param=true&param2=false' );
         $this->assertEquals( $secondary_language_custom_url_with_parameters, 'http://example.org/it/this-is-a-custom-link/?param=true&param2=false' );
 
 	}
@@ -67,58 +125,44 @@ class TranslatePressTest extends WP_UnitTestCase {
 
     public function test_translatepress_translations() {
 
-        $this->set_permalink_structure('%postname%');
+        $new_strings = $this->get_new_strings();
+        $update_strings = $this->get_update_strings();
 
-        //initialize Translate Press Components
-        $trp = TRP_Translate_Press::get_trp_instance();
-        $trp_render = $trp->get_component('translation_render');
+        $this->trp_query->check_table('en_US', 'it_IT');
+        $this->trp_query->insert_strings( $new_strings, array(), 'it_IT' );
+        $this->trp_query->insert_strings( array(), $update_strings, 'it_IT' );
 
+        $post_content = file_get_contents( dirname(__FILE__)  . "/input_html_en.html");
 
-        $post = self::factory()->post->create_and_get( array(
-            'post_title' => 'Translation testing',
-            'post_content' => '<p>This page is for testing. (Plugin <strong>TranslatePress - Testing</strong> should be active)</p>
-<h3>Normal strings</h3>'. __('some gettest text') .'
-<p>¿Here we have some characters that can be problematic when they are in the end of beginning¡</p>
-<p>¡For good measure ¡¿ put some in the middle¿</p>
-<p>"Here there are quotes"</p>
-<p>\'Single quotes\'</p>
-<p>`Back ticks`</p>
-<p>Some whitespace  in the middle after the word whitespace.</p>
-<p>A lot of whitespaces         everywhere        both in middle and on edges</p>
-<p>Random stuff  ¿┴╢  ï▒¿¡/ // ///   \</p>
-<h3>Strings in attributes - to be added in future versions</h3>
-<p><img src="https://upload.wikimedia.org/wikipedia/en/7/7b/Image_in_Glossographia.png" alt="this is alt text of mac image" /></p>
-<p><input type="text" placeholder="This is regular string placeholder" /></p>
-<p><input type="text" value="This is regular string value" /></p>
-<p><input type="button" value="This is regular string button" /></p>
-<p><input type="submit" value="This is regular string submit" /></p>
-<p><button>This is button.</button></p>
-<p><select>
-<option>Option one</option>
-<option>Option two</option>
-<option>Option three</option>
-</select></p>
-<p> </p>'
-        ));
 
         global $TRP_LANGUAGE;
         $TRP_LANGUAGE = 'it_IT';
-        $translation = $trp_render->translate_page( $post->post_content );
-        var_dump($translation);
-
-        //ob_start();
-        //$this->go_to(get_permalink($post_id));
-        //$this->go_to('/');
-        //$out1 = ob_get_contents();
-        //ob_end_clean();
+        $translation = $this->trp_render->translate_page( $post_content );
 
 
+        $expected_translation = file_get_contents( dirname(__FILE__)  . "/output_html_it.html");
 
-        //$response = file_get_contents( '.' );
-        //$response = get_http_origin();
-        //var_dump($_SERVER['REQUEST_URI']);
-        //var_dump($response);
-        $this->assertEquals( $trp_render->translate_page( 'this is a text' ), 'this is a text' ) ;
+        $this->assertEquals( $expected_translation, $translation );
+
     }
+
+
+    /*public function test_translatepress_gettext(){
+
+        $this->go_to( '/' );
+
+        $gettext_strings = $this->get_gettext_strings();
+
+        $this->trp_query->check_gettext_table('it_IT');
+        $this->trp_query->insert_gettext_strings( $gettext_strings, 'it_IT' );
+
+
+        global $TRP_LANGUAGE;
+        $TRP_LANGUAGE = 'it_IT';
+        switch_to_locale( 'it_IT' );
+        $gettext_content = '<h3>'.__('Gettext strings', 'phpunit').'</h3>';
+        $gettext_translation = $this->trp_render->translate_page( $gettext_content );
+	    print_r($gettext_content);
+    }*/
 
 }
