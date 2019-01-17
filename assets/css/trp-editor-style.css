@@ -201,12 +201,6 @@ span.select2-container{
  Translation Editors
  */
 
-#trp-previous{
-    float: left;
-}
-#trp-next{
-    float: right;
-}
 .trp-toggle-languages {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -264,6 +258,8 @@ span.select2-container{
 
 #trp-next-previous {
     margin: 5px 0 10px 0;
+    display: flex;
+    justify-content: space-between;
 }
 
 .trp-toggle-languages span,

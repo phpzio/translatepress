@@ -123,10 +123,10 @@ class TRP_Translate_Press{
 
 
         $this->loader->add_action( 'wp_ajax_trp_process_js_strings_in_translation_editor', $this->translation_render, 'process_js_strings_in_translation_editor' );
-        
+
         $this->loader->add_action( 'wp_ajax_trp_gettext_get_translations', $this->translation_manager, 'gettext_get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_gettext_save_translations', $this->translation_manager, 'gettext_save_translations' );
-        
+
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
 
     }
@@ -143,10 +143,10 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_form_language_on_url_in_ajax', 20 );
         /* handle CDATA str replacement from the content as it is messing up the renderer */
         $this->loader->add_filter( "trp_before_translate_content", $this->translation_render, 'handle_cdata', 1000 );
-        
+
         /* apply translation filters for REST API response */
         $post_types = get_post_types();
-        foreach ( $post_types as $post_type ) {            
+        foreach ( $post_types as $post_type ) {
             $this->loader->add_filter( 'rest_prepare_'.$post_type, $this->translation_render, 'handle_rest_api_translations' );
         }
 
@@ -160,7 +160,7 @@ class TRP_Translate_Press{
         add_shortcode( 'language-switcher', array( $this->language_switcher, 'language_switcher' ) );
 
 
-        $this->loader->add_action( 'trp_head', $this->translation_manager, 'enqueue_scripts_and_styles' );
+        $this->loader->add_action( 'trp_translation_manager_footer', $this->translation_manager, 'enqueue_scripts_and_styles' );
         $this->loader->add_filter( 'template_include', $this->translation_manager, 'translation_editor', 9999 );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_manager, 'enqueue_preview_scripts_and_styles' );
         $this->loader->add_action( 'admin_bar_menu', $this->translation_manager, 'add_shortcut_to_translation_editor', 90, 1 );
@@ -179,8 +179,8 @@ class TRP_Translate_Press{
 
         /* handle dynamic texts with gettext */
         $this->loader->add_filter( 'locale', $this->languages, 'change_locale' );
-        
-        $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global' );        
+
+        $this->loader->add_action( 'init', $this->translation_manager, 'create_gettext_translated_global' );
         $this->loader->add_action( 'admin_init', $this->translation_manager, 'create_gettext_translated_global' );
         $this->loader->add_action( 'init', $this->translation_manager, 'apply_gettext_filter_on_frontend' );
         $this->loader->add_action( 'admin_init', $this->translation_manager, 'apply_gettext_filter' );
@@ -211,11 +211,11 @@ class TRP_Translate_Press{
 
         /* ?or init ? hook here where you can change the $current_user global */
         $this->loader->add_action( 'init', $this->translation_manager, 'trp_view_as_user' );
-        
-        /** 
+
+        /**
          * we need to modify the permalinks structure for woocommerce when we switch languages
          * when woo registers post_types and taxonomies in the rewrite parameter of the function they change the slugs of the items (they are localized with _x )
-         * we can't flush the permalinks on every page load so we filter the rewrite_rules option 
+         * we can't flush the permalinks on every page load so we filter the rewrite_rules option
          */
         $this->loader->add_filter( "option_rewrite_rules", $this->url_converter, 'woocommerce_filter_permalinks_on_other_languages' );
         $this->loader->add_filter( "option_woocommerce_permalinks", $this->url_converter, 'woocommerce_filter_permalink_option' );

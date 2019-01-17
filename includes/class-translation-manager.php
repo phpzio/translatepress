@@ -98,22 +98,27 @@ class TRP_Translation_Manager{
      * Enqueue scripts and styles for translation Editor parent window.
      */
     public function enqueue_scripts_and_styles(){
-        wp_enqueue_style( 'trp-select2-lib-css', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/css/select2.min.css', array(), TRP_PLUGIN_VERSION );
-        wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
+        wp_enqueue_style( 'trp-editor-style', TRP_PLUGIN_URL . 'assets/css/trp-editor.css', array(), TRP_PLUGIN_VERSION );
+        //wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
 
-        wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
-	    $trp_merge_rules = $this->get_merge_rules();
-	    wp_localize_script('trp-translation-manager-script', 'trp_merge_rules', $trp_merge_rules);
-	    $localized_text = $this->localized_text();
-	    wp_localize_script('trp-translation-manager-script', 'trp_localized_text', $localized_text );
+        //wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
+	    //$trp_merge_rules = $this->get_merge_rules();
+	    //wp_localize_script('trp-translation-manager-script', 'trp_merge_rules', $trp_merge_rules);
+	    //$localized_text = $this->localized_text();
+	    //wp_localize_script('trp-translation-manager-script', 'trp_localized_text', $localized_text );
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
 
-        wp_enqueue_script( 'trp-translation-overlay',  TRP_PLUGIN_URL . 'assets/js/trp-editor-overlay.js', array(), TRP_PLUGIN_VERSION );
+        //wp_enqueue_script( 'trp-translation-overlay',  TRP_PLUGIN_URL . 'assets/js/trp-editor-overlay.js', array(), TRP_PLUGIN_VERSION );
+        wp_enqueue_script( 'trp-editor',  TRP_PLUGIN_URL . 'assets/js/trp-editor.js', array( 'wp-i18n' ), TRP_PLUGIN_VERSION );
 
-        $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-core', 'jquery-effects-core', 'jquery-ui-resizable', 'trp-translation-manager-script', 'trp-select2-lib-js', 'trp-translation-overlay' ) );
-        $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'trp-translation-manager-style', 'trp-select2-lib-css', 'dashicons' /*'wp-admin', 'common', 'site-icon', 'buttons'*/ ) );
+        wp_set_script_translations( 'trp-editor', 'translatepress-multilingual' );
+
+        $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-core', 'jquery-effects-core', 'jquery-ui-resizable', 'trp-editor' ) );
+        $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'trp-translation-manager-style', 'dashicons', 'trp-editor-style' /*'wp-admin', 'common', 'site-icon', 'buttons'*/ ) );
         wp_print_scripts( $scripts_to_print );
         wp_print_styles( $styles_to_print );
+
+
     }
 
     /**
@@ -342,7 +347,7 @@ class TRP_Translation_Manager{
                                 foreach( $lang_original_string_details as $lang_original_string_detail ){
 
                                     $translations = get_translations_for_domain( $lang_original_string_detail['domain'] );
-                                    $translated  = $translations->translate( $lang_original_string_detail['original'] );                                                                      
+                                    $translated  = $translations->translate( $lang_original_string_detail['original'] );
 
                                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $lang_original_string_detail['original'], 'translated' => $translated, 'domain' => $lang_original_string_detail['domain']) ), $language );
                                     $dictionaries[$language][] = array('id' => $db_id, 'original' => $lang_original_string_detail['original'], 'translated' => ( $translated != $lang_original_string_detail['original'] ) ? $translated : '', 'domain' => $lang_original_string_detail['domain']);
@@ -666,7 +671,7 @@ class TRP_Translation_Manager{
 		#wpadminbar #wp-admin-bar-trp_edit_translation > .ab-item {
 			text-indent: 0;
 		}
-	
+
 		#wpadminbar li#wp-admin-bar-trp_edit_translation {
 			display: block;
 		}</style>";
@@ -1049,7 +1054,7 @@ class TRP_Translation_Manager{
 
         /* remove trp-gettext wrap */
         $dateformatstring = preg_replace( '/#!trpst#trp-gettext (.*?)#!trpen#/', '', $dateformatstring );
-        $dateformatstring = preg_replace( '/#!trpst#(.?)\/trp-gettext#!trpen#/', '', $dateformatstring );		
+        $dateformatstring = preg_replace( '/#!trpst#(.?)\/trp-gettext#!trpen#/', '', $dateformatstring );
 
 
         global $wp_locale;
@@ -1096,7 +1101,7 @@ class TRP_Translation_Manager{
         $j = @date( $dateformatstring, $i );
 
         return $j;
-        
+
     }
 
 	/**

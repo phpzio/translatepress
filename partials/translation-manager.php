@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html <?php language_attributes(); ?> class="no-js">
 <head>
@@ -27,6 +26,20 @@
     $current_url = $url_converter->cur_page_url();
 
     do_action( 'trp_head' );
+
+    //setup view_as roles
+    $view_as_roles = array(
+        __('Current User', 'translatepress-multilingual') => 'current_user',
+        __('Logged Out', 'translatepress-multilingual') => 'logged_out'
+    );
+    $all_roles = wp_roles()->roles;
+
+    if( !empty( $all_roles ) ){
+        foreach( $all_roles as $role )
+            $view_as_roles[$role['name']] = '';
+    }
+
+    $view_as_roles = apply_filters( 'trp_view_as_values', $view_as_roles );
     ?>
 
     <title>TranslatePress</title>
@@ -37,9 +50,17 @@
     </script> -->
 </head>
 <body>
-    <div id="trp-editor">
-        <editor-tpl language="en" on_screen_language="fr" ajax_url="admin-ajax.php"></editor>
+
+    <div id="trp-editor-container">
+        <trp-editor
+            trp_settings='<?php echo json_encode( $trp_settings ); ?>'
+            available_languages='<?php echo json_encode( $available_languages ); ?>'
+            current_language="<?php echo $TRP_LANGUAGE; ?>"
+            view_as_roles='<?php echo json_encode( $view_as_roles ); ?>'
+            current_url="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>">
+        </trp-editor>
     </div>
+
     <?php do_action( 'trp_translation_manager_footer' ); ?>
 </body>
 </html>

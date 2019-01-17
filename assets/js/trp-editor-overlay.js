@@ -3,8 +3,8 @@ jQuery( document ).ready(function(){
         placeholder: 'Select an option'
     })*/
 
-    var overlay = jQuery('<div id="trp_select2_overlay"> </div>')
-    overlay.appendTo('#trp-controls');
+    // var overlay = jQuery('<div id="trp_select2_overlay"> </div>')
+    // overlay.appendTo('#trp-controls');
 
     var $eventSelectLanguage = jQuery("#trp-language-select");
     $eventSelectLanguage.on("select2:open", function (e) {

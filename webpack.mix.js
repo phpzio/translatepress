@@ -1,6 +1,7 @@
 let mix = require('laravel-mix');
 
-mix.js('assets/src/js/main.js', 'assets/dist/js')
+mix.js( 'assets/src/js/trp-editor.js', 'assets/js' )
+    .sass( 'assets/src/scss/trp-editor.scss', 'assets/css/' )
     .browserSync( {
         proxy : 'pms.test',
         files : [
@@ -8,4 +9,9 @@ mix.js('assets/src/js/main.js', 'assets/dist/js')
             'assets/**/*.js',
             'assets/**/*.css'
         ],
-    } );
+    } )
+    .webpackConfig({
+        externals: {
+            "jquery" : "jQuery",
+        }
+    });

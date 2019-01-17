@@ -1,0 +1,10 @@
+@import '~select2/dist/css/select2.css';
+
+.vue-friendly-iframe {
+    
+    iframe {
+        display: block;
+        width: 100%;
+        height: 100vh;
+    }
+}
