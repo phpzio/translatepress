@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 5.0.1
-Stable tag: 1.3.9
+Tested up to: 5.0.3
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,16 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.4.0 =
+* Added Enfold compatibility by increasing the template_include hook priority
+* Add the costa rica flag
+* Speed improvements by optimizing the full_trim function
+* Added compatibility for WooCommerce Invoices plugins
+* Fixed querying for dynamic strings in Translation Editor not bringing up translations for all languages
+* Fixed notice when gettext table is empty
+* Added function to display strings with bad encoding in Translation Editor
+
+
 = 1.3.9 =
 * Fixed some issues with url translations
 * Speed improvements
