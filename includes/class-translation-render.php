@@ -573,6 +573,13 @@ class TRP_Translation_Render{
                     array_push( $nodes, array('node'=>$row,'type'=>'placeholder') );
             }
         }
+	    foreach ( $html->find('img') as $k => $row ) {
+		    if($this->full_trim($row->src)!="" && !$this->has_ancestor_attribute( $row, $no_translate_attribute )) /*todo src-set, lazy load, etc*/
+		    {
+			    array_push( $translateable_strings, $row->src );
+			    array_push( $nodes, array('node'=>$row,'type'=>'image_src') );
+		    }
+	    }
 
 
         $translateable_information = array( 'translateable_strings' => $translateable_strings, 'nodes' => $nodes );
@@ -611,6 +618,10 @@ class TRP_Translation_Render{
             'image_alt' => array(
                 'accessor' => 'alt',
                 'attribute' => false
+            ),
+            'image_src' => array(
+            	'accessor' => 'src',
+				'attribute' => true
             ),
             'submit' => array(
                 'accessor' => 'value',
@@ -668,7 +679,7 @@ class TRP_Translation_Render{
                     if( $nodes[$i]['type'] == 'button' || $nodes[$i]['type'] == 'option' ){
                         $nodes[$i]['node'] = $nodes[$i]['node']->parent();
                     }
-                    $nodes[$i]['node']->setAttribute('data-trp-translate-id', $translated_string_ids[ $translateable_strings[$i] ]->id );
+	                $nodes[$i]['node']->setAttribute('data-trp-translate-id-' . $accessor, $translated_string_ids[ $translateable_strings[$i] ]->id );
                     $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
 
                     if ( $this->get_node_description( $nodes[$i] ) ) {

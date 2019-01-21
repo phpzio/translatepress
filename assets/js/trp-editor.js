@@ -155,6 +155,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./assets/src/js/iframe.vue":
+/*!**********************************!*\
+  !*** ./assets/src/js/iframe.vue ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _iframe_vue_vue_type_template_id_573e7941___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./iframe.vue?vue&type=template&id=573e7941& */ "./assets/src/js/iframe.vue?vue&type=template&id=573e7941&");
+/* harmony import */ var _iframe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./iframe.vue?vue&type=script&lang=js& */ "./assets/src/js/iframe.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _iframe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _iframe_vue_vue_type_template_id_573e7941___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _iframe_vue_vue_type_template_id_573e7941___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "assets/src/js/iframe.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./assets/src/js/iframe.vue?vue&type=script&lang=js&":
+/*!***********************************************************!*\
+  !*** ./assets/src/js/iframe.vue?vue&type=script&lang=js& ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_iframe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./iframe.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./assets/src/js/iframe.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_iframe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./assets/src/js/iframe.vue?vue&type=template&id=573e7941&":
+/*!*****************************************************************!*\
+  !*** ./assets/src/js/iframe.vue?vue&type=template&id=573e7941& ***!
+  \*****************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_iframe_vue_vue_type_template_id_573e7941___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./iframe.vue?vue&type=template&id=573e7941& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./assets/src/js/iframe.vue?vue&type=template&id=573e7941&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_iframe_vue_vue_type_template_id_573e7941___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_iframe_vue_vue_type_template_id_573e7941___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./assets/src/js/trp-editor.js":
 /*!*************************************!*\
   !*** ./assets/src/js/trp-editor.js ***!
@@ -183,6 +252,40 @@ if (document.getElementById('trp-editor-container')) {
 
 /***/ }),
 
+/***/ "./assets/src/js/utils.js":
+/*!********************************!*\
+  !*** ./assets/src/js/utils.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//borrowed from David Walsh : https://davidwalsh.name/javascript-debounce-function
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this;
+    var args = arguments;
+
+    var later = function later() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  debounce: debounce
+});
+
+/***/ }),
+
 /***/ "./assets/src/scss/trp-editor.scss":
 /*!*****************************************!*\
   !*** ./assets/src/scss/trp-editor.scss ***!
@@ -205,8 +308,7 @@ if (document.getElementById('trp-editor-container')) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var select2_dist_js_select2_full_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! select2/dist/js/select2.full.js */ "./node_modules/select2/dist/js/select2.full.js");
 /* harmony import */ var select2_dist_js_select2_full_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(select2_dist_js_select2_full_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vue_friendly_iframe__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-friendly-iframe */ "./node_modules/vue-friendly-iframe/dist/vue-friendly-iframe.js");
-/* harmony import */ var vue_friendly_iframe__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_friendly_iframe__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _iframe_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./iframe.vue */ "./assets/src/js/iframe.vue");
 //
 //
 //
@@ -295,7 +397,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    'vue-friendly-iframe': vue_friendly_iframe__WEBPACK_IMPORTED_MODULE_1___default.a
+    'trp-iframe': _iframe_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   props: ['trp_settings', 'available_languages', 'current_language', 'view_as_roles', 'current_url'],
   data: function data() {
@@ -305,11 +407,21 @@ __webpack_require__.r(__webpack_exports__);
       translation: wp.i18n,
       languages: JSON.parse(this.available_languages),
       roles: JSON.parse(this.view_as_roles),
-      currentLanguage: this.current_language
+      currentLanguage: this.current_language,
+      iframe: ''
     };
   },
   created: function created() {
-    this.settings['default-language-name'] = this.languages[this.settings['default-language']];
+    this.settings['default-language-name'] = this.languages[this.settings['default-language']]; //get iframe elements
+
+    /* let iframe = document.querySelector('#trp-preview-iframe')
+     if ( iframe != null  ) {
+         this.iframe = iframe.contentDocument || iframe.contentWindow.document
+         this.iframe.onload = function () {
+             alert('da')
+             console.log(this.iframe.querySelector('.site-description'))
+         };
+     }*/
   },
   mounted: function mounted() {
     // initialize select2
@@ -341,7 +453,117 @@ __webpack_require__.r(__webpack_exports__);
       var str = __('Saved!', this.domain);
 
       console.log(str);
+    },
+    onLoadIframe: function onLoadIframe(event) {
+      var iframe = findIframeByName(event.currentTarget.name);
+      console.log('loaded!');
+      console.log(iframe);
     }
+  }
+});
+
+function findIframeByName(name) {
+  return _.find(window.frames, function (frame) {
+    return frame.name === name;
+  });
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./assets/src/js/iframe.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./assets/src/js/iframe.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var uuid_v1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uuid/v1 */ "./node_modules/uuid/v1.js");
+/* harmony import */ var uuid_v1__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uuid_v1__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./assets/src/js/utils.js");
+//
+//
+//
+//
+//
+
+
+
+function generateGuid() {
+  return uuid_v1__WEBPACK_IMPORTED_MODULE_0___default()();
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'friendly-iframe',
+  props: {
+    src: {
+      type: String,
+      required: true
+    },
+    className: {
+      type: String,
+      required: false
+    }
+  },
+  data: function data() {
+    return {
+      iframeEl: null,
+      iframeLoadedMessage: "LOADED_IFRAME_".concat(generateGuid())
+    };
+  },
+  computed: {},
+  watch: {
+    src: function src() {
+      this.reinitIframe(this);
+    }
+  },
+  methods: {
+    removeIframe: function removeIframe() {
+      while (this.$el.firstChild) {
+        this.$el.removeChild(this.$el.firstChild);
+      }
+    },
+    setIframeUrl: function setIframeUrl() {
+      var iframeDoc = this.iframeEl.contentWindow.document;
+      iframeDoc.open().write("<body onload=\"window.location.href='".concat(this.src, "'; parent.postMessage('").concat(this.iframeLoadedMessage, "', '*')\"></body>"));
+      iframeDoc.close(); //iframe onload event happens
+    },
+    reinitIframe: _utils__WEBPACK_IMPORTED_MODULE_1__["default"].debounce(function (vm) {
+      vm.removeIframe();
+      vm.initIframe();
+    }, 200),
+    initIframe: function initIframe() {
+      this.iframeEl = document.createElement('iframe');
+      this.iframeEl.setAttribute('crossorigin', 'anonymous');
+      this.iframeEl.setAttribute('target', '_parent');
+      this.iframeEl.setAttribute('style', 'visibility: hidden; position: absolute; top: -99999px');
+      if (this.className) this.iframeEl.setAttribute('class', this.className);
+      this.$el.appendChild(this.iframeEl);
+      this.setIframeUrl();
+    },
+    listenForEvents: function listenForEvents() {
+      var _this = this;
+
+      // Create IE + others compatible event handler
+      var eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
+      var eventer = window[eventMethod];
+      var messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message'; // Listen to message from child window
+
+      eventer(messageEvent, function (event) {
+        if (event.data === _this.iframeLoadedMessage) {
+          _this.$emit('load');
+
+          console.log('LOAD');
+
+          _this.iframeEl.setAttribute('style', 'visibility: visible;');
+        }
+      }, false);
+    }
+  },
+  mounted: function mounted() {
+    this.listenForEvents();
+    this.initIframe();
   }
 });
 
@@ -7364,313 +7586,107 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ "./node_modules/vue-friendly-iframe/dist/vue-friendly-iframe.js":
-/*!**********************************************************************!*\
-  !*** ./node_modules/vue-friendly-iframe/dist/vue-friendly-iframe.js ***!
-  \**********************************************************************/
+/***/ "./node_modules/uuid/lib/bytesToUuid.js":
+/*!**********************************************!*\
+  !*** ./node_modules/uuid/lib/bytesToUuid.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
+  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+  return ([bth[buf[i++]], bth[buf[i++]], 
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]]]).join('');
+}
+
+module.exports = bytesToUuid;
+
+
+/***/ }),
+
+/***/ "./node_modules/uuid/lib/rng-browser.js":
+/*!**********************************************!*\
+  !*** ./node_modules/uuid/lib/rng-browser.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+
+// getRandomValues needs to be invoked in a context where "this" is a Crypto
+// implementation. Also, find the complete implementation of crypto on IE11.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+
+if (getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
+    return rnds8;
+  };
+} else {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/uuid/v1.js":
+/*!*********************************!*\
+  !*** ./node_modules/uuid/v1.js ***!
+  \*********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/*!
- * vue-friendly-iframe v0.10.0 (https://github.com/officert/vue-friendly-iframe)
- * (c) 2018 Tim Officer
- * Released under the MIT License.
- */
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(true)
-		module.exports = factory();
-	else { var i, a; }
-})(typeof self !== 'undefined' ? self : this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _FriendlyIframe = __webpack_require__(1);
-
-var _FriendlyIframe2 = _interopRequireDefault(_FriendlyIframe);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _FriendlyIframe2.default;
-module.exports = exports['default'];
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(2)(
-  /* script */
-  __webpack_require__(3),
-  /* template */
-  __webpack_require__(9),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-// this module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  scopeId,
-  cssModules
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  // inject cssModules
-  if (cssModules) {
-    var computed = Object.create(options.computed || null)
-    Object.keys(cssModules).forEach(function (key) {
-      var module = cssModules[key]
-      computed[key] = function () { return module }
-    })
-    options.computed = computed
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _v = __webpack_require__(4);
-
-var _v2 = _interopRequireDefault(_v);
-
-var _utils = __webpack_require__(8);
-
-var _utils2 = _interopRequireDefault(_utils);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function generateGuid() {
-  return (0, _v2.default)();
-}
-
-exports.default = {
-  name: 'friendly-iframe',
-  props: {
-    src: {
-      type: String,
-      required: true
-    },
-    className: {
-      type: String,
-      required: false
-    }
-  },
-  data: function data() {
-    return {
-      iframeEl: null,
-      iframeLoadedMessage: 'LOADED_IFRAME_' + generateGuid()
-    };
-  },
-
-  computed: {},
-  watch: {
-    src: function src() {
-      this.reinitIframe(this);
-    }
-  },
-  methods: {
-    removeIframe: function removeIframe() {
-      while (this.$el.firstChild) {
-        this.$el.removeChild(this.$el.firstChild);
-      }
-    },
-    setIframeUrl: function setIframeUrl() {
-      var iframeDoc = this.iframeEl.contentWindow.document;
-      iframeDoc.open().write('<body onload="window.location.href=\'' + this.src + '\'; parent.postMessage(\'' + this.iframeLoadedMessage + '\', \'*\')"></body>');
-
-      iframeDoc.close();
-    },
-
-    reinitIframe: _utils2.default.debounce(function (vm) {
-      vm.removeIframe();
-      vm.initIframe();
-    }, 200),
-    initIframe: function initIframe() {
-      this.iframeEl = document.createElement('iframe');
-      this.iframeEl.setAttribute('crossorigin', 'anonymous');
-      this.iframeEl.setAttribute('target', '_parent');
-      this.iframeEl.setAttribute('style', 'visibility: hidden; position: absolute; top: -99999px');
-
-      if (this.className) this.iframeEl.setAttribute('class', this.className);
-      this.$el.appendChild(this.iframeEl);
-
-      this.setIframeUrl();
-    },
-    listenForEvents: function listenForEvents() {
-      var _this = this;
-
-      var eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
-      var eventer = window[eventMethod];
-      var messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
-
-      eventer(messageEvent, function (event) {
-        if (event.data === _this.iframeLoadedMessage) {
-          _this.$emit('load');
-
-          console.log('LOAD');
-
-          _this.iframeEl.setAttribute('style', 'visibility: visible;');
-        }
-      }, false);
-    }
-  },
-  mounted: function mounted() {
-    this.listenForEvents();
-
-    this.initIframe();
-  }
-};
-module.exports = exports['default'];
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var rng = __webpack_require__(5);
-var bytesToUuid = __webpack_require__(7);
+var rng = __webpack_require__(/*! ./lib/rng */ "./node_modules/uuid/lib/rng-browser.js");
+var bytesToUuid = __webpack_require__(/*! ./lib/bytesToUuid */ "./node_modules/uuid/lib/bytesToUuid.js");
 
 // **`v1()` - Generate time-based UUID**
 //
 // Inspired by https://github.com/LiosK/UUID.js
 // and http://docs.python.org/library/uuid.html
 
-// random #'s we need to init node and clockseq
-var _seedBytes = rng();
-
-// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-var _nodeId = [
-  _seedBytes[0] | 0x01,
-  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
-];
-
-// Per 4.2.2, randomize (14 bit) clockseq
-var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
+var _nodeId;
+var _clockseq;
 
 // Previous uuid creation time
-var _lastMSecs = 0, _lastNSecs = 0;
+var _lastMSecs = 0;
+var _lastNSecs = 0;
 
 // See https://github.com/broofa/node-uuid for API details
 function v1(options, buf, offset) {
@@ -7678,8 +7694,26 @@ function v1(options, buf, offset) {
   var b = buf || [];
 
   options = options || {};
-
+  var node = options.node || _nodeId;
   var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  }
 
   // UUID timestamps are 100 nano-second units since the Gregorian epoch,
   // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
@@ -7740,7 +7774,6 @@ function v1(options, buf, offset) {
   b[i++] = clockseq & 0xff;
 
   // `node`
-  var node = options.node || _nodeId;
   for (var n = 0; n < 6; ++n) {
     b[i + n] = node[n];
   }
@@ -7750,155 +7783,6 @@ function v1(options, buf, offset) {
 
 module.exports = v1;
 
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global) {// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
-var rng;
-
-var crypto = global.crypto || global.msCrypto; // for IE 11
-if (crypto && crypto.getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-  rng = function whatwgRNG() {
-    crypto.getRandomValues(rnds8);
-    return rnds8;
-  };
-}
-
-if (!rng) {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
-  rng = function() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return rnds;
-  };
-}
-
-module.exports = rng;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  return bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]];
-}
-
-module.exports = bytesToUuid;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function debounce(func, wait, immediate) {
-  var timeout = void 0;
-
-  return function () {
-    var context = this;
-
-    var args = arguments;
-
-    var later = function later() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-
-    var callNow = immediate && !timeout;
-
-    clearTimeout(timeout);
-
-    timeout = setTimeout(later, wait);
-
-    if (callNow) func.apply(context, args);
-  };
-}
-
-exports.default = {
-  debounce: debounce
-};
-module.exports = exports["default"];
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "vue-friendly-iframe"
-  })
-},staticRenderFns: []}
-
-/***/ })
-/******/ ]);
-});
 
 /***/ }),
 
@@ -8098,7 +7982,11 @@ var render = function() {
     _c(
       "div",
       { attrs: { id: "trp-preview" } },
-      [_c("vue-friendly-iframe", { attrs: { src: _vm.current_url } })],
+      [
+        _c("trp-iframe", {
+          attrs: { id: "trp-preview-iframe", src: _vm.current_url }
+        })
+      ],
       1
     )
   ])
@@ -8182,6 +8070,30 @@ var staticRenderFns = [
     )
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./assets/src/js/iframe.vue?vue&type=template&id=573e7941&":
+/*!***********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./assets/src/js/iframe.vue?vue&type=template&id=573e7941& ***!
+  \***********************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { attrs: { id: "trp-preview-iframe" } })
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -8687,12 +8599,12 @@ var config = ({
   /**
    * Show production mode tip message on boot?
    */
-  productionTip: "development" !== 'production',
+  productionTip: "development " !== 'production',
 
   /**
    * Whether to enable devtools
    */
-  devtools: "development" !== 'production',
+  devtools: "development " !== 'production',
 
   /**
    * Whether to record perf
@@ -9659,7 +9571,7 @@ strats.computed = function (
   vm,
   key
 ) {
-  if (childVal && "development" !== 'production') {
+  if (childVal && "development " !== 'production') {
     assertObjectType(key, childVal, vm);
   }
   if (!parentVal) { return childVal }
@@ -19417,8 +19329,8 @@ module.exports = g;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/moonbas3/dev/vvv/www/pms/public_html/wp-content/plugins/translatepress/assets/src/js/trp-editor.js */"./assets/src/js/trp-editor.js");
-module.exports = __webpack_require__(/*! /home/moonbas3/dev/vvv/www/pms/public_html/wp-content/plugins/translatepress/assets/src/scss/trp-editor.scss */"./assets/src/scss/trp-editor.scss");
+__webpack_require__(/*! C:\xampp\htdocs\local\wp-content\plugins\translatepress\assets\src\js\trp-editor.js */"./assets/src/js/trp-editor.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\local\wp-content\plugins\translatepress\assets\src\scss\trp-editor.scss */"./assets/src/scss/trp-editor.scss");
 
 
 /***/ }),

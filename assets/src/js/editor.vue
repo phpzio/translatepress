@@ -77,18 +77,18 @@
         </div>
 
         <div id="trp-preview">
-            <vue-friendly-iframe :src="current_url"></vue-friendly-iframe>
+            <trp-iframe id="trp-preview-iframe" :src="current_url"></trp-iframe>
         </div>
     </div>
 </template>
 
 <script>
     import 'select2/dist/js/select2.full.js'
-    import VueFriendlyIframe from 'vue-friendly-iframe';
+    import iframe from './iframe.vue';
 
     export default {
         components: {
-            'vue-friendly-iframe': VueFriendlyIframe,
+            'trp-iframe'            : iframe
         },
         props: [
             'trp_settings',
@@ -105,10 +105,20 @@
                 languages       : JSON.parse( this.available_languages ),
                 roles           : JSON.parse( this.view_as_roles ),
                 currentLanguage : this.current_language,
+                iframe          : ''
             }
         },
         created() {
             this.settings['default-language-name'] = this.languages[ this.settings['default-language'] ]
+            //get iframe elements
+           /* let iframe = document.querySelector('#trp-preview-iframe')
+            if ( iframe != null  ) {
+                this.iframe = iframe.contentDocument || iframe.contentWindow.document
+                this.iframe.onload = function () {
+                    alert('da')
+                    console.log(this.iframe.querySelector('.site-description'))
+                };
+            }*/
         },
         mounted() {
             // initialize select2
@@ -130,7 +140,16 @@
                 let str = __( 'Saved!', this.domain )
 
                 console.log( str )
+            },
+            onLoadIframe(event) {
+                const iframe = findIframeByName(event.currentTarget.name);
+                console.log('loaded!');
+                console.log(iframe);
+
             }
         }
+    }
+    function findIframeByName(name) {
+        return _.find(window.frames, frame => frame.name === name);
     }
 </script>
