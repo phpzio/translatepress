@@ -5,6 +5,7 @@
     global $TRP_LANGUAGE;
     $trp                = TRP_Translate_Press::get_trp_instance();
     $trp_languages      = $trp->get_component( 'languages' );
+    $translation_manager= $trp->get_component( 'translation_manager' );
     $settings_component = $trp->get_component( 'settings' );
     $url_converter      = $trp->get_component('url_converter');
     $trp_settings       = $settings_component->get_settings();
@@ -24,6 +25,9 @@
 
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
     $current_url = $url_converter->cur_page_url();
+
+    //@todo
+    $selectors = array('', '-alt', '-src' );
 
     do_action( 'trp_head' );
 
@@ -56,8 +60,13 @@
             trp_settings='<?php echo json_encode( $trp_settings ); ?>'
             available_languages='<?php echo json_encode( $available_languages ); ?>'
             current_language="<?php echo $TRP_LANGUAGE; ?>"
+            on_screen_language="<?php echo ( isset( $translation_languages[0] ) ) ? $translation_languages[0] : 'null' ; ?>"
             view_as_roles='<?php echo json_encode( $view_as_roles ); ?>'
-            current_url="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>">
+            current_url="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
+            string_selectors='<?php echo json_encode( $selectors ); ?>'
+            editor_nonces='<?php echo json_encode( $translation_manager->editor_nonces() ); ?>'
+            ajax_url = '<?php echo apply_filters( 'trp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
+        >
         </trp-editor>
     </div>
 

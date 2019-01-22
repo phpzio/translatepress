@@ -84,12 +84,18 @@ class TRP_Translation_Manager{
 			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
 			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
 			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
+		);
+		return $text;
+	}
+
+	public function editor_nonces(){
+		$text = array(
 			'gettranslationsnonce'          => wp_create_nonce('get_translations'),
 			'savestringsnonce'              => wp_create_nonce('save_translations'),
 			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
 			'gettextgettranslationsnonce'   => wp_create_nonce('gettext_get_translations'),
 			'gettextsavetranslationsnonce'  => wp_create_nonce('gettext_save_translations'),
-			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
 		);
 		return $text;
 	}
@@ -104,7 +110,7 @@ class TRP_Translation_Manager{
         //wp_enqueue_script( 'trp-translation-manager-script',  TRP_PLUGIN_URL . 'assets/js/trp-editor-script.js', array(), TRP_PLUGIN_VERSION );
 	    //$trp_merge_rules = $this->get_merge_rules();
 	    //wp_localize_script('trp-translation-manager-script', 'trp_merge_rules', $trp_merge_rules);
-	    //$localized_text = $this->localized_text();
+
 	    //wp_localize_script('trp-translation-manager-script', 'trp_localized_text', $localized_text );
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
 

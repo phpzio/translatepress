@@ -10,7 +10,7 @@
         return uuidV1();
     }
     export default {
-        name: 'friendly-iframe',
+        name: 'trp-iframe',
         props: {
             src: {
                 type: String,
@@ -66,7 +66,6 @@
                 eventer(messageEvent, event => {
                     if (event.data === this.iframeLoadedMessage) {
                         this.$emit('load');
-                        console.log('LOAD');
                         this.iframeEl.setAttribute('style', 'visibility: visible;');
                     }
                 }, false);

@@ -27,9 +27,9 @@
 
                         <div id="trp-string-list">
                             <select id="trp-string-categories">
-                                <option></option>
+                                <option v-for="(option, optionIndex) in selectData" :value="option.id">{{option.original}}</option>
 
-                                <optgroup id="trp-gettext-strings-optgroup" label="Gettext Strings"></optgroup>
+                                <!--<optgroup id="trp-gettext-strings-optgroup" label="Gettext Strings"></optgroup>-->
                             </select>
                         </div>
 
@@ -77,27 +77,28 @@
         </div>
 
         <div id="trp-preview">
-            <trp-iframe id="trp-preview-iframe" :src="current_url"></trp-iframe>
+            <iframe id="trp-preview-iframe" :src="current_url" v-on:load="onLoadIframe"></iframe>
         </div>
     </div>
 </template>
 
 <script>
-    import 'select2/dist/js/select2.full.js'
-    import iframe from './iframe.vue';
+    import 'select2/dist/js/select2.min.js'
+    import axios from 'axios'
 
     export default {
-        components: {
-            'trp-iframe'            : iframe
-        },
         props: [
             'trp_settings',
             'available_languages',
             'current_language',
+            'on_screen_language',
             'view_as_roles',
-            'current_url'
+            'current_url',
+            'string_selectors',
+            'ajax_url',
+            'editor_nonces'
         ],
-        data() {
+        data(){
             return {
                 settings        : JSON.parse( this.trp_settings ),
                 domain          : 'translatepress-multilingual',
@@ -105,22 +106,18 @@
                 languages       : JSON.parse( this.available_languages ),
                 roles           : JSON.parse( this.view_as_roles ),
                 currentLanguage : this.current_language,
-                iframe          : ''
+                selectors       : JSON.parse( this.string_selectors ),
+                nonces          : JSON.parse( this.editor_nonces),
+                iframe          : '',
+                dictionary      : [],
+                selectData : [],
             }
         },
-        created() {
+        created(){
             this.settings['default-language-name'] = this.languages[ this.settings['default-language'] ]
-            //get iframe elements
-           /* let iframe = document.querySelector('#trp-preview-iframe')
-            if ( iframe != null  ) {
-                this.iframe = iframe.contentDocument || iframe.contentWindow.document
-                this.iframe.onload = function () {
-                    alert('da')
-                    console.log(this.iframe.querySelector('.site-description'))
-                };
-            }*/
+            this.selectors = this.prepareSelectorStrings()
         },
-        mounted() {
+        mounted(){
             // initialize select2
             jQuery( '#trp-language-select' ).select2( { width : '100%' })
             jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', width : '100%' })
@@ -134,22 +131,66 @@
             })
         },
         methods: {
-            translations() {
+            prepareSelectorStrings(){
+                let parsed_selectors = []
+                this.selectors.forEach( function ( selector, index ){
+                    parsed_selectors.push( 'data-trp-translate-id' + selector  )
+                })
+
+                return parsed_selectors
+            },
+            translations(){
                 const { __, _x, _n, _nx } = wp.i18n
 
                 let str = __( 'Saved!', this.domain )
 
                 console.log( str )
             },
-            onLoadIframe(event) {
-                const iframe = findIframeByName(event.currentTarget.name);
-                console.log('loaded!');
-                console.log(iframe);
+            onLoadIframe(){
+                //setup iframe
+                let iframeElement = document.querySelector('#trp-preview-iframe')
+                let app = this
 
-            }
+                this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document
+
+                //setup string array
+                let stringIdsArray = [];
+                let nodes = this.iframe.querySelectorAll( '[' + this.selectors.join('],[') + ']' )
+                nodes.forEach( function ( node ) {
+                    app.selectors.some( function ( selector ) {
+                        let stringId = node.getAttribute( selector )
+                        console.log(selector);
+
+                        if ( stringId ){
+                            stringIdsArray.push( { 'id': stringId } )
+                            return true
+                        }
+                        return false
+                    })
+                })
+
+                // unique array of ids
+                stringIdsArray = [...new Set(stringIdsArray)];
+
+                //setup POST data
+                let data = new FormData();
+                    data.append('action', 'trp_get_translations');
+                    data.append('all_languages', 'true');
+                    data.append('security', this.nonces['gettranslationsnonce']);
+                    data.append('language', this.on_screen_language);
+                    data.append('strings', JSON.stringify( stringIdsArray ) );
+
+                //make ajax request
+                axios.post( this.ajax_url, data )
+                    .then(function (response) {
+                        app.dictionary = response.data
+                        app.selectData = response.data[app.on_screen_language]
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            },
         }
-    }
-    function findIframeByName(name) {
-        return _.find(window.frames, frame => frame.name === name);
     }
 </script>
