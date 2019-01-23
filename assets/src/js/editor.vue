@@ -100,20 +100,43 @@
         ],
         data(){
             return {
-                settings          : JSON.parse( this.trp_settings ),
-                domain            : 'translatepress-multilingual',
-                translation       : wp.i18n,
-                languages         : JSON.parse( this.available_languages ),
-                roles             : JSON.parse( this.view_as_roles ),
-                currentLanguage   : this.current_language,
-                selectors         : JSON.parse( this.string_selectors ),
-                nonces            : JSON.parse( this.editor_nonces),
-                iframe            : '',
-                dictionaryRegular : [],
-                dictionaryGettext : [],
-                dictionaryDynamic : [],
-                selectData        : [],
-                selectedString    : '',
+                settings        : JSON.parse( this.trp_settings ),
+                domain          : 'translatepress-multilingual',
+                translation     : wp.i18n,
+                languages       : JSON.parse( this.available_languages ),
+                roles           : JSON.parse( this.view_as_roles ),
+                currentLanguage : this.current_language,
+                selectors       : JSON.parse( this.string_selectors ),
+                nonces          : JSON.parse( this.editor_nonces),
+                iframe          : '',
+                dictionary      : {
+                    regular         : {},
+                    gettext         : {},
+                    dynamic         : {}
+                },
+                stringTypes     : [ 'regular', 'gettext', 'dynamic' ],
+                selectedString  : '',
+                selectData      : {},
+            }
+        },
+        watch: {
+            dictionary: {
+                handler : function ( newDictionary, oldDictionary ) {
+
+                    // value: index nou
+                    // select Data must know  the type of string and the db-id
+
+                    //maybe put original as key. BUT for getttext the original is not unique. it would be unique if we concatenate domain and original. So NO, don't do this
+
+                    let app = this
+                    this.selectData = {};
+                    this.stringTypes.forEach( function( type ){
+                        if ( Object.keys(newDictionary[type]).length > 0 ){
+                            Object.assign( app.selectData, newDictionary[type][app.on_screen_language] )
+                        }
+                    })
+                },
+                deep : true
             }
         },
         created(){
@@ -123,6 +146,7 @@
         mounted(){
             // initialize select2
             jQuery( '#trp-language-select' ).select2( { width : '100%' })
+            //@todo add template
             jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', width : '100%' })
             jQuery( '#trp-view-as-select' ).select2( { width : '100%' })
 
@@ -189,11 +213,10 @@
                     data.append('security', this.nonces['gettranslationsnonce']);
                     data.append('language', this.on_screen_language);
                     data.append('strings', JSON.stringify( regularStringIdsArray ) );
-
                 //make ajax request
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        app.dictionaryRegular = response.data
+                        app.dictionary.regular = response.data
                         //app.selectData = response.data[app.on_screen_language]
                     })
                     .catch(function (error) {
@@ -211,9 +234,7 @@
                 //make ajax request
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                  //      console.log(response.data);
-                        app.dictionaryGettext = response.data
-                        //app.selectData = response.data[app.on_screen_language]
+                        app.dictionary.gettext = response.data
                     })
                     .catch(function (error) {
                         console.log(error);
