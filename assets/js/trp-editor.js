@@ -90,14 +90,15 @@
 /*!**********************************!*\
   !*** ./assets/src/js/editor.vue ***!
   \**********************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _editor_vue_vue_type_template_id_b046e8ec___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./editor.vue?vue&type=template&id=b046e8ec& */ "./assets/src/js/editor.vue?vue&type=template&id=b046e8ec&");
 /* harmony import */ var _editor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./editor.vue?vue&type=script&lang=js& */ "./assets/src/js/editor.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _editor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _editor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -127,7 +128,7 @@ component.options.__file = "assets/src/js/editor.vue"
 /*!***********************************************************!*\
   !*** ./assets/src/js/editor.vue?vue&type=script&lang=js& ***!
   \***********************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1982,8 +1983,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       selectors: JSON.parse(this.string_selectors),
       nonces: JSON.parse(this.editor_nonces),
       iframe: '',
-      dictionary: [],
-      selectData: []
+      dictionaryRegular: [],
+      dictionaryGettext: [],
+      dictionaryDynamic: [],
+      selectData: [],
+      selectedString: ''
     };
   },
   created: function created() {
@@ -2014,6 +2018,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var parsed_selectors = [];
       this.selectors.forEach(function (selector, index) {
         parsed_selectors.push('data-trp-translate-id' + selector);
+        parsed_selectors.push('data-trpgettextoriginal' + selector);
       });
       return parsed_selectors;
     },
@@ -2034,17 +2039,22 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var app = this;
       this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document; //setup string array
 
-      var stringIdsArray = [];
+      var regularStringIdsArray = [];
+      var gettextStringIdsArray = [];
       var nodes = this.iframe.querySelectorAll('[' + this.selectors.join('],[') + ']');
       nodes.forEach(function (node) {
         app.selectors.some(function (selector) {
           var stringId = node.getAttribute(selector);
-          console.log(selector);
 
           if (stringId) {
-            stringIdsArray.push({
-              'id': stringId
-            });
+            if (selector.includes('data-trpgettextoriginal')) {
+              gettextStringIdsArray.push(stringId);
+            } else {
+              regularStringIdsArray.push({
+                'id': stringId
+              });
+            }
+
             return true;
           }
 
@@ -2052,21 +2062,58 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         });
       }); // unique array of ids
 
-      stringIdsArray = _toConsumableArray(new Set(stringIdsArray)); //setup POST data
+      gettextStringIdsArray = _toConsumableArray(new Set(gettextStringIdsArray));
+      /* REGULAR */
+      //setup POST data
 
       var data = new FormData();
       data.append('action', 'trp_get_translations');
       data.append('all_languages', 'true');
       data.append('security', this.nonces['gettranslationsnonce']);
       data.append('language', this.on_screen_language);
-      data.append('strings', JSON.stringify(stringIdsArray)); //make ajax request
+      data.append('strings', JSON.stringify(regularStringIdsArray)); //make ajax request
 
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(this.ajax_url, data).then(function (response) {
-        app.dictionary = response.data;
-        app.selectData = response.data[app.on_screen_language];
+        app.dictionaryRegular = response.data; //app.selectData = response.data[app.on_screen_language]
       }).catch(function (error) {
         console.log(error);
       });
+      /* GETTEXT */
+      //setup POST data
+
+      data = new FormData();
+      data.append('action', 'trp_gettext_get_translations');
+      data.append('security', this.nonces['gettextgettranslationsnonce']);
+      data.append('language', this.currentLanguage);
+      data.append('gettext_string_ids', JSON.stringify(gettextStringIdsArray)); //make ajax request
+
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(this.ajax_url, data).then(function (response) {
+        //      console.log(response.data);
+        app.dictionaryGettext = response.data; //app.selectData = response.data[app.on_screen_language]
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  },
+  //add support for v-model in select2
+  directives: {
+    select2: {
+      inserted: function inserted(el) {
+        jQuery(el).on('select2:select', function () {
+          var event = new Event('change', {
+            bubbles: true,
+            cancelable: true
+          });
+          el.dispatchEvent(event);
+        });
+        jQuery(el).on('select2:unselect', function () {
+          var event = new Event('change', {
+            bubbles: true,
+            cancelable: true
+          });
+          el.dispatchEvent(event);
+        });
+      }
     }
   }
 });
@@ -2643,7 +2690,8 @@ var render = function() {
                       rawName: "v-model",
                       value: _vm.currentLanguage,
                       expression: "currentLanguage"
-                    }
+                    },
+                    { name: "select2", rawName: "v-select2" }
                   ],
                   attrs: { id: "trp-language-select", name: "lang" },
                   on: {
@@ -2674,11 +2722,39 @@ var render = function() {
             _c("div", { attrs: { id: "trp-string-list" } }, [
               _c(
                 "select",
-                { attrs: { id: "trp-string-categories" } },
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selectedString,
+                      expression: "selectedString"
+                    },
+                    { name: "select2", rawName: "v-select2" }
+                  ],
+                  attrs: { id: "trp-string-categories" },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.selectedString = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    }
+                  }
+                },
                 _vm._l(_vm.selectData, function(option, optionIndex) {
-                  return _c("option", { domProps: { value: option.id } }, [
-                    _vm._v(_vm._s(option.original))
-                  ])
+                  return _c(
+                    "option",
+                    { key: optionIndex, domProps: { value: option.id } },
+                    [_vm._v(_vm._s(option.original))]
+                  )
                 }),
                 0
               )

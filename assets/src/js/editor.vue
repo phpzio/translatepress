@@ -100,18 +100,20 @@
         ],
         data(){
             return {
-                settings       : JSON.parse( this.trp_settings ),
-                domain         : 'translatepress-multilingual',
-                translation    : wp.i18n,
-                languages      : JSON.parse( this.available_languages ),
-                roles          : JSON.parse( this.view_as_roles ),
-                currentLanguage: this.current_language,
-                selectors      : JSON.parse( this.string_selectors ),
-                nonces         : JSON.parse( this.editor_nonces),
-                iframe         : '',
-                dictionary     : [],
-                selectData     : [],
-                selectedString : '',
+                settings          : JSON.parse( this.trp_settings ),
+                domain            : 'translatepress-multilingual',
+                translation       : wp.i18n,
+                languages         : JSON.parse( this.available_languages ),
+                roles             : JSON.parse( this.view_as_roles ),
+                currentLanguage   : this.current_language,
+                selectors         : JSON.parse( this.string_selectors ),
+                nonces            : JSON.parse( this.editor_nonces),
+                iframe            : '',
+                dictionaryRegular : [],
+                dictionaryGettext : [],
+                dictionaryDynamic : [],
+                selectData        : [],
+                selectedString    : '',
             }
         },
         created(){
@@ -136,6 +138,7 @@
                 let parsed_selectors = []
                 this.selectors.forEach( function ( selector, index ){
                     parsed_selectors.push( 'data-trp-translate-id' + selector  )
+                    parsed_selectors.push( 'data-trpgettextoriginal' + selector  )
                 })
 
                 return parsed_selectors
@@ -155,15 +158,20 @@
                 this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document
 
                 //setup string array
-                let stringIdsArray = [];
+                let regularStringIdsArray = []
+                let gettextStringIdsArray = []
                 let nodes = this.iframe.querySelectorAll( '[' + this.selectors.join('],[') + ']' )
                 nodes.forEach( function ( node ) {
                     app.selectors.some( function ( selector ) {
                         let stringId = node.getAttribute( selector )
-                        console.log(selector);
 
                         if ( stringId ){
-                            stringIdsArray.push( { 'id': stringId } )
+                            if ( selector.includes('data-trpgettextoriginal') ){
+                                gettextStringIdsArray.push( stringId )
+                            }else{
+                                regularStringIdsArray.push( { 'id': stringId } )
+                            }
+
                             return true
                         }
                         return false
@@ -171,21 +179,41 @@
                 })
 
                 // unique array of ids
-                stringIdsArray = [...new Set(stringIdsArray)];
+                gettextStringIdsArray = [...new Set(gettextStringIdsArray)];
 
+                /* REGULAR */
                 //setup POST data
                 let data = new FormData();
                     data.append('action', 'trp_get_translations');
                     data.append('all_languages', 'true');
                     data.append('security', this.nonces['gettranslationsnonce']);
                     data.append('language', this.on_screen_language);
-                    data.append('strings', JSON.stringify( stringIdsArray ) );
+                    data.append('strings', JSON.stringify( regularStringIdsArray ) );
 
                 //make ajax request
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        app.dictionary = response.data
-                        app.selectData = response.data[app.on_screen_language]
+                        app.dictionaryRegular = response.data
+                        //app.selectData = response.data[app.on_screen_language]
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+                /* GETTEXT */
+                //setup POST data
+                data = new FormData();
+                    data.append('action', 'trp_gettext_get_translations');
+                    data.append('security', this.nonces['gettextgettranslationsnonce']);
+                    data.append('language', this.currentLanguage);
+                    data.append('gettext_string_ids', JSON.stringify( gettextStringIdsArray ) );
+
+                //make ajax request
+                axios.post( this.ajax_url, data )
+                    .then(function (response) {
+                  //      console.log(response.data);
+                        app.dictionaryGettext = response.data
+                        //app.selectData = response.data[app.on_screen_language]
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -193,13 +221,14 @@
 
             },
         },
+        //add support for v-model in select2
         directives: {
             select2: {
                 inserted(el) {
                     jQuery(el).on('select2:select', () => {
-                        const event = new Event('change', { bubbles: true, cancelable: true });
-                        el.dispatchEvent(event);
-                    });
+                        const event = new Event('change', { bubbles: true, cancelable: true })
+                        el.dispatchEvent(event)
+                    })
 
                     jQuery(el).on('select2:unselect', () => {
                         const event = new Event('change', {bubbles: true, cancelable: true})

@@ -313,8 +313,8 @@ class TRP_Translation_Manager{
                     $original_string_details = array();
                     if( !empty( $dictionaries[$current_language] ) ){
                         foreach( $dictionaries[$current_language] as $current_language_string ){
-                            $original_strings[] = $current_language_string['original'];
-                            $original_string_details[] = array( 'original' => $current_language_string['original'], 'domain' => $current_language_string['domain'] );
+                            $original_strings[] = $current_language_string->original;
+                            $original_string_details[] = array( 'original' => $current_language_string->original, 'domain' => $current_language_string->domain );
                         }
                     }
 
@@ -332,7 +332,7 @@ class TRP_Translation_Manager{
                             $search_strings_array = array();
 
                             foreach( $dictionaries[$language] as $lang_string ){
-                                $search_strings_array[] = array( 'original' => $lang_string['original'], 'domain' => $lang_string['domain']  );
+                                $search_strings_array[] = array( 'original' => $lang_string->original, 'domain' => $lang_string->domain  );
                             }
 
                             if( !empty( $search_strings_array ) ){
@@ -356,13 +356,10 @@ class TRP_Translation_Manager{
                                     $translated  = $translations->translate( $lang_original_string_detail['original'] );
 
                                     $db_id = $this->trp_query->insert_gettext_strings( array( array('original' => $lang_original_string_detail['original'], 'translated' => $translated, 'domain' => $lang_original_string_detail['domain']) ), $language );
-                                    $dictionaries[$language][] = array('id' => $db_id, 'original' => $lang_original_string_detail['original'], 'translated' => ( $translated != $lang_original_string_detail['original'] ) ? $translated : '', 'domain' => $lang_original_string_detail['domain']);
+                                    $dictionaries[$language][$db_id] = (object) array('id' => $db_id, 'original' => $lang_original_string_detail['original'], 'translated' => ( $translated != $lang_original_string_detail['original'] ) ? $translated : '', 'domain' => $lang_original_string_detail['domain']);
                                 }
                             }
                             restore_current_locale();
-
-                            $dictionaries[$language] = array_values($dictionaries[$language]);
-
                         }
                     }
 
@@ -371,8 +368,8 @@ class TRP_Translation_Manager{
                 /* html entity decode the strings so we display them properly in the textareas  */
                 foreach( $dictionaries as $lang => $dictionary ){
                     foreach( $dictionary as $key => $string ){
-                        $string = array_map('html_entity_decode', $string );
-                        $dictionaries[$lang][$key] = $string;
+                        $string = array_map('html_entity_decode', (array)$string );
+                        $dictionaries[$lang][$key] = (object)$string;
                     }
                 }
 

@@ -566,7 +566,7 @@ class TRP_Query{
         }
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
-        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), ARRAY_A );
+        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), OBJECT_K );
         return $dictionary;
     }
 
@@ -584,7 +584,7 @@ class TRP_Query{
         }
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
-        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), ARRAY_A );
+        $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), OBJECT_K );
         return $dictionary;
     }
 
