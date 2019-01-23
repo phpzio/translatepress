@@ -19,15 +19,15 @@
 
                     <div class="trp-controls-section-content">
                         <div id="trp-language-switch">
-                            <select id="trp-language-select" name="lang" v-model="currentLanguage">
+                            <select id="trp-language-select" name="lang" v-model="currentLanguage" v-select2>
                                 <option v-for="(lang, langIndex) in languages" :value="langIndex">{{lang}}</option>
                             </select>
                         </div>
 
 
                         <div id="trp-string-list">
-                            <select id="trp-string-categories">
-                                <option v-for="(option, optionIndex) in selectData" :value="option.id">{{option.original}}</option>
+                            <select id="trp-string-categories" v-model="selectedString" v-select2>
+                                <option v-for="(option, optionIndex) in selectData" :value="option.id" :key="optionIndex">{{option.original}}</option>
 
                                 <!--<optgroup id="trp-gettext-strings-optgroup" label="Gettext Strings"></optgroup>-->
                             </select>
@@ -100,17 +100,18 @@
         ],
         data(){
             return {
-                settings        : JSON.parse( this.trp_settings ),
-                domain          : 'translatepress-multilingual',
-                translation     : wp.i18n,
-                languages       : JSON.parse( this.available_languages ),
-                roles           : JSON.parse( this.view_as_roles ),
-                currentLanguage : this.current_language,
-                selectors       : JSON.parse( this.string_selectors ),
-                nonces          : JSON.parse( this.editor_nonces),
-                iframe          : '',
-                dictionary      : [],
-                selectData : [],
+                settings       : JSON.parse( this.trp_settings ),
+                domain         : 'translatepress-multilingual',
+                translation    : wp.i18n,
+                languages      : JSON.parse( this.available_languages ),
+                roles          : JSON.parse( this.view_as_roles ),
+                currentLanguage: this.current_language,
+                selectors      : JSON.parse( this.string_selectors ),
+                nonces         : JSON.parse( this.editor_nonces),
+                iframe         : '',
+                dictionary     : [],
+                selectData     : [],
+                selectedString : '',
             }
         },
         created(){
@@ -191,6 +192,21 @@
                     });
 
             },
+        },
+        directives: {
+            select2: {
+                inserted(el) {
+                    jQuery(el).on('select2:select', () => {
+                        const event = new Event('change', { bubbles: true, cancelable: true });
+                        el.dispatchEvent(event);
+                    });
+
+                    jQuery(el).on('select2:unselect', () => {
+                        const event = new Event('change', {bubbles: true, cancelable: true})
+                        el.dispatchEvent(event)
+                    })
+                },
+            }
         }
     }
 </script>
