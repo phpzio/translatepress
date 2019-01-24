@@ -2026,7 +2026,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         dynamic: {}
       },
       selectedString: '',
-      selectData: {}
+      selectData: {},
+      nodes: {}
     };
   },
   created: function created() {
@@ -2086,22 +2087,26 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   methods: {
     iFrameLoaded: function iFrameLoaded() {
       var iframeElement = document.querySelector('#trp-preview-iframe');
-      this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document; //parent URL needs to match iFrame URL
+      this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document; //sync iFrame URL with parent
 
       if (this.currentURL != this.iframe.URL) this.currentURL = this.iframe.URL;
       this.init();
     },
     init: function init() {
-      //setup every to make the editor work after the iFrame has loaded
+      this.setupNodes();
       this.setupDictionaries();
+      this.setupEventListeners();
+    },
+    setupNodes: function setupNodes() {
+      this.nodes = this.iframe.querySelectorAll('[' + this.selectors.join('],[') + ']');
     },
     setupDictionaries: function setupDictionaries() {
       //setup strings array based on iFrame
+      //save nodes somewhere else so we can hook the event listeners ?
       var self = this;
       var regularStringIdsArray = [];
       var gettextStringIdsArray = [];
-      var nodes = this.iframe.querySelectorAll('[' + this.selectors.join('],[') + ']');
-      nodes.forEach(function (node) {
+      this.nodes.forEach(function (node) {
         self.selectors.some(function (selector) {
           var stringId = node.getAttribute(selector);
 
@@ -2144,6 +2149,16 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         self.dictionary.gettext = response.data;
       }).catch(function (error) {
         console.log(error);
+      });
+    },
+    setupEventListeners: function setupEventListeners() {
+      this.nodes.forEach(function (node) {
+        node.addEventListener('mouseenter', function (element) {
+          element.target.className += 'trp-highlight';
+        });
+        node.addEventListener('mouseleave', function (element) {
+          element.target.classList.remove('trp-highlight');
+        });
       });
     },
     prepareSelectorStrings: function prepareSelectorStrings() {

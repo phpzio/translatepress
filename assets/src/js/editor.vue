@@ -117,8 +117,9 @@
                     gettext         : {},
                     dynamic         : {},
                 },
-                selectedString  : '',
-                selectData      : {},
+                selectedString : '',
+                selectData     : {},
+                nodes          : {},
             }
         },
         created(){
@@ -181,24 +182,28 @@
 
                 this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document
 
-                //parent URL needs to match iFrame URL
+                //sync iFrame URL with parent
                 if ( this.currentURL != this.iframe.URL )
                     this.currentURL = this.iframe.URL
 
                 this.init()
             },
             init(){
-                //setup every to make the editor work after the iFrame has loaded
-                this.setupDictionaries();
+                this.setupNodes()
+                this.setupDictionaries()
+                this.setupEventListeners()
+            },
+            setupNodes() {
+                this.nodes = this.iframe.querySelectorAll( '[' + this.selectors.join('],[') + ']' )
             },
             setupDictionaries(){
                 //setup strings array based on iFrame
+                //save nodes somewhere else so we can hook the event listeners ?
                 let self                  = this
                 let regularStringIdsArray = []
                 let gettextStringIdsArray = []
-                let nodes                 = this.iframe.querySelectorAll( '[' + this.selectors.join('],[') + ']' )
 
-                nodes.forEach( function ( node ){
+                this.nodes.forEach( function ( node ){
                     self.selectors.some( function ( selector ){
                         let stringId = node.getAttribute( selector )
 
@@ -249,6 +254,19 @@
                     .catch(function (error){
                         console.log(error)
                     });
+            },
+            setupEventListeners(){
+                this.nodes.forEach( function ( node ){
+
+                    node.addEventListener( 'mouseenter', function( element ) {
+                        element.target.className += 'trp-highlight'
+                    })
+
+                    node.addEventListener( 'mouseleave', function( element ) {
+                        element.target.classList.remove( 'trp-highlight' )
+                    })
+
+                })
             },
             prepareSelectorStrings(){
                 let parsed_selectors = []
