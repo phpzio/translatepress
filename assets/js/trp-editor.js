@@ -183,6 +183,42 @@ if (document.getElementById('trp-editor-container')) {
 
 /***/ }),
 
+/***/ "./assets/src/js/utils.js":
+/*!********************************!*\
+  !*** ./assets/src/js/utils.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function removeUrlParameter(url, parameter) {
+  var parts = url.split('?');
+
+  if (parts.length >= 2) {
+    var prefix = encodeURIComponent(parameter) + '=';
+    var pairs = parts[1].split(/[&;]/g); //reverse iteration as may be destructive
+
+    for (var i = pairs.length; i-- > 0;) {
+      //idiom for string.startsWith
+      if (pairs[i].lastIndexOf(prefix, 0) !== -1) {
+        pairs.splice(i, 1);
+      }
+    }
+
+    url = parts[0] + (pairs.length > 0 ? '?' + pairs.join('&') : "");
+    return url;
+  } else {
+    return url;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  removeUrlParameter: removeUrlParameter
+});
+
+/***/ }),
+
 /***/ "./assets/src/scss/trp-editor.scss":
 /*!*****************************************!*\
   !*** ./assets/src/scss/trp-editor.scss ***!
@@ -1871,8 +1907,9 @@ module.exports = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var select2_dist_js_select2_min_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! select2/dist/js/select2.min.js */ "./node_modules/select2/dist/js/select2.min.js");
 /* harmony import */ var select2_dist_js_select2_min_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(select2_dist_js_select2_min_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./assets/src/js/utils.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -1969,6 +2006,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['trp_settings', 'available_languages', 'current_language', 'on_screen_language', 'view_as_roles', 'current_url', 'string_selectors', 'ajax_url', 'editor_nonces'],
   data: function data() {
@@ -1990,6 +2028,27 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       selectedString: '',
       selectData: {}
     };
+  },
+  created: function created() {
+    this.settings['default-language-name'] = this.languages[this.settings['default-language']];
+    this.selectors = this.prepareSelectorStrings();
+  },
+  mounted: function mounted() {
+    // initialize select2
+    jQuery('#trp-language-select, #trp-view-as-select').select2({
+      width: '100%'
+    }); //@todo add template
+
+    jQuery('#trp-string-categories').select2({
+      placeholder: 'Select string to translate...',
+      width: '100%'
+    }); // show overlay when select is opened
+
+    jQuery('#trp-language-select, #trp-string-categories').on('select2:open', function () {
+      jQuery('#trp_select2_overlay').fadeIn('100');
+    }).on('select2:close', function () {
+      jQuery('#trp_select2_overlay').hide();
+    });
   },
   watch: {
     dictionary: {
@@ -2019,26 +2078,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       window.history.replaceState(null, null, this.parentURL(newUrl));
     }
   },
-  created: function created() {
-    this.settings['default-language-name'] = this.languages[this.settings['default-language']];
-    this.selectors = this.prepareSelectorStrings();
-  },
-  mounted: function mounted() {
-    // initialize select2
-    jQuery('#trp-language-select, #trp-view-as-select').select2({
-      width: '100%'
-    }); //@todo add template
-
-    jQuery('#trp-string-categories').select2({
-      placeholder: 'Select string to translate...',
-      width: '100%'
-    }); // show overlay when select is opened
-
-    jQuery('#trp-language-select, #trp-string-categories').on('select2:open', function () {
-      jQuery('#trp_select2_overlay').fadeIn('100');
-    }).on('select2:close', function () {
-      jQuery('#trp_select2_overlay').hide();
-    });
+  computed: {
+    closeURL: function closeURL() {
+      return this.cleanURL(this.currentURL);
+    }
   },
   methods: {
     iFrameLoaded: function iFrameLoaded() {
@@ -2086,7 +2129,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       data.append('security', this.nonces['gettranslationsnonce']);
       data.append('language', this.on_screen_language);
       data.append('strings', JSON.stringify(regularStringIdsArray));
-      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(this.ajax_url, data).then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post(this.ajax_url, data).then(function (response) {
         self.dictionary.regular = response.data;
       }).catch(function (error) {
         console.log(error);
@@ -2097,7 +2140,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       data.append('security', this.nonces['gettextgettranslationsnonce']);
       data.append('language', this.currentLanguage);
       data.append('gettext_string_ids', JSON.stringify(gettextStringIdsArray));
-      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(this.ajax_url, data).then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post(this.ajax_url, data).then(function (response) {
         self.dictionary.gettext = response.data;
       }).catch(function (error) {
         console.log(error);
@@ -2113,6 +2156,15 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     },
     parentURL: function parentURL(url) {
       return url.replace('trp-edit-translation=preview', 'trp-edit-translation=true');
+    },
+    cleanURL: function cleanURL(url) {
+      //make removeUrlParameter recursive and only call it once with all the parameters that
+      //need to stripped ?
+      url = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].removeUrlParameter(url, 'lang');
+      url = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].removeUrlParameter(url, 'trp-view-as');
+      url = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].removeUrlParameter(url, 'trp-view-as-nonce');
+      url = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].removeUrlParameter(url, 'trp-edit-translation');
+      return url;
     }
   },
   //add support for v-model in select2
@@ -2672,7 +2724,11 @@ var render = function() {
   return _c("div", { attrs: { id: "trp-editor" } }, [
     _c("div", { attrs: { id: "trp-controls" } }, [
       _c("div", { staticClass: "trp-controls-container" }, [
-        _vm._m(0),
+        _c("div", { attrs: { id: "trp-close-save" } }, [
+          _c("a", { attrs: { id: "trp-controls-close", href: _vm.closeURL } }),
+          _vm._v(" "),
+          _vm._m(0)
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "trp-controls-section" }, [
           _c("div", { staticClass: "trp-controls-section-content" }, [
@@ -2876,38 +2932,34 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { attrs: { id: "trp-close-save" } }, [
-      _c("a", { attrs: { id: "trp-controls-close", href: "#" } }),
+    return _c("div", { attrs: { id: "trp-save-container" } }, [
+      _c(
+        "span",
+        {
+          staticStyle: { display: "none" },
+          attrs: { id: "trp-translation-saved" }
+        },
+        [_vm._v("Saved")]
+      ),
       _vm._v(" "),
-      _c("div", { attrs: { id: "trp-save-container" } }, [
-        _c(
-          "span",
-          {
-            staticStyle: { display: "none" },
-            attrs: { id: "trp-translation-saved" }
-          },
-          [_vm._v("Saved")]
-        ),
-        _vm._v(" "),
-        _c(
-          "span",
-          {
-            staticClass: "trp-ajax-loader",
-            staticStyle: { display: "none" },
-            attrs: { id: "trp-string-saved-ajax-loader" }
-          },
-          [_c("div", { staticClass: "trp-spinner" })]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          {
-            staticClass: "button-primary trp-save-string",
-            attrs: { id: "trp-save", type: "submit" }
-          },
-          [_vm._v("Save translation")]
-        )
-      ])
+      _c(
+        "span",
+        {
+          staticClass: "trp-ajax-loader",
+          staticStyle: { display: "none" },
+          attrs: { id: "trp-string-saved-ajax-loader" }
+        },
+        [_c("div", { staticClass: "trp-spinner" })]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "button-primary trp-save-string",
+          attrs: { id: "trp-save", type: "submit" }
+        },
+        [_vm._v("Save translation")]
+      )
     ])
   },
   function() {

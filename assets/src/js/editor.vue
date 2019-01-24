@@ -5,7 +5,7 @@
             <div class="trp-controls-container">
 
                 <div id="trp-close-save">
-                    <a id="trp-controls-close" href="#"></a>
+                    <a id="trp-controls-close" :href="closeURL"></a>
                     <div id="trp-save-container">
                         <span id="trp-translation-saved" style="display: none">Saved</span>
                         <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
@@ -86,6 +86,7 @@
 
 <script>
     import 'select2/dist/js/select2.min.js'
+    import utils from './utils';
     import axios from 'axios'
 
     export default {
@@ -120,6 +121,23 @@
                 selectData      : {},
             }
         },
+        created(){
+            this.settings['default-language-name'] = this.languages[ this.settings['default-language'] ]
+            this.selectors = this.prepareSelectorStrings()
+        },
+        mounted(){
+            // initialize select2
+            jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
+            //@todo add template
+            jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', width : '100%' })
+
+            // show overlay when select is opened
+            jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
+                jQuery( '#trp_select2_overlay' ).fadeIn( '100' )
+            }).on( 'select2:close', function() {
+                jQuery( '#trp_select2_overlay' ).hide()
+            })
+        },
         watch: {
             dictionary: {
                 handler : function ( newDictionary, oldDictionary ) {
@@ -152,22 +170,10 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             }
         },
-        created(){
-            this.settings['default-language-name'] = this.languages[ this.settings['default-language'] ]
-            this.selectors = this.prepareSelectorStrings()
-        },
-        mounted(){
-            // initialize select2
-            jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            //@todo add template
-            jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', width : '100%' })
-
-            // show overlay when select is opened
-            jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
-                jQuery( '#trp_select2_overlay' ).fadeIn( '100' )
-            }).on( 'select2:close', function() {
-                jQuery( '#trp_select2_overlay' ).hide()
-            })
+        computed: {
+            closeURL: function() {
+                return this.cleanURL( this.currentURL )
+            }
         },
         methods: {
             iFrameLoaded(){
@@ -257,6 +263,16 @@
             parentURL( url ) {
                 return url.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' )
             },
+            cleanURL( url ) {
+                //make removeUrlParameter recursive and only call it once with all the parameters that
+                //need to stripped ?
+                url = utils.removeUrlParameter( url, 'lang' )
+                url = utils.removeUrlParameter( url, 'trp-view-as' )
+                url = utils.removeUrlParameter( url, 'trp-view-as-nonce' )
+                url = utils.removeUrlParameter( url, 'trp-edit-translation' )
+
+                return url
+            }
         },
         //add support for v-model in select2
         directives: {

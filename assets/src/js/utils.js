@@ -1,27 +1,29 @@
-//borrowed from David Walsh : https://davidwalsh.name/javascript-debounce-function
-function debounce(func, wait, immediate) {
-    let timeout;
+function removeUrlParameter( url, parameter ) {
 
-    return function () {
-        const context = this;
+    let parts = url.split( '?' )
 
-        const args = arguments;
+    if ( parts.length >= 2 ) {
 
-        const later = function () {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
+        let prefix = encodeURIComponent( parameter ) + '='
+        let pairs = parts[1].split( /[&;]/g )
 
-        const callNow = immediate && !timeout;
+        //reverse iteration as may be destructive
+        for ( let i = pairs.length; i-- > 0; ) {
+            //idiom for string.startsWith
+            if ( pairs[i].lastIndexOf(prefix, 0) !== -1 ) {
+                pairs.splice(i, 1)
+            }
+        }
 
-        clearTimeout(timeout);
+        url = parts[0] + ( pairs.length > 0 ? '?' + pairs.join('&') : "" )
 
-        timeout = setTimeout(later, wait);
+        return url
 
-        if (callNow) func.apply(context, args);
-    };
+    } else {
+        return url
+    }
 }
 
 export default {
-    debounce
-};
+    removeUrlParameter
+}
