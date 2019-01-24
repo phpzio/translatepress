@@ -26,6 +26,10 @@
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
     $current_url = $url_converter->cur_page_url();
 
+    //@TODO: needs to be removed; this is necessary because on `localhost:3000` the TRP URL function returns a protcol relative URL ( e.g. //yoursite.com )
+    //and we need to compare the URL with the one from the iFrame (which has the protocol added)
+    $current_url = 'http:' . $current_url;
+
     //@todo
     $selectors = array('', '-alt', '-src' );
 

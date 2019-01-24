@@ -90,15 +90,14 @@
 /*!**********************************!*\
   !*** ./assets/src/js/editor.vue ***!
   \**********************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _editor_vue_vue_type_template_id_b046e8ec___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./editor.vue?vue&type=template&id=b046e8ec& */ "./assets/src/js/editor.vue?vue&type=template&id=b046e8ec&");
 /* harmony import */ var _editor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./editor.vue?vue&type=script&lang=js& */ "./assets/src/js/editor.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _editor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _editor_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -128,7 +127,7 @@ component.options.__file = "assets/src/js/editor.vue"
 /*!***********************************************************!*\
   !*** ./assets/src/js/editor.vue?vue&type=script&lang=js& ***!
   \***********************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -621,7 +620,7 @@ Axios.prototype.request = function request(config) {
     }, arguments[1]);
   }
 
-  config = utils.merge(defaults, {method: 'get'}, this.defaults, config);
+  config = utils.merge(defaults, this.defaults, { method: 'get' }, config);
   config.method = config.method.toLowerCase();
 
   // Hook up interceptors middleware
@@ -1038,10 +1037,6 @@ var defaults = {
     return data;
   }],
 
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
   timeout: 0,
 
   xsrfCookieName: 'XSRF-TOKEN',
@@ -1196,7 +1191,9 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
       if (utils.isArray(val)) {
         key = key + '[]';
-      } else {
+      }
+
+      if (!utils.isArray(val)) {
         val = [val];
       }
 
@@ -1968,6 +1965,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1975,20 +1974,50 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   data: function data() {
     return {
       settings: JSON.parse(this.trp_settings),
-      domain: 'translatepress-multilingual',
-      translation: wp.i18n,
       languages: JSON.parse(this.available_languages),
       roles: JSON.parse(this.view_as_roles),
-      currentLanguage: this.current_language,
       selectors: JSON.parse(this.string_selectors),
       nonces: JSON.parse(this.editor_nonces),
+      stringTypes: ['regular', 'gettext', 'dynamic'],
+      currentLanguage: this.current_language,
+      currentURL: this.current_url,
       iframe: '',
-      dictionaryRegular: [],
-      dictionaryGettext: [],
-      dictionaryDynamic: [],
-      selectData: [],
-      selectedString: ''
+      dictionary: {
+        regular: {},
+        gettext: {},
+        dynamic: {}
+      },
+      selectedString: '',
+      selectData: {}
     };
+  },
+  watch: {
+    dictionary: {
+      handler: function handler(newDictionary, oldDictionary) {
+        // value: index nou
+        // select Data must know  the type of string and the db-id
+        //
+        // when searching for secondary languages, we cannot use id, they need to be matched by the original string
+        //
+        //maybe put original as key. BUT for getttext the original is not unique. it would be unique if we concatenate domain and original. So NO, don't do this
+        var self = this;
+        this.selectData = {};
+        this.stringTypes.forEach(function (type) {
+          if (Object.keys(newDictionary[type]).length > 0) {
+            Object.assign(self.selectData, newDictionary[type][self.on_screen_language]);
+          }
+        });
+      },
+      deep: true
+    },
+    currentLanguage: function currentLanguage(_currentLanguage, oldLanguage) {
+      //grab the correct URL from the iFrame
+      var newURL = this.iframe.querySelector('link[hreflang="' + _currentLanguage.replace('_', '-') + '"]').getAttribute('href');
+      this.currentURL = newURL;
+    },
+    currentURL: function currentURL(newUrl, oldUrl) {
+      window.history.replaceState(null, null, this.parentURL(newUrl));
+    }
   },
   created: function created() {
     this.settings['default-language-name'] = this.languages[this.settings['default-language']];
@@ -1996,14 +2025,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
   mounted: function mounted() {
     // initialize select2
-    jQuery('#trp-language-select').select2({
+    jQuery('#trp-language-select, #trp-view-as-select').select2({
       width: '100%'
-    });
+    }); //@todo add template
+
     jQuery('#trp-string-categories').select2({
       placeholder: 'Select string to translate...',
-      width: '100%'
-    });
-    jQuery('#trp-view-as-select').select2({
       width: '100%'
     }); // show overlay when select is opened
 
@@ -2014,36 +2041,25 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     });
   },
   methods: {
-    prepareSelectorStrings: function prepareSelectorStrings() {
-      var parsed_selectors = [];
-      this.selectors.forEach(function (selector, index) {
-        parsed_selectors.push('data-trp-translate-id' + selector);
-        parsed_selectors.push('data-trpgettextoriginal' + selector);
-      });
-      return parsed_selectors;
-    },
-    translations: function translations() {
-      var _wp$i18n = wp.i18n,
-          __ = _wp$i18n.__,
-          _x = _wp$i18n._x,
-          _n = _wp$i18n._n,
-          _nx = _wp$i18n._nx;
-
-      var str = __('Saved!', this.domain);
-
-      console.log(str);
-    },
-    onLoadIframe: function onLoadIframe() {
-      //setup iframe
+    iFrameLoaded: function iFrameLoaded() {
       var iframeElement = document.querySelector('#trp-preview-iframe');
-      var app = this;
-      this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document; //setup string array
+      this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document; //parent URL needs to match iFrame URL
 
+      if (this.currentURL != this.iframe.URL) this.currentURL = this.iframe.URL;
+      this.init();
+    },
+    init: function init() {
+      //setup every to make the editor work after the iFrame has loaded
+      this.setupDictionaries();
+    },
+    setupDictionaries: function setupDictionaries() {
+      //setup strings array based on iFrame
+      var self = this;
       var regularStringIdsArray = [];
       var gettextStringIdsArray = [];
       var nodes = this.iframe.querySelectorAll('[' + this.selectors.join('],[') + ']');
       nodes.forEach(function (node) {
-        app.selectors.some(function (selector) {
+        self.selectors.some(function (selector) {
           var stringId = node.getAttribute(selector);
 
           if (stringId) {
@@ -2060,39 +2076,43 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
           return false;
         });
-      }); // unique array of ids
+      }); //unique ids only
 
-      gettextStringIdsArray = _toConsumableArray(new Set(gettextStringIdsArray));
-      /* REGULAR */
-      //setup POST data
+      gettextStringIdsArray = _toConsumableArray(new Set(gettextStringIdsArray)); //grab Regular strings
 
       var data = new FormData();
       data.append('action', 'trp_get_translations');
       data.append('all_languages', 'true');
       data.append('security', this.nonces['gettranslationsnonce']);
       data.append('language', this.on_screen_language);
-      data.append('strings', JSON.stringify(regularStringIdsArray)); //make ajax request
-
+      data.append('strings', JSON.stringify(regularStringIdsArray));
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(this.ajax_url, data).then(function (response) {
-        app.dictionaryRegular = response.data; //app.selectData = response.data[app.on_screen_language]
+        self.dictionary.regular = response.data;
       }).catch(function (error) {
         console.log(error);
-      });
-      /* GETTEXT */
-      //setup POST data
+      }); //grab Gettext strings
 
       data = new FormData();
       data.append('action', 'trp_gettext_get_translations');
       data.append('security', this.nonces['gettextgettranslationsnonce']);
       data.append('language', this.currentLanguage);
-      data.append('gettext_string_ids', JSON.stringify(gettextStringIdsArray)); //make ajax request
-
+      data.append('gettext_string_ids', JSON.stringify(gettextStringIdsArray));
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(this.ajax_url, data).then(function (response) {
-        //      console.log(response.data);
-        app.dictionaryGettext = response.data; //app.selectData = response.data[app.on_screen_language]
+        self.dictionary.gettext = response.data;
       }).catch(function (error) {
         console.log(error);
       });
+    },
+    prepareSelectorStrings: function prepareSelectorStrings() {
+      var parsed_selectors = [];
+      this.selectors.forEach(function (selector, index) {
+        parsed_selectors.push('data-trp-translate-id' + selector);
+        parsed_selectors.push('data-trpgettextoriginal' + selector);
+      });
+      return parsed_selectors;
+    },
+    parentURL: function parentURL(url) {
+      return url.replace('trp-edit-translation=preview', 'trp-edit-translation=true');
     }
   },
   //add support for v-model in select2
@@ -2652,31 +2672,7 @@ var render = function() {
   return _c("div", { attrs: { id: "trp-editor" } }, [
     _c("div", { attrs: { id: "trp-controls" } }, [
       _c("div", { staticClass: "trp-controls-container" }, [
-        _c("div", { attrs: { id: "trp-close-save" } }, [
-          _c("a", { attrs: { id: "trp-controls-close", href: "#" } }),
-          _vm._v(" "),
-          _c("div", { attrs: { id: "trp-save-container" } }, [
-            _c(
-              "span",
-              {
-                staticStyle: { display: "none" },
-                attrs: { id: "trp-translation-saved" }
-              },
-              [_vm._v(_vm._s(_vm.translation.__("Saved!", _vm.domain)))]
-            ),
-            _vm._v(" "),
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "button-primary trp-save-string",
-                attrs: { id: "trp-save", type: "submit" }
-              },
-              [_vm._v("Save translation")]
-            )
-          ])
-        ]),
+        _vm._m(0),
         _vm._v(" "),
         _c("div", { staticClass: "trp-controls-section" }, [
           _c("div", { staticClass: "trp-controls-section-content" }, [
@@ -2869,8 +2865,8 @@ var render = function() {
     _vm._v(" "),
     _c("div", { attrs: { id: "trp-preview" } }, [
       _c("iframe", {
-        attrs: { id: "trp-preview-iframe", src: _vm.current_url },
-        on: { load: _vm.onLoadIframe }
+        attrs: { id: "trp-preview-iframe", src: _vm.currentURL },
+        on: { load: _vm.iFrameLoaded }
       })
     ])
   ])
@@ -2880,15 +2876,39 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c(
-      "span",
-      {
-        staticClass: "trp-ajax-loader",
-        staticStyle: { display: "none" },
-        attrs: { id: "trp-string-saved-ajax-loader" }
-      },
-      [_c("div", { staticClass: "trp-spinner" })]
-    )
+    return _c("div", { attrs: { id: "trp-close-save" } }, [
+      _c("a", { attrs: { id: "trp-controls-close", href: "#" } }),
+      _vm._v(" "),
+      _c("div", { attrs: { id: "trp-save-container" } }, [
+        _c(
+          "span",
+          {
+            staticStyle: { display: "none" },
+            attrs: { id: "trp-translation-saved" }
+          },
+          [_vm._v("Saved")]
+        ),
+        _vm._v(" "),
+        _c(
+          "span",
+          {
+            staticClass: "trp-ajax-loader",
+            staticStyle: { display: "none" },
+            attrs: { id: "trp-string-saved-ajax-loader" }
+          },
+          [_c("div", { staticClass: "trp-spinner" })]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "button-primary trp-save-string",
+            attrs: { id: "trp-save", type: "submit" }
+          },
+          [_vm._v("Save translation")]
+        )
+      ])
+    ])
   },
   function() {
     var _vm = this
@@ -3442,12 +3462,12 @@ var config = ({
   /**
    * Show production mode tip message on boot?
    */
-  productionTip: "development " !== 'production',
+  productionTip: "development" !== 'production',
 
   /**
    * Whether to enable devtools
    */
-  devtools: "development " !== 'production',
+  devtools: "development" !== 'production',
 
   /**
    * Whether to record perf
@@ -4414,7 +4434,7 @@ strats.computed = function (
   vm,
   key
 ) {
-  if (childVal && "development " !== 'production') {
+  if (childVal && "development" !== 'production') {
     assertObjectType(key, childVal, vm);
   }
   if (!parentVal) { return childVal }
@@ -14172,8 +14192,8 @@ module.exports = g;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\local\wp-content\plugins\translatepress\assets\src\js\trp-editor.js */"./assets/src/js/trp-editor.js");
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\local\wp-content\plugins\translatepress\assets\src\scss\trp-editor.scss */"./assets/src/scss/trp-editor.scss");
+__webpack_require__(/*! /home/moonbas3/dev/vvv/www/pms/public_html/wp-content/plugins/translatepress/assets/src/js/trp-editor.js */"./assets/src/js/trp-editor.js");
+module.exports = __webpack_require__(/*! /home/moonbas3/dev/vvv/www/pms/public_html/wp-content/plugins/translatepress/assets/src/scss/trp-editor.scss */"./assets/src/scss/trp-editor.scss");
 
 
 /***/ }),

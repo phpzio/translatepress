@@ -7,7 +7,7 @@
                 <div id="trp-close-save">
                     <a id="trp-controls-close" href="#"></a>
                     <div id="trp-save-container">
-                        <span id="trp-translation-saved" style="display: none">{{ translation.__( 'Saved!', domain ) }}</span>
+                        <span id="trp-translation-saved" style="display: none">Saved</span>
                         <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
                             <div class="trp-spinner"></div>
                         </span>
@@ -25,6 +25,8 @@
                         </div>
 
 
+                        <!-- @NOTE: If we really want to add those optgroups we can create a component for this select
+                        Just need to figure out how to pass the selectedString to the main instance. I think we can use a js event -->
                         <div id="trp-string-list">
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
                                 <option v-for="(option, optionIndex) in selectData" :value="option.id" :key="optionIndex">{{option.original}}</option>
@@ -77,7 +79,7 @@
         </div>
 
         <div id="trp-preview">
-            <iframe id="trp-preview-iframe" :src="current_url" v-on:load="onLoadIframe"></iframe>
+            <iframe id="trp-preview-iframe" :src="currentURL" v-on:load="iFrameLoaded"></iframe>
         </div>
     </div>
 </template>
@@ -101,20 +103,19 @@
         data(){
             return {
                 settings        : JSON.parse( this.trp_settings ),
-                domain          : 'translatepress-multilingual',
-                translation     : wp.i18n,
                 languages       : JSON.parse( this.available_languages ),
                 roles           : JSON.parse( this.view_as_roles ),
-                currentLanguage : this.current_language,
                 selectors       : JSON.parse( this.string_selectors ),
                 nonces          : JSON.parse( this.editor_nonces),
+                stringTypes     : [ 'regular', 'gettext', 'dynamic' ],
+                currentLanguage : this.current_language,
+                currentURL      : this.current_url,
                 iframe          : '',
                 dictionary      : {
                     regular         : {},
                     gettext         : {},
-                    dynamic         : {}
+                    dynamic         : {},
                 },
-                stringTypes     : [ 'regular', 'gettext', 'dynamic' ],
                 selectedString  : '',
                 selectData      : {},
             }
@@ -125,18 +126,30 @@
 
                     // value: index nou
                     // select Data must know  the type of string and the db-id
-
+                    //
+                    // when searching for secondary languages, we cannot use id, they need to be matched by the original string
+                    //
                     //maybe put original as key. BUT for getttext the original is not unique. it would be unique if we concatenate domain and original. So NO, don't do this
 
-                    let app = this
+                    let self = this
                     this.selectData = {};
                     this.stringTypes.forEach( function( type ){
                         if ( Object.keys(newDictionary[type]).length > 0 ){
-                            Object.assign( app.selectData, newDictionary[type][app.on_screen_language] )
+                            Object.assign( self.selectData, newDictionary[type][self.on_screen_language] )
                         }
                     })
                 },
                 deep : true
+            },
+            currentLanguage: function( currentLanguage, oldLanguage ) {
+
+                //grab the correct URL from the iFrame
+                let newURL = this.iframe.querySelector( 'link[hreflang="' + currentLanguage.replace( '_', '-' ) +'"]' ).getAttribute('href')
+
+                this.currentURL = newURL
+            },
+            currentURL: function ( newUrl, oldUrl ) {
+                window.history.replaceState( null, null, this.parentURL( newUrl ) )
             }
         },
         created(){
@@ -145,10 +158,9 @@
         },
         mounted(){
             // initialize select2
-            jQuery( '#trp-language-select' ).select2( { width : '100%' })
+            jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
             //@todo add template
             jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', width : '100%' })
-            jQuery( '#trp-view-as-select' ).select2( { width : '100%' })
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -158,35 +170,30 @@
             })
         },
         methods: {
-            prepareSelectorStrings(){
-                let parsed_selectors = []
-                this.selectors.forEach( function ( selector, index ){
-                    parsed_selectors.push( 'data-trp-translate-id' + selector  )
-                    parsed_selectors.push( 'data-trpgettextoriginal' + selector  )
-                })
-
-                return parsed_selectors
-            },
-            translations(){
-                const { __, _x, _n, _nx } = wp.i18n
-
-                let str = __( 'Saved!', this.domain )
-
-                console.log( str )
-            },
-            onLoadIframe(){
-                //setup iframe
+            iFrameLoaded(){
                 let iframeElement = document.querySelector('#trp-preview-iframe')
-                let app = this
 
                 this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document
 
-                //setup string array
+                //parent URL needs to match iFrame URL
+                if ( this.currentURL != this.iframe.URL )
+                    this.currentURL = this.iframe.URL
+
+                this.init()
+            },
+            init(){
+                //setup every to make the editor work after the iFrame has loaded
+                this.setupDictionaries();
+            },
+            setupDictionaries(){
+                //setup strings array based on iFrame
+                let self                  = this
                 let regularStringIdsArray = []
                 let gettextStringIdsArray = []
-                let nodes = this.iframe.querySelectorAll( '[' + this.selectors.join('],[') + ']' )
-                nodes.forEach( function ( node ) {
-                    app.selectors.some( function ( selector ) {
+                let nodes                 = this.iframe.querySelectorAll( '[' + this.selectors.join('],[') + ']' )
+
+                nodes.forEach( function ( node ){
+                    self.selectors.some( function ( selector ){
                         let stringId = node.getAttribute( selector )
 
                         if ( stringId ){
@@ -202,44 +209,53 @@
                     })
                 })
 
-                // unique array of ids
-                gettextStringIdsArray = [...new Set(gettextStringIdsArray)];
+                //unique ids only
+                gettextStringIdsArray = [...new Set(gettextStringIdsArray)]
 
-                /* REGULAR */
-                //setup POST data
-                let data = new FormData();
-                    data.append('action', 'trp_get_translations');
-                    data.append('all_languages', 'true');
-                    data.append('security', this.nonces['gettranslationsnonce']);
-                    data.append('language', this.on_screen_language);
-                    data.append('strings', JSON.stringify( regularStringIdsArray ) );
-                //make ajax request
+                //grab Regular strings
+                let data = new FormData()
+                    data.append('action'       , 'trp_get_translations')
+                    data.append('all_languages', 'true')
+                    data.append('security'     , this.nonces['gettranslationsnonce'])
+                    data.append('language'     , this.on_screen_language)
+                    data.append('strings'      , JSON.stringify( regularStringIdsArray ) )
+
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        app.dictionary.regular = response.data
-                        //app.selectData = response.data[app.on_screen_language]
+                        self.dictionary.regular = response.data
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
 
-                /* GETTEXT */
-                //setup POST data
-                data = new FormData();
-                    data.append('action', 'trp_gettext_get_translations');
-                    data.append('security', this.nonces['gettextgettranslationsnonce']);
-                    data.append('language', this.currentLanguage);
-                    data.append('gettext_string_ids', JSON.stringify( gettextStringIdsArray ) );
+                //grab Gettext strings
+                data = new FormData()
+                    data.append('action'            , 'trp_gettext_get_translations')
+                    data.append('security'          , this.nonces['gettextgettranslationsnonce'])
+                    data.append('language'          , this.currentLanguage)
+                    data.append('gettext_string_ids', JSON.stringify( gettextStringIdsArray ) )
 
-                //make ajax request
+
                 axios.post( this.ajax_url, data )
-                    .then(function (response) {
-                        app.dictionary.gettext = response.data
+                    .then(function (response){
+                        self.dictionary.gettext = response.data
                     })
-                    .catch(function (error) {
-                        console.log(error);
+                    .catch(function (error){
+                        console.log(error)
                     });
+            },
+            prepareSelectorStrings(){
+                let parsed_selectors = []
 
+                this.selectors.forEach( function ( selector, index ){
+                    parsed_selectors.push( 'data-trp-translate-id' + selector  )
+                    parsed_selectors.push( 'data-trpgettextoriginal' + selector  )
+                })
+
+                return parsed_selectors
+            },
+            parentURL( url ) {
+                return url.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' )
             },
         },
         //add support for v-model in select2
@@ -252,7 +268,7 @@
                     })
 
                     jQuery(el).on('select2:unselect', () => {
-                        const event = new Event('change', {bubbles: true, cancelable: true})
+                        const event = new Event('change', { bubbles: true, cancelable: true })
                         el.dispatchEvent(event)
                     })
                 },
