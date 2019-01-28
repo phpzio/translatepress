@@ -79,14 +79,14 @@
         </div>
 
         <div id="trp-preview">
-            <iframe id="trp-preview-iframe" :src="currentURL" v-on:load="iFrameLoaded"></iframe>
+            <iframe id="trp-preview-iframe" :src="urlToLoad" v-on:load="iFrameLoaded"></iframe>
         </div>
     </div>
 </template>
 
 <script>
     import 'select2/dist/js/select2.min.js'
-    import utils from './utils';
+    import utils from './utils'
     import axios from 'axios'
 
     export default {
@@ -96,7 +96,7 @@
             'current_language',
             'on_screen_language',
             'view_as_roles',
-            'current_url',
+            'url_to_load',
             'string_selectors',
             'ajax_url',
             'editor_nonces'
@@ -110,7 +110,8 @@
                 nonces          : JSON.parse( this.editor_nonces),
                 stringTypes     : [ 'regular', 'gettext', 'dynamic' ],
                 currentLanguage : this.current_language,
-                currentURL      : this.current_url,
+                currentURL      : this.url_to_load,
+                urlToLoad       : this.url_to_load,
                 iframe          : '',
                 dictionary      : {
                     regular         : {},
@@ -141,26 +142,34 @@
         },
         watch: {
             dictionary: {
-                handler : function ( newDictionary, oldDictionary ) {
+                handler : function ( newDictionary ) {
 
                     // value: index nou
                     // select Data must know  the type of string and the db-id
                     //
                     // when searching for secondary languages, we cannot use id, they need to be matched by the original string
-                    //
-                    //maybe put original as key. BUT for getttext the original is not unique. it would be unique if we concatenate domain and original. So NO, don't do this
-
                     let self = this
-                    this.selectData = {};
-                    this.stringTypes.forEach( function( type ){
-                        if ( Object.keys(newDictionary[type]).length > 0 ){
+                    this.selectData = [];
+                    this.stringTypes.forEach( function( type ) {
+                        if (Object.keys(newDictionary[type]).length > 0) {
                             Object.assign( self.selectData, newDictionary[type][self.on_screen_language] )
+
+                            // Instead of molding the data structure to what we need, we should add an intermediate step in PHP that will prepare data the way we need it.
+                            // The way we need it is like this: An array with all the strings (gettext, regular, etc)
+                            // This array will contain entries with the following properties: ID (db-id), type (gettext/regular/dynamic), translation for all languages, and other properties (domain, block_type, status)
+
+                            /*Object.keys(this.newDictionary[type][self.on_screen_language]).forEach( function ( string ) {
+                                selectData.push( string );
+                            })*/
                         }
                     })
+
+
+                    console.log(this.selectData)
                 },
                 deep : true
             },
-            currentLanguage: function( currentLanguage, oldLanguage ) {
+            currentLanguage: function( currentLanguage ) {
 
                 //grab the correct URL from the iFrame
                 let newURL = this.iframe.querySelector( 'link[hreflang="' + currentLanguage.replace( '_', '-' ) +'"]' ).getAttribute('href')
@@ -169,6 +178,9 @@
             },
             currentURL: function ( newUrl, oldUrl ) {
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
+            },
+            selectedString: function ( newString, oldString ){
+                console.log( newString );
             }
         },
         computed: {

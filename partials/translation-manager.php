@@ -66,7 +66,7 @@
             current_language="<?php echo $TRP_LANGUAGE; ?>"
             on_screen_language="<?php echo ( isset( $translation_languages[0] ) ) ? $translation_languages[0] : 'null' ; ?>"
             view_as_roles='<?php echo json_encode( $view_as_roles ); ?>'
-            current_url="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
+            url_to_load="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
             string_selectors='<?php echo json_encode( $selectors ); ?>'
             editor_nonces='<?php echo json_encode( $translation_manager->editor_nonces() ); ?>'
             ajax_url = '<?php echo apply_filters( 'trp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
