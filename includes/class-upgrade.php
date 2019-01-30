@@ -41,7 +41,11 @@ class TRP_Upgrade {
 		if( empty($stored_database_version) || version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '>' ) ){
 			$this->check_if_gettext_tables_exist();
 			$this->trp_query->check_for_block_type_column();
-			$this->check_for_full_trim_originals( $stored_database_version );
+		}
+		if( !empty( $stored_database_version ) ) {
+			if ( version_compare( '1.4.0', $stored_database_version, '>' ) ) {
+				update_option( 'trp_updated_database_full_trim_originals_140', 'no' );
+			}
 		}
 
 		update_option( 'trp_plugin_version', TRP_PLUGIN_VERSION );
@@ -62,14 +66,6 @@ class TRP_Upgrade {
 		}
 	}
 
-	/**
-	 * Sets an option to know that an upgrade is needed
-	 */
-	public function check_for_full_trim_originals( $stored_database_version ){
-		if ( version_compare( '1.4.0', $stored_database_version, '>' ) ){
-			update_option( 'trp_updated_database_full_trim_originals_140', 'no' );
-		}
-	}
 
 	/**
 	 * Show admin notice about updating database
