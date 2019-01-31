@@ -355,7 +355,7 @@ class TRP_Translation_Render{
 		    }
 		    $merge_rules = $this->translation_manager->get_merge_rules();
 	    }
-        $html = TranslatePress\str_get_html($output, true, true, TranslatePress\DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+        $html = TranslatePress\str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         /**
          * When we are in the translation editor: Intercept the trp-gettext that was wrapped around all the gettext texts, grab the attribute data-trpgettextoriginal
@@ -444,7 +444,7 @@ class TRP_Translation_Render{
                         }
 
                         // convert to a node
-                        $node_from_value = TranslatePress\str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
+                        $node_from_value = TranslatePress\str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)), true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
                         foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
                             $nfv_row->outertext = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $node_from_value->save() );
