@@ -541,7 +541,7 @@ class TRP_Query{
         $values = array();
         foreach( $original_array as $string ){
             $placeholders[] = '%s';
-            $values[] = trp_full_trim( $string );
+            $values[] = $string;
         }
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";

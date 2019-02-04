@@ -874,7 +874,7 @@ class TRP_Translation_Manager{
                     $trp_translated_gettext_text = $trp_translated_gettext_texts[$domain . '::' . $text];
 
                     if( !empty( $trp_translated_gettext_text['translated'] ) && $translation != $trp_translated_gettext_text['translated'] ) {
-                        $translation = $trp_translated_gettext_text['translated'];
+	                    $translation = str_replace( trim($text), $trp_translated_gettext_text['translated'], $text );
                     }
                     $db_id = $trp_translated_gettext_text['id'];
                     $found_in_db = true;
