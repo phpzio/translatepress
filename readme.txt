@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 5.0.3
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,7 @@ https://www.youtube.com/watch?v=pUlYisvBm8g
 * Conditional display content shortcode based on language [trp_language language="en_US"] English content only [/trp_language]
 * Possibility to edit gettext strings from themes and plugins from english to english, without adding another language. Basically a string-replace functionality.
 * Translation Block feature in which you can translate multiple html elements together
+* Native **Gutenberg** support
 
 Note: this WordPress translation plugin uses the Google Translation API to translate the strings on your site. This feature can be enabled or disabled according to your preferences.
 
@@ -124,6 +125,10 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.4.1 =
+* Added PHP 7.3 support
+* Performance improvements
+
 = 1.4.0 =
 * Added Enfold compatibility by increasing the template_include hook priority
 * Add the costa rica flag
