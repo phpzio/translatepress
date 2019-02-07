@@ -68,7 +68,7 @@ class TRP_Url_Converter {
         }
 
         //consider an admin request a call to the rest api that came from the admin area
-        if( false !== strpos( $current_url, '/wp-json/wp/v2/' ) && 0 === strpos( $referrer, $admin_url ) ){
+        if( false !== strpos( $current_url, '/wp-json/' ) && 0 === strpos( $referrer, $admin_url ) ){
             return true;
         }
 
