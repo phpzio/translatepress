@@ -269,7 +269,7 @@ function TRP_Translator(){
         observer.observe( document.body , config );
 
         jQuery( document ).ajaxComplete(function( event, request, settings ) {
-            if( window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
+            if( typeof window.parent.jQuery !== "undefined" && window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
                 var settingsdata = "" + settings.data;
                 if( typeof settings.data == 'undefined' || jQuery.isEmptyObject( settings.data ) || settingsdata.indexOf('action=trp_') === -1 ) {
                     window.parent.jQuery('#trp-preview-iframe').trigger('trp_page_loaded');
