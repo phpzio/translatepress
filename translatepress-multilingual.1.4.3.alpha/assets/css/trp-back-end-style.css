@@ -1,0 +1,144 @@
+/* Free */
+
+table#trp-options td{
+    padding-left: 28px;
+}
+
+span.select2-container{
+    width: 240px !important;
+}
+
+#trp-options .trp-text-input{
+    width:40%;
+}
+
+#trp-options .trp-select{
+    min-width:240px;
+}
+
+#trp-published-language{
+    margin-left: 20px;
+}
+
+#trp-url-slug{
+    margin-left: 5px;
+}
+
+.nav-tab.trp-translation-editor {
+    background-color: #0085ba;
+    color: #ffffff;
+}
+
+.nav-tab.trp-translation-editor:hover {
+    background-color: #008ec2;
+}
+
+.nav-tab.trp-translation-editor:focus {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+
+/**************************************************/
+/* Extra styling for admin notices
+/**************************************************/
+div.trp-notice {
+    position: relative;
+}
+
+div.trp-notice:after {
+    display: block;
+    content: '';
+    clear: both;
+}
+
+div.trp-notice.trp-narrow {
+    max-width: 825px;
+}
+
+div.trp-notice .notice-dismiss {
+    text-decoration: none;
+}
+
+.wrap div.trp-admin-notice {
+    margin-bottom: 0;
+}
+
+
+/* PRO */
+/*
+ *  Language Selector
+ */
+#trp-languages-table{
+    width: 1px;
+    margin-left: -42px
+}
+table#trp-languages-table td{
+    padding: 5px;
+}
+
+table#trp-languages-table th{
+    text-align: center;
+}
+
+.trp-language{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+input.trp-translation-published{
+    margin-top: 1px;
+}
+
+.trp-code-slug{
+    width: 65px;
+}
+
+.trp-sortable-handle{
+    background: url('../images/sorting-icon-dots.png') no-repeat center center;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 7px;
+    cursor: move;
+    margin-top: -1px;
+}
+
+#trp-new-language{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.trp-remove-language{
+    color: #a00;
+    cursor: pointer;
+}
+
+.trp-remove-language:hover{
+    color: red;
+}
+
+#trp-add-language{
+    margin-left: 10px;
+}
+
+.trp-ls-type{
+    margin-bottom: 20px;
+}
+
+.trp-ls-select-option{
+    margin-top: 10px;
+}
+
+.warning,
+.trp-upsell-multiple-languages{
+    border: 1px solid #a00;
+    padding: 1rem;
+    background: #fff;
+    max-width:800px;
+}
+
+.trp-settings-delimiter-border {
+    border-top: 1px solid #d9d9d9;
+}
