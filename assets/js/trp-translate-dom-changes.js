@@ -105,7 +105,9 @@ function TRP_Translator(){
                 }
 
                 if ( ! translation_found ){
+                    _this.pause_observer();
                     queried_string.node.textContent = initial_value;
+                    _this.unpause_observer();
                 }
             }
             // this should always be outside the for loop
