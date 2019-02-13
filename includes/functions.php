@@ -625,15 +625,45 @@ function trp_bulk_debug($debug = false, $logger = array()){
  * Compatibility with WooCommerce PDF Invoices & Packing Slips
  * https://wordpress.org/plugins/woocommerce-pdf-invoices-packing-slips/
  *
- * @since 1.4.0
+ * @since 1.4.3
  *
- * @param string $html
- * @param object $instance
+ */
+// fix attachment name in email
+add_filter( 'wpo_wcpdf_filename', 'trp_woo_pdf_invoices_and_packing_slips_compatibility' );
+
+// fix #trpgettext inside invoice pdf
+add_filter( 'wpo_wcpdf_get_html', 'trp_woo_pdf_invoices_and_packing_slips_compatibility');
+function trp_woo_pdf_invoices_and_packing_slips_compatibility($title){
+	if ( class_exists( 'TRP_Translation_Manager' ) ) {
+		return 	TRP_Translation_Manager::strip_gettext_tags($title);
+	}
+}
+
+// fix font of pdf breaking because of str_get_html() call inside translate_page()
+add_filter( 'trp_stop_translating_page', 'trp_woo_pdf_invoices_and_packing_slips_compatibility_dont_translate_pdf', 10, 2 );
+function trp_woo_pdf_invoices_and_packing_slips_compatibility_dont_translate_pdf( $bool, $output ){
+	if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'generate_wpo_wcpdf' ) {
+		return true;
+	}
+	return $bool;
+}
+
+
+/**
+ * Compatibility with WooCommerce order notes
+ *
+ * When a new order is placed in secondary languages, in admin area WooCommerce->Orders->Edit Order, the right sidebar contains Order notes which can contain #trpst tags.
+ *
+ * @since 1.4.3
  */
 
-add_filter( 'wpo_wcpdf_get_html', 'trp_woo_pdf_invoices_and_packing_slips_compatibility', 10, 2);
-function trp_woo_pdf_invoices_and_packing_slips_compatibility($html, $instance){
-    $html = str_replace('#!trpst#', '<', $html);
-    $html = str_replace('#!trpen#', '>', $html);
-    return $html;
+// old orders
+add_filter( 'woocommerce_get_order_note', 'trp_woo_notes_strip_trpst' );
+// new orders
+add_filter( 'woocommerce_new_order_note_data', 'trp_woo_notes_strip_trpst' );
+function trp_woo_notes_strip_trpst( $note_array ){
+	foreach ( $note_array as $item => $value ){
+		$note_array[$item] = TRP_Translation_Manager::strip_gettext_tags( $value );
+	}
+	return $note_array;
 }
