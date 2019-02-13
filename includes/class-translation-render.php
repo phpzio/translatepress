@@ -261,6 +261,10 @@ class TRP_Translation_Render{
      * @return string               Translated HTML page.
      */
     public function translate_page( $output ){
+    	if ( apply_filters( 'trp_stop_translating_page', false, $output ) ){
+    		return $output;
+	    }
+
     	global $trp_editor_notices;
 
         /* replace our special tags so we have valid html */
