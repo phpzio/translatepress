@@ -190,11 +190,10 @@ function TRP_Translator(){
 
     function skip_string(node){
         // skip nodes containing these attributes
-        var attr_array = ['data-no-translation', 'data-no-dynamic-translation', 'data-trpgettextoriginal', 'data-trp-translate-id'];
-        for (var at = 0; at < attr_array.length ; at++ ){
-            if ( jQuery(node).closest( '[' + attr_array[ at ] + ']').length > 0 ){
+        var selectors = trp_data.trp_skip_selectors;
+        for (var i = 0; i < selectors.length ; i++ ){
+            if ( jQuery(node).closest( selectors[ i ] ).length > 0 ){
                 return true;
-
             }
         }
         return false;
