@@ -141,17 +141,7 @@ function TRP_Translator(){
                             jQuery(mutation.addedNodes[i]).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(mutation.addedNodes[i]).find('a').context.href);
                         }
 
-                        // skip nodes containing these attributes
-                        var attr_array = ['data-no-translation', 'data-no-dynamic-translation', 'data-trpgettextoriginal', 'data-trp-translate-id'];
-                        var skip_string = false;
-                        for (var at = 0; at < attr_array.length ; at++ ){
-                            var current_attribute = node.attr( attr_array[ at ] );
-                            if ( (typeof current_attribute !== typeof undefined && current_attribute !== false) || node.parents( '[' + attr_array[ at ] + ']').length > 0 ){
-                                skip_string = true;
-                                break;
-                            }
-                        }
-                        if ( skip_string ){
+                        if ( skip_string(node) ){
                             continue;
                         }
 
@@ -172,7 +162,7 @@ function TRP_Translator(){
                             var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
                             var all_strings = all_nodes.contents().filter(function(){
                                 if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                        if ( jQuery(this).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(this).closest( '[data-trp-translate-id]').length == 0 && jQuery(this).parents( '[data-no-translation]' ).length == 0 ){
+                                        if ( ! skip_string(this) ){
                                                 return this;
                                             }
                                     }});
@@ -198,9 +188,20 @@ function TRP_Translator(){
         }
     };
 
+    function skip_string(node){
+        // skip nodes containing these attributes
+        var selectors = trp_data.trp_skip_selectors;
+        for (var i = 0; i < selectors.length ; i++ ){
+            if ( jQuery(node).closest( selectors[ i ] ).length > 0 ){
+                return true;
+            }
+        }
+        return false;
+    }
+
     function get_string_from_node( node ){
         if( node.nodeType === 3 && /\S/.test(node.nodeValue) ){
-            if ( jQuery(node).closest( '[data-trpgettextoriginal]').length == 0 && jQuery(node).closest( '[data-trp-translate-id]').length == 0 && jQuery(this).parents( '[data-no-translation]' ).length == 0 ){
+            if ( ! skip_string(node) ){
                 return node;
             }
         }

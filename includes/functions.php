@@ -667,3 +667,15 @@ function trp_woo_notes_strip_trpst( $note_array ){
 	}
 	return $note_array;
 }
+
+/**
+ * Compatibility with WooCommerce country list on checkout.
+ *
+ * Skip detection by translate-dom-changes of the list of countries
+ *
+ */
+add_filter( 'trp_skip_selectors_from_dynamic_translation', 'trp_woo_skip_dynamic_translation' );
+function trp_woo_skip_dynamic_translation( $skip_selectors ){
+	$add_skip_selectors = array( '#select2-billing_country-results', '#select2-shipping_country-results' );
+	return array_merge( $skip_selectors, $add_skip_selectors );
+}
