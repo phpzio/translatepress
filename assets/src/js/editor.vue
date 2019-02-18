@@ -24,14 +24,11 @@
                             </select>
                         </div>
 
-
-                        <!-- @NOTE: If we really want to add those optgroups we can create a component for this select
-                        Just need to figure out how to pass the selectedString to the main instance. I think we can use a js event -->
                         <div id="trp-string-list">
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
-                                <option v-for="(option, optionIndex) in selectData" :value="option.id" :key="optionIndex">{{option.original}}</option>
-
-                                <!--<optgroup id="trp-gettext-strings-optgroup" label="Gettext Strings"></optgroup>-->
+                                <optgroup v-for="(type) in stringTypes" :label="type">
+                                    <option v-for="(string, index) in dictionary" :value="index" v-if="string.type == type">{{string.original}}</option>
+                                </optgroup>
                             </select>
                         </div>
 
@@ -108,18 +105,13 @@
                 roles           : JSON.parse( this.view_as_roles ),
                 selectors       : JSON.parse( this.string_selectors ),
                 nonces          : JSON.parse( this.editor_nonces),
-                stringTypes     : [ 'regular', 'gettext', 'dynamic' ],
                 currentLanguage : this.current_language,
                 currentURL      : this.url_to_load,
                 urlToLoad       : this.url_to_load,
                 iframe          : '',
-                dictionary      : {
-                    regular         : {},
-                    gettext         : {},
-                    dynamic         : {},
-                },
+                dictionary      : [],
+                stringTypes     : [],
                 selectedString : '',
-                selectData     : {},
                 nodes          : {},
             }
         },
@@ -141,34 +133,6 @@
             })
         },
         watch: {
-            dictionary: {
-                handler : function ( newDictionary ) {
-
-                    // value: index nou
-                    // select Data must know  the type of string and the db-id
-                    //
-                    // when searching for secondary languages, we cannot use id, they need to be matched by the original string
-                    let self = this
-                    this.selectData = [];
-                    this.stringTypes.forEach( function( type ) {
-                        if (Object.keys(newDictionary[type]).length > 0) {
-                            Object.assign( self.selectData, newDictionary[type][self.on_screen_language] )
-
-                            // Instead of molding the data structure to what we need, we should add an intermediate step in PHP that will prepare data the way we need it.
-                            // The way we need it is like this: An array with all the strings (gettext, regular, etc)
-                            // This array will contain entries with the following properties: ID (db-id), type (gettext/regular/dynamic), translation for all languages, and other properties (domain, block_type, status)
-
-                            /*Object.keys(this.newDictionary[type][self.on_screen_language]).forEach( function ( string ) {
-                                selectData.push( string );
-                            })*/
-                        }
-                    })
-
-
-                    console.log(this.selectData)
-                },
-                deep : true
-            },
             currentLanguage: function( currentLanguage ) {
 
                 //grab the correct URL from the iFrame
@@ -180,7 +144,17 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( newString, oldString ){
-                console.log( newString );
+                console.log( newString )
+            },
+            dictionary: function (){
+                let self = this
+                this.dictionary.forEach( function ( row ) {
+                    if ( self.stringTypes.indexOf( row.type ) === -1 ){
+                        self.stringTypes.push( row.type )
+                    }
+                })
+
+                //merge the data type info
             }
         },
         computed: {
@@ -219,6 +193,9 @@
                     self.selectors.some( function ( selector ){
                         let stringId = node.getAttribute( selector )
 
+                        // add these details now and merge them later
+                        //this.nodeInfo.push( { type, stringId, nodeType, relatedId } );
+
                         if ( stringId ){
                             if ( selector.includes('data-trpgettextoriginal') ){
                                 gettextStringIdsArray.push( stringId )
@@ -245,7 +222,7 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        self.dictionary.regular = response.data
+                        self.addToDictionary( response.data )
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -261,11 +238,16 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response){
-                        self.dictionary.gettext = response.data
+                        self.addToDictionary( response.data )
                     })
                     .catch(function (error){
                         console.log(error)
                     });
+            },
+            addToDictionary( data ){
+                if ( data != null ) {
+                    this.dictionary = this.dictionary.concat( data );
+                }
             },
             setupEventListeners(){
                 this.nodes.forEach( function ( node ){

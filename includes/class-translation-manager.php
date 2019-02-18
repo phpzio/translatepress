@@ -83,6 +83,7 @@ class TRP_Translation_Manager{
 			'areyousuresplittb'             => __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ),
 			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
 			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
+			'gettextstrings'                => __( 'Gettext Strings', 'translatepress-multilingual' ),
 			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
 			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
 		);
@@ -277,7 +278,9 @@ class TRP_Translation_Manager{
 			        }
 			        $block_type = $this->trp_query->get_constant_block_type_regular_string();
 	                $dictionaries = $this->get_translation_for_strings( $strings, $block_type );
-                    echo trp_safe_json_encode( $dictionaries );
+	                $localized_text = $this->localized_text();
+			        $dictionary_by_original = $this->sort_dictionary_by_original( $dictionaries, $localized_text['stringlist'] );
+                    echo trp_safe_json_encode( $dictionary_by_original );
                 }
             }
         }
@@ -372,8 +375,9 @@ class TRP_Translation_Manager{
                         $dictionaries[$lang][$key] = (object)$string;
                     }
                 }
-
-                die( trp_safe_json_encode( $dictionaries ) );
+		        $localized_text = $this->localized_text();
+		        $dictionary_by_original = $this->sort_dictionary_by_original( $dictionaries, $localized_text['gettextstrings'] );
+                die( trp_safe_json_encode( $dictionary_by_original ) );
 
             }
         }
@@ -477,6 +481,38 @@ class TRP_Translation_Manager{
         }
 	    echo trp_safe_json_encode( array() );
         die();
+    }
+
+    public function sort_dictionary_by_original( $dictionaries, $type ){
+    	$array = array();
+    	foreach( $dictionaries as $language => $dictionary ){
+    		if ( isset( $dictionary['default-language'] ) && $dictionary['default-language'] == true ){
+    			continue;
+		    }
+		    foreach( $dictionary as $string ) {
+    			if ( isset( $string->original ) ){
+    				$found = false;
+    				foreach( $array as $key => $row ){
+					    if ( $row['original'] == $string->original ){
+					    	$array[$key]['translationsArray'][$language] = $string;
+					    	unset($array[$key]['translationsArray'][$language]->original);
+						    $found = true;
+					    	break;
+					    }
+				    }
+				    if ( ! $found ){
+    					$original = $string->original;
+    					unset($string->original);
+    					$array[] = array(
+    						'original' => $original,
+						    'type' => $type,
+						    'translationsArray' => array( $language => $string )
+					    );
+				    }
+			    }
+			}
+	    }
+	    return $array;
     }
 
 	/**
