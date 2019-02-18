@@ -89,43 +89,17 @@ class TRP_Translation_Render{
         return false;
     }
 
-    /**
-     * Trim strings.
-     *
-     * @param string $string      Raw string.
-     * @return string           Trimmed string.
-     */
-    public function full_trim( $string ) {
-	    /* Make sure you update full_trim function from trp-ajax too*/
-
-        /* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
-        Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
-        Also removed \xA0 (the same as chr(160) for altering special characters */
-        //$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
-
-        /* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
-        /* Trim nbsp the same way as the whitespace above */
-        $prefixes = apply_filters( 'trp_trim_characters', array( "\xc2\xa0", "&nbsp;" ) );
-	    do{
-            $previous_iteration_string = $string;
-            $string = trim($string, " \t\n\r\0\x0B");
-	        foreach( $prefixes as $prefix ) {
-	            $prefix_length = strlen($prefix);
-                if (substr($string, 0, $prefix_length) == $prefix) {
-                    $string = substr($string, $prefix_length);
-                }
-                if (substr($string, -$prefix_length, $prefix_length) == $prefix) {
-                    $string = substr($string, 0, -$prefix_length);
-                }
-            }
-	    }while( $string != $previous_iteration_string );
-
-        if ( strip_tags( $string ) == "" || trim ($string, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
-	        $string = '';
-        }
-
-        return $string;
-    }
+	/**
+	 * Trim strings.
+	 * This function is kept for backwards compatibility for earlier versions of SEO Pack Add-on
+	 *
+	 * @deprecated
+	 * @param string $string      Raw string.
+	 * @return string           Trimmed string.
+	 */
+	public function full_trim( $string ) {
+		return trp_full_trim( $string );
+	}
 
     /**
      * Preview mode string category name for give node type.
@@ -240,7 +214,7 @@ class TRP_Translation_Render{
 	 * @return string
 	 */
     public function trim_translation_block( $string ){
-	    return preg_replace('/\s+/', ' ', strip_tags( html_entity_decode( htmlspecialchars_decode( $this->full_trim( $string ), ENT_QUOTES ) ) ));
+	    return preg_replace('/\s+/', ' ', strip_tags( html_entity_decode( htmlspecialchars_decode( trp_full_trim( $string ), ENT_QUOTES ) ) ));
     }
 
 	/**
@@ -287,6 +261,10 @@ class TRP_Translation_Render{
      * @return string               Translated HTML page.
      */
     public function translate_page( $output ){
+    	if ( apply_filters( 'trp_stop_translating_page', false, $output ) ){
+    		return $output;
+	    }
+
     	global $trp_editor_notices;
 
         /* replace our special tags so we have valid html */
@@ -371,15 +349,17 @@ class TRP_Translation_Render{
 	    if ( ! $this->translation_manager ) {
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
+	    $count_translation_blocks = 0;
 	    if ( $translate_normal_strings ) {
 		    $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
+		    $count_translation_blocks = count( $all_existing_translation_blocks );
 		    // trim every translation block original now, to avoid over-calling trim function later
 		    foreach ( $all_existing_translation_blocks as $key => $existing_tb ) {
 			    $all_existing_translation_blocks[ $key ]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[ $key ]->original );
 		    }
 		    $merge_rules = $this->translation_manager->get_merge_rules();
 	    }
-        $html = trp_str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+        $html = TranslatePress\str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         /**
          * When we are in the translation editor: Intercept the trp-gettext that was wrapped around all the gettext texts, grab the attribute data-trpgettextoriginal
@@ -402,7 +382,7 @@ class TRP_Translation_Render{
                 if( $row->nodetype !== 5 && $row->nodetype !== 3 )//add all tags that are not root or text, text nodes can't have attributes
                     $trp_attr_rows[] = $row;
 
-	            if ( $translate_normal_strings ) {
+	            if ( $translate_normal_strings && $count_translation_blocks > 0 ) {
 		            $translation_block = $this->find_translation_block( $row, $all_existing_translation_blocks, $merge_rules );
 		            if ( $translation_block ) {
 			            $existing_classes = $row->getAttribute( 'class' );
@@ -468,7 +448,7 @@ class TRP_Translation_Render{
                         }
 
                         // convert to a node
-                        $node_from_value = trp_str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)));
+                        $node_from_value = TranslatePress\str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)), true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
                         foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
                             $nfv_row->outertext = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $node_from_value->save() );
@@ -497,7 +477,7 @@ class TRP_Translation_Render{
 		    return $trpremoved;
 	    }
 
-        $html = trp_str_get_html($trpremoved, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+        $html = TranslatePress\str_get_html($trpremoved, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         $no_translate_selectors = apply_filters( 'trp_no_translate_selectors', array( '#wpadminbar' ), $TRP_LANGUAGE );
 
@@ -511,33 +491,35 @@ class TRP_Translation_Render{
             }
         }
         foreach ( $html->find('.translation-block') as $k => $row ){
-            if( $this->full_trim($row->outertext)!=""
+	        $trimmed_string = trp_full_trim($row->innertext);
+            if( $trimmed_string!=""
                 && $row->parent()->tag!="script"
                 && $row->parent()->tag!="style"
-                && !is_numeric($this->full_trim($row->outertext))
-                && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
+                && !is_numeric($trimmed_string)
+                && !preg_match('/^\d+%$/',$trimmed_string)
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
                 && $row->parent()->tag != 'title'
                 && strpos($row->outertext,'[vc_') === false )
             {
-                    array_push( $translateable_strings, $this->full_trim( $row->innertext ) );
+                    array_push( $translateable_strings, $trimmed_string );
                     array_push( $nodes, array('node' => $row, 'type' => 'block'));
             }
         }
 
         foreach ( $html->find('text') as $k => $row ){
-            if( $this->full_trim($row->outertext)!=""
+        	$trimmed_string = trp_full_trim($row->outertext);
+            if( $trimmed_string!=""
                 && $row->parent()->tag!="script"
                 && $row->parent()->tag!="style"
-                && !is_numeric($this->full_trim($row->outertext))
-                && !preg_match('/^\d+%$/',$this->full_trim($row->outertext))
+                && !is_numeric($trimmed_string)
+                && !preg_match('/^\d+%$/',$trimmed_string)
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
                 && !$this->has_ancestor_class( $row, 'translation-block')
                 && $row->parent()->tag != 'title'
                 && strpos($row->outertext,'[vc_') === false )
             {
             	    // $translateable_strings array needs to be in sync in $nodes array
-                    array_push( $translateable_strings, $this->full_trim( $row->outertext ) );
+                    array_push( $translateable_strings, $trimmed_string );
                     if( $row->parent()->tag == 'button') {
                         array_push($nodes, array('node' => $row, 'type' => 'button'));
                     }
@@ -552,9 +534,10 @@ class TRP_Translation_Render{
         }
 
         foreach ( $html->find('input[type=\'submit\'],input[type=\'button\']') as $k => $row ){
-            if( $this->full_trim($row->value)!=""
-                && !is_numeric($this->full_trim($row->value))
-                && !preg_match('/^\d+%$/',$this->full_trim($row->value))
+	        $trimmed_string = trp_full_trim($row->value);
+            if( $trimmed_string!=""
+                && !is_numeric($trimmed_string)
+                && !preg_match('/^\d+%$/',$trimmed_string)
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
                 && !$this->has_ancestor_class( $row, 'translation-block') )
             {
@@ -563,9 +546,10 @@ class TRP_Translation_Render{
             }
         }
         foreach ( $html->find('input[type=\'text\'],input[type=\'password\'],input[type=\'search\'],input[type=\'email\'],input:not([type]),textarea') as $k => $row ){
-            if( $this->full_trim($row->placeholder)!=""
-                && !is_numeric($this->full_trim($row->placeholder))
-                && !preg_match('/^\d+%$/',$this->full_trim($row->placeholder))
+	        $trimmed_string = trp_full_trim($row->placeholder);
+            if( $trimmed_string!=""
+                && !is_numeric($trimmed_string)
+                && !preg_match('/^\d+%$/',$trimmed_string)
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
                 && !$this->has_ancestor_class( $row, 'translation-block') )
             {
@@ -694,7 +678,7 @@ class TRP_Translation_Render{
 
         // We need to save here in order to access the translated links too.
 	    $html = $html->save();
-        $html = trp_str_get_html($html, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+        $html = TranslatePress\str_get_html($html, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         // force custom links to have the correct language
         foreach( $html->find('a[href!="#"]') as $a_href)  {
@@ -923,7 +907,7 @@ class TRP_Translation_Render{
             //strings existing in database,
 
             if ( isset( $dictionary[$string]->translated ) ){
-                $translated_strings[$i] = $dictionary[$this->full_trim($string)]->translated;
+                $translated_strings[$i] = $dictionary[$string]->translated;
             }else{
                 $new_strings[$i] = $translateable_strings[$i];
             }
@@ -1045,11 +1029,12 @@ class TRP_Translation_Render{
                 }
             }
             $trp_data = array(
-                'trp_ajax_url' => apply_filters('trp_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
-                'trp_wp_ajax_url' => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
-                'trp_language_to_query' => $language_to_query,
-                'trp_original_language' => $this->settings['default-language'],
-                'trp_current_language' => $TRP_LANGUAGE
+                'trp_ajax_url'          => apply_filters('trp_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
+				'trp_wp_ajax_url'       => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
+				'trp_language_to_query' => $language_to_query,
+				'trp_original_language' => $this->settings['default-language'],
+				'trp_current_language'  => $TRP_LANGUAGE,
+				'trp_skip_selectors'    => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]' ), $TRP_LANGUAGE, $this->settings )
             );
             if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) {
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];

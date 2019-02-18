@@ -1,6 +1,7 @@
 <?php __("", "translatepress-multilingual"); ?>
 <?php __("Error! Duplicate Url slug values.", "translatepress-multilingual"); ?>
 <?php __("Limit this menu item to the following languages", "translatepress-multilingual"); ?>
+<?php __("All Languages", "translatepress-multilingual"); ?>
 <?php __("The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when you submit the sitemap to Google.", "translatepress-multilingual"); ?>
 <?php __("First by browser language, then IP address (recommended)", "translatepress-multilingual"); ?>
 <?php __("First by IP address, then browser language", "translatepress-multilingual"); ?>
@@ -14,7 +15,6 @@
 <?php __("Deactivate License", "translatepress-multilingual"); ?>
 <?php __("Method of language detection", "translatepress-multilingual"); ?>
 <?php __("Select how the language should be detected for first time visitors.<br>The visitor's last displayed language will be remembered through cookies.", "translatepress-multilingual"); ?>
-<?php __("All Languages", "translatepress-multilingual"); ?>
 <?php __("Language", "translatepress-multilingual"); ?>
 <?php __("Code", "translatepress-multilingual"); ?>
 <?php __("Slug", "translatepress-multilingual"); ?>
@@ -32,13 +32,6 @@
 <?php __("Flags with Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Flags with Short Language Names", "translatepress-multilingual"); ?>
 <?php __("Only Flags", "translatepress-multilingual"); ?>
-<?php __("Done.", "translatepress-multilingual"); ?>
-<?php __("Back to TranslatePress Settings page", "translatepress-multilingual"); ?>
-<?php __("Invalid nonce.", "translatepress-multilingual"); ?>
-<?php __("Querying table <strong>%s</strong>", "translatepress-multilingual"); ?>
-<?php __("%s duplicates removed", "translatepress-multilingual"); ?>
-<?php __("If the page does not redirect automatically", "translatepress-multilingual"); ?>
-<?php __("click here", "translatepress-multilingual"); ?>
 <?php __("Current Language", "translatepress-multilingual"); ?>
 <?php __("General", "translatepress-multilingual"); ?>
 <?php __("Translate Site", "translatepress-multilingual"); ?>
@@ -56,6 +49,7 @@
 <?php __("Dynamic Added Strings", "translatepress-multilingual"); ?>
 <?php __("Translate Page", "translatepress-multilingual"); ?>
 <?php __("Security check", "translatepress-multilingual"); ?>
+<?php __("<strong>Warning:</strong> Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting.", "translatepress-multilingual"); ?>
 <?php __("Description", "translatepress-multilingual"); ?>
 <?php __("OG Title", "translatepress-multilingual"); ?>
 <?php __("OG Site Name", "translatepress-multilingual"); ?>
@@ -64,6 +58,18 @@
 <?php __("Twitter Description", "translatepress-multilingual"); ?>
 <?php __("Post Slug", "translatepress-multilingual"); ?>
 <?php __("Page Title", "translatepress-multilingual"); ?>
+<?php __("TranslatePress data update", "translatepress-multilingual"); ?>
+<?php __("We need to update your translations database to the latest version.", "translatepress-multilingual"); ?>
+<?php __("Run the updater", "translatepress-multilingual"); ?>
+<?php __("<p><strong>Successfully updated database!</strong></p>", "translatepress-multilingual"); ?>
+<?php __("Back to TranslatePress Settings page", "translatepress-multilingual"); ?>
+<?php __("Invalid nonce.", "translatepress-multilingual"); ?>
+<?php __("If the page does not redirect automatically", "translatepress-multilingual"); ?>
+<?php __("click here", "translatepress-multilingual"); ?>
+<?php __("Querying table <strong>%s</strong>... ", "translatepress-multilingual"); ?>
+<?php __("Done.", "translatepress-multilingual"); ?>
+<?php __("Querying table <strong>%s</strong>", "translatepress-multilingual"); ?>
+<?php __("%s duplicates removed", "translatepress-multilingual"); ?>
 <?php __("<strong>TranslatePress</strong> requires <strong><a href=\"http://php.net/manual/en/book.mbstring.php\">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server.", "translatepress-multilingual"); ?>
 <?php __("Select the language you wish to make your website available in.", "translatepress-multilingual"); ?>
 <?php __("To add <strong>more then two languages</strong> and support for SEO Title, Description, Slug and more check out <a href=\"%s\" class=\"button button-primary\" target=\"_blank\" title=\"TranslatePress Pro\">TranslatePress PRO</a>", "translatepress-multilingual"); ?>
@@ -138,6 +144,9 @@
 <?php __("Batch size", "translatepress-multilingual"); ?>
 <?php __("The number of rows to check at once.<br>Choosing a smaller number helps solve the 502 error \"Page took too long to respond\" on large databases.<br>May take several minutes depending on the database size.", "translatepress-multilingual"); ?>
 <?php __("Remove duplicate rows", "translatepress-multilingual"); ?>
+<?php __("Update TranslatePress tables", "translatepress-multilingual"); ?>
+<?php __("<p><strong>IMPORTANT NOTE: Before performing this action it is strongly recommended to backup the database first.</strong></p>", "translatepress-multilingual"); ?>
+<?php __("Update database", "translatepress-multilingual"); ?>
 <?php __(" TranslatePress Settings", "translatepress-multilingual"); ?>
 <?php __("Translator", "translatepress-multilingual"); ?>
 <?php __("Allow this user to translate the website.", "translatepress-multilingual"); ?>

@@ -164,6 +164,43 @@ function trp_sanitize_string( $filtered ){
 	return $filtered;
 }
 
+/**
+ * Trim strings.
+ *
+ * @param string $string      Raw string.
+ * @return string           Trimmed string.
+ */
+function trp_full_trim( $string ) {
+	/* Make sure you update full_trim function from trp-ajax too*/
+
+	/* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
+	Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
+	Also removed \xA0 (the same as chr(160) for altering special characters */
+	//$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
+
+	/* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
+	/* Trim nbsp the same way as the whitespace (chr194 chr160) above */
+	$prefixes = array( "\xc2\xa0", "&nbsp;" );
+	do{
+		$previous_iteration_string = $string;
+		$string = trim($string, " \t\n\r\0\x0B");
+		foreach( $prefixes as $prefix ) {
+			$prefix_length = strlen($prefix);
+			if (substr($string, 0, $prefix_length) == $prefix) {
+				$string = substr($string, $prefix_length);
+			}
+			if (substr($string, -$prefix_length, $prefix_length) == $prefix) {
+				$string = substr($string, 0, -$prefix_length);
+			}
+		}
+	}while( $string != $previous_iteration_string );
+
+	if ( strip_tags( $string ) == "" || trim ($string, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
+		$string = '';
+	}
+
+	return $string;
+}
 
 /**
  * function that checks if $_REQUEST['trp-edit-translation'] is set or if it has a certain value
@@ -582,4 +619,63 @@ function trp_bulk_debug($debug = false, $logger = array()){
         error_log("$key :   " . str_repeat(' ', $key_length - strlen($key)) . $value);
     }
     error_log('---------------------------------------------------------');
+}
+
+/**
+ * Compatibility with WooCommerce PDF Invoices & Packing Slips
+ * https://wordpress.org/plugins/woocommerce-pdf-invoices-packing-slips/
+ *
+ * @since 1.4.3
+ *
+ */
+// fix attachment name in email
+add_filter( 'wpo_wcpdf_filename', 'trp_woo_pdf_invoices_and_packing_slips_compatibility' );
+
+// fix #trpgettext inside invoice pdf
+add_filter( 'wpo_wcpdf_get_html', 'trp_woo_pdf_invoices_and_packing_slips_compatibility');
+function trp_woo_pdf_invoices_and_packing_slips_compatibility($title){
+	if ( class_exists( 'TRP_Translation_Manager' ) ) {
+		return 	TRP_Translation_Manager::strip_gettext_tags($title);
+	}
+}
+
+// fix font of pdf breaking because of str_get_html() call inside translate_page()
+add_filter( 'trp_stop_translating_page', 'trp_woo_pdf_invoices_and_packing_slips_compatibility_dont_translate_pdf', 10, 2 );
+function trp_woo_pdf_invoices_and_packing_slips_compatibility_dont_translate_pdf( $bool, $output ){
+	if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'generate_wpo_wcpdf' ) {
+		return true;
+	}
+	return $bool;
+}
+
+
+/**
+ * Compatibility with WooCommerce order notes
+ *
+ * When a new order is placed in secondary languages, in admin area WooCommerce->Orders->Edit Order, the right sidebar contains Order notes which can contain #trpst tags.
+ *
+ * @since 1.4.3
+ */
+
+// old orders
+add_filter( 'woocommerce_get_order_note', 'trp_woo_notes_strip_trpst' );
+// new orders
+add_filter( 'woocommerce_new_order_note_data', 'trp_woo_notes_strip_trpst' );
+function trp_woo_notes_strip_trpst( $note_array ){
+	foreach ( $note_array as $item => $value ){
+		$note_array[$item] = TRP_Translation_Manager::strip_gettext_tags( $value );
+	}
+	return $note_array;
+}
+
+/**
+ * Compatibility with WooCommerce country list on checkout.
+ *
+ * Skip detection by translate-dom-changes of the list of countries
+ *
+ */
+add_filter( 'trp_skip_selectors_from_dynamic_translation', 'trp_woo_skip_dynamic_translation' );
+function trp_woo_skip_dynamic_translation( $skip_selectors ){
+	$add_skip_selectors = array( '#select2-billing_country-results', '#select2-shipping_country-results' );
+	return array_merge( $skip_selectors, $add_skip_selectors );
 }

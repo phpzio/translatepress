@@ -47,33 +47,39 @@ class TRP_Hooks_Loader{
         $this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
     }
 
-    /**
-     * Remove all actions or filters registered functions for this hook.
-     *
-     * Should be called before plugins_loaded filter priority 15.
+	/**
+	 * Remove $hook from action or filter array
+	 *
+	 * @param array $array          Action or filters array.
+	 * @param string $hook          Hook to remove.
+	 * @param string $callback      Function callback to remove (optional). If not set, it will remove all callbacks hooked to $hook.
+	 * @param string $component     Component to remove (optional). If not set, it will remove all components with the callbacks function name $callback.
+	 * @return array                Action or filters without the hook.
+	 */
+	private function unset_hook_from_array( $array, $hook, $callback, $component ) {
+		foreach ( $array as $key => $filter ){
+			if ( $filter['hook'] == $hook ){
+				if ( !$callback || ( $callback && $filter['callback'] == $callback ) ) {
+					if ( !$component || ( $component && $filter['component'] == $component ) ) {
+						unset( $array[ $key ] );
+					}
+				}
+			}
+		}
+		return array_values( $array );
+	}
+
+	/**
+     * Remove actions or filters registered functions for this hook.
      *
      * @param string $hook          Hook name.
+	 * @param string $callback      Function callback to remove (optional). If not set, it will remove all callbacks hooked to $hook.
+	 * @param string $component     Component to remove (optional). If not set, it will remove all components with the callbacks function name $callback.
      */
-    public function remove_hook( $hook ){
+    public function remove_hook( $hook, $callback = null, $component = null ){
 
-        $this->filters = $this->unset_hook_from_array( $this->filters, $hook );
-        $this->actions = $this->unset_hook_from_array( $this->actions, $hook );
-    }
-
-    /**
-     * Remove $hook from action or filter array
-     *
-     * @param array $array          Action or filters array.
-     * @param string $hook          Hook to remove.
-     * @return array                Action or filters without the hook.
-     */
-    private function unset_hook_from_array( $array, $hook ) {
-        foreach ( $array as $key => $filter ){
-            if ( $filter['hook'] == $hook ){
-                unset( $array[$key] );
-            }
-        }
-        return array_values( $array );
+        $this->filters = $this->unset_hook_from_array( $this->filters, $hook, $callback, $component );
+        $this->actions = $this->unset_hook_from_array( $this->actions, $hook, $callback, $component );
     }
 
     /**
@@ -104,7 +110,7 @@ class TRP_Hooks_Loader{
      * Hooked on plugins_loaded filter, priority 15
      */
     public function run() {
-
+		do_action( 'trp_before_running_hooks', $this );
         foreach ( $this->filters as $hook ) {
             if ( $hook['component'] == null ){
                 add_filter( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] );

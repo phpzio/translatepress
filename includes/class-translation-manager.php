@@ -193,7 +193,7 @@ class TRP_Translation_Manager{
 		    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
 			    $id_array[$key] = (int)$string->id;
 		    } else if ( isset( $string->original ) ) {
-			    $original_array[$key] = trp_sanitize_string( $string->original );
+			    $original_array[$key] = trp_full_trim( trp_sanitize_string( $string->original ) );
 		    }
 	    }
 
@@ -408,7 +408,7 @@ class TRP_Translation_Manager{
 					    }
 					    array_push($update_strings[ $language ], array(
 						    'id' => (int)$string->id,
-						    'original' => trp_sanitize_string( $string->original ),
+						    'original' => trp_full_trim( trp_sanitize_string( $string->original ) ),
 						    'translated' => trp_sanitize_string( $string->translated ),
 						    'status' => (int)$string->status,
 						    'block_type' => (int)$string->block_type
@@ -557,7 +557,7 @@ class TRP_Translation_Manager{
 								}
 								$ajax_translated_string_list = $strings->$language;
 								foreach( $ajax_translated_string_list as $ajax_key => $ajax_string ) {
-									if ( trp_sanitize_string( $ajax_string->original ) == $dictionary_string->original ) {
+									if ( trp_full_trim( trp_sanitize_string( $ajax_string->original ) ) == $dictionary_string->original ) {
 										if ( $ajax_string->translated != '' ) {
 											$dictionaries[ $language ][ $dictionary_string_key ]->translated = trp_sanitize_string( $ajax_string->translated );
 											$dictionaries[ $language ][ $dictionary_string_key ]->status     = (int) $ajax_string->status;
@@ -918,7 +918,7 @@ class TRP_Translation_Manager{
                     $trp_translated_gettext_text = $trp_translated_gettext_texts[$domain . '::' . $text];
 
                     if( !empty( $trp_translated_gettext_text['translated'] ) && $translation != $trp_translated_gettext_text['translated'] ) {
-                        $translation = $trp_translated_gettext_text['translated'];
+	                    $translation = str_replace( trim($text), $trp_translated_gettext_text['translated'], $text );
                     }
                     $db_id = $trp_translated_gettext_text['id'];
                     $found_in_db = true;
