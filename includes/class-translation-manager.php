@@ -74,31 +74,36 @@ class TRP_Translation_Manager{
     	return apply_filters( 'trp_merge_rules', $merge_rules );
 	}
 
-	public function localized_text(){
+	public function localized_text() {
 		$text = array(
-			'edit'                          => __( 'Translate', 'translatepress-multilingual' ),
-			'merge'                         => __( 'Translate entire block element', 'translatepress-multilingual' ),
-			'split'                         => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
-			'translationblock'              => __( 'Translation block', 'translatepress-multilingual' ),
-			'areyousuresplittb'             => __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ),
-			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
-			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
-			'gettextstrings'                => __( 'Gettext Strings', 'translatepress-multilingual' ),
-			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
-			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
+			'edit'              => __( 'Translate', 'translatepress-multilingual' ),
+			'merge'             => __( 'Translate entire block element', 'translatepress-multilingual' ),
+			'split'             => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
+			'translationblock'  => __( 'Translation block', 'translatepress-multilingual' ),
+			'areyousuresplittb' => __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ),
 		);
 		return $text;
 	}
 
+	public function string_types(){
+		$string_types = array(
+			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
+			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
+			'gettextstrings'                => __( 'Gettext Strings', 'translatepress-multilingual' ),
+			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' )
+		);
+		return apply_filters( 'trp_string_types', $string_types );
+	}
+
 	public function editor_nonces(){
-		$text = array(
+		$nonces = array(
 			'gettranslationsnonce'          => wp_create_nonce('get_translations'),
 			'savestringsnonce'              => wp_create_nonce('save_translations'),
 			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
 			'gettextgettranslationsnonce'   => wp_create_nonce('gettext_get_translations'),
 			'gettextsavetranslationsnonce'  => wp_create_nonce('gettext_save_translations'),
 		);
-		return $text;
+		return $nonces;
 	}
 
     /**
@@ -278,8 +283,14 @@ class TRP_Translation_Manager{
 			        }
 			        $block_type = $this->trp_query->get_constant_block_type_regular_string();
 	                $dictionaries = $this->get_translation_for_strings( $strings, $block_type );
-	                $localized_text = $this->localized_text();
-			        $dictionary_by_original = $this->sort_dictionary_by_original( $dictionaries, $localized_text['stringlist'] );
+
+	                $localized_text = $this->string_types();
+	                $string_type = $localized_text['stringlist'];
+	                if ( isset( $_POST['dynamic_strings'] ) && $_POST['dynamic_strings'] === 'true'  ){
+	                	$string_type = $localized_text['dynamicstrings'];
+	                }
+			        $dictionary_by_original = $this->sort_dictionary_by_original( $dictionaries, $string_type );
+
                     echo trp_safe_json_encode( $dictionary_by_original );
                 }
             }
@@ -375,7 +386,7 @@ class TRP_Translation_Manager{
                         $dictionaries[$lang][$key] = (object)$string;
                     }
                 }
-		        $localized_text = $this->localized_text();
+		        $localized_text = $this->string_types();
 		        $dictionary_by_original = $this->sort_dictionary_by_original( $dictionaries, $localized_text['gettextstrings'] );
                 die( trp_safe_json_encode( $dictionary_by_original ) );
 

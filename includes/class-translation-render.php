@@ -112,10 +112,10 @@ class TRP_Translation_Render{
 	    if ( ! $this->translation_manager ) {
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
-	    $localized_text = $this->translation_manager->localized_text();
+	    $string_types = $this->translation_manager->string_types();
 
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-	        $localized_text['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
+	        $string_types['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
         ));
 
         foreach( $node_type_categories as $category_name => $node_types ){
@@ -124,7 +124,7 @@ class TRP_Translation_Render{
             }
         }
 
-        return $localized_text['stringlist'];
+        return $string_types['stringlist'];
     }
 
     /**
@@ -1028,25 +1028,26 @@ class TRP_Translation_Render{
                     }
                 }
             }
-            $trp_data = array(
-                'trp_ajax_url'          => apply_filters('trp_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
-				'trp_wp_ajax_url'       => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
-				'trp_language_to_query' => $language_to_query,
-				'trp_original_language' => $this->settings['default-language'],
-				'trp_current_language'  => $TRP_LANGUAGE,
-				'trp_skip_selectors'    => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]' ), $TRP_LANGUAGE, $this->settings )
-            );
-            if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) {
-                $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
-            }
-            //wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'), TRP_PLUGIN_VERSION );
-            //wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
 	        $trp = TRP_Translate_Press::get_trp_instance();
 	        if ( ! $this->translation_manager ) {
 		        $this->translation_manager = $trp->get_component( 'translation_manager' );
 	        }
-	        $localized_text = $this->translation_manager->localized_text();
-	        //wp_localize_script('trp-dynamic-translator', 'trp_localized_text', $localized_text );
+	        $nonces = $this->translation_manager->editor_nonces();
+            $trp_data = array(
+                'trp_custom_ajax_url'                 => apply_filters('trp_custom_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
+				'trp_wp_ajax_url'                     => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
+				'trp_language_to_query'               => $language_to_query,
+				'trp_original_language'               => $this->settings['default-language'],
+				'trp_current_language'                => $TRP_LANGUAGE,
+				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]' ), $TRP_LANGUAGE, $this->settings ),
+				'gettranslationsnonce'                => $nonces['gettranslationsnonce'],
+				'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
+            );
+            if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) {
+                $trp_data['trp_custom_ajax_url'] = $trp_data['trp_wp_ajax_url'];
+            }
+            wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'), TRP_PLUGIN_VERSION );
+            wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }
     }
 

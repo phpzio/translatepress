@@ -7,7 +7,7 @@ function TRP_Translator(){
     var _this = this;
     var observer = null;
     var active = true;
-    var ajax_url = trp_data.trp_ajax_url;
+    var ajax_url = trp_data.trp_custom_ajax_url;
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
     var language_to_query;
     var except_characters = " \t\n\r  �.,/`~!@#$€£%^&*():;-_=+[]{}\\|?/<>1234567890'";
@@ -18,7 +18,7 @@ function TRP_Translator(){
      */
     this.ajax_get_translation = function( strings_to_query, url ) {
         var all_languages_true_false = 'false';
-        if ( typeof parent.trpEditor !== 'undefined' ) {
+        if ( typeof window.parent.tpEditorApp !== 'undefined' ) {
             all_languages_true_false = 'true';
         }
         jQuery.ajax({
@@ -26,12 +26,13 @@ function TRP_Translator(){
             type: 'post',
             dataType: 'json',
             data: {
-                action: 'trp_get_translations',
-                all_languages: all_languages_true_false,
-                security: trp_localized_text['gettranslationsnonce'],
-                language: language_to_query,
-                original_language: original_language,
-                strings: JSON.stringify( strings_to_query )
+                action            : 'trp_get_translations',
+                all_languages     : all_languages_true_false,
+                security          : trp_data['gettranslationsnonce'],
+                language          : language_to_query,
+                original_language : original_language,
+                strings           : JSON.stringify( strings_to_query ),
+                dynamic_strings   : 'true'
             },
             success: function( response ) {
                 if ( response === 'error' ) {
@@ -72,17 +73,17 @@ function TRP_Translator(){
      * Replace original strings with translations if found.
      */
     this.update_strings = function( response, strings_to_query ) {
-        if ( response != null && response[language_to_query] != null ){
-            var dictionary = {};
+        if ( response != null && response.length > 0 ){
             for ( var j in strings_to_query ) {
                 var queried_string = strings_to_query[j];
                 var translation_found = false;
                 var initial_value = queried_string.original;
-                for( var i in response[language_to_query] ) {
-                    var response_string = response[language_to_query][i];
-                    if (response_string.original.trim() == queried_string.original.trim()) {
+                for( var i in response ) {
+                    var response_string = response[i].translationsArray[language_to_query];
+                    if (response[i].original.trim() == queried_string.original.trim()) {
+
                         // We use j instead of i index because the strings_to_query can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
-                        dictionary[j] = {};
+                        /*dictionary[j] = {};
                         dictionary[j].id = response[language_to_query][i].id;
                         dictionary[j].original = response[language_to_query][i].original;
                         dictionary[j].translated = response[language_to_query][i].translated;
@@ -91,16 +92,16 @@ function TRP_Translator(){
                         if ( typeof parent.trpEditor !== 'undefined' ) {
                             dictionary[j].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
                             dictionary[j].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
-                        }
+                        }*/
 
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
                             _this.pause_observer();
                             queried_string.node.textContent = _this.decode_html(text_to_set);
                             _this.unpause_observer();
-                            translation_found = true;
-                            break;
                         }
+                        translation_found = true;
+                        break;
                     }
                 }
 
@@ -111,12 +112,8 @@ function TRP_Translator(){
                 }
             }
             // this should always be outside the for loop
-            if ( typeof parent.trpEditor !== 'undefined' ) {
-                response[language_to_query] = dictionary;
-                parent.trpEditor.populate_strings( response );
-                if ( parent.trpEditor.trp_lister != null ) {
-                    parent.trpEditor.trp_lister.reload_list();
-                }
+            if ( typeof window.parent.tpEditorApp !== 'undefined' ) {
+                window.parent.tpEditorApp.addToDictionary( response );
             }
         }else{
             for ( var j in strings_to_query ) {
@@ -173,7 +170,7 @@ function TRP_Translator(){
                             for (var j = 0; j < all_strings_length; j++ ) {
                                 if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
                                     strings.push({node: all_strings[j], original: all_strings[j].textContent });
-                                    if ( trp_localized_text ['showdynamiccontentbeforetranslation'] == false ) {
+                                    if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
                                         all_strings[j].textContent = '';
                                     }
                                 }

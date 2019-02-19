@@ -48,19 +48,16 @@
     }
 
     $view_as_roles = apply_filters( 'trp_view_as_values', $view_as_roles );
+    $string_types = apply_filters( 'trp_string_type_order', array_values( $translation_manager->string_types() ) );
     ?>
 
     <title>TranslatePress</title>
-    <!-- <script type="application/javascript">
-        var trp_language = '<?php //echo $TRP_LANGUAGE; ?>';
-        var trp_on_screen_language = '<?php //echo ( isset( $translation_languages[0] ) ) ? $translation_languages[0] : 'null' ; ?>';
-        var trp_ajax_url = '<?php //echo apply_filters( 'trp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>';
-    </script> -->
 </head>
 <body>
 
     <div id="trp-editor-container">
         <trp-editor
+            ref='trp_editor'
             trp_settings='<?php echo json_encode( $trp_settings ); ?>'
             available_languages='<?php echo json_encode( $available_languages ); ?>'
             current_language="<?php echo $TRP_LANGUAGE; ?>"
@@ -69,7 +66,8 @@
             url_to_load="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
             string_selectors='<?php echo json_encode( $selectors ); ?>'
             editor_nonces='<?php echo json_encode( $translation_manager->editor_nonces() ); ?>'
-            ajax_url = '<?php echo apply_filters( 'trp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
+            ajax_url= '<?php echo apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
+            string_type_order= '<?php echo json_encode( $string_types ); ?>'
         >
         </trp-editor>
     </div>

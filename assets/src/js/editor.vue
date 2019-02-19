@@ -96,7 +96,8 @@
             'url_to_load',
             'string_selectors',
             'ajax_url',
-            'editor_nonces'
+            'editor_nonces',
+            'string_type_order'
         ],
         data(){
             return {
@@ -105,6 +106,7 @@
                 roles           : JSON.parse( this.view_as_roles ),
                 selectors       : JSON.parse( this.string_selectors ),
                 nonces          : JSON.parse( this.editor_nonces),
+                stringTypeOrder : JSON.parse( this.string_type_order),
                 currentLanguage : this.current_language,
                 currentURL      : this.url_to_load,
                 urlToLoad       : this.url_to_load,
@@ -147,12 +149,12 @@
                 console.log( newString )
             },
             dictionary: function (){
-                let self = this
-                this.dictionary.forEach( function ( row ) {
-                    if ( self.stringTypes.indexOf( row.type ) === -1 ){
-                        self.stringTypes.push( row.type )
-                    }
-                })
+//                let self = this
+//                this.dictionary.forEach( function ( row ) {
+//                    if ( self.stringTypes.indexOf( row.type ) === -1 ){
+//                        self.stringTypes.push( row.type )
+//                    }
+//                })
 
                 //merge the data type info
             }
@@ -247,6 +249,24 @@
             addToDictionary( data ){
                 if ( data != null ) {
                     this.dictionary = this.dictionary.concat( data );
+
+                    let self = this
+                    let foundStringTypes = this.stringTypes;
+
+                    data.forEach( function ( row ) {
+                        if ( foundStringTypes.indexOf( row.type ) === -1 ){
+                            foundStringTypes.push( row.type )
+                        }
+                    })
+
+                    let orderedStringTypes = [];
+                    this.stringTypeOrder.forEach( function( type ){
+                        if ( foundStringTypes.indexOf( type ) !== -1 ){
+                            orderedStringTypes.push( type )
+                        }
+                    });
+
+                    this.stringTypes = orderedStringTypes;
                 }
             },
             setupEventListeners(){
