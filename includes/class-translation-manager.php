@@ -65,7 +65,7 @@ class TRP_Translation_Manager{
     }
 
 	public function get_merge_rules(){
-		$localized_text = $this->localized_text();
+		$localized_text = $this->string_types();
     	$merge_rules = array (
     		'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body', 'footer', 'article', 'main', 'iframe', 'section', 'figure', 'figcaption', 'blockquote', 'cite' ),
 		    'self_object_type' => array( 'translate-press' ),
@@ -289,7 +289,7 @@ class TRP_Translation_Manager{
 	                if ( isset( $_POST['dynamic_strings'] ) && $_POST['dynamic_strings'] === 'true'  ){
 	                	$string_type = $localized_text['dynamicstrings'];
 	                }
-			        $dictionary_by_original = $this->sort_dictionary_by_original( $dictionaries, $string_type );
+			        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $string_type );
 
                     echo trp_safe_json_encode( $dictionary_by_original );
                 }
@@ -387,7 +387,7 @@ class TRP_Translation_Manager{
                     }
                 }
 		        $localized_text = $this->string_types();
-		        $dictionary_by_original = $this->sort_dictionary_by_original( $dictionaries, $localized_text['gettextstrings'] );
+		        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $localized_text['gettextstrings'] );
                 die( trp_safe_json_encode( $dictionary_by_original ) );
 
             }
@@ -492,38 +492,6 @@ class TRP_Translation_Manager{
         }
 	    echo trp_safe_json_encode( array() );
         die();
-    }
-
-    public function sort_dictionary_by_original( $dictionaries, $type ){
-    	$array = array();
-    	foreach( $dictionaries as $language => $dictionary ){
-    		if ( isset( $dictionary['default-language'] ) && $dictionary['default-language'] == true ){
-    			continue;
-		    }
-		    foreach( $dictionary as $string ) {
-    			if ( isset( $string->original ) ){
-    				$found = false;
-    				foreach( $array as $key => $row ){
-					    if ( $row['original'] == $string->original ){
-					    	$array[$key]['translationsArray'][$language] = $string;
-					    	unset($array[$key]['translationsArray'][$language]->original);
-						    $found = true;
-					    	break;
-					    }
-				    }
-				    if ( ! $found ){
-    					$original = $string->original;
-    					unset($string->original);
-    					$array[] = array(
-    						'original' => $original,
-						    'type' => $type,
-						    'translationsArray' => array( $language => $string )
-					    );
-				    }
-			    }
-			}
-	    }
-	    return $array;
     }
 
 	/**

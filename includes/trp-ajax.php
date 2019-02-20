@@ -21,6 +21,8 @@ class TRP_Ajax{
             die();
         }
 
+        include './external-functions.php';
+
         if ( $this->connect_to_db() ){
 
             $this->output_translations(
@@ -50,7 +52,7 @@ class TRP_Ajax{
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
                 if ( isset($string->original ) ) {
-	                $original_array[$key] = mysqli_real_escape_string( $this->connection, $this->full_trim( $string->original )  );
+	                $original_array[$key] = mysqli_real_escape_string( $this->connection, trp_full_trim( $string->original )  );
                 }
             }
         }
@@ -138,45 +140,6 @@ class TRP_Ajax{
     }
 
     /**
-     * Trim strings.
-     *
-     * @param string $word      String to trim.
-     * @return string           Trimmed string.
-     */
-    protected function full_trim( $string ) {
-		/* Make sure you update full_trim function from translatepress/includes/functions.php too*/
-
-		/* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
-		Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
-		Also removed \xA0 (the same as chr(160) for altering special characters */
-		//$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
-
-		/* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
-		/* Trim nbsp the same way as the whitespace (chr194 chr160) above */
-		$prefixes = array( "\xc2\xa0", "&nbsp;" );
-		do{
-			$previous_iteration_string = $string;
-			$string = trim($string, " \t\n\r\0\x0B");
-			foreach( $prefixes as $prefix ) {
-				$prefix_length = strlen($prefix);
-				if (substr($string, 0, $prefix_length) == $prefix) {
-					$string = substr($string, $prefix_length);
-				}
-				if (substr($string, -$prefix_length, $prefix_length) == $prefix) {
-					$string = substr($string, 0, -$prefix_length);
-				}
-			}
-		}while( $string != $previous_iteration_string );
-
-	    if ( strip_tags( $string ) == "" || trim ($string, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
-		    $string = '';
-	    }
-
-	    return $string;
-
-    }
-
-    /**
      * Output translation for given strings.
      *
      * @param array $strings            Array of string to translate.
@@ -190,11 +153,13 @@ class TRP_Ajax{
             $this->return_error();
         }else {
             $dictionaries[$language] = array();
-            while ($row = mysqli_fetch_assoc($result)) {
+            while ($row = mysqli_fetch_object($result)) {
                 $dictionaries[$language][] = $row;
             }
 
-            echo json_encode($dictionaries);
+	        error_log(json_encode($dictionaries));
+	        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries,'dynamicstrings' );
+            echo json_encode($dictionary_by_original);
         }
 
     }

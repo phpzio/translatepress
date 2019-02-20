@@ -99,8 +99,8 @@ function TRP_Translator(){
                             _this.pause_observer();
                             queried_string.node.textContent = _this.decode_html(text_to_set);
                             _this.unpause_observer();
+                            translation_found = true;
                         }
-                        translation_found = true;
                         break;
                     }
                 }

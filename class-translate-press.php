@@ -79,6 +79,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-uri.php';
 	    require_once TRP_PLUGIN_DIR . 'includes/class-upgrade.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-plugin-notices.php';
+        require_once TRP_PLUGIN_DIR . 'includes/external-functions.php';
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
         require_once TRP_PLUGIN_DIR . 'includes/shortcodes.php';
