@@ -101,20 +101,21 @@
         ],
         data(){
             return {
-                settings        : JSON.parse( this.trp_settings ),
-                languages       : JSON.parse( this.available_languages ),
-                roles           : JSON.parse( this.view_as_roles ),
-                selectors       : JSON.parse( this.string_selectors ),
-                nonces          : JSON.parse( this.editor_nonces),
-                stringTypeOrder : JSON.parse( this.string_type_order),
-                currentLanguage : this.current_language,
-                currentURL      : this.url_to_load,
-                urlToLoad       : this.url_to_load,
-                iframe          : '',
-                dictionary      : [],
-                stringTypes     : [],
-                selectedString : '',
-                nodes          : {},
+                settings         : JSON.parse( this.trp_settings ),
+                languages        : JSON.parse( this.available_languages ),
+                roles            : JSON.parse( this.view_as_roles ),
+                selectors        : JSON.parse( this.string_selectors ),
+                nonces           : JSON.parse( this.editor_nonces),
+                stringTypeOrder  : JSON.parse( this.string_type_order),
+                currentLanguage  : this.current_language,
+                onScreenLanguage : this.on_screen_language,
+                currentURL       : this.url_to_load,
+                urlToLoad        : this.url_to_load,
+                iframe           : '',
+                dictionary       : [],
+                stringTypes      : [],
+                selectedString   : '',
+                nodes            : {},
             }
         },
         created(){
@@ -149,12 +150,13 @@
                 console.log( newString )
             },
             dictionary: function (){
-//                let self = this
-//                this.dictionary.forEach( function ( row ) {
-//                    if ( self.stringTypes.indexOf( row.type ) === -1 ){
-//                        self.stringTypes.push( row.type )
-//                    }
-//                })
+                let self = this
+                this.dictionary.forEach( function ( row ) {
+                    if ( row.type != '' )
+                    if ( self.stringTypes.indexOf( row.type ) === -1 ){
+                        self.stringTypes.push( row.type )
+                    }
+                })
 
                 //merge the data type info
             }
@@ -190,19 +192,32 @@
                 let self                  = this
                 let regularStringIdsArray = []
                 let gettextStringIdsArray = []
+                let extraNodeInfoRegular = []
+                let extraNodeInfoGettext = []
 
                 this.nodes.forEach( function ( node ){
                     self.selectors.some( function ( selector ){
                         let stringId = node.getAttribute( selector )
 
-                        // add these details now and merge them later
-                        //this.nodeInfo.push( { type, stringId, nodeType, relatedId } );
-
                         if ( stringId ){
+                            let nodeType = node.getAttribute( 'data-trp-node-type' )
+                            let nodeDescription = node.getAttribute( 'data-trp-node-description' )
                             if ( selector.includes('data-trpgettextoriginal') ){
                                 gettextStringIdsArray.push( stringId )
+                                extraNodeInfoGettext.push({
+                                    dbID:stringId,
+                                    selector:selector,
+                                    nodeType:nodeType,
+                                    nodeDescription: nodeDescription
+                                })
                             }else{
                                 regularStringIdsArray.push( { 'id': stringId } )
+                                extraNodeInfoRegular.push({
+                                    dbID:stringId,
+                                    selector:selector,
+                                    nodeType:nodeType,
+                                    nodeDescription: nodeDescription
+                                })
                             }
 
                             return true
@@ -224,7 +239,7 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        self.addToDictionary( response.data )
+                        self.addToDictionary( response.data, extraNodeInfoRegular )
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -240,15 +255,15 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response){
-                        self.addToDictionary( response.data )
+                        self.addToDictionary( response.data, extraNodeInfoGettext )
                     })
                     .catch(function (error){
                         console.log(error)
                     });
             },
-            addToDictionary( data ){
+            addToDictionary( data, extraNodeInfo = null ){
+                //console.log(data)
                 if ( data != null ) {
-                    this.dictionary = this.dictionary.concat( data );
 
                     let self = this
                     let foundStringTypes = this.stringTypes;
@@ -265,8 +280,35 @@
                             orderedStringTypes.push( type )
                         }
                     });
+                    foundStringTypes.forEach( function (type) {
+                        if ( orderedStringTypes.indexOf( type ) === -1 ){
+                            orderedStringTypes.push(type);
+                        }
+                    });
 
                     this.stringTypes = orderedStringTypes;
+                    //console.log(self.onScreenLanguage)
+                    if ( extraNodeInfo != null ){
+                        data.forEach( function ( dataRow, index ) {
+//                            console.log(data);//dataRow.translationsArray)
+                            extraNodeInfo.forEach(function ( infoRow ){
+
+                                //todo this check is not needed. it's only because of the bug from translation manager
+                                if ( typeof dataRow.translationsArray[self.onScreenLanguage] != 'undefined' ) {
+
+                                    //console.log(dataRow.translationsArray['en_US']);//self.onScreenLanguage]);
+                                    if (infoRow.dbID == dataRow.translationsArray[self.onScreenLanguage].id) {
+                                        if (typeof infoRow.nodeType != 'undefined') {
+                                            data[index].type = infoRow.nodeType;
+                                        }
+                                    }
+                                }
+                            })
+                        })
+                    }
+
+
+                    this.dictionary = this.dictionary.concat( data );
                 }
             },
             setupEventListeners(){

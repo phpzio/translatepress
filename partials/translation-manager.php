@@ -31,7 +31,7 @@
     $current_url = 'http:' . $current_url;
 
     //@todo
-    $selectors = array('', '-alt', '-src' );
+    $selectors = array('', '-alt', '-src', '-content' );
 
     do_action( 'trp_head' );
 

@@ -90,7 +90,7 @@ class TRP_Translation_Manager{
 			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
 			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
 			'gettextstrings'                => __( 'Gettext Strings', 'translatepress-multilingual' ),
-			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' )
+			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
 		);
 		return apply_filters( 'trp_string_types', $string_types );
 	}
@@ -285,7 +285,7 @@ class TRP_Translation_Manager{
 	                $dictionaries = $this->get_translation_for_strings( $strings, $block_type );
 
 	                $localized_text = $this->string_types();
-	                $string_type = $localized_text['stringlist'];
+	                $string_type = __('Others', 'translatepress-multilingual'); // this type is not registered in the string types because it will be overwritten by the content in data-trp-node-type
 	                if ( isset( $_POST['dynamic_strings'] ) && $_POST['dynamic_strings'] === 'true'  ){
 	                	$string_type = $localized_text['dynamicstrings'];
 	                }
