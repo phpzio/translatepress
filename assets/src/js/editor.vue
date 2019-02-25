@@ -27,7 +27,7 @@
                         <div id="trp-string-list">
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
                                 <optgroup v-for="(type) in stringTypes" :label="type">
-                                    <option v-for="(string, index) in dictionary" :value="index" v-if="string.type == type">{{string.original}}</option>
+                                    <option v-for="(string, index) in dictionary" :value="index" v-if="string.type == type" :title="string.nodeDescription">{{string.original}}</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -123,10 +123,16 @@
             this.selectors = this.prepareSelectorStrings()
         },
         mounted(){
+            let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            //@todo add template
-            jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', width : '100%' })
+            jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', templateResult: function(option){
+                    let original = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
+                    let nodeDescription = (option.title) ?  '(' + option.title + ')' : ''
+
+                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
+                }
+            , width : '100%' })
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -192,8 +198,8 @@
                 let self                  = this
                 let regularStringIdsArray = []
                 let gettextStringIdsArray = []
-                let extraNodeInfoRegular = []
-                let extraNodeInfoGettext = []
+                let nodeInfoRegular = []
+                let nodeInfoGettext = []
 
                 this.nodes.forEach( function ( node ){
                     self.selectors.some( function ( selector ){
@@ -204,18 +210,16 @@
                             let nodeDescription = node.getAttribute( 'data-trp-node-description' )
                             if ( selector.includes('data-trpgettextoriginal') ){
                                 gettextStringIdsArray.push( stringId )
-                                extraNodeInfoGettext.push({
+                                nodeInfoGettext.push({
                                     dbID:stringId,
                                     selector:selector,
-                                    nodeType:nodeType,
-                                    nodeDescription: nodeDescription
                                 })
                             }else{
                                 regularStringIdsArray.push( { 'id': stringId } )
-                                extraNodeInfoRegular.push({
+                                nodeInfoRegular.push({
                                     dbID:stringId,
                                     selector:selector,
-                                    nodeType:nodeType,
+                                    type:nodeType,
                                     nodeDescription: nodeDescription
                                 })
                             }
@@ -239,7 +243,7 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        self.addToDictionary( response.data, extraNodeInfoRegular )
+                        self.addToDictionary( response.data, self.onScreenLanguage, nodeInfoRegular )
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -255,60 +259,57 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response){
-                        self.addToDictionary( response.data, extraNodeInfoGettext )
+                        self.addToDictionary( response.data, self.currentLanguage, nodeInfoGettext )
                     })
                     .catch(function (error){
                         console.log(error)
                     });
             },
-            addToDictionary( data, extraNodeInfo = null ){
-                //console.log(data)
-                if ( data != null ) {
+            addToStringTypes( strings ){
 
-                    let self = this
-                    let foundStringTypes = this.stringTypes;
+                // see what node types are found
+                let foundStringTypes = this.stringTypes;
+                strings.forEach( function ( string ) {
+                    if ( foundStringTypes.indexOf( string.type ) === -1 ){
+                        foundStringTypes.push( string.type )
+                    }
+                })
 
-                    data.forEach( function ( row ) {
-                        if ( foundStringTypes.indexOf( row.type ) === -1 ){
-                            foundStringTypes.push( row.type )
-                        }
-                    })
+                // put the node types in the order that we want, according to the prop this.stringTypeOrder
+                let orderedStringTypes = [];
+                this.stringTypeOrder.forEach( function( type ){
+                    if ( foundStringTypes.indexOf( type ) !== -1 ){
+                        orderedStringTypes.push( type )
+                    }
+                })
 
-                    let orderedStringTypes = [];
-                    this.stringTypeOrder.forEach( function( type ){
-                        if ( foundStringTypes.indexOf( type ) !== -1 ){
-                            orderedStringTypes.push( type )
-                        }
-                    });
-                    foundStringTypes.forEach( function (type) {
-                        if ( orderedStringTypes.indexOf( type ) === -1 ){
-                            orderedStringTypes.push(type);
-                        }
-                    });
+                // if there were any other string types that were not in the prop, add them at the end.
+                foundStringTypes.forEach( function (type) {
+                    if ( orderedStringTypes.indexOf( type ) === -1 ){
+                        orderedStringTypes.push(type);
+                    }
+                })
 
-                    this.stringTypes = orderedStringTypes;
-                    //console.log(self.onScreenLanguage)
-                    if ( extraNodeInfo != null ){
-                        data.forEach( function ( dataRow, index ) {
-//                            console.log(data);//dataRow.translationsArray)
-                            extraNodeInfo.forEach(function ( infoRow ){
-
-                                //todo this check is not needed. it's only because of the bug from translation manager
-                                if ( typeof dataRow.translationsArray[self.onScreenLanguage] != 'undefined' ) {
-
-                                    //console.log(dataRow.translationsArray['en_US']);//self.onScreenLanguage]);
-                                    if (infoRow.dbID == dataRow.translationsArray[self.onScreenLanguage].id) {
-                                        if (typeof infoRow.nodeType != 'undefined') {
-                                            data[index].type = infoRow.nodeType;
-                                        }
-                                    }
+                return orderedStringTypes;
+            },
+            addToDictionary( responseData, languageOfIds, nodeInfo = null ){
+                if ( responseData != null ) {
+                    if ( nodeInfo ){
+                        nodeInfo.forEach(function ( infoRow, index ){
+                            responseData.some( function ( responseDataRow ) {
+                                if (infoRow.dbID == responseDataRow.translationsArray[languageOfIds].id) {
+                                    nodeInfo[index] = Object.assign(responseDataRow, nodeInfo[index])
+                                    return true // a sort of break
                                 }
+
                             })
                         })
+                    }else{
+                        nodeInfo = responseData
                     }
 
-
-                    this.dictionary = this.dictionary.concat( data );
+                    this.stringTypes = this.addToStringTypes( nodeInfo )
+                    this.dictionary = this.dictionary.concat( nodeInfo )
                 }
             },
             setupEventListeners(){

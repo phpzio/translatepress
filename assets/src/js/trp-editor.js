@@ -1,4 +1,3 @@
-//import 'babel-polyfill'
 import Vue from 'vue'
 import Editor from './editor.vue'
 
@@ -12,8 +11,8 @@ if ( document.getElementById( 'trp-editor-container' ) ) {
         data: {
         },
         methods:{
-            addToDictionary: function( strings, extraNodeInfo = null ) {
-                this.$refs.trp_editor.addToDictionary( strings, extraNodeInfo );
+            addToDictionary: function( strings, languageOfIds, extraNodeInfo = null ) {
+                this.$refs.trp_editor.addToDictionary( strings, languageOfIds, extraNodeInfo );
             }
         }
     })

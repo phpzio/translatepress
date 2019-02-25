@@ -113,7 +113,7 @@ function TRP_Translator(){
             }
             // this should always be outside the for loop
             if ( typeof window.parent.tpEditorApp !== 'undefined' ) {
-                window.parent.tpEditorApp.addToDictionary( response );
+                window.parent.tpEditorApp.addToDictionary( response, language_to_query );
             }
         }else{
             for ( var j in strings_to_query ) {

@@ -167,17 +167,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _editor_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./editor.vue */ "./assets/src/js/editor.vue");
-//import 'babel-polyfill'
 
 
 
 if (document.getElementById('trp-editor-container')) {
-  var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
+  window.tpEditorApp = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
     components: {
       'trp-editor': _editor_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
     },
     el: '#trp-editor-container',
-    data: {}
+    data: {},
+    methods: {
+      addToDictionary: function addToDictionary(strings, languageOfIds) {
+        var extraNodeInfo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        this.$refs.trp_editor.addToDictionary(strings, languageOfIds, extraNodeInfo);
+      }
+    }
   });
 }
 
@@ -213,8 +218,15 @@ function removeUrlParameter(url, parameter) {
   }
 }
 
+function escapeHtml(string) {
+  var escape = document.createElement('textarea');
+  escape.textContent = string;
+  return escape.innerHTML;
+}
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  removeUrlParameter: removeUrlParameter
+  removeUrlParameter: removeUrlParameter,
+  escapeHtml: escapeHtml
 });
 
 /***/ }),
@@ -656,7 +668,7 @@ Axios.prototype.request = function request(config) {
     }, arguments[1]);
   }
 
-  config = utils.merge(defaults, this.defaults, { method: 'get' }, config);
+  config = utils.merge(defaults, {method: 'get'}, this.defaults, config);
   config.method = config.method.toLowerCase();
 
   // Hook up interceptors middleware
@@ -1073,6 +1085,10 @@ var defaults = {
     return data;
   }],
 
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
   timeout: 0,
 
   xsrfCookieName: 'XSRF-TOKEN',
@@ -1227,9 +1243,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
       if (utils.isArray(val)) {
         key = key + '[]';
-      }
-
-      if (!utils.isArray(val)) {
+      } else {
         val = [val];
       }
 
@@ -2001,14 +2015,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
-//
-//
-//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['trp_settings', 'available_languages', 'current_language', 'on_screen_language', 'view_as_roles', 'current_url', 'string_selectors', 'ajax_url', 'editor_nonces'],
+  props: ['trp_settings', 'available_languages', 'current_language', 'on_screen_language', 'view_as_roles', 'url_to_load', 'string_selectors', 'ajax_url', 'editor_nonces', 'string_type_order'],
   data: function data() {
     return {
       settings: JSON.parse(this.trp_settings),
@@ -2016,17 +2027,15 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       roles: JSON.parse(this.view_as_roles),
       selectors: JSON.parse(this.string_selectors),
       nonces: JSON.parse(this.editor_nonces),
-      stringTypes: ['regular', 'gettext', 'dynamic'],
+      stringTypeOrder: JSON.parse(this.string_type_order),
       currentLanguage: this.current_language,
-      currentURL: this.current_url,
+      onScreenLanguage: this.on_screen_language,
+      currentURL: this.url_to_load,
+      urlToLoad: this.url_to_load,
       iframe: '',
-      dictionary: {
-        regular: {},
-        gettext: {},
-        dynamic: {}
-      },
+      dictionary: [],
+      stringTypes: [],
       selectedString: '',
-      selectData: {},
       nodes: {}
     };
   },
@@ -2035,13 +2044,18 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     this.selectors = this.prepareSelectorStrings();
   },
   mounted: function mounted() {
-    // initialize select2
+    var self = this; // initialize select2
+
     jQuery('#trp-language-select, #trp-view-as-select').select2({
       width: '100%'
-    }); //@todo add template
-
+    });
     jQuery('#trp-string-categories').select2({
       placeholder: 'Select string to translate...',
+      templateResult: function templateResult(option) {
+        var original = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].escapeHtml(option.text.substring(0, 90)) + (option.text.length <= 90 ? '' : '...');
+        var nodeDescription = option.title ? '(' + option.title + ')' : '';
+        return jQuery('<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>');
+      },
       width: '100%'
     }); // show overlay when select is opened
 
@@ -2052,31 +2066,24 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     });
   },
   watch: {
-    dictionary: {
-      handler: function handler(newDictionary, oldDictionary) {
-        // value: index nou
-        // select Data must know  the type of string and the db-id
-        //
-        // when searching for secondary languages, we cannot use id, they need to be matched by the original string
-        //
-        //maybe put original as key. BUT for getttext the original is not unique. it would be unique if we concatenate domain and original. So NO, don't do this
-        var self = this;
-        this.selectData = {};
-        this.stringTypes.forEach(function (type) {
-          if (Object.keys(newDictionary[type]).length > 0) {
-            Object.assign(self.selectData, newDictionary[type][self.on_screen_language]);
-          }
-        });
-      },
-      deep: true
-    },
-    currentLanguage: function currentLanguage(_currentLanguage, oldLanguage) {
+    currentLanguage: function currentLanguage(_currentLanguage) {
       //grab the correct URL from the iFrame
       var newURL = this.iframe.querySelector('link[hreflang="' + _currentLanguage.replace('_', '-') + '"]').getAttribute('href');
       this.currentURL = newURL;
     },
     currentURL: function currentURL(newUrl, oldUrl) {
       window.history.replaceState(null, null, this.parentURL(newUrl));
+    },
+    selectedString: function selectedString(newString, oldString) {
+      console.log(newString);
+    },
+    dictionary: function dictionary() {
+      var self = this;
+      this.dictionary.forEach(function (row) {
+        if (row.type != '') if (self.stringTypes.indexOf(row.type) === -1) {
+          self.stringTypes.push(row.type);
+        }
+      }); //merge the data type info
     }
   },
   computed: {
@@ -2106,16 +2113,31 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var self = this;
       var regularStringIdsArray = [];
       var gettextStringIdsArray = [];
+      var nodeInfoRegular = [];
+      var nodeInfoGettext = [];
       this.nodes.forEach(function (node) {
         self.selectors.some(function (selector) {
           var stringId = node.getAttribute(selector);
 
           if (stringId) {
+            var nodeType = node.getAttribute('data-trp-node-type');
+            var nodeDescription = node.getAttribute('data-trp-node-description');
+
             if (selector.includes('data-trpgettextoriginal')) {
               gettextStringIdsArray.push(stringId);
+              nodeInfoGettext.push({
+                dbID: stringId,
+                selector: selector
+              });
             } else {
               regularStringIdsArray.push({
                 'id': stringId
+              });
+              nodeInfoRegular.push({
+                dbID: stringId,
+                selector: selector,
+                type: nodeType,
+                nodeDescription: nodeDescription
               });
             }
 
@@ -2135,7 +2157,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       data.append('language', this.on_screen_language);
       data.append('strings', JSON.stringify(regularStringIdsArray));
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.post(this.ajax_url, data).then(function (response) {
-        self.dictionary.regular = response.data;
+        self.addToDictionary(response.data, self.onScreenLanguage, nodeInfoRegular);
       }).catch(function (error) {
         console.log(error);
       }); //grab Gettext strings
@@ -2146,10 +2168,54 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       data.append('language', this.currentLanguage);
       data.append('gettext_string_ids', JSON.stringify(gettextStringIdsArray));
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.post(this.ajax_url, data).then(function (response) {
-        self.dictionary.gettext = response.data;
+        self.addToDictionary(response.data, self.currentLanguage, nodeInfoGettext);
       }).catch(function (error) {
         console.log(error);
       });
+    },
+    addToStringTypes: function addToStringTypes(strings) {
+      // see what node types are found
+      var foundStringTypes = this.stringTypes;
+      strings.forEach(function (string) {
+        if (foundStringTypes.indexOf(string.type) === -1) {
+          foundStringTypes.push(string.type);
+        }
+      }); // put the node types in the order that we want, according to the prop this.stringTypeOrder
+
+      var orderedStringTypes = [];
+      this.stringTypeOrder.forEach(function (type) {
+        if (foundStringTypes.indexOf(type) !== -1) {
+          orderedStringTypes.push(type);
+        }
+      }); // if there were any other string types that were not in the prop, add them at the end.
+
+      foundStringTypes.forEach(function (type) {
+        if (orderedStringTypes.indexOf(type) === -1) {
+          orderedStringTypes.push(type);
+        }
+      });
+      return orderedStringTypes;
+    },
+    addToDictionary: function addToDictionary(responseData, languageOfIds) {
+      var nodeInfo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      if (responseData != null) {
+        if (nodeInfo) {
+          nodeInfo.forEach(function (infoRow, index) {
+            responseData.some(function (responseDataRow) {
+              if (infoRow.dbID == responseDataRow.translationsArray[languageOfIds].id) {
+                nodeInfo[index] = Object.assign(responseDataRow, nodeInfo[index]);
+                return true; // a sort of break
+              }
+            });
+          });
+        } else {
+          nodeInfo = responseData;
+        }
+
+        this.stringTypes = this.addToStringTypes(nodeInfo);
+        this.dictionary = this.dictionary.concat(nodeInfo);
+      }
     },
     setupEventListeners: function setupEventListeners() {
       this.nodes.forEach(function (node) {
@@ -2816,11 +2882,23 @@ var render = function() {
                     }
                   }
                 },
-                _vm._l(_vm.selectData, function(option, optionIndex) {
+                _vm._l(_vm.stringTypes, function(type) {
                   return _c(
-                    "option",
-                    { key: optionIndex, domProps: { value: option.id } },
-                    [_vm._v(_vm._s(option.original))]
+                    "optgroup",
+                    { attrs: { label: type } },
+                    _vm._l(_vm.dictionary, function(string, index) {
+                      return string.type == type
+                        ? _c(
+                            "option",
+                            {
+                              attrs: { title: string.nodeDescription },
+                              domProps: { value: index }
+                            },
+                            [_vm._v(_vm._s(string.original))]
+                          )
+                        : _vm._e()
+                    }),
+                    0
                   )
                 }),
                 0
@@ -2936,7 +3014,7 @@ var render = function() {
     _vm._v(" "),
     _c("div", { attrs: { id: "trp-preview" } }, [
       _c("iframe", {
-        attrs: { id: "trp-preview-iframe", src: _vm.currentURL },
+        attrs: { id: "trp-preview-iframe", src: _vm.urlToLoad },
         on: { load: _vm.iFrameLoaded }
       })
     ])
@@ -3529,12 +3607,12 @@ var config = ({
   /**
    * Show production mode tip message on boot?
    */
-  productionTip: "development" !== 'production',
+  productionTip: "development " !== 'production',
 
   /**
    * Whether to enable devtools
    */
-  devtools: "development" !== 'production',
+  devtools: "development " !== 'production',
 
   /**
    * Whether to record perf
@@ -4501,7 +4579,7 @@ strats.computed = function (
   vm,
   key
 ) {
-  if (childVal && "development" !== 'production') {
+  if (childVal && "development " !== 'production') {
     assertObjectType(key, childVal, vm);
   }
   if (!parentVal) { return childVal }
@@ -14259,8 +14337,8 @@ module.exports = g;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/moonbas3/dev/vvv/www/pms/public_html/wp-content/plugins/translatepress/assets/src/js/trp-editor.js */"./assets/src/js/trp-editor.js");
-module.exports = __webpack_require__(/*! /home/moonbas3/dev/vvv/www/pms/public_html/wp-content/plugins/translatepress/assets/src/scss/trp-editor.scss */"./assets/src/scss/trp-editor.scss");
+__webpack_require__(/*! C:\xampp\htdocs\local\wp-content\plugins\translatepress\assets\src\js\trp-editor.js */"./assets/src/js/trp-editor.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\local\wp-content\plugins\translatepress\assets\src\scss\trp-editor.scss */"./assets/src/scss/trp-editor.scss");
 
 
 /***/ }),

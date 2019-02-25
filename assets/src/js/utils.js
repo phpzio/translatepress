@@ -24,6 +24,13 @@ function removeUrlParameter( url, parameter ) {
     }
 }
 
+function escapeHtml( string ){
+    let escape = document.createElement('textarea');
+    escape.textContent = string;
+    return escape.innerHTML;
+}
+
 export default {
-    removeUrlParameter
+    removeUrlParameter,
+    escapeHtml
 }

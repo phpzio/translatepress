@@ -49,19 +49,31 @@ function trp_sort_dictionary_by_original( $dictionaries, $type ){
 				$found = false;
 				foreach( $array as $key => $row ){
 					if ( $row['original'] == $string->original ){
-						$array[$key]['translationsArray'][$language] = $string;
-						unset($array[$key]['translationsArray'][$language]->original);
-						$found = true;
-						break;
+						if ( !isset( $string->domain ) || ( isset( $string->domain ) && $string->domain == $row['nodeDescription'] ) ) {
+							$array[ $key ]['translationsArray'][ $language ] = $string;
+							unset( $array[ $key ]['translationsArray'][ $language ]->original );
+							$found = true;
+
+							if ( isset($string->domain) ){
+								$array[ $key ]['nodeDescription'] == $string->domain;
+							}
+							break;
+						}
 					}
 				}
 				if ( ! $found ){
 					$original = $string->original;
 					unset($string->original);
+
+					$nodeDescription = null;
+					if ( isset( $string->domain ) ){
+						$nodeDescription = $string->domain;
+					}
 					$array[] = array(
 						'original' => $original,
 						'type' => $type,
-						'translationsArray' => array( $language => $string )
+						'translationsArray' => array( $language => $string ),
+						'nodeDescription' => $nodeDescription
 					);
 				}
 			}
