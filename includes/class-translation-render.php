@@ -458,7 +458,7 @@ class TRP_Translation_Render{
                                 // we are in the editor
                                 if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
                                     $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
-                                    $row->setAttribute('data-trpgettextoriginal', $original_gettext_translation_id);
+                                    $row->setAttribute('data-trpgettextoriginal-' . $attr_name, $original_gettext_translation_id);
                                 }
                             }
                         }
@@ -664,10 +664,10 @@ class TRP_Translation_Render{
                         $nodes[$i]['node'] = $nodes[$i]['node']->parent();
                     }
 	                $nodes[$i]['node']->setAttribute('data-trp-translate-id-' . $accessor, $translated_string_ids[ $translateable_strings[$i] ]->id );
-                    $nodes[$i]['node']->setAttribute('data-trp-node-type', $this->get_node_type_category( $nodes[$i]['type'] ) );
+                    $nodes[$i]['node']->setAttribute('data-trp-node-type-' . $accessor, $this->get_node_type_category( $nodes[$i]['type'] ) );
 
                     if ( $this->get_node_description( $nodes[$i] ) ) {
-                        $nodes[$i]['node']->setAttribute('data-trp-node-description', $this->get_node_description($nodes[$i]));
+                        $nodes[$i]['node']->setAttribute('data-trp-node-description-' . $accessor, $this->get_node_description($nodes[$i]));
                     }
 
                 }

@@ -123,7 +123,6 @@
             this.selectors = this.prepareSelectorStrings()
         },
         mounted(){
-            let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
             jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', templateResult: function(option){
@@ -204,23 +203,28 @@
                 this.nodes.forEach( function ( node ){
                     self.selectors.some( function ( selector ){
                         let stringId = node.getAttribute( selector )
-
                         if ( stringId ){
-                            let nodeType = node.getAttribute( 'data-trp-node-type' )
-                            let nodeDescription = node.getAttribute( 'data-trp-node-description' )
                             if ( selector.includes('data-trpgettextoriginal') ){
+                                let nodeAttribute = selector.replace('data-trpgettextoriginal', '')
                                 gettextStringIdsArray.push( stringId )
                                 nodeInfoGettext.push({
                                     dbID:stringId,
                                     selector:selector,
+                                    attribute:nodeAttribute
                                 })
                             }else{
+                                let nodeAttribute = selector.replace('data-trp-translate-id', '')
+                                let nodeType = node.getAttribute( 'data-trp-node-type' + nodeAttribute )
+                                let nodeDescription = node.getAttribute( 'data-trp-node-description' + nodeAttribute )
                                 regularStringIdsArray.push( { 'id': stringId } )
                                 nodeInfoRegular.push({
                                     dbID:stringId,
                                     selector:selector,
+
+                                    // trimmed line -   ex. -alt will result in alt (no line)
+                                    attribute:nodeAttribute.substr(1),
                                     type:nodeType,
-                                    nodeDescription: nodeDescription
+                                    nodeDescription:nodeDescription
                                 })
                             }
 

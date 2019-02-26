@@ -30,8 +30,8 @@
     //and we need to compare the URL with the one from the iFrame (which has the protocol added)
     $current_url = 'http:' . $current_url;
 
-    //@todo
-    $selectors = array('', '-alt', '-src', '-content' );
+    //@todo list is not comprehensive. Should in sync with the code fragment where the attributes are set
+    $selectors = array('', '-alt', '-src', '-content', '-value', '-placeholder' );
 
     do_action( 'trp_head' );
 
