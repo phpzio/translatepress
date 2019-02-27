@@ -11,8 +11,8 @@ if ( document.getElementById( 'trp-editor-container' ) ) {
         data: {
         },
         methods:{
-            addToDictionary: function( strings, languageOfIds, extraNodeInfo = null ) {
-                this.$refs.trp_editor.addToDictionary( strings, languageOfIds, extraNodeInfo );
+            addToDictionary: function( strings, extraNodeInfo = null ) {
+                this.$refs.trp_editor.addToDictionary( strings, extraNodeInfo );
             }
         }
     })

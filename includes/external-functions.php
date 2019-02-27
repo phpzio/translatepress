@@ -38,7 +38,7 @@ function trp_full_trim( $string ) {
 	return $string;
 }
 
-function trp_sort_dictionary_by_original( $dictionaries, $type ){
+function trp_sort_dictionary_by_original( $dictionaries, $type, $languageForId ){
 	$array = array();
 	foreach( $dictionaries as $language => $dictionary ){
 		if ( isset( $dictionary['default-language'] ) && $dictionary['default-language'] == true ){
@@ -57,24 +57,29 @@ function trp_sort_dictionary_by_original( $dictionaries, $type ){
 							if ( isset($string->domain) ){
 								$array[ $key ]['nodeDescription'] == $string->domain;
 							}
+							if ( $language == $languageForId ){
+								$array[ $key ][ 'dbID' ] = $string->id;
+							}
 							break;
 						}
 					}
 				}
 				if ( ! $found ){
-					$original = $string->original;
+					$new_entry = array(
+						'type'              => $type,
+						'translationsArray' => array( $language  => $string ),
+						'original'          => $string->original
+					);
 					unset($string->original);
 
-					$nodeDescription = null;
 					if ( isset( $string->domain ) ){
-						$nodeDescription = $string->domain;
+						$new_entry['nodeDescription'] = $nodeDescription = $string->domain;
 					}
-					$array[] = array(
-						'original' => $original,
-						'type' => $type,
-						'translationsArray' => array( $language => $string ),
-						'nodeDescription' => $nodeDescription
-					);
+					if ( $language == $languageForId ){
+						$new_entry['dbID'] = $string->id;
+					}
+
+					$array[] = $new_entry;
 				}
 			}
 		}

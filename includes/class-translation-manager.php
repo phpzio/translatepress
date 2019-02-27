@@ -289,7 +289,7 @@ class TRP_Translation_Manager{
 	                if ( isset( $_POST['dynamic_strings'] ) && $_POST['dynamic_strings'] === 'true'  ){
 	                	$string_type = $localized_text['dynamicstrings'];
 	                }
-			        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $string_type );
+			        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $string_type, $_POST['language'] );
 
                     echo trp_safe_json_encode( $dictionary_by_original );
                 }
@@ -389,7 +389,7 @@ class TRP_Translation_Manager{
                     }
                 }
 		        $localized_text = $this->string_types();
-		        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $localized_text['gettextstrings'] );
+		        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $localized_text['gettextstrings'], $_POST['language'] );
                 die( trp_safe_json_encode( $dictionary_by_original ) );
 
             }

@@ -158,7 +158,7 @@ class TRP_Ajax{
             }
 
 	        error_log(json_encode($dictionaries));
-	        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries,'dynamicstrings' );
+	        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries,'dynamicstrings', null, null );
             echo json_encode($dictionary_by_original);
         }
 

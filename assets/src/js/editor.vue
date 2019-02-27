@@ -201,9 +201,11 @@
                 let nodeInfoGettext = []
 
                 this.nodes.forEach( function ( node ){
-                    self.selectors.some( function ( selector ){
+                    self.selectors.forEach( function ( selector ){
                         let stringId = node.getAttribute( selector )
                         if ( stringId ){
+                            let tagName = node.tagName;
+
                             if ( selector.includes('data-trpgettextoriginal') ){
                                 let nodeAttribute = selector.replace('data-trpgettextoriginal', '')
                                 gettextStringIdsArray.push( stringId )
@@ -227,10 +229,7 @@
                                     nodeDescription:nodeDescription
                                 })
                             }
-
-                            return true
                         }
-                        return false
                     })
                 })
 
@@ -247,7 +246,7 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        self.addToDictionary( response.data, self.onScreenLanguage, nodeInfoRegular )
+                        self.addToDictionary( response.data, nodeInfoRegular )
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -263,7 +262,7 @@
 
                 axios.post( this.ajax_url, data )
                     .then(function (response){
-                        self.addToDictionary( response.data, self.currentLanguage, nodeInfoGettext )
+                        self.addToDictionary( response.data, nodeInfoGettext )
                     })
                     .catch(function (error){
                         console.log(error)
@@ -296,16 +295,15 @@
 
                 return orderedStringTypes;
             },
-            addToDictionary( responseData, languageOfIds, nodeInfo = null ){
+            addToDictionary( responseData, nodeInfo = null ){
                 if ( responseData != null ) {
                     if ( nodeInfo ){
                         nodeInfo.forEach(function ( infoRow, index ){
                             responseData.some( function ( responseDataRow ) {
-                                if (infoRow.dbID == responseDataRow.translationsArray[languageOfIds].id) {
-                                    nodeInfo[index] = Object.assign(responseDataRow, nodeInfo[index])
+                                if ( infoRow.dbID == responseDataRow.dbID ) {
+                                    nodeInfo[index] = Object.assign( {}, responseDataRow, infoRow )
                                     return true // a sort of break
                                 }
-
                             })
                         })
                     }else{

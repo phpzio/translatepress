@@ -17,10 +17,7 @@ function TRP_Translator(){
      * Ajax request to get translations for strings
      */
     this.ajax_get_translation = function( strings_to_query, url ) {
-        var all_languages_true_false = 'false';
-        if ( typeof window.parent.tpEditorApp !== 'undefined' ) {
-            all_languages_true_false = 'true';
-        }
+        var all_languages_true_false = ( _this.is_editor ) ? 'true' : 'false'
         jQuery.ajax({
             url: url,
             type: 'post',
@@ -74,6 +71,7 @@ function TRP_Translator(){
      */
     this.update_strings = function( response, strings_to_query ) {
         if ( response != null && response.length > 0 ){
+            var newEntries = [];
             for ( var j in strings_to_query ) {
                 var queried_string = strings_to_query[j];
                 var translation_found = false;
@@ -81,18 +79,15 @@ function TRP_Translator(){
                 for( var i in response ) {
                     var response_string = response[i].translationsArray[language_to_query];
                     if (response[i].original.trim() == queried_string.original.trim()) {
-
-                        // We use j instead of i index because the strings_to_query can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
-                        /*dictionary[j] = {};
-                        dictionary[j].id = response[language_to_query][i].id;
-                        dictionary[j].original = response[language_to_query][i].original;
-                        dictionary[j].translated = response[language_to_query][i].translated;
-                        dictionary[j].status = response[language_to_query][i].status;
-                        dictionary[j].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
-                        if ( typeof parent.trpEditor !== 'undefined' ) {
-                            dictionary[j].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
-                            dictionary[j].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
-                        }*/
+                        // The strings_to_query can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
+                        var entry = response[i]
+                        entry.selector = 'data-trp-translate-id'
+                        newEntries.push( entry )
+                        if ( _this.is_editor ) {
+                            var jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
+                            jquery_object.attr( 'data-trp-translate-id', response[i].dbID );
+                            jquery_object.attr( 'data-trp-node-type', response[i].type );
+                        }
 
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
@@ -112,8 +107,8 @@ function TRP_Translator(){
                 }
             }
             // this should always be outside the for loop
-            if ( typeof window.parent.tpEditorApp !== 'undefined' ) {
-                window.parent.tpEditorApp.addToDictionary( response, language_to_query );
+            if ( _this.is_editor ) {
+                window.parent.tpEditorApp.addToDictionary( newEntries );
             }
         }else{
             for ( var j in strings_to_query ) {
@@ -134,7 +129,7 @@ function TRP_Translator(){
                         var node = jQuery( mutation.addedNodes[i] );
 
                         /* if it is an anchor add the trp-edit-translation=preview parameter to it */
-                        if ( typeof parent.trpEditor !== 'undefined' ) {
+                        if ( _this.is_editor ) {
                             jQuery(mutation.addedNodes[i]).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(mutation.addedNodes[i]).find('a').context.href);
                         }
 
@@ -151,7 +146,7 @@ function TRP_Translator(){
                                 });
 
                                 direct_string.textContent = '';
-                                if (typeof parent.trpEditor !== 'undefined') {
+                                if ( _this.is_editor ) {
                                     jQuery(mutation.addedNodes[i]).wrap('<translate-press></translate-press>');
                                 }
                             }
@@ -163,7 +158,7 @@ function TRP_Translator(){
                                                 return this;
                                             }
                                     }});
-                            if ( typeof parent.trpEditor !== 'undefined' ) {
+                            if ( _this.is_editor ) {
                                 all_strings.wrap('<translate-press></translate-press>');
                             }
                             var all_strings_length = all_strings.length;
@@ -250,6 +245,7 @@ function TRP_Translator(){
      * Initialize and configure observer.
      */
     this.initialize = function() {
+        this.is_editor = (typeof window.parent.tpEditorApp !== 'undefined' )
 
         current_language = trp_data.trp_current_language;
         original_language = trp_data.trp_original_language;
