@@ -1040,12 +1040,10 @@ class TRP_Translation_Render{
 				'trp_original_language'               => $this->settings['default-language'],
 				'trp_current_language'                => $TRP_LANGUAGE,
 				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]' ), $TRP_LANGUAGE, $this->settings ),
-				'gettranslationsnonce'                => $nonces['gettranslationsnonce'],
+				'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
 				'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
             );
-            if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) {
-                $trp_data['trp_custom_ajax_url'] = $trp_data['trp_wp_ajax_url'];
-            }
+
             wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'), TRP_PLUGIN_VERSION );
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
         }

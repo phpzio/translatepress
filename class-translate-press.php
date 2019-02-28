@@ -14,6 +14,8 @@ class TRP_Translate_Press{
     protected $query;
     protected $language_switcher;
     protected $translation_manager;
+    protected $editor_api_regular_strings;
+    protected $editor_api_gettext_strings;
     protected $url_converter;
     protected $languages;
     protected $slug_manager;
@@ -69,6 +71,9 @@ class TRP_Translate_Press{
     protected function load_dependencies() {
         require_once TRP_PLUGIN_DIR . 'includes/class-settings.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-manager.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-editor-api-regular-strings.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-editor-api-gettext-strings.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-translation-manager.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-hooks-loader.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-languages.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-render.php';
@@ -98,6 +103,8 @@ class TRP_Translate_Press{
         $this->query = new TRP_Query( $this->settings->get_settings() );
         $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings() );
         $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
+        $this->editor_api_regular_strings = new TRP_Editor_Api_Regular_Strings( $this->settings->get_settings() );
+        $this->editor_api_gettext_strings = new TRP_Editor_Api_Gettext_Strings( $this->settings->get_settings() );
         $this->notifications = new TRP_Trigger_Plugin_Notifications();
         $this->upgrade = new TRP_Upgrade( $this->settings->get_settings() );
     }
@@ -119,17 +126,17 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp_head', $this->translation_manager, 'add_slug_as_meta_tag', 1 );
 
 
-        $this->loader->add_action( 'wp_ajax_trp_get_translations', $this->translation_manager, 'get_translations' );
-        $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->translation_manager, 'save_translations' );
-        $this->loader->add_action( 'wp_ajax_trp_create_translation_block', $this->translation_manager, 'create_translation_block' );
-        $this->loader->add_action( 'init', $this->translation_manager, 'split_translation_block' );
+        $this->loader->add_action( 'wp_ajax_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
+//        $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->editor_api_regular_strings, 'save_translations' );
+//        $this->loader->add_action( 'wp_ajax_trp_create_translation_block', $this->editor_api_regular_strings, 'create_translation_block' );
+//        $this->loader->add_action( 'init', $this->editor_api_regular_strings, 'split_translation_block' );
 	    $this->loader->add_filter( 'trp_get_existing_translations', $this->translation_manager, 'display_possible_db_errors', 20, 3 );
 
 
         $this->loader->add_action( 'wp_ajax_trp_process_js_strings_in_translation_editor', $this->translation_render, 'process_js_strings_in_translation_editor' );
 
-        $this->loader->add_action( 'wp_ajax_trp_gettext_get_translations', $this->translation_manager, 'gettext_get_translations' );
-        $this->loader->add_action( 'wp_ajax_trp_gettext_save_translations', $this->translation_manager, 'gettext_save_translations' );
+        $this->loader->add_action( 'wp_ajax_trp_get_translations_gettext', $this->editor_api_gettext_strings, 'gettext_get_translations' );
+        $this->loader->add_action( 'wp_ajax_trp_gettext_save_translations', $this->editor_api_gettext_strings, 'gettext_save_translations' );
 
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
 

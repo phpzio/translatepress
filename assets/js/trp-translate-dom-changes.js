@@ -4,10 +4,11 @@
  */
 function TRP_Translator(){
 
+    this.is_editor = false;
     var _this = this;
     var observer = null;
     var active = true;
-    var ajax_url = trp_data.trp_custom_ajax_url;
+    var custom_ajax_url = trp_data.trp_custom_ajax_url;
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
     var language_to_query;
     var except_characters = " \t\n\r  �.,/`~!@#$€£%^&*():;-_=+[]{}\\|?/<>1234567890'";
@@ -16,36 +17,36 @@ function TRP_Translator(){
     /**
      * Ajax request to get translations for strings
      */
-    this.ajax_get_translation = function( strings_to_query, url ) {
+    this.ajax_get_translation = function( nodeInfo, string_originals, url ) {
         var all_languages_true_false = ( _this.is_editor ) ? 'true' : 'false'
         jQuery.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
             data: {
-                action            : 'trp_get_translations',
+                action            : 'trp_get_translations_regular',
                 all_languages     : all_languages_true_false,
-                security          : trp_data['gettranslationsnonce'],
+                security          : trp_data['gettranslationsnonceregular'],
                 language          : language_to_query,
                 original_language : original_language,
-                strings           : JSON.stringify( strings_to_query ),
+                originals         : JSON.stringify( string_originals ),
                 dynamic_strings   : 'true'
             },
             success: function( response ) {
                 if ( response === 'error' ) {
-                    _this.ajax_get_translation( strings_to_query, wp_ajax_url );
+                    _this.ajax_get_translation( nodeInfo, string_originals, wp_ajax_url );
                     console.log( 'Notice: TranslatePress trp-ajax request uses fall back to admin ajax.' );
                 }else{
-                    _this.update_strings( response, strings_to_query );
+                    _this.update_strings( response, nodeInfo );
                     //window.parent.jQuery('#trp-preview-iframe').trigger('load');
                 }
             },
             error: function( errorThrown ){
-                if ( url == ajax_url ){
-                    _this.ajax_get_translation( strings_to_query, wp_ajax_url );
+                if ( url == custom_ajax_url ){
+                    _this.ajax_get_translation( nodeInfo, string_originals, wp_ajax_url );
                     console.log( 'Notice: TranslatePress trp-ajax request uses fall back to admin ajax.' );
                 }else{
-                    _this.update_strings( null, strings_to_query );
+                    _this.update_strings( null, nodeInfo );
                     console.log( 'TranslatePress AJAX Request Error' );
                 }
             }
@@ -122,7 +123,8 @@ function TRP_Translator(){
      */
     this.detect_new_strings = function( mutations ){
         if ( active ) {
-            var strings = [];
+            var string_originals = [];
+            var nodeInfo = [];
             mutations.forEach( function (mutation) {
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     if ( mutation.addedNodes[i].textContent && _this.trim( mutation.addedNodes[i].textContent.trim(), except_characters ) != '' ) {
@@ -140,10 +142,12 @@ function TRP_Translator(){
                         var direct_string = get_string_from_node( mutation.addedNodes[i] );
                         if ( direct_string ) {
                             if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
-                                strings.push({
+                                var extracted_original = _this.trim(direct_string.textContent, trim_characters);
+                                nodeInfo.push({
                                     node: mutation.addedNodes[i],
-                                    original: _this.trim(direct_string.textContent, trim_characters)
+                                    original: extracted_original
                                 });
+                                string_originals.push(extracted_original)
 
                                 direct_string.textContent = '';
                                 if ( _this.is_editor ) {
@@ -164,7 +168,8 @@ function TRP_Translator(){
                             var all_strings_length = all_strings.length;
                             for (var j = 0; j < all_strings_length; j++ ) {
                                 if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                                    strings.push({node: all_strings[j], original: all_strings[j].textContent });
+                                    nodeInfo.push({node: all_strings[j], original: all_strings[j].textContent });
+                                    string_originals.push( all_strings[j].textContent )
                                     if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
                                         all_strings[j].textContent = '';
                                     }
@@ -174,8 +179,9 @@ function TRP_Translator(){
                     }
                 }
             });
-            if ( strings.length > 0 ) {
-                _this.ajax_get_translation( strings, ajax_url );
+            if ( nodeInfo.length > 0 ) {
+                var ajax_url_to_call = (_this.is_editor) ? wp_ajax_url : custom_ajax_url;
+                _this.ajax_get_translation( nodeInfo, string_originals, ajax_url_to_call );
             }
         }
     };

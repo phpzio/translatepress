@@ -120,7 +120,6 @@
         },
         created(){
             this.settings['default-language-name'] = this.languages[ this.settings['default-language'] ]
-            this.selectors = this.prepareSelectorStrings()
         },
         mounted(){
             // initialize select2
@@ -155,15 +154,6 @@
                 console.log( newString )
             },
             dictionary: function (){
-                let self = this
-                this.dictionary.forEach( function ( row ) {
-                    if ( row.type != '' )
-                    if ( self.stringTypes.indexOf( row.type ) === -1 ){
-                        self.stringTypes.push( row.type )
-                    }
-                })
-
-                //merge the data type info
             }
         },
         computed: {
@@ -184,88 +174,63 @@
                 this.init()
             },
             init(){
-                this.setupNodes()
-                this.setupDictionaries()
-                this.setupEventListeners()
+              //  this.setupNodes()
+                this.setupDictionary( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
+                this.setupDictionary( 'data-trpgettextoriginal', 'gettext', this.currentLanguage )
+//                this.setupEventListeners()
             },
-            setupNodes() {
-                this.nodes = this.iframe.querySelectorAll( '[' + this.selectors.join('],[') + ']' )
-            },
-            setupDictionaries(){
-                //setup strings array based on iFrame
-                //save nodes somewhere else so we can hook the event listeners ?
-                let self                  = this
-                let regularStringIdsArray = []
-                let gettextStringIdsArray = []
-                let nodeInfoRegular = []
-                let nodeInfoGettext = []
+            setupDictionary( baseNameSelector, typeSlug, languageOfIds ){
+                let self           = this
+                let selectors      = this.prepareSelectorStrings( baseNameSelector )
+                let nodes          = this.iframe.querySelectorAll( '[' + selectors.join('],[') + ']' )
+                let stringIdsArray = []
+                let nodeInfo       = []
 
-                this.nodes.forEach( function ( node ){
-                    self.selectors.forEach( function ( selector ){
+                nodes.forEach( function ( node ){
+                    selectors.forEach( function ( selector ){
                         let stringId = node.getAttribute( selector )
-                        if ( stringId ){
-                            let tagName = node.tagName;
+                        if ( stringId ) {
+//                            let tagName = node.tagName;
+                            stringIdsArray.push(stringId)
+                            let nodeAttribute = selector.replace(baseNameSelector, '')
+                            let nodeType = node.getAttribute('data-trp-node-type' + nodeAttribute)
+                            let nodeDescription = node.getAttribute('data-trp-node-description' + nodeAttribute)
 
-                            if ( selector.includes('data-trpgettextoriginal') ){
-                                let nodeAttribute = selector.replace('data-trpgettextoriginal', '')
-                                gettextStringIdsArray.push( stringId )
-                                nodeInfoGettext.push({
-                                    dbID:stringId,
-                                    selector:selector,
-                                    attribute:nodeAttribute
-                                })
-                            }else{
-                                let nodeAttribute = selector.replace('data-trp-translate-id', '')
-                                let nodeType = node.getAttribute( 'data-trp-node-type' + nodeAttribute )
-                                let nodeDescription = node.getAttribute( 'data-trp-node-description' + nodeAttribute )
-                                regularStringIdsArray.push( { 'id': stringId } )
-                                nodeInfoRegular.push({
-                                    dbID:stringId,
-                                    selector:selector,
-
-                                    // trimmed line -   ex. -alt will result in alt (no line)
-                                    attribute:nodeAttribute.substr(1),
-                                    type:nodeType,
-                                    nodeDescription:nodeDescription
-                                })
+                            let entry = {
+                                dbID: stringId,
+                                selector: selector,
+                                // substr(1) is used to trim prefixing line -   ex. -alt will result in alt (no line)
+                                attribute: nodeAttribute.substr(1),
+                            };
+                            if (nodeType) {
+                                entry.type = nodeType
                             }
+                            if (nodeDescription) {
+                                entry.nodeDescription = nodeDescription
+                            }
+
+                            nodeInfo.push(entry)
                         }
                     })
                 })
 
                 //unique ids only
-                gettextStringIdsArray = [...new Set(gettextStringIdsArray)]
+                stringIdsArray = [...new Set(stringIdsArray)]
 
                 //grab Regular strings
                 let data = new FormData()
-                    data.append('action'       , 'trp_get_translations')
-                    data.append('all_languages', 'true')
-                    data.append('security'     , this.nonces['gettranslationsnonce'])
-                    data.append('language'     , this.on_screen_language)
-                    data.append('strings'      , JSON.stringify( regularStringIdsArray ) )
+                data.append('action'       , 'trp_get_translations_' + typeSlug)
+                data.append('all_languages', 'true')
+                data.append('security'     , this.nonces['gettranslationsnonce' + typeSlug ] )
+                data.append('language'     , languageOfIds)
+                data.append('string_ids'   , JSON.stringify( stringIdsArray ) )
 
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        self.addToDictionary( response.data, nodeInfoRegular )
+                        self.addToDictionary( response.data, nodeInfo )
                     })
                     .catch(function (error) {
                         console.log(error);
-                    });
-
-                //grab Gettext strings
-                data = new FormData()
-                    data.append('action'            , 'trp_gettext_get_translations')
-                    data.append('security'          , this.nonces['gettextgettranslationsnonce'])
-                    data.append('language'          , this.currentLanguage)
-                    data.append('gettext_string_ids', JSON.stringify( gettextStringIdsArray ) )
-
-
-                axios.post( this.ajax_url, data )
-                    .then(function (response){
-                        self.addToDictionary( response.data, nodeInfoGettext )
-                    })
-                    .catch(function (error){
-                        console.log(error)
                     });
             },
             addToStringTypes( strings ){
@@ -327,12 +292,11 @@
 
                 })
             },
-            prepareSelectorStrings(){
+            prepareSelectorStrings( baseNameSelector ){
                 let parsed_selectors = []
 
-                this.selectors.forEach( function ( selector, index ){
-                    parsed_selectors.push( 'data-trp-translate-id' + selector  )
-                    parsed_selectors.push( 'data-trpgettextoriginal' + selector  )
+                this.selectors.forEach( function ( selectorSuffix, index ){
+                    parsed_selectors.push( baseNameSelector + selectorSuffix  )
                 })
 
                 return parsed_selectors
