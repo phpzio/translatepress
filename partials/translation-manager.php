@@ -31,7 +31,8 @@
     $current_url = 'http:' . $current_url;
 
     //@todo list is not comprehensive. Should in sync with the code fragment where the attributes are set
-    $selectors = array('', '-alt', '-src', '-content', '-value', '-placeholder' );
+    $selectors = array('', '-alt', '-src', '-content', '-value', '-placeholder', '-href', '-title' );
+    $data_attributes = array( 'data-trp-translate-id', 'data-trpgettextoriginal' );
 
     do_action( 'trp_head' );
 
@@ -65,6 +66,7 @@
             view_as_roles='<?php echo json_encode( $view_as_roles ); ?>'
             url_to_load="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
             string_selectors='<?php echo json_encode( $selectors ); ?>'
+            data_attributes='<?php echo json_encode( $data_attributes ); ?>'
             editor_nonces='<?php echo json_encode( $translation_manager->editor_nonces() ); ?>'
             ajax_url= '<?php echo apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
             string_type_order= '<?php echo json_encode( $string_types ); ?>'

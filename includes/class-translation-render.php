@@ -558,12 +558,46 @@ class TRP_Translation_Render{
             }
         }
 	    foreach ( $html->find('img') as $k => $row ) {
-		    if($this->full_trim($row->src)!="" && !$this->has_ancestor_attribute( $row, $no_translate_attribute )) /*todo src-set, lazy load, etc*/
+		    $trimmed_string = trp_full_trim($row->src);
+		    // @todo src-set, lazy load, etc
+		    // @todo don't machine translate this
+		    if( $trimmed_string!=""
+		        && !preg_match('/^\d+%$/',$trimmed_string)
+		        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+		        && !$this->has_ancestor_class( $row, 'translation-block')
+		    )
 		    {
-			    array_push( $translateable_strings, $row->src );
+			    array_push( $translateable_strings, $trimmed_string );
 			    array_push( $nodes, array('node'=>$row,'type'=>'image_src') );
 		    }
 	    }
+	    foreach ( $html->find('a[href]') as $k => $row ) {
+        	// @todo should be ignored by later processing of internal link if it was manually translated
+        	// @todo don't machine translate this
+		    $trimmed_string = trp_full_trim($row->href);
+		    if( $trimmed_string!=""
+		        && !preg_match('/^\d+%$/',$trimmed_string)
+		        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+		        && !$this->has_ancestor_class( $row, 'translation-block')
+		    )
+		    {
+			    array_push( $translateable_strings, $trimmed_string );
+			    array_push( $nodes, array('node'=>$row,'type'=>'a_href') );
+		    }
+	    }
+	    foreach ( $html->find('[title]') as $k => $row ) {
+		    $trimmed_string = trp_full_trim($row->title);
+		    if( $trimmed_string!=""
+		        && !preg_match('/^\d+%$/',$trimmed_string)
+		        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+		        && !$this->has_ancestor_class( $row, 'translation-block')
+		    )
+		    {
+			    array_push( $translateable_strings, $trimmed_string );
+			    array_push( $nodes, array('node'=>$row,'type'=>'title') );
+		    }
+	    }
+
 
 
         $translateable_information = array( 'translateable_strings' => $translateable_strings, 'nodes' => $nodes );
@@ -612,8 +646,16 @@ class TRP_Translation_Render{
                 'attribute' => true
             ),
             'placeholder' => array(
-                'accessor' => 'placeholder',
-                'attribute' => true
+	            'accessor' => 'placeholder',
+	            'attribute' => true
+            ),
+            'title' => array(
+	            'accessor' => 'title',
+	            'attribute' => true
+            ),
+            'a_href' => array(
+	            'accessor' => 'href',
+	            'attribute' => true
             ),
             'button' => array(
                 'accessor' => 'outertext',

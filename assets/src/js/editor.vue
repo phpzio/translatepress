@@ -95,27 +95,30 @@
             'view_as_roles',
             'url_to_load',
             'string_selectors',
+            'data_attributes',
             'ajax_url',
             'editor_nonces',
             'string_type_order'
         ],
         data(){
             return {
-                settings         : JSON.parse( this.trp_settings ),
-                languages        : JSON.parse( this.available_languages ),
-                roles            : JSON.parse( this.view_as_roles ),
-                selectors        : JSON.parse( this.string_selectors ),
-                nonces           : JSON.parse( this.editor_nonces),
-                stringTypeOrder  : JSON.parse( this.string_type_order),
-                currentLanguage  : this.current_language,
-                onScreenLanguage : this.on_screen_language,
-                currentURL       : this.url_to_load,
-                urlToLoad        : this.url_to_load,
-                iframe           : '',
-                dictionary       : [],
-                stringTypes      : [],
-                selectedString   : '',
-                nodes            : {},
+                settings             : JSON.parse( this.trp_settings ),
+                languages            : JSON.parse( this.available_languages ),
+                roles                : JSON.parse( this.view_as_roles ),
+                nonces               : JSON.parse( this.editor_nonces),
+                stringTypeOrder      : JSON.parse( this.string_type_order),
+                selectors            : JSON.parse( this.string_selectors ),
+                dataAttributes       : JSON.parse( this.data_attributes ),
+                currentLanguage      : this.current_language,
+                onScreenLanguage     : this.on_screen_language,
+                currentURL           : this.url_to_load,
+                urlToLoad            : this.url_to_load,
+                iframe               : '',
+                dictionary           : [],
+                stringTypes          : [],
+                selectedString       : '',
+                nodes                : {},
+                selectedIndexesArray : []
             }
         },
         created(){
@@ -150,8 +153,50 @@
             currentURL: function ( newUrl, oldUrl ) {
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
-            selectedString: function ( newString, oldString ){
-                console.log( newString )
+            selectedString: function ( selectedStringArrayIndex, oldString ){
+                let selectedString = this.dictionary[selectedStringArrayIndex]
+                let currentNode = this.iframe.querySelector( "[" + selectedString.selector + "='" + selectedString.dbID + "']")
+                let nodes = []
+                nodes.push( currentNode )
+
+                let selectors = []
+                let self = this
+                this.dataAttributes.forEach( function ( dataAttribute ){
+                    selectors = selectors.concat( self.prepareSelectorStrings( dataAttribute ) )
+                })
+
+                if ( currentNode.tagName == "IMG" ){
+                    // include the anchor's translatable attributes
+                    let anchorParent  = currentNode.closest('a')
+                    if(  anchorParent != null ) {
+                        nodes.push(anchorParent)
+                    }
+                }
+
+                if ( currentNode.tagName == "A" && currentNode.children.length > 0 ){
+                    // include all the translatable attributes inside the anchor
+                    let childrenArray = [ ...currentNode.children ];
+                    childrenArray.forEach( function ( child ) {
+                        nodes.push(child)
+                    })
+
+                }
+
+                let selectedIndexesArray = []
+                nodes.forEach( function( node ) {
+                    selectors.forEach(function (selector) {
+                        let stringId = node.getAttribute(selector)
+                        if (stringId) {
+                            selectedIndexesArray.push(self.getStringIndex(selector, stringId))
+                        }
+                    })
+                })
+
+                this.selectedIndexesArray = selectedIndexesArray
+
+            },
+            selectedIndexesArray: function( newSelectedIndexesArray, oldSelectedIndexesArray ){
+                console.log( newSelectedIndexesArray)
             },
             dictionary: function (){
             }
@@ -278,6 +323,16 @@
                     this.stringTypes = this.addToStringTypes( nodeInfo )
                     this.dictionary = this.dictionary.concat( nodeInfo )
                 }
+            },
+            getStringIndex( selector, dbID ){
+                let found = null
+                this.dictionary.some(function ( string, index ) {
+                    if ( string.dbID == dbID && string.selector == selector ){
+                        found = index
+                        return true
+                    }
+                })
+                return found
             },
             setupEventListeners(){
                 this.nodes.forEach( function ( node ){
