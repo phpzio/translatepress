@@ -10,7 +10,7 @@
     $url_converter      = $trp->get_component('url_converter');
     $trp_settings       = $settings_component->get_settings();
 
-    $available_languages = $trp_languages->get_language_names( $trp_settings['translation-languages'] );
+    $language_names = $trp_languages->get_language_names( $trp_settings['translation-languages'] );
 
     // move the current language to the beginning of the array
     $translation_languages = $trp_settings['translation-languages'];
@@ -21,7 +21,7 @@
     }
     $default_language_key = array_search( $trp_settings['default-language'], $translation_languages );
     unset( $translation_languages[$default_language_key] );
-    $translation_languages = array_values( $translation_languages );
+    $ordered_secondary_languages = array_values( $translation_languages );
 
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
     $current_url = $url_converter->cur_page_url();
@@ -60,9 +60,10 @@
         <trp-editor
             ref='trp_editor'
             trp_settings='<?php echo json_encode( $trp_settings ); ?>'
-            available_languages='<?php echo json_encode( $available_languages ); ?>'
+            language_names='<?php echo json_encode( $language_names ); ?>'
+            ordered_secondary_languages='<?php echo json_encode( $ordered_secondary_languages ); ?>'
             current_language="<?php echo $TRP_LANGUAGE; ?>"
-            on_screen_language="<?php echo ( isset( $translation_languages[0] ) ) ? $translation_languages[0] : 'null' ; ?>"
+            on_screen_language="<?php echo ( isset( $ordered_secondary_languages[0] ) ) ? $ordered_secondary_languages[0] : 'null' ; ?>"
             view_as_roles='<?php echo json_encode( $view_as_roles ); ?>'
             url_to_load="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
             string_selectors='<?php echo json_encode( $selectors ); ?>'

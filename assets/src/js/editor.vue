@@ -20,7 +20,7 @@
                     <div class="trp-controls-section-content">
                         <div id="trp-language-switch">
                             <select id="trp-language-select" name="lang" v-model="currentLanguage" v-select2>
-                                <option v-for="(lang, langIndex) in languages" :value="langIndex">{{lang}}</option>
+                                <option v-for="(lang, langIndex) in languageNames" :value="langIndex">{{lang}}</option>
                             </select>
                         </div>
 
@@ -48,26 +48,15 @@
                 </div>
 
                 <div class="trp-controls-section">
-
-                    <div id="trp-translation-section" class="trp-controls-section-content">
-
-                        <div id="trp-unsaved-changes-warning-message" style="display:none">You have unsaved changes!</div>
-
-                        <div id="trp-gettext-original" class="trp-language-text trp-gettext-original-language" style="display:none">
-                            <div class="trp-language-name">Original String</div>
-                            <textarea id="trp-gettext-original-textarea" readonly="readonly"></textarea>
-                        </div>
-
-                        <div :id="'trp-language-' + settings['default-language']" class="trp-language-text trp-default-language">
-                            <div class="trp-language-name" :data-trp-gettext-language-name="'To ' + settings['default-language-name']" :data-trp-default-language-name="'From ' + settings['default-language-name']">
-                                {{ 'From ' + settings['default-language-name'] }}
-                            </div>
-
-                            <textarea id="trp-original" :data-trp-language-code="settings['default-language']" readonly="readonly"></textarea>
-
-                            <div class="trp-discard-changes trp-discard-on-default-language" style="display:none;">Discard changes</div>
-                        </div>
-                    </div>
+                    <translation-boxes
+                            :selectedIndexesArray="selectedIndexesArray"
+                            :dictionary="dictionary"
+                            :languageNames="languageNames"
+                            :currentLanguage="currentLanguage"
+                            :settings="settings"
+                            :orderedSecondaryLanguages="orderedSecondaryLanguages"
+                    >
+                    </translation-boxes>
                 </div>
 
             </div>
@@ -85,11 +74,13 @@
     import 'select2/dist/js/select2.min.js'
     import utils from './utils'
     import axios from 'axios'
+    import translationBoxes from './components/translation-boxes.vue'
 
     export default {
         props: [
             'trp_settings',
-            'available_languages',
+            'language_names',
+            'ordered_secondary_languages',
             'current_language',
             'on_screen_language',
             'view_as_roles',
@@ -100,30 +91,34 @@
             'editor_nonces',
             'string_type_order'
         ],
+        components:{
+            translationBoxes
+        },
         data(){
             return {
-                settings             : JSON.parse( this.trp_settings ),
-                languages            : JSON.parse( this.available_languages ),
-                roles                : JSON.parse( this.view_as_roles ),
-                nonces               : JSON.parse( this.editor_nonces),
-                stringTypeOrder      : JSON.parse( this.string_type_order),
-                selectors            : JSON.parse( this.string_selectors ),
-                dataAttributes       : JSON.parse( this.data_attributes ),
-                currentLanguage      : this.current_language,
-                onScreenLanguage     : this.on_screen_language,
-                currentURL           : this.url_to_load,
-                urlToLoad            : this.url_to_load,
-                iframe               : '',
-                dictionary           : [],
-                stringTypes          : [],
-                selectedString       : '',
-                nodes                : {},
-                selectedIndexesArray : [],
-                editStringHtml       : '<trp-span><trp-merge  title="Merge" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="Split" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="Edit" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>',
+                settings                  : JSON.parse( this.trp_settings ),
+                languageNames             : JSON.parse( this.language_names ),
+                orderedSecondaryLanguages : JSON.parse( this.ordered_secondary_languages ),
+                roles                     : JSON.parse( this.view_as_roles ),
+                nonces                    : JSON.parse( this.editor_nonces),
+                stringTypeOrder           : JSON.parse( this.string_type_order),
+                selectors                 : JSON.parse( this.string_selectors ),
+                dataAttributes            : JSON.parse( this.data_attributes ),
+                currentLanguage           : this.current_language,
+                onScreenLanguage          : this.on_screen_language,
+                currentURL                : this.url_to_load,
+                urlToLoad                 : this.url_to_load,
+                iframe                    : '',
+                dictionary                : [],
+                stringTypes               : [],
+                selectedString            : '',
+                nodes                     : {},
+                selectedIndexesArray      : [],
+                editStringHtml            : '<trp-span><trp-merge  title="Merge" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="Split" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="Edit" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>',
             }
         },
         created(){
-            this.settings['default-language-name'] = this.languages[ this.settings['default-language'] ]
+            this.settings['default-language-name'] = this.languageNames[ this.settings['default-language'] ]
         },
         mounted(){
             // initialize select2
