@@ -27,7 +27,7 @@
                         <div id="trp-string-list">
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
                                 <optgroup v-for="(type) in stringTypes" :label="type">
-                                    <option v-for="(string, index) in dictionary" :value="index" v-if="string.type == type" :title="string.nodeDescription">{{string.original}}</option>
+                                    <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, type )" :title="string.nodeDescription" :data-database-id="string.dbID" :data-type="string.type">{{string.original}}</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -118,7 +118,8 @@
                 stringTypes          : [],
                 selectedString       : '',
                 nodes                : {},
-                selectedIndexesArray : []
+                selectedIndexesArray : [],
+                editStringHtml       : '<trp-span><trp-merge  title="Merge" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="Split" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="Edit" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>',
             }
         },
         created(){
@@ -154,16 +155,16 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
+
+                jQuery('#trp-string-categories').val( selectedStringArrayIndex ).trigger( 'change' )
+
                 let selectedString = this.dictionary[selectedStringArrayIndex]
                 let currentNode = this.iframe.querySelector( "[" + selectedString.selector + "='" + selectedString.dbID + "']")
                 let nodes = []
                 nodes.push( currentNode )
 
-                let selectors = []
                 let self = this
-                this.dataAttributes.forEach( function ( dataAttribute ){
-                    selectors = selectors.concat( self.prepareSelectorStrings( dataAttribute ) )
-                })
+                let selectors = self.getAllSelectors()
 
                 if ( currentNode.tagName == "IMG" ){
                     // include the anchor's translatable attributes
@@ -219,44 +220,25 @@
                 this.init()
             },
             init(){
-              //  this.setupNodes()
                 this.setupDictionary( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
                 this.setupDictionary( 'data-trpgettextoriginal', 'gettext', this.currentLanguage )
-//                this.setupEventListeners()
             },
-            setupDictionary( baseNameSelector, typeSlug, languageOfIds ){
+            setupDictionary( baseSelector, typeSlug, languageOfIds ){
                 let self           = this
-                let selectors      = this.prepareSelectorStrings( baseNameSelector )
+                let selectors      = this.prepareSelectorStrings( baseSelector )
                 let nodes          = this.iframe.querySelectorAll( '[' + selectors.join('],[') + ']' )
-                let stringIdsArray = []
-                let nodeInfo       = []
+                let stringIdsArray = [], nodeData = [], nodeEntries = []
 
                 nodes.forEach( function ( node ){
-                    selectors.forEach( function ( selector ){
-                        let stringId = node.getAttribute( selector )
-                        if ( stringId ) {
-//                            let tagName = node.tagName;
-                            stringIdsArray.push(stringId)
-                            let nodeAttribute = selector.replace(baseNameSelector, '')
-                            let nodeType = node.getAttribute('data-trp-node-type' + nodeAttribute)
-                            let nodeDescription = node.getAttribute('data-trp-node-description' + nodeAttribute)
+                    nodeEntries = self.getNodeInfo( node, baseSelector )
 
-                            let entry = {
-                                dbID: stringId,
-                                selector: selector,
-                                // substr(1) is used to trim prefixing line -   ex. -alt will result in alt (no line)
-                                attribute: nodeAttribute.substr(1),
-                            };
-                            if (nodeType) {
-                                entry.type = nodeType
-                            }
-                            if (nodeDescription) {
-                                entry.nodeDescription = nodeDescription
-                            }
+                    nodeEntries.forEach( function( entry ) {
+                        stringIdsArray.push( entry.dbID )
 
-                            nodeInfo.push(entry)
-                        }
+                        nodeData.push( entry )
                     })
+
+                    self.setupEventListener( node )
                 })
 
                 //unique ids only
@@ -264,19 +246,35 @@
 
                 //grab Regular strings
                 let data = new FormData()
-                data.append('action'       , 'trp_get_translations_' + typeSlug)
-                data.append('all_languages', 'true')
-                data.append('security'     , this.nonces['gettranslationsnonce' + typeSlug ] )
-                data.append('language'     , languageOfIds)
-                data.append('string_ids'   , JSON.stringify( stringIdsArray ) )
+                    data.append('action'       , 'trp_get_translations_' + typeSlug)
+                    data.append('all_languages', 'true')
+                    data.append('security'     , this.nonces['gettranslationsnonce' + typeSlug ] )
+                    data.append('language'     , languageOfIds)
+                    data.append('string_ids'   , JSON.stringify( stringIdsArray ) )
 
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
-                        self.addToDictionary( response.data, nodeInfo )
+                        self.addToDictionary( response.data, nodeData )
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
+            },
+            setupEventListener( node ) {
+                if ( node.tagName == 'A' )
+                    return false
+
+                let self = this
+
+                node.addEventListener( 'mouseenter', function( element ) {
+                    self.showPencilIcon( element.target )
+                })
+
+                node.addEventListener( 'mouseleave', function( element ) {
+                    element.target.classList.remove( 'trp-highlight' )
+
+                    self.removePencilIcon( true )
+                })
             },
             addToStringTypes( strings ){
 
@@ -326,26 +324,59 @@
             },
             getStringIndex( selector, dbID ){
                 let found = null
+
                 this.dictionary.some(function ( string, index ) {
                     if ( string.dbID == dbID && string.selector == selector ){
                         found = index
                         return true
                     }
                 })
+
                 return found
             },
-            setupEventListeners(){
-                this.nodes.forEach( function ( node ){
+            getNodeInfo( node, baseSelector = '' ){
+                let stringId
+                let nodeData  = []
+                let selectors = this.prepareSelectorStrings( baseSelector )
 
-                    node.addEventListener( 'mouseenter', function( element ) {
-                        element.target.className += 'trp-highlight'
-                    })
+                selectors.forEach( function ( selector ) {
 
-                    node.addEventListener( 'mouseleave', function( element ) {
-                        element.target.classList.remove( 'trp-highlight' )
-                    })
+                    stringId = node.getAttribute( selector )
+
+                    if ( stringId ) {
+
+                        let nodeAttribute   = selector.replace( baseSelector, '' )
+                        let nodeType        = node.getAttribute( 'data-trp-node-type' + nodeAttribute )
+                        let nodeDescription = node.getAttribute( 'data-trp-node-description' + nodeAttribute )
+
+                        let entry = {
+                            dbID      : stringId,
+                            selector  : selector,
+                            attribute : nodeAttribute.substr(1), // substr(1) is used to trim prefixing line - ex. -alt will result in alt (no line)
+                        }
+
+                        if ( nodeType )
+                            entry.type = nodeType
+
+                        if ( nodeDescription )
+                            entry.nodeDescription = nodeDescription
+
+                        nodeData.push( entry )
+                    }
 
                 })
+
+                return nodeData
+            },
+            getAllSelectors(){
+                let selectors = []
+                let self      = this
+
+                this.dataAttributes.forEach( function ( dataAttribute ){
+                    selectors = selectors.concat( self.prepareSelectorStrings( dataAttribute ) )
+                })
+
+                return selectors
             },
             prepareSelectorStrings( baseNameSelector ){
                 let parsed_selectors = []
@@ -356,10 +387,10 @@
 
                 return parsed_selectors
             },
-            parentURL( url ) {
+            parentURL( url ){
                 return url.replace( 'trp-edit-translation=preview', 'trp-edit-translation=true' )
             },
-            cleanURL( url ) {
+            cleanURL( url ){
                 //make removeUrlParameter recursive and only call it once with all the parameters that
                 //need to stripped ?
                 url = utils.removeUrlParameter( url, 'lang' )
@@ -368,6 +399,86 @@
                 url = utils.removeUrlParameter( url, 'trp-edit-translation' )
 
                 return url
+            },
+            showPencilIcon( target ){
+                let self = this
+                let relatedNode, relatedNodeAttr, position, stringSelector, stringId
+
+                //for these tag names we need to insert our HTML before the element and not inside of it
+                //@TODO: add/research more
+                let beforePosition = [ 'IMG', 'INPUT', 'TEXTAREA' ]
+
+                //if other icons are showing, remove them
+                self.removePencilIcon()
+
+                //add class to highlight text
+                target.className += 'trp-highlight'
+
+                if ( beforePosition.includes( target.tagName ) )
+                    position = 'beforebegin'
+                else
+                    position = 'afterbegin'
+
+                //insert button HTML
+                target.insertAdjacentHTML( position, this.editStringHtml )
+
+                let editButton = this.iframe.querySelector( 'trp-span' )
+
+                //onclick event listener
+                //@NOTE: we might need to add separate events for different buttons (the block split stuff)
+                editButton.addEventListener( 'click', function( event ) {
+                    event.preventDefault()
+
+                    //get node info based on where we inserted our button
+                    if ( position == 'afterbegin' )
+                        relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].parentNode
+                    else
+                        relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].nextElementSibling
+
+                    self.dataAttributes.forEach( function( baseSelector ) {
+
+                        self.prepareSelectorStrings( baseSelector ).forEach( function( selector ) {
+
+                            relatedNodeAttr = relatedNode.getAttribute( selector )
+
+                            if ( relatedNodeAttr ) {
+                                stringId = relatedNodeAttr
+                                stringSelector = baseSelector
+                            }
+
+                        })
+
+                    })
+
+                    self.selectedString = self.getStringIndex( stringSelector, stringId )
+
+                })
+
+            },
+            removePencilIcon( delay = false ){
+
+                let icons = this.iframe.querySelectorAll( 'trp-span' )
+
+                if ( icons.length > 0 ) {
+                    icons.forEach( function( icon ) {
+                        if ( delay ) {
+                            setTimeout( function() {
+                                icon.remove()
+                            }, 350 )
+                        } else
+                            icon.remove()
+                    })
+                }
+
+            },
+            showString( string, type ){
+                if ( typeof string.attribute != undefined && ( string.attribute == 'href' || string.attribute == 'src' ) )
+                    return false
+
+                if ( string.type == type )
+                    return true
+
+                return false
             }
         },
         //add support for v-model in select2

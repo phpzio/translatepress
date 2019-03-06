@@ -106,6 +106,10 @@ function TRP_Translator(){
                     queried_string.node.textContent = initial_value;
                     _this.unpause_observer();
                 }
+
+                if ( _this.is_editor )
+                    window.parent.tpEditorApp.setupEventListener( queried_string.node.parentNode );
+
             }
             // this should always be outside the for loop
             if ( _this.is_editor ) {
@@ -406,4 +410,3 @@ jQuery( function() {
         trpTranslator = new TRP_Translator();
     }
 });
-
