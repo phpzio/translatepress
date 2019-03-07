@@ -1,15 +1,23 @@
 <template>
-    <div id="trp-translation-section" class="trp-controls-section-content" v-if="selectedIndexesArray.length > 0">
-        <div v-for="languageCode in orderedSecondaryLanguages" :id="'trp-language-' + languageCode" class="trp-language-container">
-            <div class="trp-language-name" >
-                {{ 'To ' + languageNames[languageCode] }}
+    <div id="trp-translation-section" class="trp-controls-section-content" v-if="selectedIndexesArray">
+        <div v-for="(languageCode, key) in languages" :id="'trp-language-' + languageCode" class="trp-language-container">
+            <div class="trp-language-name">
+                <span v-if="key == 0 ">From </span>
+                <span v-else>To </span>
+                {{ completeLanguageNames[languageCode] }}
             </div>
             <div class="trp-translations-container">
                 <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
-                    <textarea v-model="dictionary[selectedIndex].translationsArray[languageCode].translated"></textarea>
+                    <div v-if="dictionary[selectedIndex].translationsArray[languageCode]">
+                        <textarea v-model="dictionary[selectedIndex].translationsArray[languageCode].translated"></textarea>
+                    </div>
+                    <div v-else>
+                        <textarea :value="dictionary[selectedIndex].original"></textarea>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
         <!--<div id="trp-unsaved-changes-warning-message" style="display:none">You have unsaved changes!</div>-->
 
         <!--<div id="trp-gettext-original" class="trp-language-text trp-gettext-original-language" style="display:none">-->
@@ -26,7 +34,6 @@
 
             <!--<div class="trp-discard-changes trp-discard-on-default-language" style="display:none;">Discard changes</div>-->
         <!--</div>-->
-    </div>
     <!--<div>-->
         <!--<textarea v-model="string">{{string}}</textarea>-->
         <!--<textarea v-model="selectedarray[0]">{{selectedarray[0]}}</textarea>-->
@@ -35,10 +42,6 @@
 
 <script>
     export default{
-        data(){
-            return{
-            }
-        },
         props:[
             'selectedIndexesArray',
             'dictionary',
@@ -46,7 +49,33 @@
             'currentLanguage',
             'settings',
             'orderedSecondaryLanguages'
-        ]
+        ],
+        data(){
+            return{
+                languages  : [],
+                completeLanguageNames : Object.assign( { 'original': 'Original String' }, this.languageNames )
+            }
+        },
+        watch:{
+            selectedIndexesArray: function(){
+                this.languages = []
+                let self = this
+                let defaultLanguage = this.settings['default-language']
+                let translateToDefault = false
+
+                this.selectedIndexesArray.forEach(function( selectedIndex ){
+                    if ( self.dictionary[selectedIndex].translationsArray[defaultLanguage] ){
+                        translateToDefault = true
+                    }
+                })
+
+                if ( translateToDefault ) {
+                    this.languages.push('original')
+                }
+                this.languages.push(defaultLanguage)
+                this.languages = this.languages.concat(this.orderedSecondaryLanguages)
+            }
+        },
     }
 </script>
 
