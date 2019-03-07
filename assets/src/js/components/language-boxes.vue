@@ -9,10 +9,10 @@
             <div class="trp-translations-container">
                 <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
                     <div v-if="dictionary[selectedIndex].translationsArray[languageCode]">
-                        <textarea v-model="dictionary[selectedIndex].translationsArray[languageCode].translated"></textarea>
+                        <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].translated"></translation-input>
                     </div>
                     <div v-else>
-                        <textarea :value="dictionary[selectedIndex].original"></textarea>
+                        <translation-input :disabled="disabled":string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original"></translation-input>
                     </div>
                 </div>
             </div>
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+    import translationInput from './translation-input.vue'
     export default{
         props:[
             'selectedIndexesArray',
@@ -55,6 +56,9 @@
                 languages  : [],
                 completeLanguageNames : Object.assign( { 'original': 'Original String' }, this.languageNames )
             }
+        },
+        components:{
+            translationInput
         },
         watch:{
             selectedIndexesArray: function(){
@@ -78,7 +82,3 @@
         },
     }
 </script>
-
-<style>
-
-</style>

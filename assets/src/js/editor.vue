@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="trp-controls-section">
-                    <translation-boxes
+                    <language-boxes
                             :selectedIndexesArray="selectedIndexesArray"
                             :dictionary="dictionary"
                             :languageNames="languageNames"
@@ -56,7 +56,7 @@
                             :settings="settings"
                             :orderedSecondaryLanguages="orderedSecondaryLanguages"
                     >
-                    </translation-boxes>
+                    </language-boxes>
                 </div>
 
             </div>
@@ -74,7 +74,7 @@
     import 'select2/dist/js/select2.min.js'
     import utils from './utils'
     import axios from 'axios'
-    import translationBoxes from './components/translation-boxes.vue'
+    import languageBoxes from './components/language-boxes.vue'
 
     export default {
         props: [
@@ -92,7 +92,7 @@
             'string_type_order'
         ],
         components:{
-            translationBoxes
+            languageBoxes
         },
         data(){
             return {
