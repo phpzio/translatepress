@@ -266,8 +266,6 @@
 
                 node.addEventListener( 'mouseleave', function( element ) {
                     element.target.classList.remove( 'trp-highlight' )
-
-                    self.removePencilIcon( true )
                 })
             },
             addToStringTypes( strings ){
@@ -451,18 +449,13 @@
                 })
 
             },
-            removePencilIcon( delay = false ){
+            removePencilIcon(){
 
                 let icons = this.iframe.querySelectorAll( 'trp-span' )
 
                 if ( icons.length > 0 ) {
                     icons.forEach( function( icon ) {
-                        if ( delay ) {
-                            setTimeout( function() {
-                                icon.remove()
-                            }, 350 )
-                        } else
-                            icon.remove()
+                        icon.remove()
                     })
                 }
 
