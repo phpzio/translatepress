@@ -25,9 +25,11 @@
                         </div>
 
                         <div id="trp-string-list">
+                            <!-- @NOTE: Move to a component ?
+                            Because this is simply a listing which gets data and then displays it accordingly -->
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
                                 <optgroup v-for="(type) in stringTypes" :label="type">
-                                    <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, type )" :title="string.nodeDescription" :data-database-id="string.dbID" :data-type="string.type">{{string.original}}</option>
+                                    <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, type )" :title="string.nodeDescription" :data-database-id="string.dbID" :data-type="string.type">{{ processOptionName( string.original, type ) }}</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -110,7 +112,7 @@
                 urlToLoad                 : this.url_to_load,
                 iframe                    : '',
                 dictionary                : [],
-                stringTypes               : [],
+                stringTypes               : [ 'Images' ],
                 selectedString            : '',
                 nodes                     : {},
                 selectedIndexesArray      : [],
@@ -123,13 +125,7 @@
         mounted(){
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', templateResult: function(option){
-                    let original = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
-                    let nodeDescription = (option.title) ?  '(' + option.title + ')' : ''
-
-                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
-                }
-            , width : '100%' })
+            jQuery( '#trp-string-categories' ).select2( { placeholder : 'Loading strings...', width : '100%' } ).prop( 'disabled', true )
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -250,10 +246,13 @@
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
                         self.addToDictionary( response.data, nodeData )
+
+                        self.initStringsDropdown()
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
+
             },
             setupEventListener( node ) {
                 if ( node.tagName == 'A' )
@@ -267,8 +266,6 @@
 
                 node.addEventListener( 'mouseleave', function( element ) {
                     element.target.classList.remove( 'trp-highlight' )
-
-                    self.removePencilIcon( true )
                 })
             },
             addToStringTypes( strings ){
@@ -407,6 +404,7 @@
                 self.removePencilIcon()
 
                 //add class to highlight text
+                target.classList.remove( 'trp-highlight' )
                 target.className += 'trp-highlight'
 
                 if ( beforePosition.includes( target.tagName ) )
@@ -447,26 +445,25 @@
 
                     self.selectedString = self.getStringIndex( stringSelector, stringId )
 
+                    jQuery( '#trp-string-categories' ).select2( 'close' )
                 })
 
             },
-            removePencilIcon( delay = false ){
+            removePencilIcon(){
 
                 let icons = this.iframe.querySelectorAll( 'trp-span' )
 
                 if ( icons.length > 0 ) {
                     icons.forEach( function( icon ) {
-                        if ( delay ) {
-                            setTimeout( function() {
-                                icon.remove()
-                            }, 350 )
-                        } else
-                            icon.remove()
+                        icon.remove()
                     })
                 }
 
             },
             showString( string, type ){
+                if ( type == 'Images' && typeof string.attribute != undefined && string.attribute == 'src' )
+                    return true
+
                 if ( typeof string.attribute != undefined && ( string.attribute == 'href' || string.attribute == 'src' ) )
                     return false
 
@@ -474,6 +471,22 @@
                     return true
 
                 return false
+            },
+            initStringsDropdown(){
+                jQuery( '#trp-string-categories' ).select2( 'destroy' )
+
+                jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
+                    let original        = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
+                    let nodeDescription = ( option.title ) ?  '(' + option.title + ')' : ''
+
+                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
+                }, width : '100%' } ).prop( 'disabled', false )
+            },
+            processOptionName( name, type ){
+                if ( type == 'Images' )
+                    return utils.getFilename( name )
+
+                return name
             }
         },
         //add support for v-model in select2

@@ -30,7 +30,15 @@ function escapeHtml( string ){
     return escape.innerHTML;
 }
 
+function getFilename( url ) {
+    if ( url )
+        return url.substring( url.lastIndexOf( "/" ) + 1, url.lastIndexOf( "." ) )
+
+    return url
+}
+
 export default {
     removeUrlParameter,
-    escapeHtml
+    escapeHtml,
+    getFilename
 }
