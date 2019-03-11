@@ -123,13 +123,7 @@
         mounted(){
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            jQuery( '#trp-string-categories' ).select2({ placeholder : 'Select string to translate...', templateResult: function(option){
-                    let original = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
-                    let nodeDescription = (option.title) ?  '(' + option.title + ')' : ''
-
-                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
-                }
-            , width : '100%' })
+            jQuery( '#trp-string-categories' ).select2( { placeholder : 'Loading strings...', width : '100%' } ).prop( 'disabled', true )
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -250,10 +244,13 @@
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
                         self.addToDictionary( response.data, nodeData )
+
+                        self.initStringsDropdown()
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
+
             },
             setupEventListener( node ) {
                 if ( node.tagName == 'A' )
@@ -448,6 +445,7 @@
 
                     self.selectedString = self.getStringIndex( stringSelector, stringId )
 
+                    jQuery( '#trp-string-categories' ).select2( 'close' )
                 })
 
             },
@@ -475,6 +473,16 @@
                     return true
 
                 return false
+            },
+            initStringsDropdown(){
+                jQuery( '#trp-string-categories' ).select2( 'destroy' )
+
+                jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
+                    let original        = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
+                    let nodeDescription = ( option.title ) ?  '(' + option.title + ')' : ''
+
+                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
+                }, width : '100%' } ).prop( 'disabled', false )
             }
         },
         //add support for v-model in select2
