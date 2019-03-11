@@ -407,6 +407,7 @@
                 self.removePencilIcon()
 
                 //add class to highlight text
+                target.classList.remove( 'trp-highlight' )
                 target.className += 'trp-highlight'
 
                 if ( beforePosition.includes( target.tagName ) )
