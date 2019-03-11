@@ -25,9 +25,11 @@
                         </div>
 
                         <div id="trp-string-list">
+                            <!-- @NOTE: Move to a component ?
+                            Because this is simply a listing which gets data and then displays it accordingly -->
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
                                 <optgroup v-for="(type) in stringTypes" :label="type">
-                                    <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, type )" :title="string.nodeDescription" :data-database-id="string.dbID" :data-type="string.type">{{string.original}}</option>
+                                    <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, type )" :title="string.nodeDescription" :data-database-id="string.dbID" :data-type="string.type">{{ processOptionName( string.original, type ) }}</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -110,7 +112,7 @@
                 urlToLoad                 : this.url_to_load,
                 iframe                    : '',
                 dictionary                : [],
-                stringTypes               : [],
+                stringTypes               : [ 'Images' ],
                 selectedString            : '',
                 nodes                     : {},
                 selectedIndexesArray      : [],
@@ -466,6 +468,9 @@
 
             },
             showString( string, type ){
+                if ( type == 'Images' && typeof string.attribute != undefined && string.attribute == 'src' )
+                    return true
+
                 if ( typeof string.attribute != undefined && ( string.attribute == 'href' || string.attribute == 'src' ) )
                     return false
 
@@ -483,6 +488,12 @@
 
                     return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
                 }, width : '100%' } ).prop( 'disabled', false )
+            },
+            processOptionName( name, type ){
+                if ( type == 'Images' )
+                    return utils.getFilename( name )
+
+                return name
             }
         },
         //add support for v-model in select2
