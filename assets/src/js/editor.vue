@@ -483,6 +483,8 @@
 
                     return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
                 }, width : '100%' } ).prop( 'disabled', false )
+
+                jQuery( '#trp_select2_overlay' ).hide()
             },
             processOptionName( name, type ){
                 if ( type == 'Images' )
