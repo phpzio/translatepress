@@ -211,6 +211,8 @@
                 this.init()
             },
             init(){
+                this.dictionary = []
+
                 this.setupDictionary( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
                 this.setupDictionary( 'data-trpgettextoriginal', 'gettext', this.currentLanguage )
             },
