@@ -1,19 +1,27 @@
 <template>
     <div id="trp-translation-section" class="trp-controls-section-content" v-if="selectedIndexesArray">
         <div v-for="(languageCode, key) in languages" :id="'trp-language-' + languageCode" class="trp-language-container">
-            <div class="trp-language-name">
-                <span v-if="key == 0 ">From </span>
-                <span v-else>To </span>
-                {{ completeLanguageNames[languageCode] }}
-            </div>
-            <div class="trp-translations-container">
-                <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
-                    <div v-if="dictionary[selectedIndex].translationsArray[languageCode]">
-                        <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].translated"></translation-input>
+            <div v-show="(key <= othersButtonPosition) || showOtherLanguages">
+                <div class="trp-language-name">
+                    <span v-if="key == 0 ">From </span>
+                    <span v-else>To </span>
+                    {{ completeLanguageNames[languageCode] }}
+                </div>
+                <div class="trp-translations-container">
+                    <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
+                        <div v-if="dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
+                            <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].translated"></translation-input>
+                        </div>
+                        <div v-else :key="selectedIndex">
+                            <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original"></translation-input>
+                        </div>
                     </div>
-                    <div v-else>
-                        <translation-input :disabled="disabled":string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original"></translation-input>
+                </div>
+                <div v-show="key == othersButtonPosition">
+                    <div class="trp-toggle-languages" @click="showOtherLanguages = !showOtherLanguages" :class="{ 'trp-show-other-languages': showOtherLanguages, 'trp-hide-other-languages': !showOtherLanguages }">
+                        <span>{{ (showOtherLanguages)? '&#11206;' : '&#11208;' }} Other languages</span>
                     </div>
+                    <!--<div id="trp-hide-all-languages" class="trp-toggle-languages trp-toggle-languages-active"><span> Other languages</span></div>-->
                 </div>
             </div>
         </div>
@@ -54,31 +62,53 @@
         data(){
             return{
                 languages  : [],
-                completeLanguageNames : Object.assign( { 'original': 'Original String' }, this.languageNames )
+                completeLanguageNames : Object.assign( { 'original': 'Original String' }, this.languageNames ),
+                othersButtonPositionOffset: 1,
+                showOtherLanguages : false
             }
         },
         components:{
             translationInput
         },
-        watch:{
-            selectedIndexesArray: function(){
+        watch: {
+            selectedIndexesArray: function () {
                 this.languages = []
                 let self = this
                 let defaultLanguage = this.settings['default-language']
                 let translateToDefault = false
+                this.othersButtonPositionOffset = 1
 
-                this.selectedIndexesArray.forEach(function( selectedIndex ){
-                    if ( self.dictionary[selectedIndex].translationsArray[defaultLanguage] ){
+                this.selectedIndexesArray.forEach(function (selectedIndex) {
+                    if (self.dictionary[selectedIndex].translationsArray[defaultLanguage]) {
                         translateToDefault = true
                     }
                 })
 
-                if ( translateToDefault ) {
+                if (translateToDefault) {
                     this.languages.push('original')
+                    this.othersButtonPositionOffset++
                 }
                 this.languages.push(defaultLanguage)
                 this.languages = this.languages.concat(this.orderedSecondaryLanguages)
+
+            }
+        },
+        computed:{
+            othersButtonPosition: function (){
+                if (this.currentLanguage === this.settings['default-language']) {
+                    // don't display it
+                    return 999
+                }else{
+                    return this.othersButtonPositionOffset
+                }
             }
         },
     }
 </script>
+
+<style>
+    .trp-language-name{
+        padding-bottom: 10px;
+        color: black;
+    }
+</style>
