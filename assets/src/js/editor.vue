@@ -246,8 +246,6 @@
                 axios.post( this.ajax_url, data )
                     .then(function (response) {
                         self.addToDictionary( response.data, nodeData )
-
-                        self.initStringsDropdown()
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -312,6 +310,8 @@
 
                     this.stringTypes = this.addToStringTypes( nodeInfo )
                     this.dictionary = this.dictionary.concat( nodeInfo )
+
+                    this.initStringsDropdown()
                 }
             },
             getStringIndex( selector, dbID ){
