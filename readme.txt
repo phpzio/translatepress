@@ -3,8 +3,8 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 5.1.0
-Stable tag: 1.4.3
+Tested up to: 5.1.1
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -125,6 +125,11 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.4.4 =
+* Added more filters
+* Make sure we do not insert empty strings in the gettext translation table
+* Added support for Affiliate tracking
+
 = 1.4.3 =
 * Fixed an issue with the Language by Get Parameter add-on
 * Added compatibility with WooCommerce PDF invoice and WooCommerce's order notes.
