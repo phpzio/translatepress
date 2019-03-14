@@ -840,6 +840,12 @@ class TRP_Translation_Manager{
 	    // if we have nested gettexts strip previous ones, and consider only the outermost
     	$text = TRP_Translation_Manager::strip_gettext_tags( $text );
     	$translation = TRP_Translation_Manager::strip_gettext_tags( $translation );
+
+        //try here to exclude some strings that do not require translation
+    	$excluded_gettext_strings = array( '', ' ', '&hellip;', '&nbsp;' );
+    	if( in_array( trp_full_trim( $text ), $excluded_gettext_strings ) )
+    	    return $translation;
+
         global $TRP_LANGUAGE;
         /* don't do anything if we don't have extra languages on the site */
         if( count( $this->settings['publish-languages'] ) < 1 )

@@ -317,6 +317,10 @@ class TRP_Query{
         $place_holders = array();
 
         foreach ( $new_strings as $string ) {
+            //make sure we don't insert empty strings in db
+            if( empty( $string['original'] ) )
+                continue;
+
             if( $string['original'] == $string['translated'] || $string['translated'] == '' ){
                 $translated = NULL;
                 $status = self::NOT_TRANSLATED;
