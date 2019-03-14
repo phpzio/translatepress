@@ -125,20 +125,17 @@ function trp_find_translation_location_for_domain( $domain, $language ){
  */
 function trp_add_affiliate_id_to_link( $link ){
 
-    // AffiliateWP
-    $affiliate_id = get_option('translatepress_affiliate_id');
-
     //Avangate Affiliate Network
     $avg_affiliate_id = get_option('translatepress_avg_affiliate_id');
-
-    if  ( !empty( $affiliate_id ) ) {
-
-        return esc_url( add_query_arg( 'ref', $affiliate_id, $link ) );
-    }
-
     if  ( !empty( $avg_affiliate_id ) ) {
-
         return esc_url( add_query_arg( 'avgref', $avg_affiliate_id, $link ) );
+    }
+    else{
+        // AffiliateWP
+        $affiliate_id = get_option('translatepress_affiliate_id');
+        if  ( !empty( $affiliate_id ) ) {
+            return esc_url( add_query_arg( 'ref', $affiliate_id, $link ) );
+        }
     }
 
     return esc_url( $link );
