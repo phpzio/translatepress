@@ -727,8 +727,8 @@ class TRP_Translation_Render{
 		    $body = $html->find('body', 0 );
 		    $body->innertext = '<div data-no-translation class="trp-editor-notices">' . $trp_editor_notices . "</div>" . $body->innertext;
 	    }
-
-	    return $html->save();
+	    $final_html = $html->save();
+	    return apply_filters( 'trp_translated_html', $final_html, $TRP_LANGUAGE, $language_code );
     }
 
     /**
