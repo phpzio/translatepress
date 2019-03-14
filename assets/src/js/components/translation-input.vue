@@ -1,6 +1,7 @@
 <template>
+    <!--<div id="trp-unsaved-changes-warning-message" style="display:none">You have unsaved changes!</div>-->
     <div class="translation-input">
-        <div class="trp-attribute-name">
+        <div class="trp-attribute-name" v-show="attributeName != 'Content'">
             {{attributeName}}
         </div>
         <div v-if="inputType == 'textarea'" class="trp-translation-input-parent">
@@ -42,7 +43,8 @@ export default{
     methods:{
         updateValue(){
             this.$emit( 'input', this.$refs[inputType].value )
-        }
+        },
+        //deter
     }
 }
 </script>

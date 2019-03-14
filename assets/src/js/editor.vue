@@ -53,10 +53,10 @@
                     <language-boxes
                             :selectedIndexesArray="selectedIndexesArray"
                             :dictionary="dictionary"
-                            :languageNames="languageNames"
                             :currentLanguage="currentLanguage"
+                            :onScreenLanguage="onScreenLanguage"
+                            :languageNames="languageNames"
                             :settings="settings"
-                            :orderedSecondaryLanguages="orderedSecondaryLanguages"
                     >
                     </language-boxes>
                 </div>
@@ -136,11 +136,22 @@
         },
         watch: {
             currentLanguage: function( currentLanguage ) {
-
+                let self = this
                 //grab the correct URL from the iFrame
                 let newURL = this.iframe.querySelector( 'link[hreflang="' + currentLanguage.replace( '_', '-' ) +'"]' ).getAttribute('href')
 
                 this.currentURL = newURL
+
+                this.onScreenLanguage = currentLanguage
+                if( this.settings['default-language'] == this.currentLanguage && this.settings['translation-languages'].length > 1 ){
+                    this.settings['translation-languages'].some(function(language){
+                        if ( language != self.settings['default-language'] ){
+                            // return the first language not default
+                            self.onScreenLanguage = language
+                            return true
+                        }
+                    })
+                }
             },
             currentURL: function ( newUrl, oldUrl ) {
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
