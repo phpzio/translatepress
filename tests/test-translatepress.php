@@ -174,8 +174,8 @@ class TranslatePressTest extends WP_UnitTestCase {
         $update_strings = $this->get_update_strings();
 
         $this->trp_query->check_table('en_US', 'it_IT');
-        $this->trp_query->insert_strings( $new_strings, array(), 'it_IT' );
-        $this->trp_query->insert_strings( array(), $update_strings, 'it_IT' );
+        $this->trp_query->insert_strings( $new_strings, 'it_IT' );
+        $this->trp_query->update_strings( $update_strings, 'it_IT' );
 
         $post_content = file_get_contents( dirname(__FILE__)  . "/input_html_en.html");
 
@@ -198,8 +198,8 @@ class TranslatePressTest extends WP_UnitTestCase {
         $update_strings = $this->get_update_strings();
 
         //$this->trp_query->check_table('en_US', 'it_IT');
-        $this->trp_query->insert_strings( $new_strings, array(), 'it_IT' );
-        $this->trp_query->insert_strings( array(), $update_strings, 'it_IT' );
+        $this->trp_query->insert_strings( $new_strings, 'it_IT' );
+        $this->trp_query->update_strings( $update_strings, 'it_IT' );
 
         $json_content = json_encode( array(
                                         '<span>Normal strings</span>',

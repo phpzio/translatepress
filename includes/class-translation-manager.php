@@ -413,7 +413,7 @@ class TRP_Translation_Manager{
 	    }
 
 	    foreach( $update_strings as $language => $update_string_array ) {
-		    $this->trp_query->insert_strings( array(), $update_string_array, $language, $block_type );
+		    $this->trp_query->update_strings( $update_string_array, $language );
 	    }
     }
 
@@ -549,7 +549,8 @@ class TRP_Translation_Manager{
 										$existing_dictionary[$string_key]['block_type'] = $active_block_type;
 										$originals = array_values( $originals );
 									}
-									$this->trp_query->insert_strings( $originals, $existing_dictionary, $language, $active_block_type );
+									$this->trp_query->insert_strings( $originals, $language, $active_block_type );
+									$this->trp_query->update_strings( $existing_dictionary, $language );
 								}
 
 							}
