@@ -331,7 +331,7 @@ class TRP_Query{
         if ( count( $new_strings ) == 0  ){
             return;
         }
-        $query = "INSERT INTO `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "` ( id, original, translated, domain, status ) VALUES ";
+        $query = "INSERT INTO `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "` ( original, translated, domain, status ) VALUES ";
 
         $values = array();
         $place_holders = array();
@@ -350,8 +350,8 @@ class TRP_Query{
                 $status = self::HUMAN_REVIEWED;
             }
                 
-            array_push( $values, NULL, $string['original'], $translated, $string['domain'], $status );
-            $place_holders[] = "( '%d', '%s', '%s', '%s', '%d')";
+            array_push( $values, $string['original'], $translated, $string['domain'], $status );
+            $place_holders[] = "( '%s', '%s', '%s', '%d')";
         }
 
 
