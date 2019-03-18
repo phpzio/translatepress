@@ -698,7 +698,7 @@ class TRP_Query{
 	 * @param array $columns_to_update              Array with the name of columns to update id, original, translated, status, block_type
 	 * @param string $placeholders_query_part       For query on all columns  '%d', '%s', '%s', '%d', '%d'
 	 */
-	public function update_strings( $update_strings, $language_code, $columns_to_update, $placeholders ) {
+	public function update_strings_by_columns( $update_strings, $language_code, $columns_to_update, $placeholders ) {
 		if ( count( $update_strings ) == 0 ) {
 			return;
 		}
