@@ -112,6 +112,7 @@
                 urlToLoad                 : this.url_to_load,
                 iframe                    : '',
                 dictionary                : [],
+                detectedSelectorAndId     : [],
                 stringTypes               : [ 'Images' ],
                 selectedString            : '',
                 nodes                     : {},
@@ -220,10 +221,17 @@
                     this.currentURL = this.iframe.URL
 
                 this.init()
+                window.addEventListener( 'trp_iframe_ajax_complete', this.scanForNewStrings )
+            },
+            scanForNewStrings(){
+                console.log('scan again for new strings')
+                this.setupDictionaries()
             },
             init(){
                 this.dictionary = []
-
+                this.setupDictionaries()
+            },
+            setupDictionaries(){
                 this.setupDictionary( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
                 this.setupDictionary( 'data-trpgettextoriginal', 'gettext', this.currentLanguage )
             },
@@ -237,9 +245,12 @@
                     nodeEntries = self.getNodeInfo( node, baseSelector )
 
                     nodeEntries.forEach( function( entry ) {
-                        stringIdsArray.push( entry.dbID )
+                        // this check ensures that we don't create duplicates when rescanning after ajax complete
+                        if ( !self.alreadyDetected( entry.selector, entry.dbID ) ) {
 
-                        nodeData.push( entry )
+                            stringIdsArray.push(entry.dbID)
+                            nodeData.push(entry)
+                        }
                     })
 
                     self.setupEventListener( node )
@@ -247,23 +258,34 @@
 
                 //unique ids only
                 stringIdsArray = [...new Set(stringIdsArray)]
-
-                //grab Regular strings
-                let data = new FormData()
-                    data.append('action'       , 'trp_get_translations_' + typeSlug)
+                if ( stringIdsArray.length > 0 ) {
+                    //grab Regular strings
+                    let data = new FormData()
+                    data.append('action', 'trp_get_translations_' + typeSlug)
                     data.append('all_languages', 'true')
-                    data.append('security'     , this.nonces['gettranslationsnonce' + typeSlug ] )
-                    data.append('language'     , languageOfIds)
-                    data.append('string_ids'   , JSON.stringify( stringIdsArray ) )
+                    data.append('security', this.nonces['gettranslationsnonce' + typeSlug])
+                    data.append('language', languageOfIds)
+                    data.append('string_ids', JSON.stringify(stringIdsArray))
 
-                axios.post( this.ajax_url, data )
-                    .then(function (response) {
-                        self.addToDictionary( response.data, nodeData )
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                    axios.post(this.ajax_url, data)
+                        .then(function (response) {
+                            self.addToDictionary(response.data, nodeData)
+                            console.log('a venit raspusunl ' + baseSelector)
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
 
+            },
+            alreadyDetected( selector, dbId){
+                let combined = selector + '=' + dbId
+                if ( utils.arrayContainsItem( this.detectedSelectorAndId, combined ) ) {
+                    return true
+                }else {
+                    this.detectedSelectorAndId.push(combined)
+                    return false
+                }
             },
             setupEventListener( node ) {
                 if ( node.tagName == 'A' )

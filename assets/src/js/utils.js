@@ -37,8 +37,20 @@ function getFilename( url ) {
     return url
 }
 
+function arrayContainsItem( array, item ){
+    let i
+    let length = array.length
+    for ( i = length -1; i >= 0; i-- ){
+        if ( array[i] === item ){
+            return true
+        }
+    }
+    return false
+}
+
 export default {
     removeUrlParameter,
     escapeHtml,
-    getFilename
+    getFilename,
+    arrayContainsItem
 }

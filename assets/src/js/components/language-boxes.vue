@@ -83,7 +83,6 @@
                 this.orderedLanguages.push( this.settings['default-language'] )
                 this.orderedLanguages.push( this.onScreenLanguage )
                 this.orderedLanguages = this.orderedLanguages.concat( filteredLanguages )
-                console.log( this.orderedLanguages );
             },
             updateLanguages: function () {
                 this.languages = []

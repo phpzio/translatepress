@@ -103,7 +103,7 @@ class TRP_Editor_Api_Regular_Strings {
 
 		// necessary in order to obtain all the original strings
 		if ( $this->settings['default-language'] != $current_language ) {
-			if ( current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+			if ( !empty ( $original_array ) && current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
 				$this->translation_render->process_strings($original_array, $current_language, $block_type);
 			}
 			$dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );

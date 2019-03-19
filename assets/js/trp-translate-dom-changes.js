@@ -18,14 +18,14 @@ function TRP_Translator(){
      * Ajax request to get translations for strings
      */
     this.ajax_get_translation = function( nodeInfo, string_originals, url ) {
-        var all_languages_true_false = ( _this.is_editor ) ? 'true' : 'false'
+        // var all_languages_true_false = ( _this.is_editor ) ? 'true' : 'false'
         jQuery.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
             data: {
                 action            : 'trp_get_translations_regular',
-                all_languages     : all_languages_true_false,
+                all_languages     : false,
                 security          : trp_data['gettranslationsnonceregular'],
                 language          : language_to_query,
                 original_language : original_language,
@@ -83,6 +83,7 @@ function TRP_Translator(){
                         // The strings_to_query can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
                         var entry = response[i]
                         entry.selector = 'data-trp-translate-id'
+                        entry.attribute = ''
                         newEntries.push( entry )
                         if ( _this.is_editor ) {
                             var jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
@@ -113,7 +114,7 @@ function TRP_Translator(){
             }
             // this should always be outside the for loop
             if ( _this.is_editor ) {
-                window.parent.tpEditorApp.addToDictionary( newEntries );
+                // window.parent.tpEditorApp.addToDictionary( newEntries );
             }
         }else{
             for ( var j in strings_to_query ) {
@@ -278,8 +279,7 @@ function TRP_Translator(){
             if( typeof window.parent.jQuery !== "undefined" && window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
                 var settingsdata = "" + settings.data;
                 if( typeof settings.data == 'undefined' || jQuery.isEmptyObject( settings.data ) || settingsdata.indexOf('action=trp_') === -1 ) {
-                    window.parent.jQuery('#trp-preview-iframe').trigger('trp_page_loaded');
-                    jQuery( window ).trigger('trp_page_loaded');
+                    window.parent.dispatchEvent( new Event( 'trp_iframe_ajax_complete' ) );
                 }
             }
         });
