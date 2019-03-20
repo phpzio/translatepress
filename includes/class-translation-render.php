@@ -40,7 +40,7 @@ class TRP_Translation_Render{
             if ( $TRP_LANGUAGE == $this->settings['default-language'] && !trp_is_translation_editor() ) {
                 ob_start(array($this, 'clear_trp_tags'), 4096);//on default language when we are not in editor we just need to clear any trp tags that could still be present
             } else {
-                ob_start(array($this, 'translate_page'), 4096);//everywhere else translate the page
+                ob_start(array($this, 'capture_output'), 4096);//everywhere else translate the page
             }
         }
     }
@@ -250,6 +250,41 @@ class TRP_Translation_Render{
         $response->data['excerpt']['rendered'] = $this->translate_page( $response->data['excerpt']['rendered'] );
         $response->data['content']['rendered'] = $this->translate_page( $response->data['content']['rendered'] );
         return $response;
+    }
+
+    public function capture_output($output_parts){
+
+        global $trp_html_output;
+
+        if( empty( $trp_html_output ) )
+            $trp_html_output = '';
+
+        $trp_html_output .= $output_parts;
+        //ob_clean();
+        //$output_parts ='';
+        //if( current_filter() != 'shutdown' )
+        flush();
+
+        return '';
+    }
+
+    public function output_page(){
+        global $TRP_LANGUAGE;
+
+        //when we check if is an ajax request in frontend we also set proper REQUEST variables and language global so we need to run this for every buffer
+        $ajax_on_frontend = TRP_Translation_Manager::is_ajax_on_frontend();//TODO refactor this function si it just checks and does not set variables
+        if( ( is_admin() && !$ajax_on_frontend ) || trp_is_translation_editor( 'true' ) ){
+            return;//we have two cases where we don't do anything: we are on the admin side and we are not in an ajax call or we are in the left side of the translation editor
+        }
+        else {
+            if ( $TRP_LANGUAGE == $this->settings['default-language'] && !trp_is_translation_editor() ) {
+                return;
+            } else {
+                global $trp_html_output;
+                echo $this->translate_page($trp_html_output);
+            }
+        }
+
     }
 
     /**
