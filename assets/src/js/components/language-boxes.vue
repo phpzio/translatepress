@@ -10,7 +10,7 @@
                 <div class="trp-translations-container">
                     <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
                         <div v-if="dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
-                            <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].translated"></translation-input>
+                            <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation"></translation-input>
                         </div>
                         <div v-else :key="selectedIndex">
                             <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original"></translation-input>
@@ -37,7 +37,7 @@
             'onScreenLanguage',
             'languageNames',
             'settings',
-    ],
+        ],
         data(){
             return{
                 languages  : [],
@@ -51,6 +51,13 @@
             translationInput
         },
         mounted(){
+            let self = this
+            this.selectedIndexesArray.forEach( function( selectedIndex ) {
+                self.settings['translation-languages'].forEach( function( languageCode  ){
+                    self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation = self.dictionary[selectedIndex].translationsArray[languageCode].translated
+                })
+            })
+
             this.determineLanguageOrder()
         },
         watch: {

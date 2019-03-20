@@ -87,7 +87,7 @@ function TRP_Translator(){
                         if ( _this.is_editor ) {
                             var jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
                             jquery_object.attr( 'data-trp-translate-id', response[i].dbID );
-                            jquery_object.attr( 'data-trp-node-type', response[i].type );
+                            jquery_object.attr( 'data-trp-node-group', response[i].group );
                         }
 
                         if (response_string.translated != '' && language_to_query == current_language ) {

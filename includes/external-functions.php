@@ -38,7 +38,7 @@ function trp_full_trim( $string ) {
 	return $string;
 }
 
-function trp_sort_dictionary_by_original( $dictionaries, $type, $languageForId ){
+function trp_sort_dictionary_by_original( $dictionaries, $type, $group, $languageForId ){
 	$array = array();
 	foreach( $dictionaries as $language => $dictionary ){
 		if ( isset( $dictionary['default-language'] ) && $dictionary['default-language'] == true ){
@@ -49,13 +49,13 @@ function trp_sort_dictionary_by_original( $dictionaries, $type, $languageForId )
 				$found = false;
 				foreach( $array as $key => $row ){
 					if ( $row['original'] == $string->original ){
-						if ( !isset( $string->domain ) || ( isset( $string->domain ) && $string->domain == $row['nodeDescription'] ) ) {
+						if ( !isset( $string->domain ) || ( isset( $string->domain ) && $string->domain == $row['description'] ) ) {
 							$array[ $key ]['translationsArray'][ $language ] = $string;
 							unset( $array[ $key ]['translationsArray'][ $language ]->original );
 							$found = true;
 
 							if ( isset($string->domain) ){
-								$array[ $key ]['nodeDescription'] == $string->domain;
+								$array[ $key ]['description'] == $string->domain;
 							}
 							if ( $language == $languageForId ){
 								$array[ $key ][ 'dbID' ] = $string->id;
@@ -67,13 +67,14 @@ function trp_sort_dictionary_by_original( $dictionaries, $type, $languageForId )
 				if ( ! $found ){
 					$new_entry = array(
 						'type'              => $type,
+						'group'         => $group,
 						'translationsArray' => array( $language  => $string ),
 						'original'          => $string->original
 					);
 					unset($string->original);
 
 					if ( isset( $string->domain ) ){
-						$new_entry['nodeDescription'] = $nodeDescription = $string->domain;
+						$new_entry['description'] = $description = $string->domain;
 					}
 					if ( $language == $languageForId ){
 						$new_entry['dbID'] = $string->id;

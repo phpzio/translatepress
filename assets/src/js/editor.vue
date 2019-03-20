@@ -6,13 +6,17 @@
 
                 <div id="trp-close-save">
                     <a id="trp-controls-close" :href="closeURL"></a>
-                    <div id="trp-save-container">
-                        <span id="trp-translation-saved" style="display: none">Saved</span>
-                        <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
-                            <div class="trp-spinner"></div>
-                        </span>
-                        <button id="trp-save" type="submit" class="button-primary trp-save-string">Save translation</button>
-                    </div>
+                    <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
+                        <div class="trp-spinner"></div>
+                    </span>
+                    <save-translations
+                            :selectedIndexesArray="selectedIndexesArray"
+                            :dictionary="dictionary"
+                            :settings="settings"
+                            :nonces="nonces"
+                            :ajax_url="ajax_url"
+                    >
+                    </save-translations>
                 </div>
 
                 <div class="trp-controls-section">
@@ -28,8 +32,8 @@
                             <!-- @NOTE: Move to a component ?
                             Because this is simply a listing which gets data and then displays it accordingly -->
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
-                                <optgroup v-for="(type) in stringTypes" :label="type">
-                                    <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, type )" :title="string.nodeDescription" :data-database-id="string.dbID" :data-type="string.type">{{ processOptionName( string.original, type ) }}</option>
+                                <optgroup v-for="(group) in stringGroups" :label="group">
+                                    <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, group )" :title="string.description" :data-database-id="string.dbID" :data-group="string.group">{{ processOptionName( string.original, group ) }}</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -77,6 +81,7 @@
     import utils from './utils'
     import axios from 'axios'
     import languageBoxes from './components/language-boxes.vue'
+    import saveTranslations from './components/save-translations.vue'
 
     export default {
         props: [
@@ -91,10 +96,11 @@
             'data_attributes',
             'ajax_url',
             'editor_nonces',
-            'string_type_order'
+            'string_group_order'
         ],
         components:{
-            languageBoxes
+            languageBoxes,
+            saveTranslations
         },
         data(){
             return {
@@ -103,7 +109,7 @@
                 orderedSecondaryLanguages : JSON.parse( this.ordered_secondary_languages ),
                 roles                     : JSON.parse( this.view_as_roles ),
                 nonces                    : JSON.parse( this.editor_nonces),
-                stringTypeOrder           : JSON.parse( this.string_type_order),
+                stringGroupOrder           : JSON.parse( this.string_group_order),
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 currentLanguage           : this.current_language,
@@ -113,7 +119,7 @@
                 iframe                    : '',
                 dictionary                : [],
                 detectedSelectorAndId     : [],
-                stringTypes               : [ 'Images' ],
+                stringGroups               : [ 'Images' ],
                 selectedString            : '',
                 nodes                     : {},
                 selectedIndexesArray      : [],
@@ -255,7 +261,6 @@
                 //unique ids only
                 stringIdsArray = [...new Set(stringIdsArray)]
                 if ( stringIdsArray.length > 0 ) {
-                    //grab Regular strings
                     let data = new FormData()
                     data.append('action', 'trp_get_translations_' + typeSlug)
                     data.append('all_languages', 'true')
@@ -266,7 +271,6 @@
                     axios.post(this.ajax_url, data)
                         .then(function (response) {
                             self.addToDictionary(response.data, nodeData)
-                            console.log('a venit raspusunl ' + baseSelector)
                         })
                         .catch(function (error) {
                             console.log(error);
@@ -297,32 +301,32 @@
                     element.target.classList.remove( 'trp-highlight' )
                 })
             },
-            addToStringTypes( strings ){
+            addToStringGroups( strings ){
 
-                // see what node types are found
-                let foundStringTypes = this.stringTypes;
+                // see what node groups are found
+                let foundStringGroups = this.stringGroups;
                 strings.forEach( function ( string ) {
-                    if ( foundStringTypes.indexOf( string.type ) === -1 ){
-                        foundStringTypes.push( string.type )
+                    if ( foundStringGroups.indexOf( string.group ) === -1 ){
+                        foundStringGroups.push( string.group )
                     }
                 })
 
-                // put the node types in the order that we want, according to the prop this.stringTypeOrder
-                let orderedStringTypes = [];
-                this.stringTypeOrder.forEach( function( type ){
-                    if ( foundStringTypes.indexOf( type ) !== -1 ){
-                        orderedStringTypes.push( type )
+                // put the node groups in the order that we want, according to the prop this.stringGroupOrder
+                let orderedStringGroups = [];
+                this.stringGroupOrder.forEach( function( group ){
+                    if ( foundStringGroups.indexOf( group ) !== -1 ){
+                        orderedStringGroups.push( group )
                     }
                 })
 
-                // if there were any other string types that were not in the prop, add them at the end.
-                foundStringTypes.forEach( function (type) {
-                    if ( orderedStringTypes.indexOf( type ) === -1 ){
-                        orderedStringTypes.push(type);
+                // if there were any other string groups that were not in the prop, add them at the end.
+                foundStringGroups.forEach( function (group) {
+                    if ( orderedStringGroups.indexOf( group ) === -1 ){
+                        orderedStringGroups.push(group);
                     }
                 })
 
-                return orderedStringTypes;
+                return orderedStringGroups;
             },
             addToDictionary( responseData, nodeInfo = null ){
                 if ( responseData != null ) {
@@ -339,7 +343,7 @@
                         nodeInfo = responseData
                     }
 
-                    this.stringTypes = this.addToStringTypes( nodeInfo )
+                    this.stringGroups = this.addToStringGroups( nodeInfo )
                     this.dictionary = this.dictionary.concat( nodeInfo )
 
                     this.initStringsDropdown()
@@ -369,7 +373,7 @@
                     if ( stringId ) {
 
                         let nodeAttribute   = selector.replace( baseSelector, '' )
-                        let nodeType        = node.getAttribute( 'data-trp-node-type' + nodeAttribute )
+                        let nodeGroup        = node.getAttribute( 'data-trp-node-group' + nodeAttribute )
                         let nodeDescription = node.getAttribute( 'data-trp-node-description' + nodeAttribute )
 
                         let entry = {
@@ -378,11 +382,11 @@
                             attribute : nodeAttribute.substr(1), // substr(1) is used to trim prefixing line - ex. -alt will result in alt (no line)
                         }
 
-                        if ( nodeType )
-                            entry.type = nodeType
+                        if ( nodeGroup )
+                            entry.group = nodeGroup
 
                         if ( nodeDescription )
-                            entry.nodeDescription = nodeDescription
+                            entry.description = nodeDescription
 
                         nodeData.push( entry )
                     }
@@ -467,7 +471,7 @@
 
                             if ( relatedNodeAttr ) {
                                 stringId = relatedNodeAttr
-                                stringSelector = baseSelector
+                                stringSelector = selector
                             }
 
                         })
@@ -498,7 +502,7 @@
                 if ( typeof string.attribute != undefined && ( string.attribute == 'href' || string.attribute == 'src' ) )
                     return false
 
-                if ( string.type == type )
+                if ( string.group == type )
                     return true
 
                 return false
@@ -508,9 +512,9 @@
 
                 jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
                     let original        = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
-                    let nodeDescription = ( option.title ) ?  '(' + option.title + ')' : ''
+                    let description = ( option.title ) ?  '(' + option.title + ')' : ''
 
-                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + nodeDescription + '</div>' );
+                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + description + '</div>' );
                 }, width : '100%' } ).prop( 'disabled', false )
 
                 jQuery( '#trp_select2_overlay' ).hide()

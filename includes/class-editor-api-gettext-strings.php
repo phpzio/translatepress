@@ -115,8 +115,8 @@ class TRP_Editor_Api_Gettext_Strings {
 						$dictionaries[$lang][$key] = (object)$string;
 					}
 				}
-				$localized_text = $this->translation_manager->string_types();
-				$dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $localized_text['gettextstrings'], $_POST['language'] );
+				$localized_text = $this->translation_manager->string_groups();
+				$dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, 'gettext', $localized_text['gettextstrings'], $_POST['language'] );
 				die( trp_safe_json_encode( $dictionary_by_original ) );
 
 			}

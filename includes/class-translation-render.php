@@ -112,19 +112,19 @@ class TRP_Translation_Render{
 	    if ( ! $this->translation_manager ) {
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
-	    $string_types = $this->translation_manager->string_types();
+	    $string_groups = $this->translation_manager->string_groups();
 
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-	        $string_types['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
+	        $string_groups['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
         ));
 
-        foreach( $node_type_categories as $category_name => $node_types ){
-            if ( in_array( $current_node_type, $node_types ) ){
+        foreach( $node_type_categories as $category_name => $node_groups ){
+            if ( in_array( $current_node_type, $node_groups ) ){
                 return $category_name;
             }
         }
 
-        return $string_types['stringlist'];
+        return $string_groups['stringlist'];
     }
 
     /**
@@ -695,7 +695,7 @@ class TRP_Translation_Render{
 
             if ( $preview_mode ) {
                 if ( $accessor == 'outertext' && $nodes[$i]['type'] != 'button' ) {
-                    $outertext_details = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-type="' . $this->get_node_type_category( $nodes[$i]['type'] ) . '"';
+                    $outertext_details = '<translate-press data-trp-translate-id="' . $translated_string_ids[$translateable_strings[$i]]->id . '" data-trp-node-group="' . $this->get_node_type_category( $nodes[$i]['type'] ) . '"';
                     if ( $this->get_node_description( $nodes[$i] ) ) {
                         $outertext_details .= ' data-trp-node-description="' . $this->get_node_description($nodes[$i] ) . '"';
                     }
@@ -706,7 +706,7 @@ class TRP_Translation_Render{
                         $nodes[$i]['node'] = $nodes[$i]['node']->parent();
                     }
 	                $nodes[$i]['node']->setAttribute('data-trp-translate-id-' . $accessor, $translated_string_ids[ $translateable_strings[$i] ]->id );
-                    $nodes[$i]['node']->setAttribute('data-trp-node-type-' . $accessor, $this->get_node_type_category( $nodes[$i]['type'] ) );
+                    $nodes[$i]['node']->setAttribute('data-trp-node-group-' . $accessor, $this->get_node_type_category( $nodes[$i]['type'] ) );
 
                     if ( $this->get_node_description( $nodes[$i] ) ) {
                         $nodes[$i]['node']->setAttribute('data-trp-node-description-' . $accessor, $this->get_node_description($nodes[$i]));

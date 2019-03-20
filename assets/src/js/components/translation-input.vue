@@ -42,7 +42,7 @@ export default{
     },
     methods:{
         updateValue(){
-            this.$emit( 'input', this.$refs[inputType].value )
+            this.$emit( 'input', this.$refs[this.inputType].value )
         },
         //deter
     }

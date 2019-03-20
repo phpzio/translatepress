@@ -65,7 +65,7 @@ class TRP_Translation_Manager{
     }
 
 	public function get_merge_rules(){
-		$localized_text = $this->string_types();
+		$localized_text = $this->string_groups();
     	$merge_rules = array (
     		'top_parents' => array( 'p', 'div', 'li', 'ol', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'body', 'footer', 'article', 'main', 'iframe', 'section', 'figure', 'figcaption', 'blockquote', 'cite' ),
 		    'self_object_type' => array( 'translate-press' ),
@@ -85,23 +85,23 @@ class TRP_Translation_Manager{
 		return $text;
 	}
 
-	public function string_types(){
-		$string_types = array(
+	public function string_groups(){
+		$string_groups = array(
 			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
 			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
 			'gettextstrings'                => __( 'Gettext Strings', 'translatepress-multilingual' ),
 			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
 		);
-		return apply_filters( 'trp_string_types', $string_types );
+		return apply_filters( 'trp_string_groups', $string_groups );
 	}
 
 	public function editor_nonces(){
 		$nonces = array(
 			'gettranslationsnonceregular'   => wp_create_nonce('get_translations'),
-			'savestringsnonce'              => wp_create_nonce('save_translations'),
-			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
+			'savetranslationsnonceregular'  => wp_create_nonce('save_translations'),
 			'gettranslationsnoncegettext'   => wp_create_nonce('gettext_get_translations'),
-			'gettextsavetranslationsnonce'  => wp_create_nonce('gettext_save_translations'),
+			'savetranslationsnoncegettext'  => wp_create_nonce('gettext_save_translations'),
+			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
 		);
 		return $nonces;
 	}

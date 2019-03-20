@@ -43,12 +43,12 @@ class TRP_Editor_Api_Regular_Strings {
 					$block_type = $this->trp_query->get_constant_block_type_regular_string();
 					$dictionaries = $this->get_translation_for_strings( $ids, $originals, $block_type );
 
-					$localized_text = $this->translation_manager->string_types();
-					$string_type = __('Others', 'translatepress-multilingual'); // this type is not registered in the string types because it will be overwritten by the content in data-trp-node-type
+					$localized_text = $this->translation_manager->string_groups();
+					$string_group = __('Others', 'translatepress-multilingual'); // this type is not registered in the string types because it will be overwritten by the content in data-trp-node-type
 					if ( isset( $_POST['dynamic_strings'] ) && $_POST['dynamic_strings'] === 'true'  ){
-						$string_type = $localized_text['dynamicstrings'];
+						$string_group = $localized_text['dynamicstrings'];
 					}
-					$dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, $string_type, $_POST['language'] );
+					$dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, 'regular', $string_group, $_POST['language'] );
 
 					echo trp_safe_json_encode( $dictionary_by_original );
 				}
