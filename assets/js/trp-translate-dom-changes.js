@@ -18,14 +18,13 @@ function TRP_Translator(){
      * Ajax request to get translations for strings
      */
     this.ajax_get_translation = function( nodeInfo, string_originals, url ) {
-        // var all_languages_true_false = ( _this.is_editor ) ? 'true' : 'false'
         jQuery.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
             data: {
                 action            : 'trp_get_translations_regular',
-                all_languages     : false,
+                all_languages     : 'false',
                 security          : trp_data['gettranslationsnonceregular'],
                 language          : language_to_query,
                 original_language : original_language,
@@ -108,13 +107,10 @@ function TRP_Translator(){
                     _this.unpause_observer();
                 }
 
-                if ( _this.is_editor )
-                    window.parent.tpEditorApp.setupEventListener( queried_string.node.parentNode );
-
             }
             // this should always be outside the for loop
             if ( _this.is_editor ) {
-                // window.parent.tpEditorApp.addToDictionary( newEntries );
+                window.parent.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
             }
         }else{
             for ( var j in strings_to_query ) {
@@ -279,7 +275,7 @@ function TRP_Translator(){
             if( typeof window.parent.jQuery !== "undefined" && window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
                 var settingsdata = "" + settings.data;
                 if( typeof settings.data == 'undefined' || jQuery.isEmptyObject( settings.data ) || settingsdata.indexOf('action=trp_') === -1 ) {
-                    window.parent.dispatchEvent( new Event( 'trp_iframe_ajax_complete' ) );
+                    window.parent.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
                 }
             }
         });

@@ -221,21 +221,17 @@
                     this.currentURL = this.iframe.URL
 
                 this.init()
-                window.addEventListener( 'trp_iframe_ajax_complete', this.scanForNewStrings )
-            },
-            scanForNewStrings(){
-                console.log('scan again for new strings')
-                this.setupDictionaries()
+                window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
             },
             init(){
                 this.dictionary = []
-                this.setupDictionaries()
+                this.scanIframeForStrings()
             },
-            setupDictionaries(){
-                this.setupDictionary( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
-                this.setupDictionary( 'data-trpgettextoriginal', 'gettext', this.currentLanguage )
+            scanIframeForStrings(){
+                this.scanForSelector( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
+                this.scanForSelector( 'data-trpgettextoriginal', 'gettext', this.currentLanguage )
             },
-            setupDictionary( baseSelector, typeSlug, languageOfIds ){
+            scanForSelector( baseSelector, typeSlug, languageOfIds ){
                 let self           = this
                 let selectors      = this.prepareSelectorStrings( baseSelector )
                 let nodes          = this.iframe.querySelectorAll( '[' + selectors.join('],[') + ']' )

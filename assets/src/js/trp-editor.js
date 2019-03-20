@@ -10,14 +10,15 @@ if ( document.getElementById( 'trp-editor-container' ) ) {
         el: '#trp-editor-container',
         data: {
         },
-        methods: {
+       /* Not needed for now. Maybe activate this in the future
+       methods: {
             addToDictionary: function( strings, extraNodeInfo = null ) {
                 this.$refs.trp_editor.addToDictionary( strings, extraNodeInfo );
             },
             setupEventListener: function( node ) {
                 this.$refs.trp_editor.setupEventListener( node );
             }
-        }
+        }*/
     })
 
 }
