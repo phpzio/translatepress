@@ -467,7 +467,7 @@
 
                             if ( relatedNodeAttr ) {
                                 stringId = relatedNodeAttr
-                                stringSelector = baseSelector
+                                stringSelector = selector
                             }
 
                         })
