@@ -127,7 +127,7 @@ class TRP_Translate_Press{
 
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
-//        $this->loader->add_action( 'wp_ajax_trp_save_translations', $this->editor_api_regular_strings, 'save_translations' );
+        $this->loader->add_action( 'wp_ajax_trp_save_translations_regular', $this->editor_api_regular_strings, 'save_translations' );
 //        $this->loader->add_action( 'wp_ajax_trp_create_translation_block', $this->editor_api_regular_strings, 'create_translation_block' );
 //        $this->loader->add_action( 'init', $this->editor_api_regular_strings, 'split_translation_block' );
 	    $this->loader->add_filter( 'trp_get_existing_translations', $this->translation_manager, 'display_possible_db_errors', 20, 3 );
@@ -136,7 +136,7 @@ class TRP_Translate_Press{
         $this->loader->add_action( 'wp_ajax_trp_process_js_strings_in_translation_editor', $this->translation_render, 'process_js_strings_in_translation_editor' );
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations_gettext', $this->editor_api_gettext_strings, 'gettext_get_translations' );
-        $this->loader->add_action( 'wp_ajax_trp_gettext_save_translations', $this->editor_api_gettext_strings, 'gettext_save_translations' );
+        $this->loader->add_action( 'wp_ajax_trp_save_translations_gettext', $this->editor_api_gettext_strings, 'gettext_save_translations' );
 
         $this->loader->add_action( 'wp_ajax_trp_publish_language', $this->translation_manager, 'publish_language' );
 

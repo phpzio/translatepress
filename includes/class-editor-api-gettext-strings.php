@@ -122,4 +122,43 @@ class TRP_Editor_Api_Gettext_Strings {
 			}
 		}
 	}
+
+	/*
+	 * Save gettext translations
+	 */
+	public function gettext_save_translations(){
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
+			if (isset($_POST['action']) && $_POST['action'] === 'trp_gettext_save_translations_gettext' && !empty($_POST['strings'])) {
+				check_ajax_referer( 'gettext_save_translations', 'security' );
+				$strings = json_decode(stripslashes($_POST['strings']));
+				$update_strings = array();
+				foreach ( $strings as $language => $language_strings ) {
+					if ( in_array( $language, $this->settings['translation-languages'] ) ) {
+						foreach( $language_strings as $string ) {
+							if ( isset( $string->id ) && is_numeric( $string->id ) ) {
+								$update_strings[ $language ] = array();
+								array_push($update_strings[ $language ], array(
+									'id' => (int)$string->id,
+									'translated' => trp_sanitize_string( $string->translated ),
+									'domain' => sanitize_text_field( $string->domain ),
+									'status' => (int)$string->status
+								));
+							}
+						}
+					}
+				}
+
+				if ( ! $this->trp_query ) {
+					$trp = TRP_Translate_Press::get_trp_instance();
+					$this->trp_query = $trp->get_component( 'query' );
+				}
+
+				foreach( $update_strings as $language => $update_string_array ) {
+					$this->trp_query->update_gettext_strings( $update_string_array, $language );
+				}
+			}
+		}
+		echo trp_safe_json_encode( array() );
+		die();
+	}
 }

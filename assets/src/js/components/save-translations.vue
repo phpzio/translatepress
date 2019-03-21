@@ -34,7 +34,6 @@
                     if ( typeSlug === self.dictionary[selectedIndex].type ) {
                         self.settings['translation-languages'].forEach( function( languageCode  ){
                             saveData[languageCode] = []
-                            console.log(languageCode)
                             if ( self.dictionary[selectedIndex].translationsArray[languageCode] && (self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation != self.dictionary[selectedIndex].translationsArray[languageCode].translated ) ) {
                                 if ( self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation === '' ) {
                                     //set as not translated

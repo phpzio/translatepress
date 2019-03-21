@@ -51,18 +51,19 @@
             translationInput
         },
         mounted(){
-            let self = this
-            this.selectedIndexesArray.forEach( function( selectedIndex ) {
-                self.settings['translation-languages'].forEach( function( languageCode  ){
-                    self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation = self.dictionary[selectedIndex].translationsArray[languageCode].translated
-                })
-            })
-
             this.determineLanguageOrder()
         },
         watch: {
             selectedIndexesArray: function () {
                 this.updateLanguages()
+                let self = this
+                this.selectedIndexesArray.forEach( function( selectedIndex ) {
+                    self.settings['translation-languages'].forEach( function( languageCode  ){
+                        if ( self.dictionary[selectedIndex].translationsArray[languageCode] ) {
+                            self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation = self.dictionary[selectedIndex].translationsArray[languageCode].translated
+                        }
+                    })
+                })
             },
             onScreenLanguage: function(){
                 this.determineLanguageOrder()
