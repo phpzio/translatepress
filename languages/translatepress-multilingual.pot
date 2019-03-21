@@ -25,7 +25,7 @@ msgstr ""
 msgid "All Languages"
 msgstr ""
 
-#: ../tp-add-on-seo-pack/class-seo-pack.php:167
+#: ../tp-add-on-seo-pack/class-seo-pack.php:171
 msgid "The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when you submit the sitemap to Google."
 msgstr ""
 
@@ -209,11 +209,11 @@ msgstr ""
 msgid "Translate Page"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1198
+#: ../translatepress/includes/class-translation-manager.php:1242
 msgid "Security check"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1272
+#: ../translatepress/includes/class-translation-manager.php:1316
 msgid "<strong>Warning:</strong> Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting."
 msgstr ""
 
@@ -297,7 +297,7 @@ msgstr ""
 msgid "%s duplicates removed"
 msgstr ""
 
-#: ../translatepress/includes/functions.php:253
+#: ../translatepress/includes/functions.php:258
 msgid "<strong>TranslatePress</strong> requires <strong><a href=\"http://php.net/manual/en/book.mbstring.php\">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server."
 msgstr ""
 

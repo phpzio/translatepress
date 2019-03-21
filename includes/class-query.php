@@ -264,43 +264,63 @@ class TRP_Query{
 		return false;
 	}
 
-    /**
-     * Insert translations and new strings in DB.
-     *
-     * @param array $new_strings Array of strings for which we do not have a translation. Only inserts original.
-	 * @param array $update_strings Array of arrays, each containing an entry to update.
-	 * @param string $language_code Language code of table where it should be inserted.
-	 * @param int $block_type
-	 * @param string $on_duplicate
+	/**
+	 * Update regular strings in DB
+	 *
+	 * @param $update_strings
+	 * @param $language_code
 	 */
-	public function insert_strings( $new_strings, $update_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING ) {
-        if ( $block_type == null ) {
-			$block_type = self::BLOCK_TYPE_REGULAR_STRING;
-		}
-		if ( count( $new_strings ) == 0 && count( $update_strings ) == 0 ) {
+	public function update_strings( $update_strings, $language_code ) {
+		if ( count( $update_strings ) == 0 ) {
 			return;
 		}
 		$query = "INSERT INTO `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` ( id, original, translated, status, block_type ) VALUES ";
+
+		$values = array();
+		$place_holders = array();
+
+		foreach ( $update_strings as $string ) {
+			if ( ! isset( $string['block_type'] ) ){
+				$string['block_type'] = self::BLOCK_TYPE_REGULAR_STRING;
+			}
+			array_push( $values, $string['id'], $string['original'], $string['translated'], $string['status'], $string['block_type'] );
+			$place_holders[] = "('%d','%s','%s','%d','%d')";
+		}
+		$query .= implode( ', ', $place_holders );
+
+		$on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status), block_type=VALUES(block_type)';
+		$query .= $on_duplicate;
+
+		// you cannot insert multiple rows at once using insert() method.
+		// but by using prepare you cannot insert NULL values.
+		$this->db->query( $this->db->prepare($query . ' ', $values) );
+	}
+
+	/**
+	 * Insert new regular strings in DB.
+	 *
+	 * @param array $new_strings Array of strings for which we do not have a translation. Only inserts original.
+	 * @param string $language_code Language code of table where it should be inserted.
+	 * @param int $block_type
+	 */
+	public function insert_strings( $new_strings, $language_code, $block_type = self::BLOCK_TYPE_REGULAR_STRING ) {
+        if ( $block_type == null ) {
+			$block_type = self::BLOCK_TYPE_REGULAR_STRING;
+		}
+		if ( count( $new_strings ) == 0 ) {
+			return;
+		}
+		$query = "INSERT INTO `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` ( original, translated, status, block_type ) VALUES ";
 
         $values = array();
         $place_holders = array();
         $new_strings = array_unique( $new_strings );
 
         foreach ( $new_strings as $string ) {
-            array_push( $values, NULL, $string, NULL, self::NOT_TRANSLATED, $block_type );
-            $place_holders[] = "('%d','%s','%s','%d','%d')";
-        }
-        foreach ( $update_strings as $string ) {
-        	if ( ! isset( $string['block_type'] ) ){
-        		$string['block_type'] = self::BLOCK_TYPE_REGULAR_STRING;
-	        }
-            array_push( $values, $string['id'], $string['original'], $string['translated'], $string['status'], $string['block_type'] );
-            $place_holders[] = "('%d','%s','%s','%d','%d')";
+            array_push( $values, $string, NULL, self::NOT_TRANSLATED, $block_type );
+            $place_holders[] = "('%s','%s','%d','%d')";
         }
 		$query .= implode( ', ', $place_holders );
-
-		$on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status), block_type=VALUES(block_type)';
-		$query .= $on_duplicate;
 
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.
@@ -311,12 +331,16 @@ class TRP_Query{
         if ( count( $new_strings ) == 0  ){
             return;
         }
-        $query = "INSERT INTO `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "` ( id, original, translated, domain, status ) VALUES ";
+        $query = "INSERT INTO `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "` ( original, translated, domain, status ) VALUES ";
 
         $values = array();
         $place_holders = array();
 
         foreach ( $new_strings as $string ) {
+            //make sure we don't insert empty strings in db
+            if( empty( $string['original'] ) )
+                continue;
+
             if( $string['original'] == $string['translated'] || $string['translated'] == '' ){
                 $translated = NULL;
                 $status = self::NOT_TRANSLATED;
@@ -326,8 +350,8 @@ class TRP_Query{
                 $status = self::HUMAN_REVIEWED;
             }
                 
-            array_push( $values, NULL, $string['original'], $translated, $string['domain'], $status );
-            $place_holders[] = "( '%d', '%s', '%s', '%s', '%d')";
+            array_push( $values, $string['original'], $translated, $string['domain'], $status );
+            $place_holders[] = "( '%s', '%s', '%s', '%d')";
         }
 
 
@@ -674,14 +698,16 @@ class TRP_Query{
 	 * @param array $columns_to_update              Array with the name of columns to update id, original, translated, status, block_type
 	 * @param string $placeholders_query_part       For query on all columns  '%d', '%s', '%s', '%d', '%d'
 	 */
-	public function update_strings( $update_strings, $language_code, $columns_to_update, $placeholders ) {
+	public function update_strings_by_columns( $update_strings, $language_code, $columns_to_update ) {
 		if ( count( $update_strings ) == 0 ) {
 			return;
 		}
 
+		$placeholder_array_mapping = array( 'id'=>'%d', 'original'=>'%s', 'translated' => '%s', 'status' => '%d', 'block_type'=>'%d' );
 		$columns_query_part = '';
 		foreach ( $columns_to_update as $column ) {
 			$columns_query_part .= $column . ',';
+			$placeholders[] = $placeholder_array_mapping[$column];
 		}
 		$columns_query_part = rtrim( $columns_query_part, ',' );
 

@@ -711,6 +711,7 @@ function TRP_Editor(){
                 e.preventDefault();
             }
         });
+        jQuery( "#trp-preview-iframe" ).on( 'trp_page_loaded', _this.initialize );
     }
 
     /**

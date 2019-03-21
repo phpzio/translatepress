@@ -72,6 +72,13 @@ if [ $freeversion == 'y' ]; then
     # rm -rf $trunk_dir/node_modules
     # rm -rf $trunk_dir/gulpfile.js
     # rm -rf $trunk_dir/package-lock.json
+
+    # #remove testing files
+    # rm -rf $trunk_dir/bin
+    # rm -rf $trunk_dir/tests
+    # rm -rf $trunk_dir/.phpcs.xml.dist
+    # rm -rf $trunk_dir/.travis.yml
+    # rm -rf $trunk_dir/phpunit.xml.dist
     #
     # #add new tag
     # svn cp trunk tags/$version

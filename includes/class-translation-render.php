@@ -8,6 +8,7 @@
 class TRP_Translation_Render{
     protected $settings;
     protected $machine_translator;
+    /* @var TRP_Query */
     protected $trp_query;
 	/* @var TRP_Url_Converter */
     protected $url_converter;
@@ -780,8 +781,8 @@ class TRP_Translation_Render{
 		    $body = $html->find('body', 0 );
 		    $body->innertext = '<div data-no-translation class="trp-editor-notices">' . $trp_editor_notices . "</div>" . $body->innertext;
 	    }
-
-	    return $html->save();
+	    $final_html = $html->save();
+	    return apply_filters( 'trp_translated_html', $final_html, $TRP_LANGUAGE, $language_code );
     }
 
     /**
@@ -1003,7 +1004,8 @@ class TRP_Translation_Render{
             }
         }
 
-        $this->trp_query->insert_strings( $new_strings, $update_strings, $language_code, $block_type );
+        $this->trp_query->insert_strings( $new_strings, $language_code, $block_type );
+        $this->trp_query->update_strings( $update_strings, $language_code );
 
         return $translated_strings;
     }

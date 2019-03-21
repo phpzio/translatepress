@@ -315,6 +315,7 @@ class TRP_Url_Converter {
             $new_url = $url;
         }
 
+	    $new_url = apply_filters( 'trp_get_url_for_language', $new_url, $url, $language, $this->get_abs_home(), $this->get_lang_from_url_string($url), $this->get_url_slug( $language ) );
         wp_cache_set('get_url_for_language_' . $hash, $new_url . $trp_link_is_processed, 'trp');
         return $new_url . $trp_link_is_processed ;
 
