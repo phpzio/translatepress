@@ -519,22 +519,27 @@
                 return false
             },
             initStringsDropdown(){
-                jQuery( '#trp-string-categories' ).select2( 'destroy' )
+                if ( !this.isStringsDropdownOpen() ) {
+                    jQuery( '#trp-string-categories' ).select2( 'destroy' )
 
-                jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
-                    let original    = he.decode( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
-                    let description = ( option.title ) ?  '(' + option.title + ')' : ''
+                    jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
+                        let original    = he.decode( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
+                        let description = ( option.title ) ?  '(' + option.title + ')' : ''
 
-                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + description + '</div>' );
-                }, width : '100%' } ).prop( 'disabled', false )
+                        return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + description + '</div>' );
+                    }, width : '100%' } ).prop( 'disabled', false )
 
-                jQuery( '#trp_select2_overlay' ).hide()
+                    jQuery( '#trp_select2_overlay' ).hide()
+                }
             },
             processOptionName( name, type ){
                 if ( type == 'Images' )
                     return utils.getFilename( name )
 
                 return name
+            },
+            isStringsDropdownOpen() {
+                return jQuery( '#trp-string-categories' ).select2( 'isOpen' )
             }
         },
         //add support for v-model in select2
