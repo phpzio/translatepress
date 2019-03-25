@@ -30,8 +30,7 @@
     //and we need to compare the URL with the one from the iFrame (which has the protocol added)
     $current_url = 'http:' . $current_url;
 
-    //@todo list is not comprehensive. Should in sync with the code fragment where the attributes are set
-    $selectors = array('', '-alt', '-src', '-content', '-value', '-placeholder', '-href', '-title' );
+    $selectors = array( '', '-alt', '-src', '-title', '-content', '-value', '-placeholder', '-href', '-outertext', '-innertext' );
     $data_attributes = array( 'data-trp-translate-id', 'data-trpgettextoriginal' );
 
     do_action( 'trp_head' );
@@ -39,7 +38,7 @@
     //setup view_as roles
     $view_as_roles = array(
         __('Current User', 'translatepress-multilingual') => 'current_user',
-        __('Logged Out', 'translatepress-multilingual') => 'logged_out'
+        __('Logged Out',   'translatepress-multilingual') => 'logged_out'
     );
     $all_roles = wp_roles()->roles;
 

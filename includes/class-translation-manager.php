@@ -87,10 +87,11 @@ class TRP_Translation_Manager{
 
 	public function string_groups(){
 		$string_groups = array(
-			'metainformation'               => __( 'Meta Information', 'translatepress-multilingual' ),
-			'stringlist'                    => __( 'String List', 'translatepress-multilingual' ),
-			'gettextstrings'                => __( 'Gettext Strings', 'translatepress-multilingual' ),
-			'dynamicstrings'                => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+            'metainformation' => __( 'Meta Information', 'translatepress-multilingual' ),
+            'stringlist'      => __( 'String List', 'translatepress-multilingual' ),
+            'gettextstrings'  => __( 'Gettext Strings', 'translatepress-multilingual' ),
+            'images'          => __( 'Images', 'translatepress-multilingual' ),
+            'dynamicstrings'  => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
 		);
 		return apply_filters( 'trp_string_groups', $string_groups );
 	}

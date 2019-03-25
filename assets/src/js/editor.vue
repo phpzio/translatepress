@@ -82,6 +82,7 @@
     import axios from 'axios'
     import languageBoxes from './components/language-boxes.vue'
     import saveTranslations from './components/save-translations.vue'
+    import he from 'he'
 
     export default {
         props: [
@@ -109,7 +110,7 @@
                 orderedSecondaryLanguages : JSON.parse( this.ordered_secondary_languages ),
                 roles                     : JSON.parse( this.view_as_roles ),
                 nonces                    : JSON.parse( this.editor_nonces),
-                stringGroupOrder           : JSON.parse( this.string_group_order),
+                stringGroupOrder          : JSON.parse( this.string_group_order),
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 currentLanguage           : this.current_language,
@@ -119,7 +120,7 @@
                 iframe                    : '',
                 dictionary                : [],
                 detectedSelectorAndId     : [],
-                stringGroups               : [ 'Images' ],
+                stringGroups              : [],
                 selectedString            : '',
                 nodes                     : {},
                 selectedIndexesArray      : [],
@@ -164,6 +165,8 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
+                if ( typeof selectedStringArrayIndex == undefined || selectedStringArrayIndex == null )
+                    return
 
                 jQuery('#trp-string-categories').val( selectedStringArrayIndex ).trigger( 'change' )
 
@@ -287,7 +290,7 @@
                     return false
                 }
             },
-            setupEventListener( node ) {
+            setupEventListener( node ){
                 if ( node.tagName == 'A' )
                     return false
 
@@ -297,9 +300,27 @@
                     self.showPencilIcon( element.target )
                 })
 
-                node.addEventListener( 'mouseleave', function( element ) {
-                    element.target.classList.remove( 'trp-highlight' )
-                })
+            },
+            addToDictionary( responseData, nodeInfo = null ){
+                if ( responseData != null ) {
+                    if ( nodeInfo ){
+                        nodeInfo.forEach(function ( infoRow, index ){
+                            responseData.some( function ( responseDataRow ) {
+                                if ( infoRow.dbID == responseDataRow.dbID ) {
+                                    nodeInfo[index] = Object.assign( {}, responseDataRow, infoRow )
+                                    return true // a sort of break
+                                }
+                            })
+                        })
+                    }else{
+                        nodeInfo = responseData
+                    }
+
+                    this.stringGroups = this.addToStringGroups( nodeInfo )
+                    this.dictionary = this.dictionary.concat( nodeInfo )
+
+                    this.initStringsDropdown()
+                }
             },
             addToStringGroups( strings ){
 
@@ -328,27 +349,6 @@
 
                 return orderedStringGroups;
             },
-            addToDictionary( responseData, nodeInfo = null ){
-                if ( responseData != null ) {
-                    if ( nodeInfo ){
-                        nodeInfo.forEach(function ( infoRow, index ){
-                            responseData.some( function ( responseDataRow ) {
-                                if ( infoRow.dbID == responseDataRow.dbID ) {
-                                    nodeInfo[index] = Object.assign( {}, responseDataRow, infoRow )
-                                    return true // a sort of break
-                                }
-                            })
-                        })
-                    }else{
-                        nodeInfo = responseData
-                    }
-
-                    this.stringGroups = this.addToStringGroups( nodeInfo )
-                    this.dictionary = this.dictionary.concat( nodeInfo )
-
-                    this.initStringsDropdown()
-                }
-            },
             getStringIndex( selector, dbID ){
                 let found = null
 
@@ -373,7 +373,7 @@
                     if ( stringId ) {
 
                         let nodeAttribute   = selector.replace( baseSelector, '' )
-                        let nodeGroup        = node.getAttribute( 'data-trp-node-group' + nodeAttribute )
+                        let nodeGroup       = node.getAttribute( 'data-trp-node-group' + nodeAttribute )
                         let nodeDescription = node.getAttribute( 'data-trp-node-description' + nodeAttribute )
 
                         let entry = {
@@ -438,10 +438,21 @@
                 //if other icons are showing, remove them
                 self.removePencilIcon()
 
-                //add class to highlight text
-                target.classList.remove( 'trp-highlight' )
-                target.className += 'trp-highlight'
+                //remove highlight class
+                let previouslyHighlighted = this.iframe.getElementsByClassName( 'trp-highlight' )
 
+                if ( previouslyHighlighted.length > 0 ) {
+                    let i
+
+                    for ( i = 0; i < previouslyHighlighted.length; i++ )
+                        previouslyHighlighted[i].classList.remove( 'trp-highlight' )
+                }
+
+                //add class to highlight text
+                if ( !target.classList.contains( 'trp-highlight' ) )
+                    target.className += 'trp-highlight'
+
+                //figure out where to insert extra HTML
                 if ( beforePosition.includes( target.tagName ) )
                     position = 'beforebegin'
                 else
@@ -508,22 +519,27 @@
                 return false
             },
             initStringsDropdown(){
-                jQuery( '#trp-string-categories' ).select2( 'destroy' )
+                if ( !this.isStringsDropdownOpen() ) {
+                    jQuery( '#trp-string-categories' ).select2( 'destroy' )
 
-                jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
-                    let original        = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
-                    let description = ( option.title ) ?  '(' + option.title + ')' : ''
+                    jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
+                        let original    = he.decode( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
+                        let description = ( option.title ) ?  '(' + option.title + ')' : ''
 
-                    return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + description + '</div>' );
-                }, width : '100%' } ).prop( 'disabled', false )
+                        return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + description + '</div>' );
+                    }, width : '100%' } ).prop( 'disabled', false )
 
-                jQuery( '#trp_select2_overlay' ).hide()
+                    jQuery( '#trp_select2_overlay' ).hide()
+                }
             },
             processOptionName( name, type ){
                 if ( type == 'Images' )
                     return utils.getFilename( name )
 
                 return name
+            },
+            isStringsDropdownOpen() {
+                return jQuery( '#trp-string-categories' ).select2( 'isOpen' )
             }
         },
         //add support for v-model in select2
