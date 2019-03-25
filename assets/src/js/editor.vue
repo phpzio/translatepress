@@ -164,6 +164,8 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
+                if ( typeof selectedStringArrayIndex == undefined || selectedStringArrayIndex == null )
+                    return
 
                 jQuery('#trp-string-categories').val( selectedStringArrayIndex ).trigger( 'change' )
 
