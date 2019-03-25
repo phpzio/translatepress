@@ -159,6 +159,6 @@ class TRP_Editor_Api_Gettext_Strings {
 			}
 		}
 		echo trp_safe_json_encode( array() );
-		die();
+		wp_die();
 	}
 }

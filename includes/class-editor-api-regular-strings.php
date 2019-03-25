@@ -228,5 +228,7 @@ class TRP_Editor_Api_Regular_Strings {
 		foreach( $update_strings as $language => $update_string_array ) {
 			$this->trp_query->update_strings( $update_string_array, $language, array('id','translated', 'status', 'block_type'));
 		}
+		echo trp_safe_json_encode( array() );
+		wp_die();
 	}
 }

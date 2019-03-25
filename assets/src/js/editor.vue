@@ -15,6 +15,9 @@
                             :settings="settings"
                             :nonces="nonces"
                             :ajax_url="ajax_url"
+                            :currentLanguage="currentLanguage"
+                            :iframe="iframe"
+                            :currentURL="currentURL"
                     >
                     </save-translations>
                 </div>
@@ -209,7 +212,7 @@
 
             },
             selectedIndexesArray: function( newSelectedIndexesArray, oldSelectedIndexesArray ){
-                console.log( newSelectedIndexesArray)
+//                console.log( newSelectedIndexesArray)
             },
             dictionary: function (){
             }
