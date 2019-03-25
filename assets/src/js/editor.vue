@@ -82,6 +82,7 @@
     import axios from 'axios'
     import languageBoxes from './components/language-boxes.vue'
     import saveTranslations from './components/save-translations.vue'
+    import he from 'he'
 
     export default {
         props: [
@@ -521,7 +522,7 @@
                 jQuery( '#trp-string-categories' ).select2( 'destroy' )
 
                 jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
-                    let original        = utils.escapeHtml( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
+                    let original    = he.decode( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
                     let description = ( option.title ) ?  '(' + option.title + ')' : ''
 
                     return jQuery( '<div>' + original + '</div><div class="string-selector-description">' + description + '</div>' );
