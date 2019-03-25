@@ -257,7 +257,7 @@ class TRP_Upgrade {
 		}
 
 		// overwrite original only
-		$this->trp_query->update_strings_by_columns( $strings, $language_code, array( 'id', 'original' ), array( '%d', '%s' ) );
+		$this->trp_query->update_strings( $strings, $language_code, array( 'id', 'original' ) );
 		return false;
 	}
 

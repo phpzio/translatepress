@@ -202,9 +202,9 @@ class TRP_Editor_Api_Regular_Strings {
 		$update_strings = array();
 		foreach ( $strings as $language => $language_strings ) {
 			if ( in_array( $language, $this->settings['translation-languages'] ) && $language != $this->settings['default-language'] ) {
+				$update_strings[ $language ] = array();
 				foreach( $language_strings as $string ) {
 					if ( isset( $string->id ) && is_numeric( $string->id ) ) {
-						$update_strings[ $language ] = array();
 						if ( ! isset( $string->block_type ) ){
 							$string->block_type = $block_type;
 						}
@@ -226,7 +226,7 @@ class TRP_Editor_Api_Regular_Strings {
 		}
 
 		foreach( $update_strings as $language => $update_string_array ) {
-			$this->trp_query->update_strings_by_columns( $update_string_array, $language, array('id','translated', 'status', 'block_type'));
+			$this->trp_query->update_strings( $update_string_array, $language, array('id','translated', 'status', 'block_type'));
 		}
 	}
 }
