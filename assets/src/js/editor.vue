@@ -297,9 +297,6 @@
                     self.showPencilIcon( element.target )
                 })
 
-                node.addEventListener( 'mouseleave', function( element ) {
-                    element.target.classList.remove( 'trp-highlight' )
-                })
             },
             addToDictionary( responseData, nodeInfo = null ){
                 if ( responseData != null ) {
@@ -438,10 +435,21 @@
                 //if other icons are showing, remove them
                 self.removePencilIcon()
 
-                //add class to highlight text
-                target.classList.remove( 'trp-highlight' )
-                target.className += 'trp-highlight'
+                //remove highlight class
+                let previouslyHighlighted = this.iframe.getElementsByClassName( 'trp-highlight' )
 
+                if ( previouslyHighlighted.length > 0 ) {
+                    let i
+
+                    for ( i = 0; i < previouslyHighlighted.length; i++ )
+                        previouslyHighlighted[i].classList.remove( 'trp-highlight' )
+                }
+
+                //add class to highlight text
+                if ( !target.classList.contains( 'trp-highlight' ) )
+                    target.className += 'trp-highlight'
+
+                //figure out where to insert extra HTML
                 if ( beforePosition.includes( target.tagName ) )
                     position = 'beforebegin'
                 else
