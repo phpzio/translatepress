@@ -109,7 +109,7 @@
                 orderedSecondaryLanguages : JSON.parse( this.ordered_secondary_languages ),
                 roles                     : JSON.parse( this.view_as_roles ),
                 nonces                    : JSON.parse( this.editor_nonces),
-                stringGroupOrder           : JSON.parse( this.string_group_order),
+                stringGroupOrder          : JSON.parse( this.string_group_order),
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 currentLanguage           : this.current_language,
@@ -119,7 +119,7 @@
                 iframe                    : '',
                 dictionary                : [],
                 detectedSelectorAndId     : [],
-                stringGroups               : [ 'Images' ],
+                stringGroups              : [],
                 selectedString            : '',
                 nodes                     : {},
                 selectedIndexesArray      : [],
@@ -287,7 +287,7 @@
                     return false
                 }
             },
-            setupEventListener( node ) {
+            setupEventListener( node ){
                 if ( node.tagName == 'A' )
                     return false
 
@@ -300,6 +300,27 @@
                 node.addEventListener( 'mouseleave', function( element ) {
                     element.target.classList.remove( 'trp-highlight' )
                 })
+            },
+            addToDictionary( responseData, nodeInfo = null ){
+                if ( responseData != null ) {
+                    if ( nodeInfo ){
+                        nodeInfo.forEach(function ( infoRow, index ){
+                            responseData.some( function ( responseDataRow ) {
+                                if ( infoRow.dbID == responseDataRow.dbID ) {
+                                    nodeInfo[index] = Object.assign( {}, responseDataRow, infoRow )
+                                    return true // a sort of break
+                                }
+                            })
+                        })
+                    }else{
+                        nodeInfo = responseData
+                    }
+
+                    this.stringGroups = this.addToStringGroups( nodeInfo )
+                    this.dictionary = this.dictionary.concat( nodeInfo )
+
+                    this.initStringsDropdown()
+                }
             },
             addToStringGroups( strings ){
 
@@ -328,27 +349,6 @@
 
                 return orderedStringGroups;
             },
-            addToDictionary( responseData, nodeInfo = null ){
-                if ( responseData != null ) {
-                    if ( nodeInfo ){
-                        nodeInfo.forEach(function ( infoRow, index ){
-                            responseData.some( function ( responseDataRow ) {
-                                if ( infoRow.dbID == responseDataRow.dbID ) {
-                                    nodeInfo[index] = Object.assign( {}, responseDataRow, infoRow )
-                                    return true // a sort of break
-                                }
-                            })
-                        })
-                    }else{
-                        nodeInfo = responseData
-                    }
-
-                    this.stringGroups = this.addToStringGroups( nodeInfo )
-                    this.dictionary = this.dictionary.concat( nodeInfo )
-
-                    this.initStringsDropdown()
-                }
-            },
             getStringIndex( selector, dbID ){
                 let found = null
 
@@ -373,7 +373,7 @@
                     if ( stringId ) {
 
                         let nodeAttribute   = selector.replace( baseSelector, '' )
-                        let nodeGroup        = node.getAttribute( 'data-trp-node-group' + nodeAttribute )
+                        let nodeGroup       = node.getAttribute( 'data-trp-node-group' + nodeAttribute )
                         let nodeDescription = node.getAttribute( 'data-trp-node-description' + nodeAttribute )
 
                         let entry = {

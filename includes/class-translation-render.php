@@ -116,7 +116,8 @@ class TRP_Translation_Render{
 	    $string_groups = $this->translation_manager->string_groups();
 
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-	        $string_groups['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
+            $string_groups['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
+            $string_groups['images']          => array( 'image_src' )
         ));
 
         foreach( $node_type_categories as $category_name => $node_groups ){
