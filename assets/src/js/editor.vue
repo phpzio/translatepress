@@ -81,11 +81,11 @@
 
 <script>
     import 'select2/dist/js/select2.min.js'
-    import utils from './utils'
-    import axios from 'axios'
-    import languageBoxes from './components/language-boxes.vue'
+    import utils            from './utils'
+    import axios            from 'axios'
+    import languageBoxes    from './components/language-boxes.vue'
     import saveTranslations from './components/save-translations.vue'
-    import he from 'he'
+    import he               from 'he'
 
     export default {
         props: [
@@ -284,7 +284,7 @@
                 }
 
             },
-            alreadyDetected( selector, dbId){
+            alreadyDetected( selector, dbId ){
                 let combined = selector + '=' + dbId
                 if ( utils.arrayContainsItem( this.detectedSelectorAndId, combined ) ) {
                     return true
@@ -453,7 +453,7 @@
 
                 //add class to highlight text
                 if ( !target.classList.contains( 'trp-highlight' ) )
-                    target.className += 'trp-highlight'
+                    target.className += ' trp-highlight'
 
                 //figure out where to insert extra HTML
                 if ( beforePosition.includes( target.tagName ) )
@@ -499,7 +499,6 @@
 
             },
             removePencilIcon(){
-
                 let icons = this.iframe.querySelectorAll( 'trp-span' )
 
                 if ( icons.length > 0 ) {
@@ -507,7 +506,6 @@
                         icon.remove()
                     })
                 }
-
             },
             showString( string, type ){
                 if ( type == 'Images' && typeof string.attribute != undefined && string.attribute == 'src' )
