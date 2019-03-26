@@ -168,7 +168,7 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
-                if ( typeof selectedStringArrayIndex == undefined || selectedStringArrayIndex == null )
+                if ( typeof selectedStringArrayIndex == 'undefined' || selectedStringArrayIndex == null )
                     return
 
                 jQuery('#trp-string-categories').val( selectedStringArrayIndex ).trigger( 'change' )
@@ -299,10 +299,7 @@
 
                 let self = this
 
-                node.addEventListener( 'mouseenter', function( element ) {
-                    self.showPencilIcon( element.target )
-                })
-
+                node.addEventListener( 'mouseenter', self.showPencilIcon )
             },
             addToDictionary( responseData, nodeInfo = null ){
                 if ( responseData != null ) {
@@ -430,7 +427,9 @@
 
                 return url
             },
-            showPencilIcon( target ){
+            showPencilIcon( element ){
+                let target = element.target
+
                 let self = this
                 let relatedNode, relatedNodeAttr, position, stringSelector, stringId
 
@@ -508,10 +507,10 @@
                 }
             },
             showString( string, type ){
-                if ( type == 'Images' && typeof string.attribute != undefined && string.attribute == 'src' )
+                if ( type == 'Images' && typeof string.attribute != 'undefined' && string.attribute == 'src' )
                     return true
 
-                if ( typeof string.attribute != undefined && ( string.attribute == 'href' || string.attribute == 'src' ) )
+                if ( typeof string.attribute != 'undefined' && ( string.attribute == 'href' || string.attribute == 'src' ) )
                     return false
 
                 if ( string.group == type )
