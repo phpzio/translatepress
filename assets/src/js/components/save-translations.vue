@@ -90,27 +90,29 @@
                 })
             },
             setTextInIframe( string, languageCode, reloadedIframeResponse ){
-                let node = this.iframe.querySelector( "[" + string.selector + "='" + string.dbID + "']" )
+                let nodes = this.iframe.querySelectorAll( "[" + string.selector + "='" + string.dbID + "']" )
                 let textToSet = null
                 if ( reloadedIframeResponse ){
                     let translatedNode = document.createRange().createContextualFragment(reloadedIframeResponse).querySelector( "[" + string.selector + "='" + string.dbID + "']" )
                     if ( translatedNode ) {
-                        textToSet = (typeof string.attribute === 'undefined' || string.attribute == "") ? translatedNode.textContent : node.getAttribute(string.attribute)
+                        textToSet = (typeof string.attribute === 'undefined' || string.attribute === "") ? translatedNode.textContent : translatedNode.getAttribute(string.attribute)
                     }
                 }
                 if ( textToSet === null ) {
                     textToSet = ( string.translationsArray[languageCode].translated === '' ) ? string.original : string.translationsArray[languageCode].translated
                 }
 
-                if ( typeof string.attribute === 'undefined' || string.attribute == "" ){
-                    let initialValue = node.textContent;
-                    textToSet = initialValue.replace(initialValue.trim(), textToSet);
-                    node.innerHTML = textToSet
-                }else{
-                    let initialValue = node.getAttribute( string.attribute )
-                    textToSet = initialValue.replace(initialValue.trim(), textToSet)
-                    node.setAttribute( string.attribute, textToSet )
-                }
+                nodes.forEach(function(node){
+                    if (typeof string.attribute === 'undefined' || string.attribute === "") {
+                        let initialValue = node.textContent;
+                        textToSet = initialValue.replace(initialValue.trim(), textToSet);
+                        node.innerHTML = textToSet
+                    } else {
+                        let initialValue = node.getAttribute(string.attribute)
+                        textToSet = initialValue.replace(initialValue.trim(), textToSet)
+                        node.setAttribute(string.attribute, textToSet)
+                    }
+                })
             }
         }
     }
