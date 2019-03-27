@@ -32,6 +32,8 @@
                 let saveData = {}
                 let updateIframeData  = {}
                 let foundStringsToSave = false
+
+                // construct an array of the necessary information
                 this.selectedIndexesArray.forEach( function( selectedIndex ){
                     if ( typeSlug === self.dictionary[selectedIndex].type ) {
                         self.settings['translation-languages'].forEach( function( languageCode  ){
@@ -40,11 +42,7 @@
                             updateIframeData[languageCode] = ( updateIframeData[languageCode] ) ? updateIframeData[languageCode] : []
 
                             if ( self.dictionary[selectedIndex].translationsArray[languageCode] && (self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation != self.dictionary[selectedIndex].translationsArray[languageCode].translated ) ) {
-                                if ( self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation === '' ) {
-                                    self.dictionary[selectedIndex].translationsArray[languageCode].status = 0  //set as not translated
-                                }else{
-                                    self.dictionary[selectedIndex].translationsArray[languageCode].status = 2  //set as human reviewed
-                                }
+                                self.dictionary[selectedIndex].translationsArray[languageCode].status = ( self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation === '' ) ? 0 : 2
                                 self.dictionary[selectedIndex].translationsArray[languageCode].translated = self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation
 
                                 saveData[languageCode].push( self.dictionary[selectedIndex].translationsArray[languageCode] )
@@ -56,6 +54,7 @@
                     }
                 })
 
+                // send request to save strings in database
                 if ( foundStringsToSave ) {
                     let data = new FormData()
                     data.append('action', 'trp_save_translations_' + typeSlug)
@@ -71,6 +70,7 @@
                             }else {
                                 self.updateIframe(updateIframeData)
                             }
+                            self.$emit('translations-saved')
                         })
                         .catch(function (error) {
                             console.log(error)

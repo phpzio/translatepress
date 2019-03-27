@@ -1,5 +1,6 @@
 <template>
     <div id="trp-translation-section" class="trp-controls-section-content" v-if="selectedIndexesArray">
+        <div v-show="showChangesUnsavedMessage" >You have unsaved changes! <span>Discard all?</span></div>
         <div v-for="(languageCode, key) in languages" :id="'trp-language-' + languageCode" class="trp-language-container">
             <div v-show="(key <= othersButtonPosition) || showOtherLanguages">
                 <div class="trp-language-name">
@@ -11,6 +12,7 @@
                     <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
                         <div v-if="dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
                             <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation"></translation-input>
+                            <div class="trp-discard-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">Discard changes</div>
                         </div>
                         <div v-else :key="selectedIndex">
                             <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original"></translation-input>
@@ -37,6 +39,7 @@
             'onScreenLanguage',
             'languageNames',
             'settings',
+            'showChangesUnsavedMessage'
         ],
         data(){
             return{
@@ -56,14 +59,6 @@
         watch: {
             selectedIndexesArray: function () {
                 this.updateLanguages()
-                let self = this
-                this.selectedIndexesArray.forEach( function( selectedIndex ) {
-                    self.settings['translation-languages'].forEach( function( languageCode  ){
-                        if ( self.dictionary[selectedIndex] && self.dictionary[selectedIndex].translationsArray[languageCode] ) {
-                            self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation = self.dictionary[selectedIndex].translationsArray[languageCode].translated
-                        }
-                    })
-                })
             },
             onScreenLanguage: function(){
                 this.determineLanguageOrder()
@@ -111,6 +106,12 @@
                 }
                 this.languages = this.languages.concat(this.orderedLanguages)
 
+            },
+            discardChanges: function(selectedIndex,languageCode){
+                this.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation = this.dictionary[selectedIndex].translationsArray[languageCode].translated
+            },
+            hasUnsavedChanges: function(selectedIndex, languageCode){
+                return (this.dictionary[selectedIndex].translationsArray[languageCode].translated !== this.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation)
             }
         }
     }
@@ -121,4 +122,23 @@
         padding-bottom: 10px;
         color: black;
     }
+
+    .trp-discard-changes{
+        color: darkgrey;
+        font-size: 11px;
+        float: right;
+        user-select: none;
+        margin-top: -15px;
+    }
+
+    .trp-unsaved-changes.trp-discard-changes{
+        color: #a00;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    .trp-unsaved-changes.trp-discard-changes:hover{
+        color: #dc3232;
+        cursor: pointer;
+    }
+
 </style>

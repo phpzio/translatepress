@@ -18,6 +18,7 @@
                             :currentLanguage="currentLanguage"
                             :iframe="iframe"
                             :currentURL="currentURL"
+                            @translations-saved="showChangesUnsavedMessage = false"
                     >
                     </save-translations>
                 </div>
@@ -64,6 +65,7 @@
                             :onScreenLanguage="onScreenLanguage"
                             :languageNames="languageNames"
                             :settings="settings"
+                            :showChangesUnsavedMessage="showChangesUnsavedMessage"
                     >
                     </language-boxes>
                 </div>
@@ -127,6 +129,7 @@
                 selectedString            : '',
                 nodes                     : {},
                 selectedIndexesArray      : [],
+                showChangesUnsavedMessage : false,
                 editStringHtml            : '<trp-span><trp-merge  title="Merge" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="Split" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="Edit" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>',
             }
         },
@@ -134,6 +137,7 @@
             this.settings['default-language-name'] = this.languageNames[ this.settings['default-language'] ]
         },
         mounted(){
+            let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
             jQuery( '#trp-string-categories' ).select2( { placeholder : 'Loading strings...', width : '100%' } ).prop( 'disabled', true )
@@ -143,6 +147,11 @@
                 jQuery( '#trp_select2_overlay' ).fadeIn( '100' )
             }).on( 'select2:close', function() {
                 jQuery( '#trp_select2_overlay' ).hide()
+            }).on( 'select2:opening', function(e) {
+                /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
+                if (self.hasUnsavedChanges()) {
+                    e.preventDefault();
+                }
             })
         },
         watch: {
@@ -168,7 +177,7 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
-                if ( typeof selectedStringArrayIndex == undefined || selectedStringArrayIndex == null )
+                if ( this.hasUnsavedChanges() || typeof selectedStringArrayIndex == undefined || selectedStringArrayIndex == null )
                     return
 
                 jQuery('#trp-string-categories').val( selectedStringArrayIndex ).trigger( 'change' )
@@ -212,7 +221,7 @@
 
             },
             selectedIndexesArray: function( newSelectedIndexesArray, oldSelectedIndexesArray ){
-//                console.log( newSelectedIndexesArray)
+                console.log( newSelectedIndexesArray)
             },
             dictionary: function (){
             }
@@ -541,6 +550,20 @@
             },
             isStringsDropdownOpen() {
                 return jQuery( '#trp-string-categories' ).select2( 'isOpen' )
+            },
+            hasUnsavedChanges(){
+                let unsavedChanges = false
+                let self = this
+                this.selectedIndexesArray.forEach(function(selectedIndex){
+                    self.settings['translation-languages'].forEach( function( languageCode  ) {
+                        if ( self.dictionary[selectedIndex].translationsArray[languageCode] &&
+                            (self.dictionary[selectedIndex].translationsArray[languageCode].translated !== self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation) ) {
+                            self.showChangesUnsavedMessage = true
+                            unsavedChanges = true
+                        }
+                    })
+                })
+                return unsavedChanges
             }
         },
         //add support for v-model in select2

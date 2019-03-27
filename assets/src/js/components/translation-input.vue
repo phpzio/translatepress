@@ -6,11 +6,9 @@
         </div>
         <div v-if="inputType == 'textarea'" class="trp-translation-input-parent">
             <textarea class="trp-translation-input trp-textarea" :readonly="readonly" ref="textarea" :value="value" @input="updateValue()"></textarea>
-            <div v-if="!readonly" class="trp-discard-changes">Discard changes</div>
         </div>
         <div v-if="inputType == 'input'" class="trp-translation-input-parent">
             <input class="trp-translation-input trp-input" :readonly="readonly" ref="input" :value="value" @input="updateValue()">
-            <div v-if="!readonly" class="trp-discard-changes">Discard changes</div>
         </div>
 
     </div>
@@ -20,31 +18,35 @@ export default{
     props:[
         'value',
         'string',
+        'translated',
         'disabled',
-        'readonly'
+        'readonly',
+        'editedValue'
     ],
     data(){
         return{
-            inputType     : 'textarea',
-            attributeName : this.string.attribute.charAt(0).toUpperCase() + this.string.attribute.slice(1)
+            inputType      : 'textarea',
+            attributeName  : this.string.attribute.charAt(0).toUpperCase() + this.string.attribute.slice(1),
         }
     },
     mounted(){
         let inputTypeArray = {
-                ''        : 'textarea',
-                'content' : 'textarea',
-                'alt'     : 'textarea',
-                'title'   : 'textarea',
-                'href'    : 'input',
-                'src'     : 'input',
+            ''            : 'textarea',
+            'content'     : 'textarea',
+            'alt'         : 'textarea',
+            'title'       : 'textarea',
+            'placeholder' : 'textarea',
+            'href'        : 'input',
+            'src'         : 'input',
+            'outertext'   : 'input',
+            'value'       : 'input'
         };
-        this.inputType = inputTypeArray[this.string.attribute]
+        this.inputType = ( inputTypeArray[this.string.attribute] ) ? inputTypeArray[this.string.attribute] : 'textarea'
     },
     methods:{
         updateValue(){
             this.$emit( 'input', this.$refs[this.inputType].value )
-        },
-        //deter
+        }
     }
 }
 </script>
@@ -74,23 +76,6 @@ export default{
 
     .trp-textarea{
         height: 80px;
-    }
-
-    .trp-discard-changes{
-        color: darkgrey;
-        font-size: 11px;
-        float: right;
-        user-select: none;
-    }
-
-    .trp-unsaved-changes .trp-discard-changes{
-        color: #a00;
-        cursor: pointer;
-        text-decoration: underline;
-    }
-    .trp-unsaved-changes .trp-discard-changes:hover{
-        color: #dc3232;
-        cursor: pointer;
     }
 
 </style>

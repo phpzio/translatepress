@@ -47,6 +47,7 @@ function trp_sort_dictionary_by_original( $dictionaries, $type, $group, $languag
 		foreach( $dictionary as $string ) {
 			if ( isset( $string->original ) ){
 				$found = false;
+				$string->editedTranslation = $string->translated;
 				foreach( $array as $key => $row ){
 					if ( $row['original'] == $string->original ){
 						if ( !isset( $string->domain ) || ( isset( $string->domain ) && $string->domain == $row['description'] ) ) {
