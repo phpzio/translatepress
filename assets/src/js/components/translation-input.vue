@@ -1,5 +1,4 @@
 <template>
-    <!--<div id="trp-unsaved-changes-warning-message" style="display:none">You have unsaved changes!</div>-->
     <div class="translation-input" :class="{'trp-highlight-unsaved-changes':highlightUnsavedChanges}">
         <div class="trp-attribute-name" v-show="attributeName != 'Content'">
             {{attributeName}}
@@ -10,7 +9,10 @@
         <div v-if="inputType == 'input'" class="trp-translation-input-parent">
             <input class="trp-translation-input trp-input" :readonly="readonly" ref="input" :value="value" @input="updateValue()">
         </div>
-
+        <div v-if="inputType == 'addmedia'" class="trp-translation-input-parent">
+            <input type="button" class="trp-add-media" value="Add Media">
+            <input class="trp-translation-input trp-input trp-media" :readonly="readonly" ref="addmedia" :value="value" @input="updateValue()">
+        </div>
     </div>
 </template>
 <script>
@@ -38,9 +40,9 @@ export default{
             'title'       : 'textarea',
             'placeholder' : 'textarea',
             'href'        : 'input',
-            'src'         : 'input',
             'outertext'   : 'input',
-            'value'       : 'input'
+            'value'       : 'input',
+            'src'         : 'addmedia'
         };
         this.inputType = ( inputTypeArray[this.string.attribute] ) ? inputTypeArray[this.string.attribute] : 'textarea'
     },

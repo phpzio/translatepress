@@ -207,7 +207,7 @@ span.select2-container{
 }
 
 .trp-toggle-languages span,
-.trp-next-previous-buttons {
+.trp-next-previous-buttons, .trp-add-media {
     cursor: pointer;
 }
 
@@ -217,13 +217,19 @@ span.select2-container{
     justify-content: space-between;
 }
 
+input.trp-add-media{
+    float:right;
+    margin-right: -9px;
+}
+
 .trp-toggle-languages span,
 .trp-next-previous-buttons span {
     font-size: initial;
 }
 
 .trp-toggle-languages span,
-.trp-next-previous-buttons {
+.trp-next-previous-buttons,
+.trp-add-media {
     display: inline-block;
     text-decoration: none;
     font-size: 13px;
@@ -245,7 +251,8 @@ span.select2-container{
 }
 
 .trp-toggle-languages span,
-.trp-next-previous-buttons {
+.trp-next-previous-buttons,
+.trp-add-media{
     color: #555;
     border-color: #cccccc;
     background: #f7f7f7;
@@ -261,7 +268,8 @@ span.select2-container{
 
 .trp-toggle-languages span:hover,
 .trp-next-previous-buttons:hover,
-.trp-next-previous-buttons:focus {
+.trp-next-previous-buttons:focus,
+.trp-add-media:hover{
     background: #fafafa;
     border-color: #999;
     color: #222;
