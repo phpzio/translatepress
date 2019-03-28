@@ -1,6 +1,6 @@
 <template>
     <!--<div id="trp-unsaved-changes-warning-message" style="display:none">You have unsaved changes!</div>-->
-    <div class="translation-input">
+    <div class="translation-input" :class="{'trp-highlight-unsaved-changes':highlightUnsavedChanges}">
         <div class="trp-attribute-name" v-show="attributeName != 'Content'">
             {{attributeName}}
         </div>
@@ -21,7 +21,8 @@ export default{
         'translated',
         'disabled',
         'readonly',
-        'editedValue'
+        'editedValue',
+        'highlightUnsavedChanges'
     ],
     data(){
         return{
@@ -76,6 +77,9 @@ export default{
 
     .trp-textarea{
         height: 80px;
+    }
+    .trp-highlight-unsaved-changes .trp-translation-input{
+        border:solid 2px red
     }
 
 </style>

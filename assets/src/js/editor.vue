@@ -66,6 +66,7 @@
                             :languageNames="languageNames"
                             :settings="settings"
                             :showChangesUnsavedMessage="showChangesUnsavedMessage"
+                            @discarded-changes="hasUnsavedChanges()"
                     >
                     </language-boxes>
                 </div>
@@ -558,11 +559,12 @@
                     self.settings['translation-languages'].forEach( function( languageCode  ) {
                         if ( self.dictionary[selectedIndex].translationsArray[languageCode] &&
                             (self.dictionary[selectedIndex].translationsArray[languageCode].translated !== self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation) ) {
-                            self.showChangesUnsavedMessage = true
                             unsavedChanges = true
                         }
                     })
                 })
+                this.showChangesUnsavedMessage = unsavedChanges
+
                 return unsavedChanges
             }
         },
