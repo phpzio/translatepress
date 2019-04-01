@@ -218,6 +218,23 @@ class TRP_Translation_Render{
 	    return preg_replace('/\s+/', ' ', strip_tags( html_entity_decode( htmlspecialchars_decode( trp_full_trim( $string ), ENT_QUOTES ) ) ));
     }
 
+    /**
+     * Recursive function that checks if a DOM node contains certain tags or not
+     * @param $row
+     * @param $tags
+     * @return bool
+     */
+    public function check_children_for_tags( $row, $tags ){
+        foreach( $row->children as $child ){
+            if( in_array( $child->tag, $tags ) ){
+                return true;
+            }
+            else{
+                $this->check_children_for_tags( $child, $tags );
+            }
+        }
+    }
+
 	/**
 	 * Return translation block if matches any existing translation block from db
 	 *
@@ -231,12 +248,17 @@ class TRP_Translation_Render{
 	 */
     public function find_translation_block( $row, $all_existing_translation_blocks, $merge_rules ){
     	if ( in_array( $row->tag, $merge_rules['top_parents'] ) ){
-		    $trimmed_inner_text = $this->trim_translation_block( $row->innertext );
-			foreach( $all_existing_translation_blocks as $existing_translation_block ){
-				if ( $existing_translation_block->trimmed_original == $trimmed_inner_text ){
-					return $existing_translation_block;
-				}
-			}
+            //$row->innertext is very intensive on dom nodes that have a lot of children so we try here to eliminate as many as possible here
+            // the ideea is that if a dom node contains any top parent tags for blocks it can't be a block itself so we skip it
+            $skip = $this->check_children_for_tags( $row, $merge_rules['top_parents'] );
+            if( !$skip ) {
+                $trimmed_inner_text = $this->trim_translation_block($row->innertext);
+                foreach ($all_existing_translation_blocks as $existing_translation_block) {
+                    if ($existing_translation_block->trimmed_original == $trimmed_inner_text) {
+                        return $existing_translation_block;
+                    }
+                }
+            }
 	    }
 	    return null;
     }
@@ -353,11 +375,19 @@ class TRP_Translation_Render{
 	    $count_translation_blocks = 0;
 	    if ( $translate_normal_strings ) {
 		    $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
-		    $count_translation_blocks = count( $all_existing_translation_blocks );
 		    // trim every translation block original now, to avoid over-calling trim function later
 		    foreach ( $all_existing_translation_blocks as $key => $existing_tb ) {
 			    $all_existing_translation_blocks[ $key ]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[ $key ]->original );
 		    }
+
+		    //try to find if there are any blocks on the current page html
+            foreach( $all_existing_translation_blocks as $key => $existing_translation_block ){
+                if (  strpos( $this->trim_translation_block( $output ), $existing_translation_block->trimmed_original ) === false ){
+                    unset($all_existing_translation_blocks[$key] );//if it isn't present remove it, this way we don't look for them on pages that don't contain blocks
+                }
+            }
+            $count_translation_blocks = count( $all_existing_translation_blocks );//see here how many remain on the current page
+
 		    $merge_rules = $this->translation_manager->get_merge_rules();
 	    }
         $html = TranslatePress\str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
@@ -468,17 +498,14 @@ class TRP_Translation_Render{
             }
         }
 
-        /* save it as a string */
-        $trpremoved = $html->save();
-        /* perform preg replace on the remaining trp-gettext tags */
-	    $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $trpremoved );
-	    $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
 
 	    if ( ! $translate_normal_strings ) {
+            /* save it as a string */
+            $trpremoved = $html->save();
+            /* perform preg replace on the remaining trp-gettext tags */
+            $trpremoved = $this->remove_trp_html_tags($trpremoved );
 		    return $trpremoved;
 	    }
-
-        $html = TranslatePress\str_get_html($trpremoved, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 
         $no_translate_selectors = apply_filters( 'trp_no_translate_selectors', array( '#wpadminbar' ), $TRP_LANGUAGE );
 
@@ -491,46 +518,49 @@ class TRP_Translation_Render{
                 $row->setAttribute( $no_translate_attribute, '' );
             }
         }
-        foreach ( $html->find('.translation-block') as $k => $row ){
-	        $trimmed_string = trp_full_trim($row->innertext);
+        foreach ( $html->find('.translation-block') as $row ){
+            $trimmed_string = trp_full_trim($row->innertext);
+            $parent = $row->parent();
             if( $trimmed_string!=""
-                && $row->parent()->tag!="script"
-                && $row->parent()->tag!="style"
+                && $parent->tag!="script"
+                && $parent->tag!="style"
+                && $parent->tag != 'title'
+                && strpos($row->outertext,'[vc_') === false
                 && !is_numeric($trimmed_string)
                 && !preg_match('/^\d+%$/',$trimmed_string)
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
-                && $row->parent()->tag != 'title'
-                && strpos($row->outertext,'[vc_') === false )
+                && !$this->has_ancestor_attribute( $row, $no_translate_attribute ) )
             {
-                    array_push( $translateable_strings, $trimmed_string );
-                    array_push( $nodes, array('node' => $row, 'type' => 'block'));
+                array_push( $translateable_strings, $trimmed_string );
+                array_push( $nodes, array('node' => $row, 'type' => 'block'));
             }
         }
 
-        foreach ( $html->find('text') as $k => $row ){
-        	$trimmed_string = trp_full_trim($row->outertext);
+        foreach ( $html->find('text') as $row ){
+            $outertext = $row->outertext;
+            $parent = $row->parent();
+            $trimmed_string = trp_full_trim($outertext);
             if( $trimmed_string!=""
-                && $row->parent()->tag!="script"
-                && $row->parent()->tag!="style"
+                && $parent->tag!="script"
+                && $parent->tag!="style"
+                && $parent->tag != 'title'
+                && strpos($outertext,'[vc_') === false
                 && !is_numeric($trimmed_string)
                 && !preg_match('/^\d+%$/',$trimmed_string)
                 && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
-                && !$this->has_ancestor_class( $row, 'translation-block')
-                && $row->parent()->tag != 'title'
-                && strpos($row->outertext,'[vc_') === false )
+                && !$this->has_ancestor_class( $row, 'translation-block') )
             {
-            	    // $translateable_strings array needs to be in sync in $nodes array
-                    array_push( $translateable_strings, $trimmed_string );
-                    if( $row->parent()->tag == 'button') {
-                        array_push($nodes, array('node' => $row, 'type' => 'button'));
+                // $translateable_strings array needs to be in sync in $nodes array
+                array_push( $translateable_strings, $trimmed_string );
+                if( $parent->tag == 'button') {
+                    array_push($nodes, array('node' => $row, 'type' => 'button'));
+                }
+                else {
+                    if ( $parent->tag == 'option' ) {
+                        array_push( $nodes, array( 'node' => $row, 'type' => 'option' ) );
+                    } else {
+                        array_push( $nodes, array( 'node' => $row, 'type' => 'text' ) );
                     }
-                    else {
-	                    if ( $row->parent()->tag == 'option' ) {
-		                    array_push( $nodes, array( 'node' => $row, 'type' => 'option' ) );
-	                    } else {
-		                    array_push( $nodes, array( 'node' => $row, 'type' => 'text' ) );
-	                    }
-                    }
+                }
             }
         }
 
@@ -667,8 +697,16 @@ class TRP_Translation_Render{
 
 
         // We need to save here in order to access the translated links too.
-	    $html = $html->save();
-        $html = TranslatePress\str_get_html($html, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+        if( apply_filters('tp_handle_custom_links_in_translation_blocks', false) ) {
+            $html = $html->save();
+            $html = TranslatePress\str_get_html($html, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+        }
+
+
+        //set up general links variables
+        $home_url = home_url();
+        $admin_url = admin_url();
+        $wp_login_url = wp_login_url();
 
         // force custom links to have the correct language
         foreach( $html->find('a[href!="#"]') as $a_href)  {
@@ -676,10 +714,10 @@ class TRP_Translation_Render{
 
             $url = $a_href->href;
 
-            $url = $this->maybe_is_local_url($url);
+            $url = $this->maybe_is_local_url($url, $home_url);
 
-            $is_external_link = $this->is_external_link( $url );
-            $is_admin_link = $this->is_admin_link($url);
+            $is_external_link = $this->is_external_link( $url, $home_url );
+            $is_admin_link = $this->is_admin_link($url, $admin_url, $wp_login_url);
 
 	        if( $preview_mode && ! $is_external_link ){
 				$a_href->setAttribute( 'data-trp-original-href', $url );
@@ -704,8 +742,8 @@ class TRP_Translation_Render{
             $row->innertext .= apply_filters( 'trp_form_inputs', '<input type="hidden" name="trp-form-language" value="'. $this->settings['url-slugs'][$TRP_LANGUAGE] .'"/>', $TRP_LANGUAGE, $this->settings['url-slugs'][$TRP_LANGUAGE] );
             $form_action = $row->action;
 
-            $is_external_link = $this->is_external_link( $form_action );
-            $is_admin_link = $this->is_admin_link($form_action );
+            $is_external_link = $this->is_external_link( $form_action, $home_url );
+            $is_admin_link = $this->is_admin_link($form_action, $admin_url, $wp_login_url );
 
             if ( !empty($form_action)
                 && $this->settings['force-language-to-custom-links'] == 'yes'
@@ -729,7 +767,22 @@ class TRP_Translation_Render{
 		    $body->innertext = '<div data-no-translation class="trp-editor-notices">' . $trp_editor_notices . "</div>" . $body->innertext;
 	    }
 	    $final_html = $html->save();
+
+        /* perform preg replace on the remaining trp-gettext tags */
+        $final_html = $this->remove_trp_html_tags( $final_html );
+
 	    return apply_filters( 'trp_translated_html', $final_html, $TRP_LANGUAGE, $language_code );
+    }
+
+    /**
+     * function that removes any unwanted leftover <trp-gettext> tags
+     * @param $string
+     * @return string|string[]|null
+     */
+    function remove_trp_html_tags( $string ){
+        $string = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $string );
+        $string = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $string );
+        return $string;
     }
 
     /**
@@ -762,9 +815,10 @@ class TRP_Translation_Render{
      * Whether given url links to an external domain.
      *
      * @param string $url           Url.
+     * @param string $home_url      Optional home_url so we avoid calling the home_url() inside loops.
      * @return bool                 Whether given url links to an external domain.
      */
-    public function is_external_link( $url ){
+    public function is_external_link( $url, $home_url = '' ){
         // Abort if parameter URL is empty
         if( empty($url) ) {
             return false;
@@ -775,7 +829,9 @@ class TRP_Translation_Render{
 
         // Parse home URL and parameter URL
         $link_url = parse_url( $url );
-        $home_url = parse_url( home_url() );
+        if( empty( $home_url ) )
+            $home_url = home_url();
+        $home_url = parse_url( $home_url );
 
         // Decide on target
         if( !isset ($link_url['host'] ) || $link_url['host'] == $home_url['host'] ) {
@@ -792,9 +848,10 @@ class TRP_Translation_Render{
      * Takes into account http, https, www and all the possible combinations between them.
      *
      * @param string $url           Url.
+     * @param string $home_url      Optional home_url so we avoid calling the home_url() inside loops.
      * @return string               Correct URL that's the same structure as home_url
      */
-    public function maybe_is_local_url( $url ){
+    public function maybe_is_local_url( $url, $home_url='' ){
 
         if ( apply_filters('disable_maybe_is_local_url', false) ){
             return $url;
@@ -810,7 +867,9 @@ class TRP_Translation_Render{
 
         // Parse home URL and parameter URL
         $link_url = parse_url( $url );
-        $home_url = parse_url( home_url() );
+        if( empty( $home_url ) )
+            $home_url = home_url();
+        $home_url = parse_url( $home_url );
 
         // Decide on target
         if( !isset ($link_url['host'] ) || $link_url['host'] == $home_url['host'] ) {
@@ -861,9 +920,15 @@ class TRP_Translation_Render{
      * @param string $url           Url.
      * @return bool                 Whether given url links to an admin page.
      */
-    protected function is_admin_link( $url ){
+    protected function is_admin_link( $url, $admin_url = '', $wp_login_url = '' ){
 
-        if ( strpos( $url, admin_url() ) !== false || strpos( $url, wp_login_url() ) !== false ){
+        if( empty( $admin_url ) )
+            $admin_url = admin_url();
+
+        if( empty( $wp_login_url ) )
+            $wp_login_url = wp_login_url();
+
+        if ( strpos( $url, $admin_url ) !== false || strpos( $url, $wp_login_url ) !== false ){
             return true;
         }
         return false;
