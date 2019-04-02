@@ -852,10 +852,12 @@ class TRP_Translation_Manager{
     	if( in_array( trp_full_trim( $text ), $excluded_gettext_strings ) )
     	    return $translation;
 
+        //set a global so we remember the last string we processed and if it is the same with the current one return a result immediately for performance reasons ( this could happen in loops )
+        global $tp_last_gettext_processed;
+        if( isset( $tp_last_gettext_processed[$text.'::'.$domain] ) )
+            return $tp_last_gettext_processed[$text.'::'.$domain];
+
         global $TRP_LANGUAGE;
-        /* don't do anything if we don't have extra languages on the site */
-        if( count( $this->settings['publish-languages'] ) < 1 )
-            return $translation;
 
         if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == 'translatepress-multilingual' )
             return $translation;
@@ -979,20 +981,29 @@ class TRP_Translation_Manager{
 	            'esc_url',
 	            'wc_get_permalink_structure' // make sure we don't touch the woocommerce permalink rewrite slugs that are translated
             ), $text, $translation, $domain );
-            $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+            if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
+                $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 15);//set a limit if it is supported to improve performance
+            }
+            else{
+                $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            }
             if( !empty( $callstack_functions ) ){
                 foreach( $callstack_functions as $callstack_function ){
 	                if ( in_array( $callstack_function['function'], $blacklist_functions ) ){
+                        $tp_last_gettext_processed = array( $text.'::'.$domain => $translation );
 		                return $translation;
 	                }
 
 	                /* make sure we don't touch the woocommerce process_payment function in WC_Gateway_Stripe. It does a wp_remote_post() call to stripe with localized parameters */
                     if( $callstack_function['function'] == 'process_payment' && $callstack_function['class'] == 'WC_Gateway_Stripe' ){
+                        $tp_last_gettext_processed = array( $text.'::'.$domain => $translation );
                         return $translation;
                     }
 
                 }
             }
+            unset($callstack_functions);//maybe free up some memory
 
 	        if ( did_action( 'init' ) ) {
 		        if ( ( ! empty( $TRP_LANGUAGE ) && $this->settings["default-language"] != $TRP_LANGUAGE ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) ) {
@@ -1001,7 +1012,7 @@ class TRP_Translation_Manager{
 		        }
 	        }
         }
-
+        $tp_last_gettext_processed = array( $text.'::'.$domain => $translation );
         return $translation;
     }
 
