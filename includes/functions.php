@@ -673,6 +673,15 @@ function trp_woo_notes_strip_trpst( $note_array ){
 	return $note_array;
 }
 
+/*
+ * Compatibility with WooCommerce back-end display order shipping taxes
+ */
+add_filter('woocommerce_order_item_display_meta_key','trp_woo_data_strip_trpst');
+add_filter('woocommerce_order_item_get_method_title','trp_woo_data_strip_trpst');
+function trp_woo_data_strip_trpst( $data ){
+	return TRP_Translation_Manager::strip_gettext_tags( $data );
+}
+
 /**
  * Compatibility with WooCommerce country list on checkout.
  *
