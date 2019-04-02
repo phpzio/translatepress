@@ -104,6 +104,7 @@
                     this.othersButtonPositionOffset++
                 }
 
+                this.languages = this.languages.concat(this.orderedLanguages)
             },
             discardChanges: function(selectedIndex,languageCode){
                 this.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation = this.dictionary[selectedIndex].translationsArray[languageCode].translated
