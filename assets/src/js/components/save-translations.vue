@@ -6,16 +6,21 @@
 </template>
 <script>
     import axios from 'axios'
+
     export default{
         props: [
             'selectedIndexesArray',
+            'selectedString',
             'dictionary',
             'settings',
             'nonces',
             'ajax_url',
             'currentLanguage',
+            'onScreenLanguage',
             'iframe',
-            'currentURL'
+            'currentURL',
+            'mergingString',
+            'mergeData',
         ],
         data(){
             return {
@@ -24,8 +29,12 @@
         },
         methods:{
             save(){
-                this.saveStringType( 'gettext' )
-                this.saveStringType( 'regular' )
+                if ( this.mergingString )
+                    this.createTranslationBlock()
+                else {
+                    this.saveStringType( 'gettext' )
+                    this.saveStringType( 'regular' )
+                }
             },
             saveStringType( typeSlug ){
                 let self = this
@@ -57,9 +66,9 @@
                 // send request to save strings in database
                 if ( foundStringsToSave ) {
                     let data = new FormData()
-                    data.append('action', 'trp_save_translations_' + typeSlug)
-                    data.append('security', this.nonces['savetranslationsnonce' + typeSlug])
-                    data.append('strings', JSON.stringify(saveData))
+                        data.append('action', 'trp_save_translations_' + typeSlug)
+                        data.append('security', this.nonces['savetranslationsnonce' + typeSlug])
+                        data.append('strings', JSON.stringify(saveData))
 
                     axios.post(this.ajax_url, data)
                         .then(function (response) {
@@ -113,6 +122,80 @@
                         node.setAttribute(string.attribute, textToSet)
                     }
                 })
+            },
+            createTranslationBlock() {
+                let self = this
+                let saveData = {}, translation = {}, original
+                let foundStringsToSave = false
+
+                this.selectedIndexesArray.forEach( function( selectedIndex ){
+                    self.settings['translation-languages'].forEach( function( languageCode  ){
+                        saveData[languageCode] = ( saveData[languageCode] ) ? saveData[languageCode] : []
+
+                        if( self.dictionary[selectedIndex] && self.dictionary[selectedIndex].translationsArray[languageCode] ) {
+
+                            translation = self.dictionary[selectedIndex].translationsArray[languageCode]
+
+                            translation.block_type = self.dictionary[selectedIndex].block_type
+                            translation.id         = self.dictionary[selectedIndex].dbID
+                            translation.original   = self.dictionary[selectedIndex].original
+
+                            if( self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation != self.dictionary[selectedIndex].translationsArray[languageCode].translated ) {
+                                self.dictionary[selectedIndex].translationsArray[languageCode].translated = self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation
+
+                                if( self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation !== '' )
+                                    self.dictionary[selectedIndex].translationsArray[languageCode].status = 2
+                            }
+
+                            saveData[languageCode].push( translation )
+
+                            foundStringsToSave = true
+                        }
+                    })
+
+                    original = self.dictionary[selectedIndex].original
+                })
+
+                if( foundStringsToSave ) {
+                    let data = new FormData()
+                        data.append( 'action'       , 'trp_create_translation_block' )
+                        data.append( 'security'     , this.nonces['mergetbnonce'] )
+                        data.append( 'language'     , this.currentLanguage )
+                        data.append( 'strings'      , JSON.stringify( saveData ) )
+                        data.append( 'original'     , original )
+                        data.append( 'all_languages', 'true' )
+
+                    axios.post(this.ajax_url, data)
+                        .then(function (response) {
+                            let item = self.dictionary[self.selectedIndexesArray[0]]
+
+                            item.dbID = item.translationsArray[self.onScreenLanguage].id
+
+                            //update dictionary string ids
+                            Object.keys( item.translationsArray ).forEach( function(key) {
+                                Object.keys( response.data[key] ).forEach( function(index) {
+
+                                    item.translationsArray[key].id = response.data[key][index].id
+                                })
+                            })
+
+                            self.$parent.mergeData = []
+
+                            //replace HTML in iFrame
+                            let translationBlock = self.iframe.querySelector( '.trp-create-translation-block' )
+                            translationBlock.innerHTML = item.original
+                            translationBlock.setAttribute( 'data-trp-translate-id', item.dbID )
+                            translationBlock.classList.remove( 'trp-create-translation-block' )
+
+                            //setup event listener for new block
+                            self.$parent.setupEventListener( translationBlock )
+
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                        });
+                }
+
             }
         }
     }

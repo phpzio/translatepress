@@ -5,7 +5,7 @@
 .trp-icon {
     width: 30px !important;
     height: 30px !important;
-    display: inline-block;
+    display: none;
     position: absolute !important;
     margin-left: -30px !important;
     cursor: pointer !important;
@@ -89,7 +89,7 @@ translate-press{
  * Merge icon
  */
 
-.trp-icon.trp-merge{
+.trp-icon.trp-merge {
     display: none;
     margin-left: -60px !important;
     background: #3CB371!important;

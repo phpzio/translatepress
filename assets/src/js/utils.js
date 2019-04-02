@@ -37,6 +37,17 @@ function getFilename( url ) {
     return url
 }
 
+function unwrap( wrapper ) {
+    let docFrag = document.createDocumentFragment();
+
+    while (wrapper.firstChild) {
+        let child = wrapper.removeChild( wrapper.firstChild );
+        docFrag.appendChild( child );
+    }
+
+    wrapper.parentNode.replaceChild( docFrag, wrapper );
+}
+
 function arrayContainsItem( array, item ){
     let i
     let length = array.length
@@ -52,5 +63,6 @@ export default {
     removeUrlParameter,
     escapeHtml,
     getFilename,
-    arrayContainsItem
+    arrayContainsItem,
+    unwrap
 }

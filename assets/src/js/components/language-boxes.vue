@@ -43,11 +43,11 @@
         ],
         data(){
             return{
-                languages  : [],
-                completeLanguageNames : Object.assign( { 'original': 'Original String' }, this.languageNames ),
-                othersButtonPositionOffset: 1,
-                showOtherLanguages : false,
-                orderedLanguages : []
+                languages                  : [],
+                completeLanguageNames      : Object.assign( { 'original': 'Original String' }, this.languageNames ),
+                othersButtonPositionOffset : 1,
+                showOtherLanguages         : false,
+                orderedLanguages           : []
             }
         },
         components:{
@@ -88,23 +88,21 @@
                 this.orderedLanguages = this.orderedLanguages.concat( filteredLanguages )
             },
             updateLanguages: function () {
-                this.languages = []
-                let self = this
-                let defaultLanguage = this.settings['default-language']
-                let translateToDefault = false
+                this.languages                  = []
+                let self                        = this
+                let defaultLanguage             = this.settings['default-language']
+                let translateToDefault          = false
                 this.othersButtonPositionOffset = 1
 
                 this.selectedIndexesArray.forEach(function (selectedIndex) {
-                    if (self.dictionary[selectedIndex].translationsArray[defaultLanguage]) {
+                    if( self.dictionary[selectedIndex] && self.dictionary[selectedIndex].translationsArray[defaultLanguage] )
                         translateToDefault = true
-                    }
                 })
 
                 if (translateToDefault) {
                     this.languages.push('original')
                     this.othersButtonPositionOffset++
                 }
-                this.languages = this.languages.concat(this.orderedLanguages)
 
             },
             discardChanges: function(selectedIndex,languageCode){

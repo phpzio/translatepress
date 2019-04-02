@@ -16,8 +16,11 @@
                             :nonces="nonces"
                             :ajax_url="ajax_url"
                             :currentLanguage="currentLanguage"
+                            :onScreenLanguage="onScreenLanguage"
                             :iframe="iframe"
                             :currentURL="currentURL"
+                            :mergingString="mergingString"
+                            :mergeData="mergeData"
                             @translations-saved="showChangesUnsavedMessage = false"
                     >
                     </save-translations>
@@ -74,6 +77,19 @@
             </div>
 
             <div id="trp_select2_overlay"></div>
+
+            <hover-actions
+                ref="hoverActions"
+                :dictionary="dictionary"
+                :settings="settings"
+                :iframe="iframe"
+                :dataAttributes="dataAttributes"
+                :mergeRules="mergeRules"
+                :nonces="nonces"
+                :ajax_url="ajax_url"
+                :mergeData="mergeData"
+            >
+            </hover-actions>
         </div>
 
         <div id="trp-preview">
@@ -88,6 +104,7 @@
     import axios            from 'axios'
     import languageBoxes    from './components/language-boxes.vue'
     import saveTranslations from './components/save-translations.vue'
+    import hoverActions     from './components/hover-actions.vue'
     import he               from 'he'
 
     export default {
@@ -103,14 +120,17 @@
             'data_attributes',
             'ajax_url',
             'editor_nonces',
-            'string_group_order'
+            'string_group_order',
+            'merge_rules'
         ],
         components:{
             languageBoxes,
-            saveTranslations
+            saveTranslations,
+            hoverActions
         },
         data(){
             return {
+                //props
                 settings                  : JSON.parse( this.trp_settings ),
                 languageNames             : JSON.parse( this.language_names ),
                 orderedSecondaryLanguages : JSON.parse( this.ordered_secondary_languages ),
@@ -119,19 +139,21 @@
                 stringGroupOrder          : JSON.parse( this.string_group_order),
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
+                mergeRules                : JSON.parse( this.merge_rules ),
+                //data
                 currentLanguage           : this.current_language,
                 onScreenLanguage          : this.on_screen_language,
                 currentURL                : this.url_to_load,
                 urlToLoad                 : this.url_to_load,
                 iframe                    : '',
                 dictionary                : [],
+                selectedString            : '',
+                selectedIndexesArray      : [],
                 detectedSelectorAndId     : [],
                 stringGroups              : [],
-                selectedString            : '',
-                nodes                     : {},
-                selectedIndexesArray      : [],
+                mergingString             : false,
+                mergeData                 : [],
                 showChangesUnsavedMessage : false,
-                editStringHtml            : '<trp-span><trp-merge  title="Merge" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="Split" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="Edit" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>',
             }
         },
         created(){
@@ -178,55 +200,53 @@
                 window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
-                if ( this.hasUnsavedChanges() || typeof selectedStringArrayIndex == 'undefined' || selectedStringArrayIndex == null ) {
+                if( this.hasUnsavedChanges() || !selectedStringArrayIndex )
                     return
-                }
 
-                jQuery('#trp-string-categories').val( selectedStringArrayIndex ).trigger( 'change' )
+                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ).trigger( 'change' )
 
-                let selectedString = this.dictionary[selectedStringArrayIndex]
-                let currentNode = this.iframe.querySelector( "[" + selectedString.selector + "='" + selectedString.dbID + "']")
-                let nodes = []
-                nodes.push( currentNode )
-
-                let self = this
-                let selectors = self.getAllSelectors()
-
-                if ( currentNode.tagName == "IMG" ){
-                    // include the anchor's translatable attributes
-                    let anchorParent  = currentNode.closest('a')
-                    if(  anchorParent != null ) {
-                        nodes.push(anchorParent)
-                    }
-                }
-
-                if ( currentNode.tagName == "A" && currentNode.children.length > 0 ){
-                    // include all the translatable attributes inside the anchor
-                    let childrenArray = [ ...currentNode.children ];
-                    childrenArray.forEach( function ( child ) {
-                        nodes.push(child)
-                    })
-
-                }
-
+                let selectedString       = this.dictionary[selectedStringArrayIndex]
+                let currentNode          = this.iframe.querySelector( "[" + selectedString.selector + "='" + selectedString.dbID + "']")
                 let selectedIndexesArray = []
-                nodes.forEach( function( node ) {
-                    selectors.forEach(function (selector) {
-                        let stringId = node.getAttribute(selector)
-                        if (stringId) {
-                            selectedIndexesArray.push(self.getStringIndex(selector, stringId))
+
+                //when merging we do not have a valid current node, so we just add the fake id
+                if( currentNode ) {
+                    let self = this
+                    let selectors = self.getAllSelectors()
+                    let nodes = []
+
+                    nodes.push( currentNode )
+
+                    if ( currentNode.tagName == "IMG" ){
+                        // include the anchor's translatable attributes
+                        let anchorParent  = currentNode.closest('a')
+                        if(  anchorParent != null ) {
+                            nodes.push(anchorParent)
                         }
+                    }
+
+                    if ( currentNode.tagName == "A" && currentNode.children.length > 0 ){
+                        // include all the translatable attributes inside the anchor
+                        let childrenArray = [ ...currentNode.children ];
+                        childrenArray.forEach( function ( child ) {
+                            nodes.push(child)
+                        })
+
+                    }
+
+                    nodes.forEach( function( node ) {
+                        selectors.forEach(function (selector) {
+                            let stringId = node.getAttribute(selector)
+                            if (stringId) {
+                                selectedIndexesArray.push(self.getStringIndex(selector, stringId))
+                            }
+                        })
                     })
-                })
+                } else
+                    selectedIndexesArray.push( selectedStringArrayIndex )
 
                 this.selectedIndexesArray = selectedIndexesArray
-
             },
-            selectedIndexesArray: function( newSelectedIndexesArray, oldSelectedIndexesArray ){
-                console.log( newSelectedIndexesArray)
-            },
-            dictionary: function (){
-            }
         },
         computed: {
             closeURL: function() {
@@ -279,11 +299,11 @@
                 stringIdsArray = [...new Set(stringIdsArray)]
                 if ( stringIdsArray.length > 0 ) {
                     let data = new FormData()
-                    data.append('action', 'trp_get_translations_' + typeSlug)
+                    data.append('action'       , 'trp_get_translations_' + typeSlug)
                     data.append('all_languages', 'true')
-                    data.append('security', this.nonces['gettranslationsnonce' + typeSlug])
-                    data.append('language', languageOfIds)
-                    data.append('string_ids', JSON.stringify(stringIdsArray))
+                    data.append('security'     , this.nonces['gettranslationsnonce' + typeSlug])
+                    data.append('language'     , languageOfIds)
+                    data.append('string_ids'   , JSON.stringify(stringIdsArray))
 
                     axios.post(this.ajax_url, data)
                         .then(function (response) {
@@ -310,14 +330,25 @@
 
                 let self = this
 
-                node.addEventListener( 'mouseenter', self.showPencilIcon )
+                node.addEventListener( 'mouseenter', self.$refs.hoverActions.showPencilIcon )
             },
             addToDictionary( responseData, nodeInfo = null ){
+                let self = this
+
                 if ( responseData != null ) {
                     if ( nodeInfo ){
                         nodeInfo.forEach(function ( infoRow, index ){
                             responseData.some( function ( responseDataRow ) {
+
                                 if ( infoRow.dbID == responseDataRow.dbID ) {
+                                    //bring block_type to the top level object
+                                    if ( responseDataRow.type != 'gettext' && typeof responseDataRow.block_type == 'undefined' ) {
+                                        let firstLanguage = self.orderedSecondaryLanguages[0]
+
+                                        if ( typeof responseDataRow.translationsArray[firstLanguage].block_type != 'undefined' )
+                                            responseDataRow.block_type = responseDataRow.translationsArray[firstLanguage].block_type
+                                    }
+
                                     nodeInfo[index] = Object.assign( {}, responseDataRow, infoRow )
                                     return true // a sort of break
                                 }
@@ -438,85 +469,6 @@
 
                 return url
             },
-            showPencilIcon( element ){
-                let target = element.target
-
-                let self = this
-                let relatedNode, relatedNodeAttr, position, stringSelector, stringId
-
-                //for these tag names we need to insert our HTML before the element and not inside of it
-                //@TODO: add/research more
-                let beforePosition = [ 'IMG', 'INPUT', 'TEXTAREA' ]
-
-                //if other icons are showing, remove them
-                self.removePencilIcon()
-
-                //remove highlight class
-                let previouslyHighlighted = this.iframe.getElementsByClassName( 'trp-highlight' )
-
-                if ( previouslyHighlighted.length > 0 ) {
-                    let i
-
-                    for ( i = 0; i < previouslyHighlighted.length; i++ )
-                        previouslyHighlighted[i].classList.remove( 'trp-highlight' )
-                }
-
-                //add class to highlight text
-                if ( !target.classList.contains( 'trp-highlight' ) )
-                    target.className += ' trp-highlight'
-
-                //figure out where to insert extra HTML
-                if ( beforePosition.includes( target.tagName ) )
-                    position = 'beforebegin'
-                else
-                    position = 'afterbegin'
-
-                //insert button HTML
-                target.insertAdjacentHTML( position, this.editStringHtml )
-
-                let editButton = this.iframe.querySelector( 'trp-span' )
-
-                //onclick event listener
-                //@NOTE: we might need to add separate events for different buttons (the block split stuff)
-                editButton.addEventListener( 'click', function( event ) {
-                    event.preventDefault()
-
-                    //get node info based on where we inserted our button
-                    if ( position == 'afterbegin' )
-                        relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].parentNode
-                    else
-                        relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].nextElementSibling
-
-                    self.dataAttributes.forEach( function( baseSelector ) {
-
-                        self.prepareSelectorStrings( baseSelector ).forEach( function( selector ) {
-
-                            relatedNodeAttr = relatedNode.getAttribute( selector )
-
-                            if ( relatedNodeAttr ) {
-                                stringId = relatedNodeAttr
-                                stringSelector = selector
-                            }
-
-                        })
-
-                    })
-
-                    self.selectedString = self.getStringIndex( stringSelector, stringId )
-
-                    jQuery( '#trp-string-categories' ).select2( 'close' )
-                })
-
-            },
-            removePencilIcon(){
-                let icons = this.iframe.querySelectorAll( 'trp-span' )
-
-                if ( icons.length > 0 ) {
-                    icons.forEach( function( icon ) {
-                        icon.remove()
-                    })
-                }
-            },
             showString( string, type ){
                 if ( type == 'Images' && typeof string.attribute != 'undefined' && string.attribute == 'src' )
                     return true
@@ -549,7 +501,7 @@
 
                 return name
             },
-            isStringsDropdownOpen() {
+            isStringsDropdownOpen(){
                 return jQuery( '#trp-string-categories' ).select2( 'isOpen' )
             },
             hasUnsavedChanges(){

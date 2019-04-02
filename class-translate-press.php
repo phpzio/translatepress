@@ -94,19 +94,19 @@ class TRP_Translate_Press{
      * Instantiates components.
      */
     protected function initialize_components() {
-        $this->loader = new TRP_Hooks_Loader();
-        $this->languages = new TRP_Languages();
-        $this->settings = new TRP_Settings();
-        $this->translation_render = new TRP_Translation_Render( $this->settings->get_settings() );
-        $this->url_converter = new TRP_Url_Converter( $this->settings->get_settings() );
-        $this->language_switcher = new TRP_Language_Switcher( $this->settings->get_settings(), $this );
-        $this->query = new TRP_Query( $this->settings->get_settings() );
-        $this->machine_translator = new TRP_Machine_Translator( $this->settings->get_settings() );
-        $this->translation_manager = new TRP_Translation_Manager( $this->settings->get_settings() );
+        $this->loader                     = new TRP_Hooks_Loader();
+        $this->languages                  = new TRP_Languages();
+        $this->settings                   = new TRP_Settings();
+        $this->translation_render         = new TRP_Translation_Render( $this->settings->get_settings() );
+        $this->url_converter              = new TRP_Url_Converter( $this->settings->get_settings() );
+        $this->language_switcher          = new TRP_Language_Switcher( $this->settings->get_settings(), $this );
+        $this->query                      = new TRP_Query( $this->settings->get_settings() );
+        $this->machine_translator         = new TRP_Machine_Translator( $this->settings->get_settings() );
+        $this->translation_manager        = new TRP_Translation_Manager( $this->settings->get_settings() );
         $this->editor_api_regular_strings = new TRP_Editor_Api_Regular_Strings( $this->settings->get_settings() );
         $this->editor_api_gettext_strings = new TRP_Editor_Api_Gettext_Strings( $this->settings->get_settings() );
-        $this->notifications = new TRP_Trigger_Plugin_Notifications();
-        $this->upgrade = new TRP_Upgrade( $this->settings->get_settings() );
+        $this->notifications              = new TRP_Trigger_Plugin_Notifications();
+        $this->upgrade                    = new TRP_Upgrade( $this->settings->get_settings() );
     }
 
     /**
@@ -128,8 +128,8 @@ class TRP_Translate_Press{
 
         $this->loader->add_action( 'wp_ajax_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations_regular', $this->editor_api_regular_strings, 'save_translations' );
-//        $this->loader->add_action( 'wp_ajax_trp_create_translation_block', $this->editor_api_regular_strings, 'create_translation_block' );
-//        $this->loader->add_action( 'init', $this->editor_api_regular_strings, 'split_translation_block' );
+        $this->loader->add_action( 'wp_ajax_trp_split_translation_block', $this->editor_api_regular_strings, 'split_translation_block' );
+        $this->loader->add_action( 'wp_ajax_trp_create_translation_block', $this->editor_api_regular_strings, 'create_translation_block' );
 	    $this->loader->add_filter( 'trp_get_existing_translations', $this->translation_manager, 'display_possible_db_errors', 20, 3 );
 
 

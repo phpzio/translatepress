@@ -49,6 +49,8 @@
 
     $view_as_roles = apply_filters( 'trp_view_as_values', $view_as_roles );
     $string_groups = apply_filters( 'trp_string_group_order', array_values( $translation_manager->string_groups() ) );
+
+    $merge_rules = $translation_manager->get_merge_rules();
     ?>
 
     <title>TranslatePress</title>
@@ -68,8 +70,9 @@
             string_selectors='<?php echo json_encode( $selectors ); ?>'
             data_attributes='<?php echo json_encode( $data_attributes ); ?>'
             editor_nonces='<?php echo json_encode( $translation_manager->editor_nonces() ); ?>'
-            ajax_url= '<?php echo apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
-            string_group_order= '<?php echo json_encode( $string_groups ); ?>'
+            ajax_url='<?php echo apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
+            string_group_order='<?php echo json_encode( $string_groups ); ?>'
+            merge_rules='<?php echo json_encode( $merge_rules ); ?>'
         >
         </trp-editor>
     </div>
