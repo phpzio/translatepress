@@ -727,24 +727,42 @@ class TRP_Translation_Manager{
         if( $this::is_ajax_on_frontend() ){
             add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ) );
         }
-        elseif( class_exists( 'WooCommerce' ) ){
-        	// WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
-            add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ), 19 );
-        }//otherwise start from the wp_head hook
-        else{
+        else{//otherwise start from the wp_head hook
             add_action( 'wp_head', array( $this, 'apply_gettext_filter' ), 100 );
+        }
+
+        //if we have woocommerce installed and it is not an ajax request add a gettext hook starting from wp_loaded and remove it on wp_head
+        if( class_exists( 'WooCommerce' ) && !$this::is_ajax_on_frontend() ){
+            // WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
+            add_action( 'wp_loaded', array( $this, 'apply_woocommerce_gettext_filter' ), 19 );
         }
     }
 
     /* apply the gettext filter here */
     public function apply_gettext_filter(){
-	   	global $pagenow;
-	   	// Do not process gettext strings on wp-login pages. Do not process strings in admin area except for when when is_ajax_on_frontend.
+
+        //if we have wocommerce installed remove te hook that was added on wp_loaded
+        if( class_exists( 'WooCommerce' ) ){
+            // WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
+            remove_action( 'wp_loaded', array( $this, 'apply_woocommerce_gettext_filter' ), 19 );
+        }
+
+        $this->call_gettext_filters();
+
+    }
+
+    public function apply_woocommerce_gettext_filter(){
+        $this->call_gettext_filters('woocommerce_');
+    }
+
+    public function call_gettext_filters( $prefix = '' ){
+        global $pagenow;
+        // Do not process gettext strings on wp-login pages. Do not process strings in admin area except for when when is_ajax_on_frontend.
         if( ( $pagenow != 'wp-login.php' ) && ( !is_admin() || $this::is_ajax_on_frontend() ) ) {
-            add_filter('gettext', array($this, 'process_gettext_strings'), 100, 3);
-            add_filter('gettext_with_context', array($this, 'process_gettext_strings_with_context'), 100, 4);
-            add_filter('ngettext', array($this, 'process_ngettext_strings'), 100, 5);
-            add_filter('ngettext_with_context', array($this, 'process_ngettext_strings_with_context'), 100, 6);
+            add_filter('gettext', array($this, $prefix.'process_gettext_strings'), 100, 3);
+            add_filter('gettext_with_context', array($this, $prefix.'process_gettext_strings_with_context'), 100, 4);
+            add_filter('ngettext', array($this, $prefix.'process_ngettext_strings'), 100, 5);
+            add_filter('ngettext_with_context', array($this, $prefix.'process_ngettext_strings_with_context'), 100, 6);
         }
     }
 
@@ -1014,6 +1032,20 @@ class TRP_Translation_Manager{
     }
 
     /**
+     * caller for woocommerce domain texts
+     * @param $translation
+     * @param $text
+     * @param $domain
+     * @return string
+     */
+    function woocommerce_process_gettext_strings( $translation, $text, $domain ){
+        if( $domain === 'woocommerce' ){
+            $translation = $this->process_gettext_strings( $translation, $text, $domain );
+        }
+        return $translation;
+    }
+
+    /**
      * Function that filters gettext strings with context _x
      * @param $translation
      * @param $text
@@ -1023,6 +1055,16 @@ class TRP_Translation_Manager{
      */
     function process_gettext_strings_with_context( $translation, $text, $context, $domain ){
         $translation = $this->process_gettext_strings( $translation, $text, $domain );
+        return $translation;
+    }
+
+    /**
+     * caller for woocommerce domain texts with context
+     */
+    function woocommerce_process_gettext_strings_with_context( $translation, $text, $context, $domain ){
+        if( $domain === 'woocommerce' ) {
+            $translation = $this->process_gettext_strings_with_context( $translation, $text, $context, $domain );
+        }
         return $translation;
     }
 
@@ -1045,6 +1087,17 @@ class TRP_Translation_Manager{
     }
 
     /**
+     * caller for woocommerce domain numeric texts
+     */
+    function woocommerce_process_ngettext_strings($translation, $single, $plural, $number, $domain){
+        if( $domain === 'woocommerce' ) {
+            $translation = $this->process_ngettext_strings($translation, $single, $plural, $number, $domain);
+        }
+
+        return $translation;
+    }
+
+    /**
      * function that filters the _nx translations
      * @param $translation
      * @param $single
@@ -1056,6 +1109,16 @@ class TRP_Translation_Manager{
      */
     function process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain ){
         $translation = $this->process_ngettext_strings( $translation, $single, $plural, $number, $domain );
+        return $translation;
+    }
+
+    /**
+     * caller for woocommerce domain numeric texts with context
+     */
+    function woocommerce_process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain ){
+        if( $domain === 'woocommerce' ) {
+            $translation = $this->process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain );
+        }
         return $translation;
     }
 
