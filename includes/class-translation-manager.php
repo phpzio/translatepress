@@ -723,8 +723,10 @@ class TRP_Translation_Manager{
      * function that applies the gettext filter on frontend on different hooks depending on what we need
      */
     public function initialize_gettext_processing(){
+        $is_ajax_on_frontend = $this::is_ajax_on_frontend();
+
         /* on ajax hooks from frontend that have the init hook ( we found WooCommerce has it ) apply it earlier */
-        if( $this::is_ajax_on_frontend() ){
+        if( $is_ajax_on_frontend ){
             add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ) );
         }
         else{//otherwise start from the wp_head hook
@@ -732,7 +734,7 @@ class TRP_Translation_Manager{
         }
 
         //if we have woocommerce installed and it is not an ajax request add a gettext hook starting from wp_loaded and remove it on wp_head
-        if( class_exists( 'WooCommerce' ) && !$this::is_ajax_on_frontend() ){
+        if( class_exists( 'WooCommerce' ) && !$is_ajax_on_frontend ){
             // WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
             add_action( 'wp_loaded', array( $this, 'apply_woocommerce_gettext_filter' ), 19 );
         }
