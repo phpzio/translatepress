@@ -697,9 +697,6 @@ class TRP_Translation_Manager{
      */
     public function create_gettext_translated_global(){
 
-        //we do not need this in cron requests ?
-        if( isset( $_REQUEST['doing_wp_cron'] ) )
-            return;
 
         global $trp_translated_gettext_texts;
         if( !is_admin() || $this::is_ajax_on_frontend() ) {
