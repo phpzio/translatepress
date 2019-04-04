@@ -865,7 +865,7 @@ class TRP_Translation_Manager{
     	$translation = TRP_Translation_Manager::strip_gettext_tags( $translation );
 
         //try here to exclude some strings that do not require translation
-    	$excluded_gettext_strings = array( '', ' ', '&hellip;', '&nbsp;' );
+    	$excluded_gettext_strings = array( '', ' ', '&hellip;', '&nbsp;', '&raquo;' );
     	if( in_array( trp_full_trim( $text ), $excluded_gettext_strings ) )
     	    return $translation;
 
