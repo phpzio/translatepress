@@ -883,8 +883,12 @@ class TRP_Translation_Manager{
         if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
             return $translation;
 
+        //use a global for is_ajax_on_frontend() so we don't execute it multiple times
+        global $tp_gettext_is_ajax_on_frontend;
+        if( !isset($tp_gettext_is_ajax_on_frontend) )
+            $tp_gettext_is_ajax_on_frontend = $this::is_ajax_on_frontend();
 
-        if ( !defined( 'DOING_AJAX' ) || $this::is_ajax_on_frontend() ) {
+        if ( !defined( 'DOING_AJAX' ) || $tp_gettext_is_ajax_on_frontend ) {
 	        $db_id       = '';
 	        $skip_gettext_querying = apply_filters( 'trp_skip_gettext_querying', false, $translation, $text, $domain );
 	        if ( !$skip_gettext_querying ) {
