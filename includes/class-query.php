@@ -377,7 +377,7 @@ class TRP_Query{
         $status = !empty( $string['status'] ) ? $string['status'] : self::NOT_TRANSLATED;
 
         foreach ( $updated_strings as $string ) {
-            if( !empty( $string['id'] ) && !empty( $string['original'] ) ) {//we must have an ID and an original
+            if( !empty( $string['id'] ) && is_numeric( $string['id'] ) && !empty( $string['original'] ) ) {//we must have an ID and an original
                 array_push($values, $string['id'], $string['original'], $string['translated'], $string['domain'], $status);
                 $place_holders[] = "( '%d', '%s', '%s', '%s', '%d')";
             }
