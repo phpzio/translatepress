@@ -141,6 +141,11 @@ class TRP_Translate_Press{
      * Hooks methods used in front-end
      */
     protected function define_frontend_hooks(){
+
+        //we do not need the plugin in cron requests ?
+        if( isset( $_REQUEST['doing_wp_cron'] ) )
+            return;
+
         $this->loader->add_action( 'init', $this->translation_render, 'start_output_buffer', 0 );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_scripts', 10 );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );

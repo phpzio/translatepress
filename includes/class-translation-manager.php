@@ -696,6 +696,8 @@ class TRP_Translation_Manager{
      * Create a global with the gettext strings that exist in the database
      */
     public function create_gettext_translated_global(){
+
+
         global $trp_translated_gettext_texts;
         if( !is_admin() || $this::is_ajax_on_frontend() ) {
             global $TRP_LANGUAGE;
@@ -721,28 +723,48 @@ class TRP_Translation_Manager{
      * function that applies the gettext filter on frontend on different hooks depending on what we need
      */
     public function initialize_gettext_processing(){
+        $is_ajax_on_frontend = $this::is_ajax_on_frontend();
+
         /* on ajax hooks from frontend that have the init hook ( we found WooCommerce has it ) apply it earlier */
-        if( $this::is_ajax_on_frontend() ){
+        if( $is_ajax_on_frontend ){
             add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ) );
         }
-        elseif( class_exists( 'WooCommerce' ) ){
-        	// WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
-            add_action( 'wp_loaded', array( $this, 'apply_gettext_filter' ), 19 );
-        }//otherwise start from the wp_head hook
-        else{
+        else{//otherwise start from the wp_head hook
             add_action( 'wp_head', array( $this, 'apply_gettext_filter' ), 100 );
+        }
+
+        //if we have woocommerce installed and it is not an ajax request add a gettext hook starting from wp_loaded and remove it on wp_head
+        if( class_exists( 'WooCommerce' ) && !$is_ajax_on_frontend ){
+            // WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
+            add_action( 'wp_loaded', array( $this, 'apply_woocommerce_gettext_filter' ), 19 );
         }
     }
 
     /* apply the gettext filter here */
     public function apply_gettext_filter(){
-	   	global $pagenow;
-	   	// Do not process gettext strings on wp-login pages. Do not process strings in admin area except for when when is_ajax_on_frontend.
+
+        //if we have wocommerce installed remove te hook that was added on wp_loaded
+        if( class_exists( 'WooCommerce' ) ){
+            // WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
+            remove_action( 'wp_loaded', array( $this, 'apply_woocommerce_gettext_filter' ), 19 );
+        }
+
+        $this->call_gettext_filters();
+
+    }
+
+    public function apply_woocommerce_gettext_filter(){
+        $this->call_gettext_filters('woocommerce_');
+    }
+
+    public function call_gettext_filters( $prefix = '' ){
+        global $pagenow;
+        // Do not process gettext strings on wp-login pages. Do not process strings in admin area except for when when is_ajax_on_frontend.
         if( ( $pagenow != 'wp-login.php' ) && ( !is_admin() || $this::is_ajax_on_frontend() ) ) {
-            add_filter('gettext', array($this, 'process_gettext_strings'), 100, 3);
-            add_filter('gettext_with_context', array($this, 'process_gettext_strings_with_context'), 100, 4);
-            add_filter('ngettext', array($this, 'process_ngettext_strings'), 100, 5);
-            add_filter('ngettext_with_context', array($this, 'process_ngettext_strings_with_context'), 100, 6);
+            add_filter('gettext', array($this, $prefix.'process_gettext_strings'), 100, 3);
+            add_filter('gettext_with_context', array($this, $prefix.'process_gettext_strings_with_context'), 100, 4);
+            add_filter('ngettext', array($this, $prefix.'process_ngettext_strings'), 100, 5);
+            add_filter('ngettext_with_context', array($this, $prefix.'process_ngettext_strings_with_context'), 100, 6);
         }
     }
 
@@ -843,14 +865,16 @@ class TRP_Translation_Manager{
     	$translation = TRP_Translation_Manager::strip_gettext_tags( $translation );
 
         //try here to exclude some strings that do not require translation
-    	$excluded_gettext_strings = array( '', ' ', '&hellip;', '&nbsp;' );
+    	$excluded_gettext_strings = array( '', ' ', '&hellip;', '&nbsp;', '&raquo;' );
     	if( in_array( trp_full_trim( $text ), $excluded_gettext_strings ) )
     	    return $translation;
 
+        //set a global so we remember the last string we processed and if it is the same with the current one return a result immediately for performance reasons ( this could happen in loops )
+        global $tp_last_gettext_processed;
+        if( isset( $tp_last_gettext_processed[$text.'::'.$domain] ) )
+            return $tp_last_gettext_processed[$text.'::'.$domain];
+
         global $TRP_LANGUAGE;
-        /* don't do anything if we don't have extra languages on the site */
-        if( count( $this->settings['publish-languages'] ) < 1 )
-            return $translation;
 
         if( ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'true' ) || $domain == 'translatepress-multilingual' )
             return $translation;
@@ -859,8 +883,12 @@ class TRP_Translation_Manager{
         if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
             return $translation;
 
+        //use a global for is_ajax_on_frontend() so we don't execute it multiple times
+        global $tp_gettext_is_ajax_on_frontend;
+        if( !isset($tp_gettext_is_ajax_on_frontend) )
+            $tp_gettext_is_ajax_on_frontend = $this::is_ajax_on_frontend();
 
-        if ( !defined( 'DOING_AJAX' ) || $this::is_ajax_on_frontend() ) {
+        if ( !defined( 'DOING_AJAX' ) || $tp_gettext_is_ajax_on_frontend ) {
 	        $db_id       = '';
 	        $skip_gettext_querying = apply_filters( 'trp_skip_gettext_querying', false, $translation, $text, $domain );
 	        if ( !$skip_gettext_querying ) {
@@ -974,20 +1002,29 @@ class TRP_Translation_Manager{
 	            'esc_url',
 	            'wc_get_permalink_structure' // make sure we don't touch the woocommerce permalink rewrite slugs that are translated
             ), $text, $translation, $domain );
-            $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+            if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
+                $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 15);//set a limit if it is supported to improve performance
+            }
+            else{
+                $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            }
             if( !empty( $callstack_functions ) ){
                 foreach( $callstack_functions as $callstack_function ){
 	                if ( in_array( $callstack_function['function'], $blacklist_functions ) ){
+                        $tp_last_gettext_processed = array( $text.'::'.$domain => $translation );
 		                return $translation;
 	                }
 
 	                /* make sure we don't touch the woocommerce process_payment function in WC_Gateway_Stripe. It does a wp_remote_post() call to stripe with localized parameters */
                     if( $callstack_function['function'] == 'process_payment' && $callstack_function['class'] == 'WC_Gateway_Stripe' ){
+                        $tp_last_gettext_processed = array( $text.'::'.$domain => $translation );
                         return $translation;
                     }
 
                 }
             }
+            unset($callstack_functions);//maybe free up some memory
 
 	        if ( did_action( 'init' ) ) {
 		        if ( ( ! empty( $TRP_LANGUAGE ) && $this->settings["default-language"] != $TRP_LANGUAGE ) || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) ) {
@@ -996,7 +1033,21 @@ class TRP_Translation_Manager{
 		        }
 	        }
         }
+        $tp_last_gettext_processed = array( $text.'::'.$domain => $translation );
+        return $translation;
+    }
 
+    /**
+     * caller for woocommerce domain texts
+     * @param $translation
+     * @param $text
+     * @param $domain
+     * @return string
+     */
+    function woocommerce_process_gettext_strings( $translation, $text, $domain ){
+        if( $domain === 'woocommerce' ){
+            $translation = $this->process_gettext_strings( $translation, $text, $domain );
+        }
         return $translation;
     }
 
@@ -1010,6 +1061,16 @@ class TRP_Translation_Manager{
      */
     function process_gettext_strings_with_context( $translation, $text, $context, $domain ){
         $translation = $this->process_gettext_strings( $translation, $text, $domain );
+        return $translation;
+    }
+
+    /**
+     * caller for woocommerce domain texts with context
+     */
+    function woocommerce_process_gettext_strings_with_context( $translation, $text, $context, $domain ){
+        if( $domain === 'woocommerce' ) {
+            $translation = $this->process_gettext_strings_with_context( $translation, $text, $context, $domain );
+        }
         return $translation;
     }
 
@@ -1032,6 +1093,17 @@ class TRP_Translation_Manager{
     }
 
     /**
+     * caller for woocommerce domain numeric texts
+     */
+    function woocommerce_process_ngettext_strings($translation, $single, $plural, $number, $domain){
+        if( $domain === 'woocommerce' ) {
+            $translation = $this->process_ngettext_strings($translation, $single, $plural, $number, $domain);
+        }
+
+        return $translation;
+    }
+
+    /**
      * function that filters the _nx translations
      * @param $translation
      * @param $single
@@ -1043,6 +1115,16 @@ class TRP_Translation_Manager{
      */
     function process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain ){
         $translation = $this->process_ngettext_strings( $translation, $single, $plural, $number, $domain );
+        return $translation;
+    }
+
+    /**
+     * caller for woocommerce domain numeric texts with context
+     */
+    function woocommerce_process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain ){
+        if( $domain === 'woocommerce' ) {
+            $translation = $this->process_ngettext_strings_with_context( $translation, $single, $plural, $number, $context, $domain );
+        }
         return $translation;
     }
 
