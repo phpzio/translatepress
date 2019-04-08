@@ -1012,6 +1012,18 @@ class TRP_Translation_Render{
         return false;
     }
 
+    /*
+     * Enqueue scripts on all pages
+     */
+	public function enqueue_scripts() {
+
+		// so far only when woocommerce is active we need to enqueue this script on all pages
+		if ( class_exists( 'WooCommerce' ) ){
+			wp_enqueue_script('trp-frontend-compatibility', TRP_PLUGIN_URL . 'assets/js/trp-frontend-compatibility.js', array(), TRP_PLUGIN_VERSION );
+		}
+
+	}
+
     /**
      * Enqueue dynamic translation script.
      */
