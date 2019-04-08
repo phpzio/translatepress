@@ -41,7 +41,7 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_BASE', plugin_basename( __DIR__ . '/index.php' ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.4.4' );
+        define( 'TRP_PLUGIN_VERSION', '1.4.5' );
 
 	    wp_cache_add_non_persistent_groups(array('trp'));
 
@@ -134,6 +134,8 @@ class TRP_Translate_Press{
 
 	    $this->loader->add_action( 'admin_menu', $this->upgrade, 'register_menu_page' );
 	    $this->loader->add_action( 'admin_init', $this->upgrade, 'show_admin_notice' );
+	    $this->loader->add_action( 'admin_init', $this->upgrade, 'start_updating_db' );
+	    $this->loader->add_action( 'wp_ajax_trp_update_database', $this->upgrade, 'trp_update_database' );
 
     }
 
