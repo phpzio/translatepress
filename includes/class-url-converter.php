@@ -36,9 +36,8 @@ class TRP_Url_Converter {
             return $url;
         }
 
-        if( is_customize_preview() || $this->is_admin_request()  )
+        if( is_customize_preview() || $this->is_admin_request()  || $this->is_sitemap_link( $path ) )
             return $url;
-
 
         $url_slug = $this->get_url_slug( $TRP_LANGUAGE );
         $abs_home = $this->get_abs_home();
@@ -92,6 +91,28 @@ class TRP_Url_Converter {
         } else {
             return false;
         }
+    }
+
+    /**
+     * A function that is used inside the home_url filter to detect if the current link is a sitemap link
+     * @param $path the path that is passed inside home_url
+     * @return bool
+     */
+    public function is_sitemap_link( $path ) {
+
+        //we first check in the $path
+        if( !empty( $path ) ){
+            if( strpos($path, 'sitemap') !== false && strpos($path, '.xml') !== false )
+                return true;
+            else
+                return false;
+        }
+        else { //if the path is empty check the request URI
+            if (strpos( $_SERVER['REQUEST_URI'], 'sitemap') !== false && strpos( $_SERVER['REQUEST_URI'], '.xml') !== false)
+                return true;
+        }
+
+        return false;
     }
 
     /**
