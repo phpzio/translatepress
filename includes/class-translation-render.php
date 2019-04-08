@@ -71,7 +71,7 @@ class TRP_Translation_Render{
                 // in the translation editor we need a different language then the default because we need string ID's.
                 // so we're forcing it to the first translation language because if it's the default, we're just returning the $output
                 if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' )  {
-                    if( count( $this->settings['publish-languages'] ) > 1 ){
+                    if( count( $this->settings['translation-languages'] ) > 1 ){
                         foreach ($this->settings['translation-languages'] as $language) {
                             if ($language != $TRP_LANGUAGE) {
                                 // return the first language not default. only used for preview mode
@@ -391,6 +391,11 @@ class TRP_Translation_Render{
 		    $merge_rules = $this->translation_manager->get_merge_rules();
 	    }
         $html = TranslatePress\str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+	    if ( $html === false ){
+		    $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $output );
+		    $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
+			return $trpremoved;
+	    }
 
         /**
          * When we are in the translation editor: Intercept the trp-gettext that was wrapped around all the gettext texts, grab the attribute data-trpgettextoriginal
@@ -480,6 +485,9 @@ class TRP_Translation_Render{
 
                         // convert to a node
                         $node_from_value = TranslatePress\str_get_html(html_entity_decode(htmlspecialchars_decode($attr_value, ENT_QUOTES)), true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+	                    if ( $node_from_value === false ){
+		                    continue;
+	                    }
                         foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
                             $nfv_row->outertext = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $node_from_value->save() );
@@ -698,8 +706,11 @@ class TRP_Translation_Render{
 
         // We need to save here in order to access the translated links too.
         if( apply_filters('tp_handle_custom_links_in_translation_blocks', false) ) {
-            $html = $html->save();
-            $html = TranslatePress\str_get_html($html, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+            $html_string = $html->save();
+            $html = TranslatePress\str_get_html($html_string, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+            if ( $html === false ){
+                return $html_string;
+            }
         }
 
 
@@ -1062,6 +1073,18 @@ class TRP_Translation_Render{
         }
         return false;
     }
+
+    /*
+     * Enqueue scripts on all pages
+     */
+	public function enqueue_scripts() {
+
+		// so far only when woocommerce is active we need to enqueue this script on all pages
+		if ( class_exists( 'WooCommerce' ) ){
+			wp_enqueue_script('trp-frontend-compatibility', TRP_PLUGIN_URL . 'assets/js/trp-frontend-compatibility.js', array(), TRP_PLUGIN_VERSION );
+		}
+
+	}
 
     /**
      * Enqueue dynamic translation script.
