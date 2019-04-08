@@ -71,7 +71,7 @@ class TRP_Translation_Render{
                 // in the translation editor we need a different language then the default because we need string ID's.
                 // so we're forcing it to the first translation language because if it's the default, we're just returning the $output
                 if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' )  {
-                    if( count( $this->settings['publish-languages'] ) > 1 ){
+                    if( count( $this->settings['translation-languages'] ) > 1 ){
                         foreach ($this->settings['translation-languages'] as $language) {
                             if ($language != $TRP_LANGUAGE) {
                                 // return the first language not default. only used for preview mode
