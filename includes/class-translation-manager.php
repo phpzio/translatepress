@@ -894,9 +894,9 @@ class TRP_Translation_Manager{
 							        'id'         => $db_id,
 							        'original'   => $text,
 							        'translated' => $translation,
-							        'domain'     => $domain
-						        ),
-						        'status' => $this->trp_query->get_constant_human_reviewed()
+							        'domain'     => $domain,
+                                    'status' => $this->trp_query->get_constant_human_reviewed()
+						        )
 					        ), get_locale() );
 				        }
 			        }
