@@ -692,8 +692,8 @@ function trp_woo_skip_dynamic_translation( $skip_selectors ){
  *
  * Product variation name keep changes, but the prefix is the same. Wrap the prefix to allow translating that part separately.
  */
-add_filter( 'woocommerce_product_variation_title', 'trpc_woo_wrap_variation', 10, 4);
-function trpc_woo_wrap_variation($name, $product, $title_base, $title_suffix){
+add_filter( 'woocommerce_product_variation_title', 'trp_woo_wrap_variation', 8, 4);
+function trp_woo_wrap_variation($name, $product, $title_base, $title_suffix){
 	$separator  = '<span> - </span>';
 	return $title_suffix ? $title_base . $separator . $title_suffix : $title_base;
 }
