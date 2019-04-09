@@ -749,4 +749,6 @@ class TRP_Query{
 		$prepared_query = $this->db->prepare($query . ' ', $values);
 		$this->db->query( $prepared_query );
 	}
+
+
 }

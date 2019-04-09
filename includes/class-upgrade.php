@@ -25,6 +25,7 @@ class TRP_Upgrade {
 	 */
 	public function register_menu_page(){
 		add_submenu_page( 'TRPHidden', 'TranslatePress Remove Duplicate Rows', 'TRPHidden', 'manage_options', 'trp_remove_duplicate_rows', array($this, 'trp_remove_duplicate_rows') );
+		add_submenu_page( 'TRPHidden', 'TranslatePress Update Database', 'TRPHidden', 'manage_options', 'trp_update_database', array( $this, 'trp_update_database_page' ) );
 	}
 
 	/**
@@ -42,11 +43,11 @@ class TRP_Upgrade {
 			$this->trp_query->check_for_block_type_column();
 		}
 		if( !empty( $stored_database_version ) ) {
-			if ( version_compare( '1.4.0', $stored_database_version, '>' ) ) {
-				update_option( 'trp_updated_database_full_trim_originals_140', 'no' );
-			}
-			if ( version_compare( '1.4.5', $stored_database_version, '>' ) ) {
-				update_option( 'trp_updated_database_gettext_empty_rows_145', 'no' );
+			$updates = $this->get_updates_details();
+			foreach( $updates as $update ){
+				if ( version_compare( $update['version'], $stored_database_version, '>' ) ){
+					update_option( $update['option_name'], 'no' );
+				}
 			}
 		}
 
@@ -68,8 +69,23 @@ class TRP_Upgrade {
 		}
 	}
 
-	public function get_option_names_for_updates(){
-		return apply_filters( 'trp_option_names_for_updates', array( 'trp_updated_database_full_trim_originals_140', 'trp_updated_database_gettext_empty_rows_145' ) );
+	public function get_updates_details(){
+		return apply_filters( 'trp_updates_details',
+			array(
+				'full_trim_originals_140' => array(
+					'version'           => '1.4.0',
+					'option_name'       => 'trp_updated_database_full_trim_originals_140',
+					'callback'          => array( $this, 'trp_updated_database_full_trim_originals_140' ),
+					'batch_size'        => 200
+				),
+				'gettext_empty_rows_145' => array(
+					'version'           => '1.4.5',
+					'option_name'       => 'trp_updated_database_gettext_empty_rows_145',
+					'callback'          => array( $this,'trp_updated_database_gettext_empty_rows_145'),
+					'batch_size'        => 10000
+				)
+			)
+		);
 	}
 
 
@@ -77,9 +93,12 @@ class TRP_Upgrade {
 	 * Show admin notice about updating database
 	 */
 	public function show_admin_notice(){
-		$updates_needed = $this->get_option_names_for_updates();
-		foreach( $updates_needed as $option_name ){
-			$option = get_option( $option_name, 'is not set' );
+		if ( ( isset( $_GET[ 'page'] ) && $_GET['page'] == 'trp_update_database' ) ){
+			return;
+		}
+		$updates_needed = $this->get_updates_details();
+		foreach( $updates_needed as $update ){
+			$option = get_option( $update['option_name'], 'is not set' );
 			if ( $option === 'no' ){
 				add_action( 'admin_notices', array( $this, 'admin_notice_update_database' ) );
 				break;
@@ -92,32 +111,41 @@ class TRP_Upgrade {
 	 */
 	public function admin_notice_update_database() {
 
+		$url = add_query_arg( array(
+			'page'                      => 'trp_update_database',
+		), site_url('wp-admin/admin.php') );
+
 		// maybe change notice color to blue #28B1FF
 		$html = '<div id="message" class="updated">';
 		$html .= '<p><strong>' . esc_html__( 'TranslatePress data update', 'translatepress-multilingual' ) . '</strong> &#8211; ' . esc_html__( 'We need to update your translations database to the latest version.', 'translatepress-multilingual' ) . '</p>';
-		$html .= '<form method="post" onsubmit="return confirm( \'' . __( 'IMPORTANT: It is strongly recommended to backup the database first!\nAre you sure you want to continue?', 'translatepress-multilingual' ) . '\');">
-                    <input type="hidden" name="trp_start_updb_nonce" value="' . wp_create_nonce('tpstartupdatedatabase') . '">
-                    <p>
-                    	<input type="submit" title="' . __( 'Run background updater of the translation tables for TranslatePress', 'translatepress-multilingual' ) . '" class="button-primary" value="' .__( 'Run the updater', 'translatepress-multilingual' ) . '">
-                    </p>
-                </form>';
+//		$html .= '<form method="post" onsubmit="return confirm( \'' . __( 'IMPORTANT: It is strongly recommended to backup the database first!\nAre you sure you want to continue?', 'translatepress-multilingual' ) . '\');">
+//                    <input type="hidden" name="trp_start_updb_nonce" value="' . wp_create_nonce('tpstartupdatedatabase') . '">
+//                    <p>
+//                    	<input type="submit" title="' . __( 'Run background updater of the translation tables for TranslatePress', 'translatepress-multilingual' ) . '" class="button-primary" value="' .__( 'Run the updater', 'translatepress-multilingual' ) . '">
+//                    </p>
+//                </form>';
+		$html .= '<p class="submit"><a href="' . esc_url( $url ) . '" onclick="return confirm( \'' . __( 'IMPORTANT: It is strongly recommended to backup the database first!\nAre you sure you want to continue?', 'translatepress-multilingual' ) . '\');" class="button-primary">' . esc_html__( 'Run the updater', 'translatepress-multilingual' ) . '</a></p>';
 		$html .= '</div>';
 		echo $html;
 	}
 
-	public function remote_post( $query_arguments ){
-		$url = add_query_arg( $query_arguments, admin_url( 'admin-ajax.php' ) );
-		$arguments = array(
-			'timeout'   => 0.01,
-			'blocking'  => false,
-			'body'      => '',
-			'cookies'   => $_COOKIE,
-			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
-		);
-		wp_remote_post( esc_url_raw( $url ), $arguments );
+//	public function remote_post( $query_arguments ){
+//		$url = add_query_arg( $query_arguments, admin_url( 'admin-ajax.php' ) );
+//		$arguments = array(
+//			'timeout'   => 0.01,
+//			'blocking'  => false,
+//			'body'      => '',
+//			'cookies'   => $_COOKIE,
+//			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+//		);
+//		wp_remote_get( esc_url_raw( $url ), $arguments );
+//	}
+
+	public function trp_update_database_page(){
+		require_once TRP_PLUGIN_DIR . 'partials/trp-update-database.php';
 	}
 
-	public function start_updating_db(){
+/*	public function start_updating_db(){
 		if ( isset( $_REQUEST['trp_start_updb_nonce'] ) && current_user_can( 'manage_options' ) ) {
 			$nonce = wp_verify_nonce( $_REQUEST['trp_start_updb_nonce'], 'tpstartupdatedatabase' );
 			if ( $nonce === 1 ) {
@@ -127,19 +155,16 @@ class TRP_Upgrade {
 				) );
 			}
 		}
-	}
+	}*/
 
 
 	/**
 	 * Call all functions to update database
 	 *
 	 * hooked to wp_ajax_trp_update_database
-	 *
-	 *
-	 *
 	 */
 	public function trp_update_database(){
-		error_log('we are doing it');
+//		error_log(json_encode($_REQUEST));
 		if ( ! current_user_can( 'manage_options' ) ){
 			return;
 		}
@@ -147,43 +172,53 @@ class TRP_Upgrade {
 		$nonce = wp_verify_nonce( $_REQUEST['trp_updb_nonce'], 'tpupdatedatabase' );
 		if ( $nonce === false ){
 //			echo __('Invalid nonce.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+//			error_log('nonce invalid');
 			return;
 		}
-
-		$updates_needed = $this->get_option_names_for_updates();
+		$request = array();
+		$updates_needed = $this->get_updates_details();
 		if ( empty ( $_REQUEST['trp_updb_action'] ) ){
-			foreach( $updates_needed as $option_name ) {
-				$option = get_option( $option_name, 'is not set' );
+			foreach( $updates_needed as $update_action_key => $update ) {
+				$option = get_option( $update['option_name'], 'is not set' );
 				if ( $option === 'no' ) {
-					$_REQUEST['trp_updb_action'] = $option_name;
+					$_REQUEST['trp_updb_action'] = $update_action_key;
+					break;
 				}
 			}
 			if ( empty ( $_REQUEST['trp_updb_action'] ) ){
 				// finished succesfully
-				return;
+				echo json_encode( array(
+					'trp_update_completed' => 'yes',
+					'progress_message'  => '<p><strong>' . __('Successfully updated database!', 'translatepress-multilingual' ) . '</strong></p><p><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a></p>'
+				));
+				wp_die();
 			}else{
 				$_REQUEST['trp_updb_lang'] = $this->settings['translation-languages'][0];
 				$_REQUEST['trp_updb_batch'] = 0;
 			}
 		}else{
-			if ( ! in_array ( $_REQUEST['trp_updb_action'], $updates_needed ) ){
+			if ( !isset( $updates_needed[ $_REQUEST['trp_updb_action'] ] ) ){
 				// finished with error
+				error_log('error action empty');
 				return ;
 			}
 			if ( !in_array( $_REQUEST['trp_updb_lang'], $this->settings['translation-languages'] ) ) {
 				// finish with error due to incorrect translation language
+				error_log('error translation language empty');
 				return;
 			}
 		}
 
+		$request['trp_updb_action'] = $_REQUEST['trp_updb_action'];
 		if ( !empty( $_REQUEST['trp_updb_batch'] ) && (int) $_REQUEST['trp_updb_batch'] > 0 ) {
 			$get_batch = (int)$_REQUEST['trp_updb_batch'];
 		}else{
 			$get_batch = 0;
 		}
 
-		$next_get_batch = 0;
-		$batch_size = apply_filters( 'trp_updb_batch_size', 200 );
+		$request['trp_updb_batch'] = 0;
+		$update_details = $updates_needed[$_REQUEST['trp_updb_action']];
+		$batch_size = apply_filters( 'trp_updb_batch_size', $update_details['batch_size'], $_REQUEST['trp_updb_action'], $update_details );
 		$language_code = $_REQUEST['trp_updb_lang'];
 
 		if ( ! $this->trp_query ) {
@@ -196,7 +231,7 @@ class TRP_Upgrade {
 		$duration = 0;
 		while( $duration < 2 ){
 			$inferior_limit = $batch_size * $get_batch;
-			$finished_with_language = call_user_func( array( $this, $_REQUEST['trp_updb_action'] ), $language_code, $inferior_limit, $batch_size );
+			$finished_with_language = call_user_func( $update_details['callback'], $language_code, $inferior_limit, $batch_size );
 
 			if ( $finished_with_language ) {
 				break;
@@ -207,7 +242,7 @@ class TRP_Upgrade {
 			$duration = $stop_time - $start_time;
 		}
 		if ( ! $finished_with_language ) {
-			$next_get_batch = $get_batch + 1;
+			$request['trp_updb_batch'] = $get_batch + 1;
 		}
 
 
@@ -216,28 +251,37 @@ class TRP_Upgrade {
 			$index = array_search( $language_code, $this->settings['translation-languages'] );
 			if ( isset ( $this->settings['translation-languages'][ $index + 1 ] ) ) {
 				// next language code in array
-				$next_language = $this->settings['translation-languages'][ $index + 1 ];
+				$request['trp_updb_lang'] = $this->settings['translation-languages'][ $index + 1 ];
+//				error_log('next language in array = ' . $next_language);
 			} else {
+//				error_log('finish one action = ' . $_REQUEST['trp_updb_action']);
 				// finish action due to completing all the translation languages
-				$next_language = '';
+				$request['trp_updb_lang'] = '';
 				// this will stop showing the admin notice
-				update_option( $_REQUEST['trp_updb_action'], 'yes' );
-				$_REQUEST['trp_updb_action'] = '';
+				update_option( $update_details['option_name'], 'yes' );
+				$request['trp_updb_action'] = '';
 			}
 		}else{
-			$next_language = $language_code;
+			$request['trp_updb_lang'] = $language_code;
+//			error_log('next language is same language = ' . $next_language);
 		}
 
 		// construct and redirect to next url
 		$query_arguments = array(
 			'action'                    => 'trp_update_database',
-			'trp_updb_action'           => $_REQUEST['trp_updb_action'],
-			'trp_updb_lang'             => $next_language,
-			'trp_updb_batch'            => $next_get_batch,
-			'trp_updb_nonce'            => wp_create_nonce('tpupdatedatabase')
+			'trp_updb_action'           => $request['trp_updb_action'],
+			'trp_updb_lang'             => $request['trp_updb_lang'],
+			'trp_updb_batch'            => $request['trp_updb_batch'],
+			'trp_updb_nonce'            => wp_create_nonce('tpupdatedatabase'),
+			'trp_update_completed'      => 'no',
+			'progress_message'          => '<p>' . __('In progress...', 'translatepress-multilingual' ) . '</p>'
 		);
-		$this->remote_post($query_arguments);
+//		error_log('wp_remote post = ' . json_encode($query_arguments));
+//		update_option( $query_arguments );
+		echo( json_encode( $query_arguments ));
 		wp_die();
+//		exit;
+//		wp_die();
 	}
 
 	/**
@@ -284,6 +328,10 @@ class TRP_Upgrade {
 			$trp = TRP_Translate_Press::get_trp_instance();
 			/* @var TRP_Query */
 			$this->trp_query = $trp->get_component( 'query' );
+		}
+		if ( $language_code == $this->settings['default-language']){
+			// default language doesn't have a dictionary table
+			return true;
 		}
 		error_log('full trim ' . $language_code . ', ' . $inferior_limit . ', ' . $batch_size);
 		$strings = $this->trp_query->get_rows_from_location( $language_code, $inferior_limit, $batch_size, array( 'id', 'original' ) );
@@ -428,5 +476,18 @@ class TRP_Upgrade {
 		echo "<meta http-equiv='refresh' content='0; url={$url}' />";
 		echo "<br> " . __( 'If the page does not redirect automatically', 'translatepress-multilingual' ) . " <a href='$url' >" . __( 'click here', 'translatepress-multilingual' ) . ".</a>";
 		exit;
+	}
+
+	public function enqueue_update_script( $hook ) {
+		if ( $hook === 'admin_page_trp_update_database' ) {
+			wp_enqueue_script( 'trp-update-database', TRP_PLUGIN_URL . 'assets/js/trp-update-database.js', array(
+				'jquery',
+			), TRP_PLUGIN_VERSION );
+		}
+
+		wp_localize_script( 'trp-update-database', 'trp_updb_localized ', array(
+			'admin_ajax_url' => admin_url( 'admin-ajax.php' ),
+			'nonce' => wp_create_nonce('tpupdatedatabase')
+		) );
 	}
 }

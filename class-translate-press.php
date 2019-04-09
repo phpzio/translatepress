@@ -134,7 +134,7 @@ class TRP_Translate_Press{
 
 	    $this->loader->add_action( 'admin_menu', $this->upgrade, 'register_menu_page' );
 	    $this->loader->add_action( 'admin_init', $this->upgrade, 'show_admin_notice' );
-	    $this->loader->add_action( 'admin_init', $this->upgrade, 'start_updating_db' );
+	    $this->loader->add_action( 'admin_enqueue_scripts', $this->upgrade, 'enqueue_update_script', 10, 1 );
 	    $this->loader->add_action( 'wp_ajax_trp_update_database', $this->upgrade, 'trp_update_database' );
 
     }
