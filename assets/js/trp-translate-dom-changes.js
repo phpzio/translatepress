@@ -264,12 +264,12 @@ function TRP_Translator(){
         var config = {
             attributes: true,
             childList: true,
-            characterData: true,
+            characterData: false,//this could be CDATA so I set it to false in v 1.4.5
             subtree: true
         };
 
 
-        observer.observe( document.body , config );
+        observer.observe( document.documentElement , config );
 
         jQuery( document ).ajaxComplete(function( event, request, settings ) {
             if( typeof window.parent.jQuery !== "undefined" && window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
@@ -401,10 +401,9 @@ function trp_allow_detect_dom_changes_to_run(){
 }
 
 
-// Initialize the Translate Press Editor after jQuery is ready
-jQuery( function() {
-    if ( trp_allow_detect_dom_changes_to_run() ) {
-        trpTranslator = new TRP_Translator();
-    }
-});
+// Initialize the Translate Press Editor when the script loads
+if ( trp_allow_detect_dom_changes_to_run() ) {
+    trpTranslator = new TRP_Translator();
+}
+
 

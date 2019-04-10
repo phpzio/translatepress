@@ -374,11 +374,14 @@ class TRP_Query{
         $values = array();
         $place_holders = array();
 
-        $status = !empty( $string['status'] ) ? $string['status'] : self::NOT_TRANSLATED;
 
         foreach ( $updated_strings as $string ) {
-            array_push( $values, $string['id'], $string['original'], $string['translated'], $string['domain'], $status );
-            $place_holders[] = "( '%d', '%s', '%s', '%s', '%d')";
+            $status = !empty( $string['status'] ) ? $string['status'] : self::NOT_TRANSLATED;
+
+            if( !empty( $string['id'] ) && is_numeric( $string['id'] ) && !empty( $string['original'] ) ) {//we must have an ID and an original
+                array_push($values, $string['id'], $string['original'], $string['translated'], $string['domain'], $status);
+                $place_holders[] = "( '%d', '%s', '%s', '%s', '%d')";
+            }
         }
 
         $on_duplicate = ' ON DUPLICATE KEY UPDATE translated=VALUES(translated), status=VALUES(status)';
