@@ -1118,7 +1118,7 @@ class TRP_Translation_Render{
             if ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) {
                 $trp_data['trp_ajax_url'] = $trp_data['trp_wp_ajax_url'];
             }
-            wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'), TRP_PLUGIN_VERSION );
+            wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'), TRP_PLUGIN_VERSION, true );
             wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
 	        $trp = TRP_Translate_Press::get_trp_instance();
 	        if ( ! $this->translation_manager ) {
