@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 5.1.1
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -125,6 +125,19 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.4.5 =
+* Performance improvements
+* Fixed an issue that was causing empty strings to get inserted in the database
+* Improvements to detecting dynamic js strings earlier
+* Fixes some urls for sitemap
+* We now check if str_get_html is successful to avoid fatal error
+* Fixed regular string loaded by ajax not detected in translation editor
+* We now allow translating WooCommerce product base name separately from selected variations
+* Fixed WooCommerce cart details not being translated when changing language
+* Fixed Automatic Google Translation on languages not published yet
+* Fixed Translation Editor not working in default language when no translation language is published yet
+* Fixed gettext wrapping characters showing up in WooCommerce Shipping taxes metabox on Order pages
+
 = 1.4.4 =
 * Added more filters
 * Make sure we do not insert empty strings in the gettext translation table

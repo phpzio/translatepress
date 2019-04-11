@@ -60,16 +60,23 @@
 <?php __("Page Title", "translatepress-multilingual"); ?>
 <?php __("TranslatePress data update", "translatepress-multilingual"); ?>
 <?php __("We need to update your translations database to the latest version.", "translatepress-multilingual"); ?>
+<?php __("IMPORTANT: It is strongly recommended to backup the database first!\nAre you sure you want to continue?", "translatepress-multilingual"); ?>
 <?php __("Run the updater", "translatepress-multilingual"); ?>
-<?php __("<p><strong>Successfully updated database!</strong></p>", "translatepress-multilingual"); ?>
+<?php __("Update aborted! Your user account doesn't have the capability to perform database updates.", "translatepress-multilingual"); ?>
+<?php __("Update aborted! Invalid nonce.", "translatepress-multilingual"); ?>
 <?php __("Back to TranslatePress Settings page", "translatepress-multilingual"); ?>
-<?php __("Invalid nonce.", "translatepress-multilingual"); ?>
-<?php __("If the page does not redirect automatically", "translatepress-multilingual"); ?>
-<?php __("click here", "translatepress-multilingual"); ?>
-<?php __("Querying table <strong>%s</strong>... ", "translatepress-multilingual"); ?>
+<?php __("Successfully updated database!", "translatepress-multilingual"); ?>
+<?php __("Updating database to version %s+", "translatepress-multilingual"); ?>
+<?php __("Processing table for language %s...", "translatepress-multilingual"); ?>
+<?php __("Update aborted! Incorrect action.", "translatepress-multilingual"); ?>
+<?php __("Update aborted! Incorrect language code.", "translatepress-multilingual"); ?>
+<?php __(" done.", "translatepress-multilingual"); ?>
 <?php __("Done.", "translatepress-multilingual"); ?>
+<?php __("Invalid nonce.", "translatepress-multilingual"); ?>
 <?php __("Querying table <strong>%s</strong>", "translatepress-multilingual"); ?>
 <?php __("%s duplicates removed", "translatepress-multilingual"); ?>
+<?php __("If the page does not redirect automatically", "translatepress-multilingual"); ?>
+<?php __("click here", "translatepress-multilingual"); ?>
 <?php __("<strong>TranslatePress</strong> requires <strong><a href=\"http://php.net/manual/en/book.mbstring.php\">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server.", "translatepress-multilingual"); ?>
 <?php __("Select the language you wish to make your website available in.", "translatepress-multilingual"); ?>
 <?php __("To add <strong>more then two languages</strong> and support for SEO Title, Description, Slug and more check out <a href=\"%s\" class=\"button button-primary\" target=\"_blank\" title=\"TranslatePress Pro\">TranslatePress PRO</a>", "translatepress-multilingual"); ?>
@@ -140,13 +147,11 @@
 <?php __("Find Out More", "translatepress-multilingual"); ?>
 <?php __("Remove duplicate rows from TranslatePress tables", "translatepress-multilingual"); ?>
 <?php __("<strong>IMPORTANT NOTE: Before performing this action it is strongly recommended to backup the database first.</strong><br><br>This feature can be used to cleanup duplicate entries in TranslatePress trp_dictionary tables. Such duplicates can appear in exceptional situations of unexpected behavior.", "translatepress-multilingual"); ?>
-<?php __("IMPORTANT: It is strongly recommended to backup the database first!\nAre you sure you want to continue?", "translatepress-multilingual"); ?>
 <?php __("Batch size", "translatepress-multilingual"); ?>
 <?php __("The number of rows to check at once.<br>Choosing a smaller number helps solve the 502 error \"Page took too long to respond\" on large databases.<br>May take several minutes depending on the database size.", "translatepress-multilingual"); ?>
 <?php __("Remove duplicate rows", "translatepress-multilingual"); ?>
-<?php __("Update TranslatePress tables", "translatepress-multilingual"); ?>
-<?php __("<p><strong>IMPORTANT NOTE: Before performing this action it is strongly recommended to backup the database first.</strong></p>", "translatepress-multilingual"); ?>
-<?php __("Update database", "translatepress-multilingual"); ?>
+<?php __("TranslatePress Database Updater", "translatepress-multilingual"); ?>
+<?php __("Updating TranslatePress tables", "translatepress-multilingual"); ?>
 <?php __(" TranslatePress Settings", "translatepress-multilingual"); ?>
 <?php __("Translator", "translatepress-multilingual"); ?>
 <?php __("Allow this user to translate the website.", "translatepress-multilingual"); ?>
