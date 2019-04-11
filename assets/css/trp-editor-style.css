@@ -217,11 +217,6 @@ span.select2-container{
     justify-content: space-between;
 }
 
-input.trp-add-media{
-    float:right;
-    margin-right: -9px;
-}
-
 .trp-toggle-languages span,
 .trp-next-previous-buttons span {
     font-size: initial;
@@ -446,3 +441,93 @@ spin {
 .select2-results{
     max-height: 400px !important;
 }
+
+
+/*
+Language boxes component
+ */
+.trp-changes-unsaved-message{
+    color: red;
+    padding-bottom: 10px;
+}
+
+.trp-language-name{
+    padding-bottom: 10px;
+    color: black;
+}
+.trp-discard-individual-changes{
+    float: right;
+    margin-top: -15px;
+    font-size: 11px;
+}
+
+.trp-discard-changes{
+    color: darkgrey;
+    user-select: none;
+}
+
+.trp-unsaved-changes.trp-discard-changes{
+    color: #a00;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.trp-unsaved-changes.trp-discard-changes:hover{
+    color: #dc3232;
+    cursor: pointer;
+}
+
+
+/*
+Translation Input component
+ */
+
+.trp-translation-input-header{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 3px;
+}
+.trp-translation-input-header-item{
+    display: inline-block;
+    vertical-align: baseline;
+    position:relative;
+}
+.trp-attribute-name{
+    position: absolute;
+    bottom:0;
+}
+.trp-translation-input-header-item.trp-no-media{
+    padding-top: 20px;
+}
+.trp-add-media{
+    margin-top:5px;
+}
+
+
+.trp-translation-input-parent {
+    padding-right: 9px;
+    padding-bottom: 15px;
+}
+.trp-translation-input{
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-size: 14px;
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+    padding: 3px;
+    border: 1px solid  #aaa;
+    border-radius:3px;
+}
+.trp-translation-input[readonly="readonly"]{
+    background: #EBEBE4;
+    border: 1px solid  #aaa;
+    outline-width: 0;
+}
+
+.trp-textarea{
+    height: 80px;
+}
+.trp-highlight-unsaved-changes .trp-translation-input{
+    border:solid 2px red
+}
+
+

@@ -10,7 +10,7 @@
                 </div>
                 <div class="trp-translations-container">
                     <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
-                        <div v-if="dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
+                        <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
                             <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :highlightUnsavedChanges="showChangesUnsavedMessage && hasUnsavedChanges( selectedIndex, languageCode )"></translation-input>
                             <div class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">Discard changes</div>
                         </div>
@@ -127,36 +127,3 @@
         }
     }
 </script>
-
-<style>
-    .trp-changes-unsaved-message{
-        color: red;
-        padding-bottom: 10px;
-    }
-
-    .trp-language-name{
-        padding-bottom: 10px;
-        color: black;
-    }
-    .trp-discard-individual-changes{
-        float: right;
-        margin-top: -15px;
-        font-size: 11px;
-    }
-
-    .trp-discard-changes{
-        color: darkgrey;
-        user-select: none;
-    }
-
-    .trp-unsaved-changes.trp-discard-changes{
-        color: #a00;
-        cursor: pointer;
-        text-decoration: underline;
-    }
-    .trp-unsaved-changes.trp-discard-changes:hover{
-        color: #dc3232;
-        cursor: pointer;
-    }
-
-</style>
