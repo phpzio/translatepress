@@ -749,4 +749,10 @@ class TRP_Query{
 		$prepared_query = $this->db->prepare($query . ' ', $values);
 		$this->db->query( $prepared_query );
 	}
+
+	public function delete_empty_gettext_strings( $language_code, $limit ){
+		$limit = (int) $limit;
+		$sql = "DELETE FROM `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ). "` WHERE (original IS NULL OR original = '') LIMIT " . $limit;
+		return $this->db->query( $sql );
+	}
 }
