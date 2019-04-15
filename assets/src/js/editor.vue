@@ -507,14 +507,16 @@
             hasUnsavedChanges(){
                 let unsavedChanges = false
                 let self = this
-                this.selectedIndexesArray.forEach(function(selectedIndex){
-                    self.settings['translation-languages'].forEach( function( languageCode  ) {
-                        if ( self.dictionary[selectedIndex].translationsArray[languageCode] &&
-                            (self.dictionary[selectedIndex].translationsArray[languageCode].translated !== self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation) ) {
-                            unsavedChanges = true
-                        }
+                if ( this.selectedIndexesArray.length > 0 ) {
+                    this.selectedIndexesArray.forEach(function (selectedIndex) {
+                        self.settings['translation-languages'].forEach(function (languageCode) {
+                            if (self.dictionary[selectedIndex].translationsArray[languageCode] &&
+                                (self.dictionary[selectedIndex].translationsArray[languageCode].translated !== self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation)) {
+                                unsavedChanges = true
+                            }
+                        })
                     })
-                })
+                }
                 this.showChangesUnsavedMessage = unsavedChanges
 
                 return unsavedChanges

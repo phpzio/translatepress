@@ -14,7 +14,7 @@
                             <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :highlightUnsavedChanges="showChangesUnsavedMessage && hasUnsavedChanges( selectedIndex, languageCode )"></translation-input>
                             <div class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">Discard changes</div>
                         </div>
-                        <div v-else :key="selectedIndex">
+                        <div v-else-if="dictionary[selectedIndex]" :key="selectedIndex">
                             <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original"></translation-input>
                         </div>
                     </div>

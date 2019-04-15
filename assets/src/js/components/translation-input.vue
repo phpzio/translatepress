@@ -1,20 +1,23 @@
 <template>
     <div class="translation-input" :class="{'trp-highlight-unsaved-changes':highlightUnsavedChanges}">
         <div class="trp-translation-input-header" v-show="attributeName != ''">
-            <div class="trp-translation-input-header-item" :class="{'trp-no-media': inputType != 'addmedia'}">
+            <div class="trp-translation-input-header-item" :class="{'trp-no-media': inputType != 'inputmedia'}">
                 <div class="trp-attribute-name"  v-show="attributeName != 'Content'">
                     {{attributeName}}
                 </div>
             </div>
             <div class="trp-translation-input-header-item">
-                <input v-show="inputType == 'addmedia'" type="button" class="trp-add-media" value="Add Media">
+                <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" value="Add Media" @click="openMediaUpload($event)">
             </div>
         </div>
         <div v-if="inputType == 'textarea'" class="trp-translation-input-parent">
             <textarea class="trp-translation-input trp-textarea" :readonly="readonly" ref="textarea" :value="value" @input="updateValue()"></textarea>
         </div>
-        <div v-if="inputType == 'input' || inputType == 'addmedia' " class="trp-translation-input-parent">
-            <input class="trp-translation-input trp-input" :class="{'trp-media' : inputType == 'addmedia' }" :readonly="readonly" ref="input" :value="value" @input="updateValue()">
+        <div v-if="inputType == 'input'" class="trp-translation-input-parent">
+            <input class="trp-translation-input trp-input" :class="{'trp-media' : inputType == 'inputmedia' }" :readonly="readonly" ref="input" :value="value" @input="updateValue( null )">
+        </div>
+        <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent">
+            <input class="trp-translation-input trp-input trp-media" :readonly="readonly" ref="inputmedia" :value="value" @input="updateValue( null )">
         </div>
     </div>
 </template>
@@ -23,10 +26,7 @@ export default{
     props:[
         'value',
         'string',
-        'translated',
-        'disabled',
         'readonly',
-        'editedValue',
         'highlightUnsavedChanges'
     ],
     data(){
@@ -44,14 +44,29 @@ export default{
             'placeholder' : 'textarea',
             'outertext'   : 'input',
             'value'       : 'input',
-            'src'         : 'addmedia',
-            'href'        : 'addmedia'
+            'src'         : 'inputmedia',
+            'href'        : 'inputmedia'
         };
         this.inputType = ( inputTypeArray[this.string.attribute] ) ? inputTypeArray[this.string.attribute] : 'textarea'
+        this.inputType = (this.readonly && this.inputType === 'inputmedia' ) ? 'input' : this.inputType;
     },
     methods:{
-        updateValue(){
-            this.$emit( 'input', this.$refs[this.inputType].value )
+        updateValue( value ){
+            value = ( value ) ? value : this.$refs[this.inputType].value
+            this.$emit( 'input', value )
+        },
+        openMediaUpload(event){
+            event.preventDefault()
+            let self = this
+            if (wp.media && wp.media.editor) {
+                wp.media.editor.send.attachment = function (props, attachment) {
+                    self.updateValue(attachment.url)
+                }
+                wp.media.editor.open()
+            }else{
+                console.log( 'TranslatePress Error: WP Media not loaded')
+            }
+            return false
         }
     }
 }
