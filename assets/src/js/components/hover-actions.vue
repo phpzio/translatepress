@@ -37,6 +37,9 @@
                 //@TODO: add/research more
                 let beforePosition = [ 'IMG', 'INPUT', 'TEXTAREA' ]
 
+                if( self.hoveredTarget != '' && target.isSameNode( self.hoveredTarget ) )
+                    return
+
                 //if other icons are showing, remove them
                 self.removePencilIcon()
 
