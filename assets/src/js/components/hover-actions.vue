@@ -55,11 +55,20 @@
                 //insert button HTML
                 target.insertAdjacentHTML( position, this.html )
 
+                //inserted node
+                let trpSpan = self.iframe.getElementsByTagName( 'trp-span' )[0]
+
+                //figure out if split or merge is available
+                mergeOrSplit = self.checkMergeOrSplit( target )
+
+                //fit inside view
+                self.fitPencilIconInsideView( trpSpan, target, mergeOrSplit )
+
                 //get node info based on where we inserted our button
                 if( position == 'afterbegin' )
-                    relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].parentNode
+                    relatedNode = trpSpan.parentNode
                 else
-                    relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].nextElementSibling
+                    relatedNode = trpSpan.nextElementSibling
 
                 //edit string button
                 let editButton = this.iframe.querySelector( 'trp-edit' )
@@ -88,9 +97,7 @@
                 self.hoveredStringIndex = this.$parent.getStringIndex( stringSelector, stringId )
                 self.hoveredTarget      = target
 
-                //figure out if split or merge is available
-                mergeOrSplit = self.checkMergeOrSplit( target )
-
+                //merge or split event listeners
                 if( mergeOrSplit != 'none' && !self.mergeData.includes( stringId ) ) {
                     let button = this.iframe.querySelector( 'trp-' + mergeOrSplit )
 
@@ -333,6 +340,17 @@
 
                 return true
             },
+            fitPencilIconInsideView( pencil, target, mergeOrSplit ){
+                let rect = target.getBoundingClientRect(), margin
+
+                if( mergeOrSplit != 'none' )
+                    margin = 60
+                else
+                    margin = 30
+
+                if( rect.left < 35 )
+                    pencil.setAttribute( 'style', 'margin-left: ' + margin + 'px !important' )
+            }
         }
     }
 </script>
