@@ -36,8 +36,6 @@
                         </div>
 
                         <div id="trp-string-list">
-                            <!-- @NOTE: Move to a component ?
-                            Because this is simply a listing which gets data and then displays it accordingly -->
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
                                 <optgroup v-for="(group) in stringGroups" :label="group">
                                     <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, group )" :title="string.description" :data-database-id="string.dbID" :data-group="string.group">{{ processOptionName( string.original, group ) }}</option>
@@ -393,7 +391,7 @@
             },
             getStringIndex( selector, dbID ){
                 let found = null
-
+                
                 this.dictionary.some(function ( string, index ) {
                     if ( string.dbID == dbID && string.selector == selector ){
                         found = index

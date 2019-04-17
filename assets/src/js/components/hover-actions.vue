@@ -26,9 +26,9 @@
         },
         methods:{
             showPencilIcon( element ){
-                //@NOTE:
-                //do not show this if dictionary is not initialized yet ? Thing is the event listeners are registered first
-                //and users can click on strings before the dictionary and select is initialized
+                if( !this.dictionary || this.dictionary.length < 1 )
+                    return
+
                 let self = this
                 let target = element.target
                 let relatedNode, relatedNodeAttr, position, stringSelector, stringId, mergeOrSplit
