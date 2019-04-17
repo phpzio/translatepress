@@ -128,56 +128,25 @@ function TRP_Translator(){
             var nodeInfo = [];
             mutations.forEach( function (mutation) {
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
-                    if ( mutation.addedNodes[i].textContent && _this.trim( mutation.addedNodes[i].textContent.trim(), except_characters ) != '' ) {
-                        var node = jQuery( mutation.addedNodes[i] );
-
-                        /* if it is an anchor add the trp-edit-translation=preview parameter to it */
-                        if ( _this.is_editor ) {
-                            jQuery(mutation.addedNodes[i]).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(mutation.addedNodes[i]).find('a').context.href);
-                        }
-
-                        if ( skip_string(node) ){
-                            continue;
-                        }
-
-                        var direct_string = get_string_from_node( mutation.addedNodes[i] );
-                        if ( direct_string ) {
-                            if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
-                                var extracted_original = _this.trim(direct_string.textContent, trim_characters);
-                                nodeInfo.push({
-                                    node: mutation.addedNodes[i],
-                                    original: extracted_original
-                                });
-                                string_originals.push(extracted_original)
-
-                                direct_string.textContent = '';
-                                if ( _this.is_editor ) {
-                                    jQuery(mutation.addedNodes[i]).wrap('<translate-press></translate-press>');
-                                }
-                            }
-                        }else{
-                            var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
-                            var all_strings = all_nodes.contents().filter(function(){
-                                if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                        if ( ! skip_string(this) ){
-                                                return this;
-                                            }
-                                    }});
-                            if ( _this.is_editor ) {
-                                all_strings.wrap('<translate-press></translate-press>');
-                            }
-                            var all_strings_length = all_strings.length;
-                            for (var j = 0; j < all_strings_length; j++ ) {
-                                if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                                    nodeInfo.push({node: all_strings[j], original: all_strings[j].textContent });
-                                    string_originals.push( all_strings[j].textContent )
-                                    if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
-                                        all_strings[j].textContent = '';
-                                    }
-                                }
-                            }
-                        }
+                    var node = mutation.addedNodes[i]
+                    /* if it is an anchor add the trp-edit-translation=preview parameter to it */
+                    if ( _this.is_editor ) {
+                        jQuery(node).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(node).find('a').context.href);
                     }
+
+                    if ( _this.skip_string(node) ){
+                        continue;
+                    }
+
+                    // text content
+                    var translateable = _this.get_translateable_textcontent( node )
+                    string_originals = string_originals.concat( translateable.string_originals );
+                    nodeInfo = nodeInfo.concat( translateable.nodeInfo );
+
+                    // attributes
+                    // node.find('[]')
+                    // string_originals = string_originals.concat( translateable.string_originals );
+                    // nodeInfo = nodeInfo.concat( translateable.nodeInfo );
                 }
             });
             if ( nodeInfo.length > 0 ) {
@@ -187,7 +156,7 @@ function TRP_Translator(){
         }
     };
 
-    function skip_string(node){
+    this.skip_string = function(node){
         // skip nodes containing these attributes
         var selectors = trp_data.trp_skip_selectors;
         for (var i = 0; i < selectors.length ; i++ ){
@@ -196,11 +165,60 @@ function TRP_Translator(){
             }
         }
         return false;
+    };
+
+    this.get_translateable_textcontent = function( node ){
+        var string_originals = [];
+        var nodeInfo = [];
+        if ( node.textContent && _this.trim( node.textContent.trim(), except_characters ) != '' ) {
+            // node = jQuery( node );
+
+            var direct_string = get_string_from_node( node );
+            if ( direct_string ) {
+                // a text without HTML was added
+                if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
+                    var extracted_original = _this.trim(direct_string.textContent, trim_characters);
+                    nodeInfo.push({
+                        node: node,
+                        original: extracted_original
+                    });
+                    string_originals.push(extracted_original)
+
+                    direct_string.textContent = '';
+                    if ( _this.is_editor ) {
+                        jQuery(node).wrap('<translate-press></translate-press>');
+                    }
+                }
+            }else{
+                // node contains HTML
+                var all_nodes = jQuery( node ).find( '*').addBack();
+                var all_strings = all_nodes.contents().filter(function(){
+                    if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
+                        if ( ! _this.skip_string(this) ){
+                            return this;
+                        }
+                    }});
+                if ( _this.is_editor ) {
+                    all_strings.wrap('<translate-press></translate-press>');
+                }
+                var all_strings_length = all_strings.length;
+                for (var j = 0; j < all_strings_length; j++ ) {
+                    if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
+                        nodeInfo.push({node: all_strings[j], original: all_strings[j].textContent });
+                        string_originals.push( all_strings[j].textContent )
+                        if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
+                            all_strings[j].textContent = '';
+                        }
+                    }
+                }
+            }
+        }
+        return { 'string_originals': string_originals, 'nodeInfo': nodeInfo };
     }
 
     function get_string_from_node( node ){
         if( node.nodeType === 3 && /\S/.test(node.nodeValue) ){
-            if ( ! skip_string(node) ){
+            if ( ! _this.skip_string(node) ){
                 return node;
             }
         }

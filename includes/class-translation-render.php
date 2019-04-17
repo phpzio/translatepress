@@ -535,72 +535,24 @@ class TRP_Translation_Render{
             }
         }
 
-        foreach ( $html->find('input[type=\'submit\'],input[type=\'button\']') as $k => $row ){
-	        $trimmed_string = trp_full_trim($row->value);
-            if( $trimmed_string!=""
-                && !is_numeric($trimmed_string)
-                && !preg_match('/^\d+%$/',$trimmed_string)
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
-                && !$this->has_ancestor_class( $row, 'translation-block') )
-            {
-                    array_push( $translateable_strings, html_entity_decode( $row->value ) );
-                    array_push( $nodes, array('node'=>$row,'type'=>'submit') );
-            }
-        }
-        foreach ( $html->find('input[type=\'text\'],input[type=\'password\'],input[type=\'search\'],input[type=\'email\'],input:not([type]),textarea') as $k => $row ){
-	        $trimmed_string = trp_full_trim($row->placeholder);
-            if( $trimmed_string!=""
-                && !is_numeric($trimmed_string)
-                && !preg_match('/^\d+%$/',$trimmed_string)
-                && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
-                && !$this->has_ancestor_class( $row, 'translation-block') )
-            {
-                    array_push( $translateable_strings, html_entity_decode ( $row->placeholder ) );
-                    array_push( $nodes, array('node'=>$row,'type'=>'placeholder') );
-            }
-        }
-	    foreach ( $html->find('img') as $k => $row ) {
-		    $trimmed_string = trp_full_trim($row->src);
-		    // @todo src-set, lazy load, etc
-		    // @todo don't machine translate this
-		    if( $trimmed_string!=""
-		        && !preg_match('/^\d+%$/',$trimmed_string)
-		        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
-		        && !$this->has_ancestor_class( $row, 'translation-block')
-		    )
-		    {
-			    array_push( $translateable_strings, $trimmed_string );
-			    array_push( $nodes, array('node'=>$row,'type'=>'image_src') );
+	    $node_accessors = $this->get_node_accessors();
+	    foreach( $node_accessors as $node_accessor_key => $node_accessor ){
+	    	if ( isset( $node_accessor['selector'] ) ){
+			    foreach ( $html->find( $node_accessor['selector'] ) as $k => $row ){
+			    	$current_node_accessor_selector = $node_accessor['accessor'];
+				    $trimmed_string = trp_full_trim($row->$current_node_accessor_selector);
+				    if( $trimmed_string!=""
+				        && !is_numeric($trimmed_string)
+				        && !preg_match('/^\d+%$/',$trimmed_string)
+				        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+				        && !$this->has_ancestor_class( $row, 'translation-block') )
+				    {
+					    array_push( $translateable_strings, html_entity_decode( $trimmed_string ) );
+					    array_push( $nodes, array( 'node'=>$row, 'type' => $node_accessor_key ) );
+				    }
+			    }
 		    }
 	    }
-	    foreach ( $html->find('a[href]') as $k => $row ) {
-        	// @todo should be ignored by later processing of internal link if it was manually translated
-        	// @todo don't machine translate this
-		    $trimmed_string = trp_full_trim($row->href);
-		    if( $trimmed_string!=""
-		        && !preg_match('/^\d+%$/',$trimmed_string)
-		        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
-		        && !$this->has_ancestor_class( $row, 'translation-block')
-		    )
-		    {
-			    array_push( $translateable_strings, $trimmed_string );
-			    array_push( $nodes, array('node'=>$row,'type'=>'a_href') );
-		    }
-	    }
-	    foreach ( $html->find('[title]') as $k => $row ) {
-		    $trimmed_string = trp_full_trim($row->title);
-		    if( $trimmed_string!=""
-		        && !preg_match('/^\d+%$/',$trimmed_string)
-		        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
-		        && !$this->has_ancestor_class( $row, 'translation-block')
-		    )
-		    {
-			    array_push( $translateable_strings, $trimmed_string );
-			    array_push( $nodes, array('node'=>$row,'type'=>'title') );
-		    }
-	    }
-
-
 
         $translateable_information = array( 'translateable_strings' => $translateable_strings, 'nodes' => $nodes );
         $translateable_information = apply_filters( 'trp_translateable_strings', $translateable_information, $html, $no_translate_attribute, $TRP_LANGUAGE, $language_code, $this );
@@ -614,67 +566,13 @@ class TRP_Translation_Render{
         if ( $preview_mode ) {
             $translated_string_ids = $this->trp_query->get_string_ids($translateable_strings, $language_code);
         }
-        $node_accessor = apply_filters( 'trp_node_accessors', array(
-            'text' => array(
-                'accessor' => 'outertext',
-                'attribute' => false
-            ),
-            'block' => array(
-                'accessor' => 'innertext',
-                'attribute' => false
-            ),
-            'page_title' => array(
-                'accessor' => 'outertext',
-                'attribute' => false
-            ),
-            'meta_desc' => array(
-                'accessor' => 'content',
-                'attribute' => true
-            ),
-            'post_slug' => array(
-                'accessor' => 'content',
-                'attribute' => false
-            ),
-            'image_alt' => array(
-                'accessor' => 'alt',
-                'attribute' => false
-            ),
-            'image_src' => array(
-            	'accessor' => 'src',
-				'attribute' => true
-            ),
-            'submit' => array(
-                'accessor' => 'value',
-                'attribute' => true
-            ),
-            'placeholder' => array(
-	            'accessor' => 'placeholder',
-	            'attribute' => true
-            ),
-            'title' => array(
-	            'accessor' => 'title',
-	            'attribute' => true
-            ),
-            'a_href' => array(
-	            'accessor' => 'href',
-	            'attribute' => true
-            ),
-            'button' => array(
-                'accessor' => 'outertext',
-                'attribute' => false
-            ),
-            'option' => array(
-                'accessor' => 'innertext',
-                'attribute' => false
-            )
-        ));
 
         foreach ( $nodes as $i => $node ) {
             $translation_available = isset( $translated_strings[$i] );
             if ( ! ( $translation_available || $preview_mode ) ){
                 continue;
             }
-            $current_node_accessor = $node_accessor[ $nodes[$i]['type'] ];
+            $current_node_accessor = $node_accessors[ $nodes[$i]['type'] ];
             $accessor = $current_node_accessor[ 'accessor' ];
             if ( $translation_available && isset( $current_node_accessor ) && ! ( $preview_mode && ( $this->settings['default-language'] == $TRP_LANGUAGE ) ) ) {
 
@@ -1052,6 +950,76 @@ class TRP_Translation_Render{
         return false;
     }
 
+	/**
+	 * Which attributes to translate and how to access them
+	 *
+	 * Nodes with "selector" attribute are automatically searched for in PHP translate_page and in JS translate-dom-changes
+	 *
+	 * @return array
+	 */
+    public function get_node_accessors(){
+	    return apply_filters( 'trp_node_accessors', array(
+		    'text' => array(
+			    'accessor' => 'outertext',
+			    'attribute' => false
+		    ),
+		    'block' => array(
+			    'accessor' => 'innertext',
+			    'attribute' => false
+		    ),
+		    'page_title' => array(
+			    'accessor' => 'outertext',
+			    'attribute' => false
+		    ),
+		    'meta_desc' => array(
+			    'accessor' => 'content',
+			    'attribute' => true
+		    ),
+		    'post_slug' => array(
+			    'accessor' => 'content',
+			    'attribute' => false
+		    ),
+		    'image_alt' => array(
+		    	'selector' => 'img[alt]',
+			    'accessor' => 'alt',
+			    'attribute' => false
+		    ),
+		    'image_src' => array(
+		    	'selector' => 'img[src]',
+			    'accessor' => 'src',
+			    'attribute' => true
+		    ),
+		    'submit' => array(
+		    	'selector' => 'input[type=\'submit\'],input[type=\'button\']',
+			    'accessor' => 'value',
+			    'attribute' => true
+		    ),
+		    'placeholder' => array(
+		    	'selector' => 'input[type=\'text\'][placeholder],input[type=\'password\'][placeholder],input[type=\'search\'][placeholder],input[type=\'email\'][placeholder],input[placeholder]:not([type]),textarea[placeholder]',
+			    'accessor' => 'placeholder',
+			    'attribute' => true
+		    ),
+		    'title' => array(
+		    	'selector' => '[title]',
+			    'accessor' => 'title',
+			    'attribute' => true
+		    ),
+		    'a_href' => array(
+		    	'selector' => 'a[href]',
+			    'accessor' => 'href',
+			    'attribute' => true
+		    ),
+		    'button' => array(
+			    'accessor' => 'outertext',
+			    'attribute' => false
+		    ),
+		    'option' => array(
+			    'accessor' => 'innertext',
+			    'attribute' => false
+		    )
+	    ));
+    }
+
     /**
      * Enqueue dynamic translation script.
      */
@@ -1084,7 +1052,8 @@ class TRP_Translation_Render{
 				'trp_language_to_query'               => $language_to_query,
 				'trp_original_language'               => $this->settings['default-language'],
 				'trp_current_language'                => $TRP_LANGUAGE,
-				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]' ), $TRP_LANGUAGE, $this->settings ),
+				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]', 'trp-span' ), $TRP_LANGUAGE, $this->settings ),
+				'trp_attributes_selectors'            => apply_filters( 'trp_attributes_selectors_for_dynamic_translation', array( 'input[type=\'submit\'],input[type=\'button\']', 'img[src]', 'input[placeholder]', '[title]', 'img[alt]', 'a[href]', '' ), $TRP_LANGUAGE, $this->settings ),
 				'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
 				'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
             );
