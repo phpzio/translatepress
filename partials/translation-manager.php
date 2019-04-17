@@ -51,6 +51,8 @@
     $string_groups = apply_filters( 'trp_string_group_order', array_values( $translation_manager->string_groups() ) );
 
     $merge_rules = $translation_manager->get_merge_rules();
+
+    $localized_text = $translation_manager->localized_text();
     ?>
 
     <title>TranslatePress</title>
@@ -73,6 +75,7 @@
             ajax_url='<?php echo apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
             string_group_order='<?php echo json_encode( $string_groups ); ?>'
             merge_rules='<?php echo json_encode( $merge_rules ); ?>'
+            localized_text='<?php echo json_encode( $localized_text ); ?>'
         >
         </trp-editor>
     </div>

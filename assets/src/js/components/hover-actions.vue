@@ -15,11 +15,11 @@
             'mergeRules',
             'ajax_url',
             'nonces',
-            'mergeData'
+            'mergeData',
+            'editorStrings'
         ],
         data(){
             return{
-                html               : '<trp-span><trp-merge title="Merge" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="Split" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="Edit" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>',
                 hoveredStringIndex : '',
                 hoveredTarget      : '',
             }
@@ -53,7 +53,7 @@
                     position = 'afterbegin'
 
                 //insert button HTML
-                target.insertAdjacentHTML( position, this.html )
+                target.insertAdjacentHTML( position, this.getTrpSpan() )
 
                 //inserted node
                 let trpSpan = self.iframe.getElementsByTagName( 'trp-span' )[0]
@@ -130,7 +130,7 @@
 
                 this.$parent.mergingString = false
 
-                let split = confirm( 'Are you sure you want to split ?' )
+                let split = confirm( this.editorStrings.split_confirmation )
 
                 if( split === false )
                     return
@@ -350,6 +350,9 @@
 
                 if( rect.left < 35 )
                     pencil.setAttribute( 'style', 'margin-left: ' + margin + 'px !important' )
+            },
+            getTrpSpan() {
+                return '<trp-span><trp-merge title="'+ this.editorStrings.merge +'" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="'+ this.editorStrings.split +'" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="'+ this.editorStrings.edit +'" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>'
             }
         }
     }

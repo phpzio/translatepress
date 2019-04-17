@@ -1,27 +1,27 @@
 <template>
     <div id="trp-translation-section" class="trp-controls-section-content" v-if="selectedIndexesArray">
-        <div v-show="showChangesUnsavedMessage" class="trp-changes-unsaved-message">You have unsaved changes! <span class="trp-unsaved-changes trp-discard-changes "@click="discardAll">Discard all</span>?</div>
+        <div v-show="showChangesUnsavedMessage" class="trp-changes-unsaved-message">{{ editorStrings.unsaved_changes }} <span class="trp-unsaved-changes trp-discard-changes "@click="discardAll">{{ editorStrings.discard_all }}</span>?</div>
         <div v-for="(languageCode, key) in languages" :id="'trp-language-' + languageCode" class="trp-language-container">
             <div v-show="(key <= othersButtonPosition) || showOtherLanguages">
                 <div class="trp-language-name">
-                    <span v-if="key == 0 ">From </span>
-                    <span v-else>To </span>
+                    <span v-if="key == 0 ">{{ editorStrings.from }} </span>
+                    <span v-else>{{ editorStrings.to }} </span>
                     {{ completeLanguageNames[languageCode] }}
                 </div>
                 <div class="trp-translations-container">
                     <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
                         <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
-                            <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :highlightUnsavedChanges="showChangesUnsavedMessage && hasUnsavedChanges( selectedIndex, languageCode )"></translation-input>
-                            <div class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">Discard changes</div>
+                            <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :highlightUnsavedChanges="showChangesUnsavedMessage && hasUnsavedChanges( selectedIndex, languageCode )" :editorStrings="editorStrings"></translation-input>
+                            <div class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">{{ editorStrings.discard }}</div>
                         </div>
                         <div v-else-if="dictionary[selectedIndex]" :key="selectedIndex">
-                            <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original"></translation-input>
+                            <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original" :editorStrings="editorStrings"></translation-input>
                         </div>
                     </div>
                 </div>
                 <div v-show="key == othersButtonPosition">
                     <div class="trp-toggle-languages" @click="showOtherLanguages = !showOtherLanguages" :class="{ 'trp-show-other-languages': showOtherLanguages, 'trp-hide-other-languages': !showOtherLanguages }">
-                        <span>{{ (showOtherLanguages)? '&#11206;' : '&#11208;' }} Other languages</span>
+                        <span>{{ (showOtherLanguages)? '&#11206;' : '&#11208;' }} {{ editorStrings.other_lang }}</span>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,8 @@
             'onScreenLanguage',
             'languageNames',
             'settings',
-            'showChangesUnsavedMessage'
+            'showChangesUnsavedMessage',
+            'editorStrings'
         ],
         data(){
             return{

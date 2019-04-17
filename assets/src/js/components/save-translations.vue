@@ -1,7 +1,7 @@
 <template>
     <div id="trp-save-container">
-        <span id="trp-translation-saved" style="display: none">Saved</span>
-        <button id="trp-save" type="submit" class="button-primary trp-save-string" @click="save">Save translation</button>
+        <span id="trp-translation-saved" style="display: none">{{ editorStrings.saved }}</span>
+        <button id="trp-save" type="submit" class="button-primary trp-save-string" @click="save">{{ editorStrings.save_translation }}</button>
     </div>
 </template>
 <script>
@@ -21,6 +21,7 @@
             'currentURL',
             'mergingString',
             'mergeData',
+            'editorStrings'
         ],
         data(){
             return {

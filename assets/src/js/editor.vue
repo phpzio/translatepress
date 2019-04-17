@@ -5,7 +5,7 @@
             <div class="trp-controls-container">
 
                 <div id="trp-close-save">
-                    <a id="trp-controls-close" :href="closeURL"></a>
+                    <a id="trp-controls-close" :href="closeURL" :title="editorStrings.close"></a>
                     <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
                         <div class="trp-spinner"></div>
                     </span>
@@ -22,6 +22,7 @@
                             :mergingString="mergingString"
                             :mergeData="mergeData"
                             @translations-saved="showChangesUnsavedMessage = false"
+                            :editorStrings="editorStrings"
                     >
                     </save-translations>
                 </div>
@@ -44,14 +45,14 @@
                         </div>
 
                         <div id="trp-next-previous">
-                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> Previous</button>
-                            <button type="button" id="trp-next" class="trp-next-previous-buttons">Next <span>&raquo;</span></button>
+                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> {{ editorStrings.next }}</button>
+                            <button type="button" id="trp-next" class="trp-next-previous-buttons">{{ editorStrings.previous }} <span>&raquo;</span></button>
                         </div>
 
                         <div id="trp-view-as">
-                            <div id="trp-view-as-description">View as</div>
+                            <div id="trp-view-as-description">{{ editorStrings.view_as }}</div>
                             <select id="trp-view-as-select">
-                                <option v-for="(role, roleIndex) in roles" :value="role" :disabled="!role" :title="!role ? 'Available in our Pro Versions' : ''">{{roleIndex}}</option>
+                                <option v-for="(role, roleIndex) in roles" :value="role" :disabled="!role" :title="!role ? editorStrings.view_as_pro : ''">{{roleIndex}}</option>
                             </select>
                         </div>
                     </div>
@@ -68,6 +69,7 @@
                             :settings="settings"
                             :showChangesUnsavedMessage="showChangesUnsavedMessage"
                             @discarded-changes="hasUnsavedChanges()"
+                            :editorStrings="editorStrings"
                     >
                     </language-boxes>
                 </div>
@@ -86,6 +88,7 @@
                 :nonces="nonces"
                 :ajax_url="ajax_url"
                 :mergeData="mergeData"
+                :editorStrings="editorStrings"
             >
             </hover-actions>
         </div>
@@ -119,7 +122,8 @@
             'ajax_url',
             'editor_nonces',
             'string_group_order',
-            'merge_rules'
+            'merge_rules',
+            'localized_text'
         ],
         components:{
             languageBoxes,
@@ -138,6 +142,7 @@
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 mergeRules                : JSON.parse( this.merge_rules ),
+                editorStrings             : JSON.parse( this.localized_text ),
                 //data
                 currentLanguage           : this.current_language,
                 onScreenLanguage          : this.on_screen_language,
@@ -161,7 +166,7 @@
             let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            jQuery( '#trp-string-categories' ).select2( { placeholder : 'Loading strings...', width : '100%' } ).prop( 'disabled', true )
+            jQuery( '#trp-string-categories' ).select2( { placeholder : self.editorStrings.strings_loading, width : '100%' } ).prop( 'disabled', true )
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -174,6 +179,8 @@
                     e.preventDefault();
                 }
             })
+
+
         },
         watch: {
             currentLanguage: function( currentLanguage ) {
@@ -195,7 +202,7 @@
                 }
             },
             currentURL: function ( newUrl, oldUrl ) {
-                window.history.replaceState( null, null, this.parentURL( newUrl ) )
+                window.history.pushState( null, null, this.parentURL( newUrl ) )
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
                 if( this.hasUnsavedChanges() || !selectedStringArrayIndex )
@@ -391,7 +398,7 @@
             },
             getStringIndex( selector, dbID ){
                 let found = null
-                
+
                 this.dictionary.some(function ( string, index ) {
                     if ( string.dbID == dbID && string.selector == selector ){
                         found = index
@@ -480,10 +487,12 @@
                 return false
             },
             initStringsDropdown(){
+                let self = this
+
                 if ( !this.isStringsDropdownOpen() ) {
                     jQuery( '#trp-string-categories' ).select2( 'destroy' )
 
-                    jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
+                    jQuery( '#trp-string-categories' ).select2( { placeholder : self.editorStrings.select_string, templateResult: function(option){
                         let original    = he.decode( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
                         let description = ( option.title ) ?  '(' + option.title + ')' : ''
 

@@ -77,14 +77,28 @@ class TRP_Translation_Manager{
 	}
 
 	public function localized_text() {
-		$text = array(
-			'edit'              => __( 'Translate', 'translatepress-multilingual' ),
-			'merge'             => __( 'Translate entire block element', 'translatepress-multilingual' ),
-			'split'             => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
-			'translationblock'  => __( 'Translation block', 'translatepress-multilingual' ),
-			'areyousuresplittb' => __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ),
-		);
-		return $text;
+        return array(
+            'saved'              => __( 'Saved', 'translatepress-multilingual' ),
+            'save_translation'   => __( 'Save translation', 'translatepress-multilingual' ),
+            'unsaved_changes'    => __( 'You have unsaved changes !', 'translatepress-multilingual' ),
+            'discard'            => __( 'Discard changes', 'translatepress-multilingual' ),
+            'discard_all'        => __( 'Discard All', 'translatepress-multilingual' ),
+            'strings_loading'    => __( 'Loading Strings...', 'translatepress-multilingual' ),
+            'select_string'      => __( 'Select string to translate...', 'translatepress-multilingual' ),
+            'close'              => __( 'Close Editor', 'translatepress-multilingual' ),
+            'from'               => __( 'From', 'translatepress-multilingual' ),
+            'to'                 => __( 'To', 'translatepress-multilingual' ),
+            'next'               => __( 'Next', 'translatepress-multilingual' ),
+            'previous'           => __( 'Previous', 'translatepress-multilingual' ),
+            'add_media'          => __( 'Add Media', 'translatepress-multilingual' ),
+            'other_lang'         => __( 'Other languages', 'translatepress-multilingual' ),
+            'view_as'            => __( 'View As', 'translatepress-multilingual' ),
+            'view_as_pro'        => __( 'Available in our Pro Versions', 'translatepress-multilingual' ),
+            'edit'               => __( 'Edit', 'translatepress-multilingual' ),
+            'merge'              => __( 'Merge', 'translatepress-multilingual' ),
+            'split'              => __( 'Split', 'translatepress-multilingual' ),
+            'split_confirmation' => __( 'Are you sure you want to split this string ?', 'translatepress-multilingual' ),
+        );
 	}
 
 	public function string_groups(){
