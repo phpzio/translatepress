@@ -51,7 +51,7 @@
 
                         <div id="trp-view-as">
                             <div id="trp-view-as-description">{{ editorStrings.view_as }}</div>
-                            <select id="trp-view-as-select">
+                            <select id="trp-view-as-select" v-model="viewAs" v-select2>
                                 <option v-for="(role, roleIndex) in roles" :value="role" :disabled="!role" :title="!role ? editorStrings.view_as_pro : ''">{{roleIndex}}</option>
                             </select>
                         </div>
@@ -157,10 +157,19 @@
                 mergingString             : false,
                 mergeData                 : [],
                 showChangesUnsavedMessage : false,
+                viewAs                    : '',
             }
         },
         created(){
             this.settings['default-language-name'] = this.languageNames[ this.settings['default-language'] ]
+
+            //set default value for the View As select
+            let params = utils.getUrlParameters( this.currentURL )
+
+            if( Object.keys(params).length > 1 && params['trp-view-as'] )
+                this.viewAs = params['trp-view-as']
+            else
+                this.viewAs = 'current_user'
         },
         mounted(){
             let self = this
@@ -176,11 +185,9 @@
             }).on( 'select2:opening', function(e) {
                 /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
                 if (self.hasUnsavedChanges()) {
-                    e.preventDefault();
+                    e.preventDefault()
                 }
             })
-
-
         },
         watch: {
             currentLanguage: function( currentLanguage ) {
@@ -203,6 +210,30 @@
             },
             currentURL: function ( newUrl, oldUrl ) {
                 window.history.pushState( null, null, this.parentURL( newUrl ) )
+            },
+            viewAs: function( role ) {
+                if( !this.currentURL || !this.iframe )
+                    return
+
+                let url = this.cleanURL( this.currentURL )
+
+                url = utils.updateUrlParameter( url, 'trp-edit-translation', 'preview' )
+
+                if( role == 'current_user' ) {
+                    this.iframe.location = url
+                    return
+                }
+
+                //if nonce not available, an update to the Browse as Other Roles add-on is required
+                if( !this.nonces[role] ) {
+                    alert( this.editorStrings.bor_update_notice )
+                    return
+                }
+
+                url = utils.updateUrlParameter( url, 'trp-view-as', role )
+                url = utils.updateUrlParameter( url, 'trp-view-as-nonce', this.nonces[role] )
+
+                this.iframe.location = url
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
                 if( this.hasUnsavedChanges() || !selectedStringArrayIndex )

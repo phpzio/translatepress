@@ -26,10 +26,6 @@
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
     $current_url = $url_converter->cur_page_url();
 
-    //@TODO: needs to be removed; this is necessary because on `localhost:3000` the TRP URL function returns a protcol relative URL ( e.g. //yoursite.com )
-    //and we need to compare the URL with the one from the iFrame (which has the protocol added)
-    $current_url = 'http:' . $current_url;
-
     $selectors = array( '', '-alt', '-src', '-title', '-content', '-value', '-placeholder', '-href', '-outertext', '-innertext' );
     $data_attributes = array( 'data-trp-translate-id', 'data-trpgettextoriginal' );
 
@@ -49,10 +45,6 @@
 
     $view_as_roles = apply_filters( 'trp_view_as_values', $view_as_roles );
     $string_groups = apply_filters( 'trp_string_group_order', array_values( $translation_manager->string_groups() ) );
-
-    $merge_rules = $translation_manager->get_merge_rules();
-
-    $localized_text = $translation_manager->localized_text();
     ?>
 
     <title>TranslatePress</title>
@@ -74,8 +66,8 @@
             editor_nonces='<?php echo json_encode( $translation_manager->editor_nonces() ); ?>'
             ajax_url='<?php echo apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
             string_group_order='<?php echo json_encode( $string_groups ); ?>'
-            merge_rules='<?php echo json_encode( $merge_rules ); ?>'
-            localized_text='<?php echo json_encode( $localized_text ); ?>'
+            merge_rules='<?php echo json_encode( $translation_manager->get_merge_rules() ); ?>'
+            localized_text='<?php echo json_encode( $translation_manager->localized_text() ); ?>'
         >
         </trp-editor>
     </div>

@@ -98,6 +98,7 @@ class TRP_Translation_Manager{
             'merge'              => __( 'Merge', 'translatepress-multilingual' ),
             'split'              => __( 'Split', 'translatepress-multilingual' ),
             'split_confirmation' => __( 'Are you sure you want to split this string ?', 'translatepress-multilingual' ),
+            'bor_update_notice'  => __( 'For this option to work, please update the Browse as other role add-on to the latest version.', 'translatepress-multilingual' ),
         );
 	}
 
@@ -114,14 +115,17 @@ class TRP_Translation_Manager{
 
 	public function editor_nonces(){
 		$nonces = array(
-			'gettranslationsnonceregular'   => wp_create_nonce('get_translations'),
-			'savetranslationsnonceregular'  => wp_create_nonce('save_translations'),
-			'gettranslationsnoncegettext'   => wp_create_nonce('gettext_get_translations'),
-			'savetranslationsnoncegettext'  => wp_create_nonce('gettext_save_translations'),
-			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
-			'mergetbnonce'                  => wp_create_nonce('merge_translation_block'),
+            'gettranslationsnonceregular'  => wp_create_nonce('get_translations'),
+            'savetranslationsnonceregular' => wp_create_nonce('save_translations'),
+            'gettranslationsnoncegettext'  => wp_create_nonce('gettext_get_translations'),
+            'savetranslationsnoncegettext' => wp_create_nonce('gettext_save_translations'),
+            'splittbnonce'                 => wp_create_nonce('split_translation_block'),
+            'mergetbnonce'                 => wp_create_nonce('merge_translation_block'),
+            'mergetbnonce'                 => wp_create_nonce('merge_translation_block'),
+            'logged_out'                   => wp_create_nonce('trp_view_aslogged_out' . get_current_user_id()),
 		);
-		return $nonces;
+
+		return apply_filters( 'trp_editor_nonces', $nonces );
 	}
 
     /**
