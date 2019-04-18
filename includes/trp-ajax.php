@@ -17,7 +17,7 @@ class TRP_Ajax{
      */
     public function __construct( ){
 
-        if ( !isset( $_POST['action'] ) || $_POST['action'] !== 'trp_get_translations' || empty( $_POST['strings'] ) || empty( $_POST['language'] ) || empty( $_POST['original_language'] ) ) {
+        if ( !isset( $_POST['action'] ) || $_POST['action'] !== 'trp_get_translations_regular' || empty( $_POST['originals'] ) || empty( $_POST['language'] ) || empty( $_POST['original_language'] ) ) {
             die();
         }
 
@@ -26,7 +26,7 @@ class TRP_Ajax{
         if ( $this->connect_to_db() ){
 
             $this->output_translations(
-            	$this->sanitize_strings( $_POST['strings'] ),
+            	$this->sanitize_strings( $_POST['originals'] ),
 	            mysqli_real_escape_string( $this->connection, filter_var( $_POST['language'], FILTER_SANITIZE_STRING ) ),
 	            mysqli_real_escape_string( $this->connection, filter_var( $_POST['original_language'], FILTER_SANITIZE_STRING ) )
             );
@@ -48,15 +48,12 @@ class TRP_Ajax{
      */
     protected function sanitize_strings( $posted_strings){
         $strings = json_decode( $posted_strings );
-        $original_array = array();
         if ( is_array( $strings ) ) {
             foreach ($strings as $key => $string) {
-                if ( isset($string->original ) ) {
-	                $original_array[$key] = mysqli_real_escape_string( $this->connection, trp_full_trim( $string->original )  );
-                }
+	            $strings[$key] = mysqli_real_escape_string( $this->connection, trp_full_trim( $string )  );
             }
         }
-        return $original_array;
+        return $strings;
     }
 
     /**

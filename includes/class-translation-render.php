@@ -1052,8 +1052,8 @@ class TRP_Translation_Render{
 				'trp_language_to_query'               => $language_to_query,
 				'trp_original_language'               => $this->settings['default-language'],
 				'trp_current_language'                => $TRP_LANGUAGE,
-				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]', 'trp-span' ), $TRP_LANGUAGE, $this->settings ),
-				'trp_attributes_selectors'            => apply_filters( 'trp_attributes_selectors_for_dynamic_translation', array( 'input[type=\'submit\'],input[type=\'button\']', 'img[src]', 'input[placeholder]', '[title]', 'img[alt]', 'a[href]', '' ), $TRP_LANGUAGE, $this->settings ),
+				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ),
+				'trp_attributes_selectors'            => $this->get_node_accessors(),
 				'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
 				'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
             );
