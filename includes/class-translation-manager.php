@@ -77,14 +77,29 @@ class TRP_Translation_Manager{
 	}
 
 	public function localized_text() {
-		$text = array(
-			'edit'              => __( 'Translate', 'translatepress-multilingual' ),
-			'merge'             => __( 'Translate entire block element', 'translatepress-multilingual' ),
-			'split'             => __( 'Split block to translate strings individually', 'translatepress-multilingual' ),
-			'translationblock'  => __( 'Translation block', 'translatepress-multilingual' ),
-			'areyousuresplittb' => __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ),
-		);
-		return $text;
+        return array(
+            'saved'              => __( 'Saved', 'translatepress-multilingual' ),
+            'save_translation'   => __( 'Save translation', 'translatepress-multilingual' ),
+            'unsaved_changes'    => __( 'You have unsaved changes !', 'translatepress-multilingual' ),
+            'discard'            => __( 'Discard changes', 'translatepress-multilingual' ),
+            'discard_all'        => __( 'Discard All', 'translatepress-multilingual' ),
+            'strings_loading'    => __( 'Loading Strings...', 'translatepress-multilingual' ),
+            'select_string'      => __( 'Select string to translate...', 'translatepress-multilingual' ),
+            'close'              => __( 'Close Editor', 'translatepress-multilingual' ),
+            'from'               => __( 'From', 'translatepress-multilingual' ),
+            'to'                 => __( 'To', 'translatepress-multilingual' ),
+            'next'               => __( 'Next', 'translatepress-multilingual' ),
+            'previous'           => __( 'Previous', 'translatepress-multilingual' ),
+            'add_media'          => __( 'Add Media', 'translatepress-multilingual' ),
+            'other_lang'         => __( 'Other languages', 'translatepress-multilingual' ),
+            'view_as'            => __( 'View As', 'translatepress-multilingual' ),
+            'view_as_pro'        => __( 'Available in our Pro Versions', 'translatepress-multilingual' ),
+            'edit'               => __( 'Edit', 'translatepress-multilingual' ),
+            'merge'              => __( 'Merge', 'translatepress-multilingual' ),
+            'split'              => __( 'Split', 'translatepress-multilingual' ),
+            'split_confirmation' => __( 'Are you sure you want to split this string ?', 'translatepress-multilingual' ),
+            'bor_update_notice'  => __( 'For this option to work, please update the Browse as other role add-on to the latest version.', 'translatepress-multilingual' ),
+        );
 	}
 
 	public function string_groups(){
@@ -100,14 +115,17 @@ class TRP_Translation_Manager{
 
 	public function editor_nonces(){
 		$nonces = array(
-			'gettranslationsnonceregular'   => wp_create_nonce('get_translations'),
-			'savetranslationsnonceregular'  => wp_create_nonce('save_translations'),
-			'gettranslationsnoncegettext'   => wp_create_nonce('gettext_get_translations'),
-			'savetranslationsnoncegettext'  => wp_create_nonce('gettext_save_translations'),
-			'splittbnonce'                  => wp_create_nonce('split_translation_block'),
-			'mergetbnonce'                  => wp_create_nonce('merge_translation_block'),
+            'gettranslationsnonceregular'  => wp_create_nonce('get_translations'),
+            'savetranslationsnonceregular' => wp_create_nonce('save_translations'),
+            'gettranslationsnoncegettext'  => wp_create_nonce('gettext_get_translations'),
+            'savetranslationsnoncegettext' => wp_create_nonce('gettext_save_translations'),
+            'splittbnonce'                 => wp_create_nonce('split_translation_block'),
+            'mergetbnonce'                 => wp_create_nonce('merge_translation_block'),
+            'mergetbnonce'                 => wp_create_nonce('merge_translation_block'),
+            'logged_out'                   => wp_create_nonce('trp_view_aslogged_out' . get_current_user_id()),
 		);
-		return $nonces;
+
+		return apply_filters( 'trp_editor_nonces', $nonces );
 	}
 
     /**

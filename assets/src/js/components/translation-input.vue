@@ -7,7 +7,7 @@
                 </div>
             </div>
             <div class="trp-translation-input-header-item">
-                <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" value="Add Media" @click="openMediaUpload($event)">
+                <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="openMediaUpload($event)">
             </div>
         </div>
         <div v-if="inputType == 'textarea'" class="trp-translation-input-parent">
@@ -27,7 +27,8 @@ export default{
         'value',
         'string',
         'readonly',
-        'highlightUnsavedChanges'
+        'highlightUnsavedChanges',
+        'editorStrings'
     ],
     data(){
         return{

@@ -1,5 +1,4 @@
 function removeUrlParameter( url, parameter ) {
-
     let parts = url.split( '?' )
 
     if ( parts.length >= 2 ) {
@@ -59,8 +58,55 @@ function arrayContainsItem( array, item ){
     return false
 }
 
+//Adds or updates an existing query parameter in an url
+function updateUrlParameter(uri, key, value) {
+    let regex = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i")
+
+    if ( uri.match(regex) )
+        return uri.replace(regex, '$1' + key + "=" + value + '$2')
+    else {
+        let hash = ''
+
+        if( uri.indexOf('#') !== -1 ){
+            hash = uri.replace(/.*#/, '#')
+            uri = uri.replace(/#.*/, '')
+        }
+
+        let separator = uri.indexOf('?') !== -1 ? "&" : "?"
+
+        return uri + separator + key + "=" + value + hash
+    }
+}
+
+//Given an arbitrary URL, returns an array with the URL parameters
+function getUrlParameters( url ){
+    let query = url.split('?')
+
+    if( !query[1] )
+        return null
+
+    let vars = query[1].split('&'), query_string = {}, i
+
+    for ( i = 0; i < vars.length; i++ ) {
+        let pair  = vars[i].split('='),
+            key   = decodeURIComponent(pair[0]),
+            value = decodeURIComponent(pair[1])
+
+        if ( typeof query_string[key] === 'undefined' )
+            query_string[key] = decodeURIComponent(value)
+        else if ( typeof query_string[key] === 'undefined' )
+            query_string[key] = [ query_string[key], decodeURIComponent(value) ]
+        else
+            query_string[key].push(decodeURIComponent(value) )
+    }
+
+    return query_string
+}
+
 export default {
     removeUrlParameter,
+    updateUrlParameter,
+    getUrlParameters,
     escapeHtml,
     getFilename,
     arrayContainsItem,

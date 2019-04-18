@@ -5,7 +5,7 @@
             <div class="trp-controls-container">
 
                 <div id="trp-close-save">
-                    <a id="trp-controls-close" :href="closeURL"></a>
+                    <a id="trp-controls-close" :href="closeURL" :title="editorStrings.close"></a>
                     <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
                         <div class="trp-spinner"></div>
                     </span>
@@ -22,6 +22,7 @@
                             :mergingString="mergingString"
                             :mergeData="mergeData"
                             @translations-saved="showChangesUnsavedMessage = false"
+                            :editorStrings="editorStrings"
                     >
                     </save-translations>
                 </div>
@@ -36,8 +37,6 @@
                         </div>
 
                         <div id="trp-string-list">
-                            <!-- @NOTE: Move to a component ?
-                            Because this is simply a listing which gets data and then displays it accordingly -->
                             <select id="trp-string-categories" v-model="selectedString" v-select2>
                                 <optgroup v-for="(group) in stringGroups" :label="group">
                                     <option v-for="(string, index) in dictionary" :value="index" v-if="showString( string, group )" :title="string.description" :data-database-id="string.dbID" :data-group="string.group">{{ processOptionName( string.original, group ) }}</option>
@@ -46,14 +45,14 @@
                         </div>
 
                         <div id="trp-next-previous">
-                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> Previous</button>
-                            <button type="button" id="trp-next" class="trp-next-previous-buttons">Next <span>&raquo;</span></button>
+                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> {{ editorStrings.next }}</button>
+                            <button type="button" id="trp-next" class="trp-next-previous-buttons">{{ editorStrings.previous }} <span>&raquo;</span></button>
                         </div>
 
                         <div id="trp-view-as">
-                            <div id="trp-view-as-description">View as</div>
-                            <select id="trp-view-as-select">
-                                <option v-for="(role, roleIndex) in roles" :value="role" :disabled="!role" :title="!role ? 'Available in our Pro Versions' : ''">{{roleIndex}}</option>
+                            <div id="trp-view-as-description">{{ editorStrings.view_as }}</div>
+                            <select id="trp-view-as-select" v-model="viewAs" v-select2>
+                                <option v-for="(role, roleIndex) in roles" :value="role" :disabled="!role" :title="!role ? editorStrings.view_as_pro : ''">{{roleIndex}}</option>
                             </select>
                         </div>
                     </div>
@@ -70,6 +69,7 @@
                             :settings="settings"
                             :showChangesUnsavedMessage="showChangesUnsavedMessage"
                             @discarded-changes="hasUnsavedChanges()"
+                            :editorStrings="editorStrings"
                     >
                     </language-boxes>
                 </div>
@@ -88,6 +88,7 @@
                 :nonces="nonces"
                 :ajax_url="ajax_url"
                 :mergeData="mergeData"
+                :editorStrings="editorStrings"
             >
             </hover-actions>
         </div>
@@ -121,7 +122,8 @@
             'ajax_url',
             'editor_nonces',
             'string_group_order',
-            'merge_rules'
+            'merge_rules',
+            'localized_text'
         ],
         components:{
             languageBoxes,
@@ -140,6 +142,7 @@
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 mergeRules                : JSON.parse( this.merge_rules ),
+                editorStrings             : JSON.parse( this.localized_text ),
                 //data
                 currentLanguage           : this.current_language,
                 onScreenLanguage          : this.on_screen_language,
@@ -154,16 +157,25 @@
                 mergingString             : false,
                 mergeData                 : [],
                 showChangesUnsavedMessage : false,
+                viewAs                    : '',
             }
         },
         created(){
             this.settings['default-language-name'] = this.languageNames[ this.settings['default-language'] ]
+
+            //set default value for the View As select
+            let params = utils.getUrlParameters( this.currentURL )
+
+            if( Object.keys(params).length > 1 && params['trp-view-as'] )
+                this.viewAs = params['trp-view-as']
+            else
+                this.viewAs = 'current_user'
         },
         mounted(){
             let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            jQuery( '#trp-string-categories' ).select2( { placeholder : 'Loading strings...', width : '100%' } ).prop( 'disabled', true )
+            jQuery( '#trp-string-categories' ).select2( { placeholder : self.editorStrings.strings_loading, width : '100%' } ).prop( 'disabled', true )
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -173,7 +185,7 @@
             }).on( 'select2:opening', function(e) {
                 /* when we have unsaved changes prevent the strings dropdown from opening so we do not have a disconnect between the textareas and the dropdown */
                 if (self.hasUnsavedChanges()) {
-                    e.preventDefault();
+                    e.preventDefault()
                 }
             })
         },
@@ -197,7 +209,31 @@
                 }
             },
             currentURL: function ( newUrl, oldUrl ) {
-                window.history.replaceState( null, null, this.parentURL( newUrl ) )
+                window.history.pushState( null, null, this.parentURL( newUrl ) )
+            },
+            viewAs: function( role ) {
+                if( !this.currentURL || !this.iframe )
+                    return
+
+                let url = this.cleanURL( this.currentURL )
+
+                url = utils.updateUrlParameter( url, 'trp-edit-translation', 'preview' )
+
+                if( role == 'current_user' ) {
+                    this.iframe.location = url
+                    return
+                }
+
+                //if nonce not available, an update to the Browse as Other Roles add-on is required
+                if( !this.nonces[role] ) {
+                    alert( this.editorStrings.bor_update_notice )
+                    return
+                }
+
+                url = utils.updateUrlParameter( url, 'trp-view-as', role )
+                url = utils.updateUrlParameter( url, 'trp-view-as-nonce', this.nonces[role] )
+
+                this.iframe.location = url
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
                 if( this.hasUnsavedChanges() || !selectedStringArrayIndex )
@@ -482,10 +518,12 @@
                 return false
             },
             initStringsDropdown(){
+                let self = this
+
                 if ( !this.isStringsDropdownOpen() ) {
                     jQuery( '#trp-string-categories' ).select2( 'destroy' )
 
-                    jQuery( '#trp-string-categories' ).select2( { placeholder : 'Select string to translate...', templateResult: function(option){
+                    jQuery( '#trp-string-categories' ).select2( { placeholder : self.editorStrings.select_string, templateResult: function(option){
                         let original    = he.decode( option.text.substring(0, 90) ) + ( ( option.text.length <= 90) ? '' : '...' )
                         let description = ( option.title ) ?  '(' + option.title + ')' : ''
 

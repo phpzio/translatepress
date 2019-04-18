@@ -15,20 +15,20 @@
             'mergeRules',
             'ajax_url',
             'nonces',
-            'mergeData'
+            'mergeData',
+            'editorStrings'
         ],
         data(){
             return{
-                html               : '<trp-span><trp-merge title="Merge" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="Split" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="Edit" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>',
                 hoveredStringIndex : '',
                 hoveredTarget      : '',
             }
         },
         methods:{
             showPencilIcon( element ){
-                //@NOTE:
-                //do not show this if dictionary is not initialized yet ? Thing is the event listeners are registered first
-                //and users can click on strings before the dictionary and select is initialized
+                if( !this.dictionary || this.dictionary.length < 1 )
+                    return
+
                 let self = this
                 let target = element.target
                 let relatedNode, relatedNodeAttr, position, stringSelector, stringId, mergeOrSplit
@@ -36,6 +36,9 @@
                 //for these tag names we need to insert our HTML before the element and not inside of it
                 //@TODO: add/research more
                 let beforePosition = [ 'IMG', 'INPUT', 'TEXTAREA' ]
+
+                if( self.hoveredTarget != '' && target.isSameNode( self.hoveredTarget ) )
+                    return
 
                 //if other icons are showing, remove them
                 self.removePencilIcon()
@@ -50,13 +53,22 @@
                     position = 'afterbegin'
 
                 //insert button HTML
-                target.insertAdjacentHTML( position, this.html )
+                target.insertAdjacentHTML( position, this.getTrpSpan() )
+
+                //inserted node
+                let trpSpan = self.iframe.getElementsByTagName( 'trp-span' )[0]
+
+                //figure out if split or merge is available
+                mergeOrSplit = self.checkMergeOrSplit( target )
+
+                //fit inside view
+                self.fitPencilIconInsideView( trpSpan, target, mergeOrSplit )
 
                 //get node info based on where we inserted our button
                 if( position == 'afterbegin' )
-                    relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].parentNode
+                    relatedNode = trpSpan.parentNode
                 else
-                    relatedNode = self.iframe.getElementsByTagName( 'trp-span' )[0].nextElementSibling
+                    relatedNode = trpSpan.nextElementSibling
 
                 //edit string button
                 let editButton = this.iframe.querySelector( 'trp-edit' )
@@ -85,9 +97,7 @@
                 self.hoveredStringIndex = this.$parent.getStringIndex( stringSelector, stringId )
                 self.hoveredTarget      = target
 
-                //figure out if split or merge is available
-                mergeOrSplit = self.checkMergeOrSplit( target )
-
+                //merge or split event listeners
                 if( mergeOrSplit != 'none' && !self.mergeData.includes( stringId ) ) {
                     let button = this.iframe.querySelector( 'trp-' + mergeOrSplit )
 
@@ -120,7 +130,7 @@
 
                 this.$parent.mergingString = false
 
-                let split = confirm( 'Are you sure you want to split ?' )
+                let split = confirm( this.editorStrings.split_confirmation )
 
                 if( split === false )
                     return
@@ -330,6 +340,20 @@
 
                 return true
             },
+            fitPencilIconInsideView( pencil, target, mergeOrSplit ){
+                let rect = target.getBoundingClientRect(), margin
+
+                if( mergeOrSplit != 'none' )
+                    margin = 60
+                else
+                    margin = 30
+
+                if( rect.left < 35 )
+                    pencil.setAttribute( 'style', 'margin-left: ' + margin + 'px !important' )
+            },
+            getTrpSpan() {
+                return '<trp-span><trp-merge title="'+ this.editorStrings.merge +'" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="'+ this.editorStrings.split +'" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="'+ this.editorStrings.edit +'" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>'
+            }
         }
     }
 </script>
