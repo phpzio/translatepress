@@ -314,12 +314,11 @@
                 let otherAttributes = [ 'data-trp-placeholder', 'data-trp-unpreviewable' ]
                 let attributesToRemove = otherAttributes.concat( self.$parent.prepareSelectorStrings( 'data-trp-translate-id' ), self.$parent.prepareSelectorStrings( 'data-trp-node-group' ), self.$parent.prepareSelectorStrings( 'data-trp-node-description' ) )
 
-                attributesToRemove.forEach( function( attribute ) {
-                    node = copy.querySelector( '[' + attribute + ']' )
-
-                    if ( node )
+                for(node of copy.children) {
+                    attributesToRemove.forEach( function( attribute ) {
                         node.removeAttribute( attribute )
-                })
+                    })
+                }
 
                 return copy.innerHTML
 
