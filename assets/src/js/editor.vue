@@ -361,7 +361,7 @@
                 }
             },
             setupEventListener( node ){
-                if ( node.tagName == 'A' )
+                if ( node.tagName == 'A' && !node.hasAttribute( 'data-trpgettextoriginal' ) )
                     return false
 
                 let self = this
