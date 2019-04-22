@@ -1,11 +1,98 @@
 @import '~select2/dist/css/select2.css';
 
 #trp-preview-iframe {
-    
+
     iframe {
         display: block;
         width: 100%;
         height: 100vh;
         border: 0;
+    }
+}
+
+#trp-preview-loader {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    transition: all 1s ease-in-out;
+}
+
+.trp-loader {
+    -webkit-animation: rotation 1.35s linear infinite;
+    animation: rotation 1.35s linear infinite;
+    stroke: #0085ba;
+}
+
+@-webkit-keyframes rotation{
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(270deg);
+        transform: rotate(270deg);
+    }
+}
+
+@keyframes rotation{
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(270deg);
+        transform: rotate(270deg);
+    }
+}
+
+.trp-circle{
+    stroke-dasharray: 180;
+    stroke-dashoffset: 0;
+    -webkit-transform-origin: center;
+    -ms-transform-origin: center;
+    transform-origin: center;
+    -webkit-animation: turn 1.35s ease-in-out infinite;
+    animation: turn 1.35s ease-in-out infinite;
+}
+
+@-webkit-keyframes turn{
+    0% {
+        stroke-dashoffset: 180;
+    }
+
+    50% {
+        stroke-dashoffset: 45;
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg);
+    }
+
+    100% {
+        stroke-dashoffset: 180;
+        -webkit-transform: rotate(450deg);
+        transform: rotate(450deg);
+    }
+}
+
+@keyframes turn{
+    0% {
+        stroke-dashoffset: 180;
+    }
+
+    50% {
+        stroke-dashoffset: 45;
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg);
+    }
+
+    100% {
+        stroke-dashoffset: 180;
+        -webkit-transform: rotate(450deg);
+        transform: rotate(450deg);
     }
 }

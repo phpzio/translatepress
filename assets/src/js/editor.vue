@@ -95,6 +95,12 @@
 
         <div id="trp-preview">
             <iframe id="trp-preview-iframe" :src="urlToLoad" v-on:load="iFrameLoaded"></iframe>
+
+            <div id="trp-preview-loader">
+                <svg class="trp-loader" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="trp-circle" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                </svg>
+            </div>
         </div>
     </div>
 </template>
@@ -302,6 +308,7 @@
         },
         methods: {
             iFrameLoaded(){
+                let self = this
                 let iframeElement = document.querySelector('#trp-preview-iframe')
 
                 this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document
@@ -310,10 +317,20 @@
                 if ( this.currentURL != this.iframe.URL )
                     this.currentURL = this.iframe.URL
 
-                this.dictionary = []
+                this.detectedSelectorAndId = []
+                this.dictionary            = []
                 this.scanIframeForStrings()
 
                 window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
+
+                //hide iFrame loader
+                this.iframeLoader( 'hide' )
+
+                //event that is fired when the iFrame is navigated
+                iframeElement.contentWindow.onbeforeunload = function() {
+                    self.iframeLoader( 'show' )
+                }
+
             },
             scanIframeForStrings(){
                 this.scanForSelector( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
@@ -570,6 +587,14 @@
                 this.showChangesUnsavedMessage = unsavedChanges
 
                 return unsavedChanges
+            },
+            iframeLoader( status ) {
+                let loader = document.getElementById( 'trp-preview-loader' )
+
+                if( status == 'show' )
+                    loader.style.display = 'flex'
+                else if( status == 'hide' )
+                    loader.style.display = 'none'
             }
         },
         //add support for v-model in select2
