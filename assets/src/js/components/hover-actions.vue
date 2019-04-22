@@ -58,12 +58,6 @@
                 //inserted node
                 let trpSpan = self.iframe.getElementsByTagName( 'trp-span' )[0]
 
-                //figure out if split or merge is available
-                mergeOrSplit = self.checkMergeOrSplit( target )
-
-                //fit inside view
-                self.fitPencilIconInsideView( trpSpan, target, mergeOrSplit )
-
                 //get node info based on where we inserted our button
                 if( position == 'afterbegin' )
                     relatedNode = trpSpan.parentNode
@@ -86,6 +80,15 @@
                     })
                 })
 
+                self.hoveredStringIndex = this.$parent.getStringIndex( stringSelector, stringId )
+                self.hoveredTarget      = target
+
+                //figure out if split or merge is available
+                mergeOrSplit = self.checkMergeOrSplit( target )
+
+                //fit inside view
+                self.fitPencilIconInsideView( trpSpan, target, mergeOrSplit )
+
                 if( !self.mergeData.includes( stringId ) ) {
                     editButton.style.display = 'inline-block'
 
@@ -93,9 +96,6 @@
                     if( !target.classList.contains( 'trp-highlight' ) )
                         target.className += ' trp-highlight'
                 }
-
-                self.hoveredStringIndex = this.$parent.getStringIndex( stringSelector, stringId )
-                self.hoveredTarget      = target
 
                 //merge or split event listeners
                 if( mergeOrSplit != 'none' && !self.mergeData.includes( stringId ) ) {
@@ -111,7 +111,6 @@
                 }
 
                 editButton.addEventListener( 'click', self.editHandler )
-
             },
             editHandler( event ){
                 event.preventDefault()
@@ -226,8 +225,10 @@
                         }
 
                         //populate existing translations
-                        if( deprecatedString )
-                            dummyTranslations.translated = self.dictionary[deprecatedString].translationsArray[languageCode].translated
+                        if( deprecatedString ) {
+                            dummyTranslations.translated        = self.dictionary[deprecatedString].translationsArray[languageCode].translated
+                            dummyTranslations.editedTranslation = self.dictionary[deprecatedString].translationsArray[languageCode].translated
+                        }
 
                         dummyString.translationsArray[languageCode] = dummyTranslations
                     }

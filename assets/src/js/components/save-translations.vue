@@ -175,7 +175,6 @@
                             //update dictionary string ids
                             Object.keys( item.translationsArray ).forEach( function(key) {
                                 Object.keys( response.data[key] ).forEach( function(index) {
-
                                     item.translationsArray[key].id = response.data[key][index].id
                                 })
                             })
@@ -184,13 +183,12 @@
 
                             //replace HTML in iFrame
                             let translationBlock = self.iframe.querySelector( '.trp-create-translation-block' )
-                            translationBlock.innerHTML = item.original
+                            translationBlock.innerHTML = item.translationsArray[self.onScreenLanguage].translated
                             translationBlock.setAttribute( 'data-trp-translate-id', item.dbID )
                             translationBlock.classList.remove( 'trp-create-translation-block' )
 
                             //setup event listener for new block
                             self.$parent.setupEventListener( translationBlock )
-
                         })
                         .catch(function (error) {
                             console.log(error)
