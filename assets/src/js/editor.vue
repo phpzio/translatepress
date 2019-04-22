@@ -175,7 +175,9 @@
             let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            jQuery( '#trp-string-categories' ).select2( { placeholder : self.editorStrings.strings_loading, width : '100%' } ).prop( 'disabled', true )
+
+            //init strings dropdown
+            this.stringsDropdownLoading()
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -195,7 +197,16 @@
                 //grab the correct URL from the iFrame
                 let newURL = this.iframe.querySelector( 'link[hreflang="' + currentLanguage.replace( '_', '-' ) +'"]' ).getAttribute('href')
 
-                this.currentURL = newURL
+                this.currentURL           = newURL
+                this.iframe.location      = newURL
+
+                //reset vue props
+                this.selectedString       = ''
+                this.selectedIndexesArray = []
+
+                //set strings dropdown to loading state
+                jQuery('#trp-string-categories').val('').trigger('change')
+                this.stringsDropdownLoading()
 
                 this.onScreenLanguage = currentLanguage
                 if( this.settings['default-language'] == this.currentLanguage && this.settings['translation-languages'].length > 1 ){
@@ -299,12 +310,10 @@
                 if ( this.currentURL != this.iframe.URL )
                     this.currentURL = this.iframe.URL
 
-                this.init()
-                window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
-            },
-            init(){
                 this.dictionary = []
                 this.scanIframeForStrings()
+
+                window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
             },
             scanIframeForStrings(){
                 this.scanForSelector( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
@@ -532,6 +541,9 @@
 
                     jQuery( '#trp_select2_overlay' ).hide()
                 }
+            },
+            stringsDropdownLoading(){
+                jQuery( '#trp-string-categories' ).select2( { placeholder : this.editorStrings.strings_loading, width : '100%' } ).prop( 'disabled', true )
             },
             processOptionName( name, type ){
                 if ( type == 'Images' )
