@@ -1524,6 +1524,10 @@ jQuery( function() {
 });
 
 
+
+/* handle gettext texts */
+var gettext_dictionaries = null;
+
 /* initial load and populate the dropdown with gettext strings */
 function trp_initialize_gettext() {
     /* get the gettext texts ids from the page and pass them to a ajax call to construct the dictonaries */
@@ -1597,8 +1601,6 @@ function trp_initialize_gettext() {
 
 }
 
-/* handle gettext texts */
-var gettext_dictionaries = null;
 jQuery(function(){
 
     jQuery( "#trp-preview-iframe" ).load( trp_initialize_gettext );
