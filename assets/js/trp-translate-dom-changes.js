@@ -7,7 +7,13 @@ function TRP_Translator(){
     this.is_editor = false;
     var _this = this;
     var observer = null;
-    var active = true;
+    // configuration of the observer:
+    var observerConfig = {
+        attributes: true,
+        childList: true,
+        characterData: true,
+        subtree: true
+    };
     var custom_ajax_url = trp_data.trp_custom_ajax_url;
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
     var language_to_query;
@@ -70,6 +76,7 @@ function TRP_Translator(){
      * Replace original strings with translations if found.
      */
     this.update_strings = function( response, nodesInfo ) {
+        _this.pause_observer();
         if ( response != null && response.length > 0 ){
             var newEntries = [];
             for ( var j in nodesInfo ) {
@@ -79,7 +86,6 @@ function TRP_Translator(){
                 for( var i in response ) {
                     var response_string = response[i].translationsArray[language_to_query];
                     if (response[i].original.trim() == nodeInfo.original.trim()) {
-                        // console.log(nodeInfo.attribute)
                         // The nodeInfo can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
                         var entry = response[i]
                         entry.selector = 'data-trp-translate-id'
@@ -102,13 +108,11 @@ function TRP_Translator(){
 
                         if (response_string.translated != '' && language_to_query == current_language ) {
                             var text_to_set = _this.decode_html( initial_value.replace(initial_value.trim(), response_string.translated));
-                            _this.pause_observer();
                             if ( nodeInfo.attribute ){
                                 nodeInfo.node.setAttribute( nodeInfo.attribute, text_to_set )
                             }else {
                                 nodeInfo.node.textContent = text_to_set;
                             }
-                            _this.unpause_observer();
                             translation_found = true;
                         }
                         break;
@@ -116,13 +120,11 @@ function TRP_Translator(){
                 }
 
                 if ( ! translation_found ){
-                    _this.pause_observer();
                     if ( nodeInfo.attribute ){
                         nodeInfo.node.setAttribute( nodeInfo.attribute, initial_value )
                     }else {
                         nodeInfo.node.textContent = initial_value;
                     }
-                    _this.unpause_observer();
                 }
 
             }
@@ -135,43 +137,57 @@ function TRP_Translator(){
                 nodesInfo[j].node.textContent = nodesInfo[j].original;
             }
         }
+        _this.resume_observer();
     };
 
     /**
      * Detect and remember added strings.
      */
     this.detect_new_strings = function( mutations ){
-        if ( active ) {
-            var string_originals = [];
-            var nodesInfo = [];
-            mutations.forEach( function (mutation) {
-                for (var i = 0; i < mutation.addedNodes.length; i++) {
-                    var node = mutation.addedNodes[i]
-                    /* if it is an anchor add the trp-edit-translation=preview parameter to it */
-                    if ( _this.is_editor ) {
-                        jQuery(node).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(node).find('a').context.href);
-                    }
-
-                    if ( _this.skip_string(node) ){
-                        continue;
-                    }
-
-                    // Search for innertext
-                    var translateable = _this.get_translateable_textcontent( node )
-                    string_originals = string_originals.concat( translateable.string_originals );
-                    nodesInfo = nodesInfo.concat( translateable.nodesInfo );
-
-                    // Search for text inside attributes
-                    translateable = _this.get_translateable_attributes( node )
-                    string_originals = string_originals.concat( translateable.string_originals );
-                    nodesInfo = nodesInfo.concat( translateable.nodesInfo );
+        _this.pause_observer();
+        var string_originals = [];
+        var nodesInfo = [];
+        var translateable;
+        mutations.forEach( function (mutation) {
+            for (var i = 0; i < mutation.addedNodes.length; i++) {
+                var node = mutation.addedNodes[i]
+                /* if it is an anchor add the trp-edit-translation=preview parameter to it */
+                if ( _this.is_editor ) {
+                    jQuery(node).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(node).find('a').context.href);
                 }
-            });
-            if ( nodesInfo.length > 0 ) {
-                var ajax_url_to_call = (_this.is_editor) ? wp_ajax_url : custom_ajax_url;
-                _this.ajax_get_translation( nodesInfo, string_originals, ajax_url_to_call );
+
+                if ( _this.skip_string(node) ){
+                    continue;
+                }
+
+                // Search for innertext modifications or newly added nodes with innertext
+                translateable = _this.get_translateable_textcontent( node )
+                string_originals = string_originals.concat( translateable.string_originals );
+                nodesInfo = nodesInfo.concat( translateable.nodesInfo );
+
+                // Search for text inside attributes of newly added nodes
+                translateable = _this.get_translateable_attributes( node )
+                string_originals = string_originals.concat( translateable.string_originals );
+                nodesInfo = nodesInfo.concat( translateable.nodesInfo );
             }
+
+            //todo if in array first
+            if ( mutation.attributeName /*&& mutation.attributeName == 'placeholder'*/){
+                if ( _this.skip_string(mutation.target) ){
+                    return
+                }
+
+                // Search for modified text inside attributes of existing nodes
+                translateable = _this.get_translateable_attributes( mutation.target )
+                string_originals = string_originals.concat( translateable.string_originals );
+                nodesInfo = nodesInfo.concat( translateable.nodesInfo );
+            }
+        });
+        if ( nodesInfo.length > 0 ) {
+            var ajax_url_to_call = (_this.is_editor) ? wp_ajax_url : custom_ajax_url;
+            _this.ajax_get_translation( nodesInfo, string_originals, ajax_url_to_call );
         }
+        _this.resume_observer()
     };
 
     this.skip_string = function(node){
@@ -232,7 +248,6 @@ function TRP_Translator(){
     }
 
     this.get_translateable_attributes = function ( node ) {
-        console.log(node)
         var nodesInfo = []
         var string_originals = []
         for (var trp_attribute_key in trp_data.trp_attributes_selectors) {
@@ -267,7 +282,7 @@ function TRP_Translator(){
         }
     }
 
-    //function that cleans the gettext wrappers
+    // cleans the gettext wrappers
     this.cleanup_gettext_wrapper = function(){
         jQuery('trp-gettext').contents().unwrap();
     };
@@ -321,16 +336,8 @@ function TRP_Translator(){
 
         // create an observer instance
         observer = new MutationObserver( _this.detect_new_strings );
-        // configuration of the observer:
-        var config = {
-            attributes: true,
-            childList: true,
-            characterData: true,
-            subtree: true
-        };
 
-
-        observer.observe( document.body , config );
+        _this.resume_observer();
 
         jQuery( document ).ajaxComplete(function( event, request, settings ) {
             if( typeof window.parent.jQuery !== "undefined" && window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
@@ -346,24 +353,17 @@ function TRP_Translator(){
     };
 
     /**
-     * Stop observing new strings.
-     */
-    this.disconnect = function(){
-        observer.disconnect();
-    };
-
-    /**
      * Resume observing new strings added.
      */
-    this.unpause_observer = function(){
-        active = true;
+    this.resume_observer = function(){
+        observer.observe( document.body , observerConfig );
     };
 
     /**
-     * Pause observing new string added.
+     * Pause observing new strings added.
      */
     this.pause_observer = function(){
-        active = false;
+        observer.disconnect();
     };
 
     this.trim = function (str, charlist) {

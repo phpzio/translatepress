@@ -967,23 +967,6 @@ class TRP_Translation_Render{
 			    'accessor' => 'innertext',
 			    'attribute' => false
 		    ),
-		    'page_title' => array(
-			    'accessor' => 'outertext',
-			    'attribute' => false
-		    ),
-		    'meta_desc' => array(
-			    'accessor' => 'content',
-			    'attribute' => true
-		    ),
-		    'post_slug' => array(
-			    'accessor' => 'content',
-			    'attribute' => false
-		    ),
-		    'image_alt' => array(
-		    	'selector' => 'img[alt]',
-			    'accessor' => 'alt',
-			    'attribute' => false
-		    ),
 		    'image_src' => array(
 		    	'selector' => 'img[src]',
 			    'accessor' => 'src',
