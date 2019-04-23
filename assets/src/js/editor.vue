@@ -95,6 +95,12 @@
 
         <div id="trp-preview">
             <iframe id="trp-preview-iframe" :src="urlToLoad" v-on:load="iFrameLoaded"></iframe>
+
+            <div id="trp-preview-loader">
+                <svg class="trp-loader" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="trp-circle" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                </svg>
+            </div>
         </div>
     </div>
 </template>
@@ -175,7 +181,9 @@
             let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
-            jQuery( '#trp-string-categories' ).select2( { placeholder : self.editorStrings.strings_loading, width : '100%' } ).prop( 'disabled', true )
+
+            //init strings dropdown
+            this.stringsDropdownLoading()
 
             // show overlay when select is opened
             jQuery( '#trp-language-select, #trp-string-categories' ).on( 'select2:open', function() {
@@ -195,7 +203,16 @@
                 //grab the correct URL from the iFrame
                 let newURL = this.iframe.querySelector( 'link[hreflang="' + currentLanguage.replace( '_', '-' ) +'"]' ).getAttribute('href')
 
-                this.currentURL = newURL
+                this.currentURL           = newURL
+                this.iframe.location      = newURL
+
+                //reset vue props
+                this.selectedString       = ''
+                this.selectedIndexesArray = []
+
+                //set strings dropdown to loading state
+                jQuery('#trp-string-categories').val('').trigger('change')
+                this.stringsDropdownLoading()
 
                 this.onScreenLanguage = currentLanguage
                 if( this.settings['default-language'] == this.currentLanguage && this.settings['translation-languages'].length > 1 ){
@@ -291,6 +308,7 @@
         },
         methods: {
             iFrameLoaded(){
+                let self = this
                 let iframeElement = document.querySelector('#trp-preview-iframe')
 
                 this.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document
@@ -299,12 +317,20 @@
                 if ( this.currentURL != this.iframe.URL )
                     this.currentURL = this.iframe.URL
 
-                this.init()
-                window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
-            },
-            init(){
-                this.dictionary = []
+                this.detectedSelectorAndId = []
+                this.dictionary            = []
                 this.scanIframeForStrings()
+
+                window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
+
+                //hide iFrame loader
+                this.iframeLoader( 'hide' )
+
+                //event that is fired when the iFrame is navigated
+                iframeElement.contentWindow.onbeforeunload = function() {
+                    self.iframeLoader( 'show' )
+                }
+
             },
             scanIframeForStrings(){
                 this.scanForSelector( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
@@ -361,7 +387,7 @@
                 }
             },
             setupEventListener( node ){
-                if ( node.tagName == 'A' )
+                if ( node.tagName == 'A' && !node.hasAttribute( 'data-trpgettextoriginal' ) )
                     return false
 
                 let self = this
@@ -533,6 +559,9 @@
                     jQuery( '#trp_select2_overlay' ).hide()
                 }
             },
+            stringsDropdownLoading(){
+                jQuery( '#trp-string-categories' ).select2( { placeholder : this.editorStrings.strings_loading, width : '100%' } ).prop( 'disabled', true )
+            },
             processOptionName( name, type ){
                 if ( type == 'Images' )
                     return utils.getFilename( name )
@@ -558,6 +587,14 @@
                 this.showChangesUnsavedMessage = unsavedChanges
 
                 return unsavedChanges
+            },
+            iframeLoader( status ) {
+                let loader = document.getElementById( 'trp-preview-loader' )
+
+                if( status == 'show' )
+                    loader.style.display = 'flex'
+                else if( status == 'hide' )
+                    loader.style.display = 'none'
             }
         },
         //add support for v-model in select2
