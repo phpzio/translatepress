@@ -99,6 +99,9 @@ class TRP_Translation_Manager{
             'split'              => __( 'Split', 'translatepress-multilingual' ),
             'split_confirmation' => __( 'Are you sure you want to split this string ?', 'translatepress-multilingual' ),
             'bor_update_notice'  => __( 'For this option to work, please update the Browse as other role add-on to the latest version.', 'translatepress-multilingual' ),
+            'extra_lang_row1'    => sprintf( __( 'You can add a new language from <a href="%s">Settings->TranslatePress</a>', 'translatepress-multilingual' ), admin_url( 'options-general.php?page=translate-press' ) ),
+            'extra_lang_row2'    => __( 'However, you can still use TranslatePress to <strong style="background: #f5fb9d;">modify gettext strings</strong> available in your page.', 'translatepress-multilingual' ),
+            'extra_lang_row3'    => __( 'Strings that are user created can not be modified, only those from themes and plugins.', 'translatepress-multilingual' )
         );
 	}
 

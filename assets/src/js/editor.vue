@@ -74,6 +74,7 @@
                     </language-boxes>
                 </div>
 
+                <extra-content :languageNames="languageNames" :editorStrings="editorStrings"></extra-content>
             </div>
 
             <div id="trp_select2_overlay"></div>
@@ -112,6 +113,7 @@
     import languageBoxes    from './components/language-boxes.vue'
     import saveTranslations from './components/save-translations.vue'
     import hoverActions     from './components/hover-actions.vue'
+    import extraContent     from './components/extra-content.vue'
     import he               from 'he'
 
     export default {
@@ -134,7 +136,8 @@
         components:{
             languageBoxes,
             saveTranslations,
-            hoverActions
+            hoverActions,
+            extraContent
         },
         data(){
             return {
