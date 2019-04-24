@@ -7,7 +7,6 @@ function TRP_Translator(){
     this.is_editor = false;
     var _this = this;
     var observer = null;
-    // configuration of the observer:
     var observerConfig = {
         attributes: true,
         childList: true,
@@ -43,7 +42,6 @@ function TRP_Translator(){
                     console.log( 'Notice: TranslatePress trp-ajax request uses fall back to admin ajax.' );
                 }else{
                     _this.update_strings( response, nodesInfo );
-                    //window.parent.jQuery('#trp-preview-iframe').trigger('load');
                 }
             },
             error: function( errorThrown ){
@@ -134,17 +132,31 @@ function TRP_Translator(){
             }
         }else{
             for ( var j in nodesInfo ) {
-                nodesInfo[j].node.textContent = nodesInfo[j].original;
+                if ( nodesInfo[j].attribute ){
+                    nodesInfo[j].node.setAttribute( nodesInfo[j].attribute, nodesInfo[j].original )
+                }else {
+                    nodesInfo[j].node.textContent = nodesInfo[j].original;
+                }
+
             }
         }
         _this.resume_observer();
     };
 
+    /*
+     * Separated from the detect_new_strings function to allow disconnecting observer.
+     */
+    this.detect_new_strings_callback = function( mutations ){
+        // calling disconnect directly instead of calling pause_observer because we don't need to takeRecords() (called from pause_observer) because we would duplicate mutations
+        observer.disconnect()
+        _this.detect_new_strings( mutations );
+        _this.resume_observer();
+    }
+
     /**
      * Detect and remember added strings.
      */
     this.detect_new_strings = function( mutations ){
-        _this.pause_observer();
         var string_originals = [];
         var nodesInfo = [];
         var translateable;
@@ -171,8 +183,10 @@ function TRP_Translator(){
                 nodesInfo = nodesInfo.concat( translateable.nodesInfo );
             }
 
-            //todo if in array first
-            if ( mutation.attributeName /*&& mutation.attributeName == 'placeholder'*/){
+            if ( mutation.attributeName ){
+                if ( ! _this.in_array( mutation.attributeName, trp_data.trp_attributes_accessors ) ){
+                    return
+                }
                 if ( _this.skip_string(mutation.target) ){
                     return
                 }
@@ -187,7 +201,6 @@ function TRP_Translator(){
             var ajax_url_to_call = (_this.is_editor) ? wp_ajax_url : custom_ajax_url;
             _this.ajax_get_translation( nodesInfo, string_originals, ajax_url_to_call );
         }
-        _this.resume_observer()
     };
 
     this.skip_string = function(node){
@@ -201,11 +214,21 @@ function TRP_Translator(){
         return false;
     };
 
+    this.in_array = function (needle, array ) {
+        var i
+        var length = array.length
+        for( i = 0; i < length; i++ ){
+            if ( array[i] === needle ){
+                return true
+            }
+        }
+        return false
+    }
+
     this.get_translateable_textcontent = function( node ){
         var string_originals = [];
         var nodesInfo = [];
         if ( node.textContent && _this.trim( node.textContent.trim(), except_characters ) != '' ) {
-            // node = jQuery( node );
 
             var direct_string = get_string_from_node( node );
             if ( direct_string ) {
@@ -270,7 +293,6 @@ function TRP_Translator(){
                 }
             }
         }
-        console.log(string_originals)
         return { 'string_originals': string_originals, 'nodesInfo': nodesInfo };
     }
 
@@ -335,7 +357,7 @@ function TRP_Translator(){
         language_to_query = trp_data.trp_language_to_query;
 
         // create an observer instance
-        observer = new MutationObserver( _this.detect_new_strings );
+        observer = new MutationObserver( _this.detect_new_strings_callback );
 
         _this.resume_observer();
 
@@ -363,7 +385,17 @@ function TRP_Translator(){
      * Pause observing new strings added.
      */
     this.pause_observer = function(){
-        observer.disconnect();
+        /*
+        Disconnect will delete the existing mutations detected prior to being passed to callback function.
+        So we are calling takeRecords to save them first, disconnect, then detect the strings
+        Disconnect happens before detect_new_strings to avoid detecting mutations from within detect new strings functions
+         */
+        var mutations = observer.takeRecords()
+        observer.disconnect()
+        if ( mutations.length > 0 ) {
+            _this.detect_new_strings(mutations)
+        }
+
     };
 
     this.trim = function (str, charlist) {

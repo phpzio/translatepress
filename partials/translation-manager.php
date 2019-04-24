@@ -3,12 +3,13 @@
 <head>
     <?php
     global $TRP_LANGUAGE;
-    $trp                = TRP_Translate_Press::get_trp_instance();
-    $trp_languages      = $trp->get_component( 'languages' );
-    $translation_manager= $trp->get_component( 'translation_manager' );
-    $settings_component = $trp->get_component( 'settings' );
-    $url_converter      = $trp->get_component('url_converter');
-    $trp_settings       = $settings_component->get_settings();
+    $trp                 = TRP_Translate_Press::get_trp_instance();
+    $trp_languages       = $trp->get_component( 'languages' );
+    $translation_manager = $trp->get_component( 'translation_manager' );
+    $translation_render  = $trp->get_component( 'translation_render' );
+    $settings_component  = $trp->get_component( 'settings' );
+    $url_converter       = $trp->get_component('url_converter');
+    $trp_settings        = $settings_component->get_settings();
 
     $language_names = $trp_languages->get_language_names( $trp_settings['translation-languages'] );
 
@@ -26,7 +27,8 @@
     $current_language_published = ( in_array( $TRP_LANGUAGE, $trp_settings[ 'publish-languages' ] ) );
     $current_url = $url_converter->cur_page_url();
 
-    $selectors = array( '', '-alt', '-src', '-title', '-content', '-value', '-placeholder', '-href', '-outertext', '-innertext' );
+    $selectors = $translation_render->get_accessors_array( '-' ); // suffix selectors such as array( '-alt', '-src', '-title', '-content', '-value', '-placeholder', '-href', '-outertext', '-innertext' )
+    $selectors[] = ''; // empty string suffix added for using just the base attribute data-trp-translate-id  (instead of data-trp-translate-id-alt)
     $data_attributes = array( 'data-trp-translate-id', 'data-trpgettextoriginal' );
 
     do_action( 'trp_head' );

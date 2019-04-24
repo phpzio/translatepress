@@ -9,6 +9,7 @@ function TRP_Iframe_Preview(){
      * Add GET preview parameter for links and forms.
      */
     this.initialize = function() {
+        trpTranslator.pause_observer();
         jQuery('a').each(function () {
             // target parent brakes from the iframe so we're changing to self.
             // We cannot remove it because we need it in Translation blocks
@@ -40,7 +41,7 @@ function TRP_Iframe_Preview(){
         jQuery('form').each(function () {
             jQuery( this ).append( jQuery('<input></input>').attr({ type: 'hidden', value: 'preview', name: 'trp-edit-translation' }) );
         });
-
+        trpTranslator.resume_observer();
     };
 
     /**

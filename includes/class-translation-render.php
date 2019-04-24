@@ -1003,6 +1003,18 @@ class TRP_Translation_Render{
 	    ));
     }
 
+    public function get_accessors_array( $prefix = '' ){
+    	$accessor_array = array();
+	    $node_accessors_array = $this->get_node_accessors();
+	    foreach ( $node_accessors_array as $node_accessor ){
+	    	if ( isset ( $node_accessor['accessor'] ) ){
+			    $accessor_array[] = $prefix . $node_accessor['accessor'];
+		    }
+	    }
+
+	    return array_values( array_unique( $accessor_array ) );
+    }
+
     /**
      * Enqueue dynamic translation script.
      */
@@ -1037,6 +1049,7 @@ class TRP_Translation_Render{
 				'trp_current_language'                => $TRP_LANGUAGE,
 				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ),
 				'trp_attributes_selectors'            => $this->get_node_accessors(),
+				'trp_attributes_accessors'            => $this->get_accessors_array(),
 				'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
 				'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
             );
