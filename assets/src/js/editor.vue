@@ -45,8 +45,8 @@
                         </div>
 
                         <div id="trp-next-previous">
-                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> {{ editorStrings.next }}</button>
-                            <button type="button" id="trp-next" class="trp-next-previous-buttons">{{ editorStrings.previous }} <span>&raquo;</span></button>
+                            <button type="button" id="trp-previous" class="trp-next-previous-buttons" v-on:click="previousString()"><span>&laquo;</span> {{ editorStrings.previous }}</button>
+                            <button type="button" id="trp-next" class="trp-next-previous-buttons" v-on:click="nextString()">{{ editorStrings.next }} <span>&raquo;</span></button>
                         </div>
 
                         <div id="trp-view-as">
@@ -261,6 +261,7 @@
 
                 jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ).trigger( 'change' )
 
+                //@TODO Should probably verify this, so we do not throw errors if the index is missing
                 let selectedString       = this.dictionary[selectedStringArrayIndex]
                 let currentNode          = this.iframe.querySelector( "[" + selectedString.selector + "='" + selectedString.dbID + "']")
                 let selectedIndexesArray = []
@@ -598,6 +599,24 @@
                     loader.style.display = 'flex'
                 else if( status == 'hide' )
                     loader.style.display = 'none'
+            },
+            previousString(){
+                let currentValue = document.getElementById('trp-string-categories').value
+
+                if( currentValue == 0 )
+                    return
+
+                let newValue = +currentValue - 1
+
+                this.selectedString = newValue.toString()
+            },
+            nextString(){
+                let currentValue = document.getElementById('trp-string-categories').value, newValue = '0'
+
+                if( currentValue != '' )
+                    newValue = +currentValue + 1
+
+                this.selectedString = newValue.toString()
             }
         },
         //add support for v-model in select2
