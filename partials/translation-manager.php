@@ -68,6 +68,7 @@
             string_group_order='<?php echo json_encode( $string_groups ); ?>'
             merge_rules='<?php echo json_encode( $translation_manager->get_merge_rules() ); ?>'
             localized_text='<?php echo json_encode( $translation_manager->localized_text() ); ?>'
+            paid_version="<?php echo trp_is_paid_version() ? 'true' : 'false'; ?>"
         >
         </trp-editor>
     </div>

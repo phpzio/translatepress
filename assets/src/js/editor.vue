@@ -74,7 +74,7 @@
                     </language-boxes>
                 </div>
 
-                <extra-content :languageNames="languageNames" :editorStrings="editorStrings"></extra-content>
+                <extra-content :languageNames="languageNames" :editorStrings="editorStrings" :paidVersion="paid_version"></extra-content>
             </div>
 
             <div id="trp_select2_overlay"></div>
@@ -131,7 +131,8 @@
             'editor_nonces',
             'string_group_order',
             'merge_rules',
-            'localized_text'
+            'localized_text',
+            'paid_version'
         ],
         components:{
             languageBoxes,

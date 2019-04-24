@@ -646,3 +646,27 @@ function trp_woo_skip_dynamic_translation( $skip_selectors ){
 	$add_skip_selectors = array( '#select2-billing_country-results', '#select2-shipping_country-results' );
 	return array_merge( $skip_selectors, $add_skip_selectors );
 }
+
+function trp_is_paid_version(){
+    $licence = get_option( 'trp_licence_key' );
+
+    if( !empty( $licence ) )
+        return true;
+
+    //list of class names
+    $addons = array(
+        'TRP_Automatic_Language_Detection',
+        'TRP_Browse_as_other_Role',
+        'TRP_Extra_Languages',
+        'TRP_Navigation_Based_on_Language',
+        'TRP_Seo_Pack',
+        'TRP_Translator_Accounts',
+    );
+
+    foreach( $addons as $className ) {
+        if( class_exists( $className ) )
+            return true;
+    }
+
+    return false;
+}
