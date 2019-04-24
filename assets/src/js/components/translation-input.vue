@@ -11,17 +11,19 @@
             </div>
         </div>
         <div v-if="inputType == 'textarea'" class="trp-translation-input-parent">
-            <textarea class="trp-translation-input trp-textarea" :readonly="readonly" ref="textarea" :value="value" @input="updateValue()"></textarea>
+            <textarea class="trp-translation-input trp-textarea" :readonly="readonly" ref="textarea" :value="getValue()" @input="updateValue()"></textarea>
         </div>
         <div v-if="inputType == 'input'" class="trp-translation-input-parent">
-            <input class="trp-translation-input trp-input" :class="{'trp-media' : inputType == 'inputmedia' }" :readonly="readonly" ref="input" :value="value" @input="updateValue( null )">
+            <input class="trp-translation-input trp-input" :class="{'trp-media' : inputType == 'inputmedia' }" :readonly="readonly" ref="input" :value="getValue()" @input="updateValue( null )">
         </div>
         <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent">
-            <input class="trp-translation-input trp-input trp-media" :readonly="readonly" ref="inputmedia" :value="value" @input="updateValue( null )">
+            <input class="trp-translation-input trp-input trp-media" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
         </div>
     </div>
 </template>
 <script>
+import he from 'he'
+
 export default{
     props:[
         'value',
@@ -52,6 +54,12 @@ export default{
         this.inputType = (this.readonly && this.inputType === 'inputmedia' ) ? 'input' : this.inputType;
     },
     methods:{
+        getValue(){
+            if( this.value )
+                return he.decode( this.value )
+
+            return this.value
+        },
         updateValue( value ){
             value = ( value ) ? value : this.$refs[this.inputType].value
             this.$emit( 'input', value )

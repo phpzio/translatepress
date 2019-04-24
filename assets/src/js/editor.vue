@@ -45,8 +45,8 @@
                         </div>
 
                         <div id="trp-next-previous">
-                            <button type="button" id="trp-previous" class="trp-next-previous-buttons"><span>&laquo;</span> {{ editorStrings.next }}</button>
-                            <button type="button" id="trp-next" class="trp-next-previous-buttons">{{ editorStrings.previous }} <span>&raquo;</span></button>
+                            <button type="button" id="trp-previous" class="trp-next-previous-buttons" v-on:click="previousString()"><span>&laquo;</span> {{ editorStrings.previous }}</button>
+                            <button type="button" id="trp-next" class="trp-next-previous-buttons" v-on:click="nextString()">{{ editorStrings.next }} <span>&raquo;</span></button>
                         </div>
 
                         <div id="trp-view-as">
@@ -70,10 +70,12 @@
                             :showChangesUnsavedMessage="showChangesUnsavedMessage"
                             @discarded-changes="hasUnsavedChanges()"
                             :editorStrings="editorStrings"
+                            :flagsPath="flags_path"
                     >
                     </language-boxes>
                 </div>
 
+                <extra-content :languageNames="languageNames" :editorStrings="editorStrings" :paidVersion="paid_version"></extra-content>
             </div>
 
             <div id="trp_select2_overlay"></div>
@@ -112,6 +114,7 @@
     import languageBoxes    from './components/language-boxes.vue'
     import saveTranslations from './components/save-translations.vue'
     import hoverActions     from './components/hover-actions.vue'
+    import extraContent     from './components/extra-content.vue'
     import he               from 'he'
 
     export default {
@@ -129,12 +132,15 @@
             'editor_nonces',
             'string_group_order',
             'merge_rules',
-            'localized_text'
+            'localized_text',
+            'paid_version',
+            'flags_path'
         ],
         components:{
             languageBoxes,
             saveTranslations,
-            hoverActions
+            hoverActions,
+            extraContent
         },
         data(){
             return {
@@ -253,12 +259,16 @@
                 this.iframe.location = url
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
-                if( this.hasUnsavedChanges() || !selectedStringArrayIndex )
+                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ? selectedStringArrayIndex : '' ).trigger( 'change' )
+
+                if( this.hasUnsavedChanges() || ( !selectedStringArrayIndex && selectedStringArrayIndex != 0 ) )
                     return
 
-                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ).trigger( 'change' )
-
                 let selectedString       = this.dictionary[selectedStringArrayIndex]
+
+                if( !selectedString )
+                    return
+
                 let currentNode          = this.iframe.querySelector( "[" + selectedString.selector + "='" + selectedString.dbID + "']")
                 let selectedIndexesArray = []
 
@@ -317,18 +327,23 @@
                 if ( this.currentURL != this.iframe.URL )
                     this.currentURL = this.iframe.URL
 
-                this.detectedSelectorAndId = []
-                this.dictionary            = []
+                //hide iFrame loader
+                this.iframeLoader( 'hide' )
+
+                self.detectedSelectorAndId = []
+                self.dictionary            = []
                 this.scanIframeForStrings()
 
                 window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
 
-                //hide iFrame loader
-                this.iframeLoader( 'hide' )
-
                 //event that is fired when the iFrame is navigated
                 iframeElement.contentWindow.onbeforeunload = function() {
                     self.iframeLoader( 'show' )
+
+                    self.selectedString = null
+                    self.selectedIndexesArray = []
+
+                    self.stringsDropdownLoading()
                 }
 
             },
@@ -348,7 +363,6 @@
                     nodeEntries.forEach( function( entry ) {
                         // this check ensures that we don't create duplicates when rescanning after ajax complete
                         if ( !self.alreadyDetected( entry.selector, entry.dbID ) ) {
-
                             stringIdsArray.push(entry.dbID)
                             nodeData.push(entry)
                         }
@@ -595,6 +609,24 @@
                     loader.style.display = 'flex'
                 else if( status == 'hide' )
                     loader.style.display = 'none'
+            },
+            previousString(){
+                let currentValue = document.getElementById('trp-string-categories').value
+
+                if( currentValue == 0 )
+                    return
+
+                let newValue = +currentValue - 1
+
+                this.selectedString = newValue.toString()
+            },
+            nextString(){
+                let currentValue = document.getElementById('trp-string-categories').value, newValue = '0'
+
+                if( currentValue != '' )
+                    newValue = +currentValue + 1
+
+                this.selectedString = newValue.toString()
             }
         },
         //add support for v-model in select2
