@@ -654,14 +654,14 @@ function trp_is_paid_version(){
         return true;
 
     //list of class names
-    $addons = array(
+    $addons = apply_filters( 'trp_paid_addons', array(
         'TRP_Automatic_Language_Detection',
         'TRP_Browse_as_other_Role',
         'TRP_Extra_Languages',
         'TRP_Navigation_Based_on_Language',
         'TRP_Seo_Pack',
         'TRP_Translator_Accounts',
-    );
+    ));
 
     foreach( $addons as $className ) {
         if( class_exists( $className ) )
