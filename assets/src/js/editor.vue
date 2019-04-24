@@ -259,13 +259,16 @@
                 this.iframe.location = url
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
-                if( this.hasUnsavedChanges() || selectedStringArrayIndex == 'undefined' )
+                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ? selectedStringArrayIndex : '' ).trigger( 'change' )
+
+                if( this.hasUnsavedChanges() || ( !selectedStringArrayIndex && selectedStringArrayIndex != 0 ) )
                     return
 
-                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ).trigger( 'change' )
-
-                //@TODO Should probably verify this, so we do not throw errors if the index is missing
                 let selectedString       = this.dictionary[selectedStringArrayIndex]
+
+                if( !selectedString )
+                    return
+
                 let currentNode          = this.iframe.querySelector( "[" + selectedString.selector + "='" + selectedString.dbID + "']")
                 let selectedIndexesArray = []
 
@@ -324,18 +327,23 @@
                 if ( this.currentURL != this.iframe.URL )
                     this.currentURL = this.iframe.URL
 
-                this.detectedSelectorAndId = []
-                this.dictionary            = []
+                //hide iFrame loader
+                this.iframeLoader( 'hide' )
+
+                self.detectedSelectorAndId = []
+                self.dictionary            = []
                 this.scanIframeForStrings()
 
                 window.addEventListener( 'trp_iframe_page_updated', this.scanIframeForStrings )
 
-                //hide iFrame loader
-                this.iframeLoader( 'hide' )
-
                 //event that is fired when the iFrame is navigated
                 iframeElement.contentWindow.onbeforeunload = function() {
                     self.iframeLoader( 'show' )
+
+                    self.selectedString = null
+                    self.selectedIndexesArray = []
+
+                    self.stringsDropdownLoading()
                 }
 
             },

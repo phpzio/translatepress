@@ -58,6 +58,9 @@
                 //inserted node
                 let trpSpan = self.iframe.getElementsByTagName( 'trp-span' )[0]
 
+                if( !trpSpan )
+                    return
+                    
                 //get node info based on where we inserted our button
                 if( position == 'afterbegin' )
                     relatedNode = trpSpan.parentNode
