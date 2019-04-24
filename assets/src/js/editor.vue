@@ -257,7 +257,7 @@
                 this.iframe.location = url
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
-                if( this.hasUnsavedChanges() || !selectedStringArrayIndex )
+                if( this.hasUnsavedChanges() || selectedStringArrayIndex == 'undefined' )
                     return
 
                 jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ).trigger( 'change' )
@@ -353,7 +353,6 @@
                     nodeEntries.forEach( function( entry ) {
                         // this check ensures that we don't create duplicates when rescanning after ajax complete
                         if ( !self.alreadyDetected( entry.selector, entry.dbID ) ) {
-
                             stringIdsArray.push(entry.dbID)
                             nodeData.push(entry)
                         }
