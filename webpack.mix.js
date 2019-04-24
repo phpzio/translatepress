@@ -9,6 +9,7 @@ mix.js( 'assets/src/js/trp-editor.js', 'assets/js' )
             'assets/**/*.js',
             'assets/**/*.css'
         ],
+        ghostMode : false
     } )
     .webpackConfig({
         externals: {
