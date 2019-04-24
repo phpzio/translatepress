@@ -70,6 +70,7 @@
                             :showChangesUnsavedMessage="showChangesUnsavedMessage"
                             @discarded-changes="hasUnsavedChanges()"
                             :editorStrings="editorStrings"
+                            :flagsPath="flags_path"
                     >
                     </language-boxes>
                 </div>
@@ -132,7 +133,8 @@
             'string_group_order',
             'merge_rules',
             'localized_text',
-            'paid_version'
+            'paid_version',
+            'flags_path'
         ],
         components:{
             languageBoxes,

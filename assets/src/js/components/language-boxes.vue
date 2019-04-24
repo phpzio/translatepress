@@ -6,6 +6,8 @@
                 <div class="trp-language-name">
                     <span v-if="key == 0 ">{{ editorStrings.from }} </span>
                     <span v-else>{{ editorStrings.to }} </span>
+
+                    <img v-if="languageCode != 'original'" class="trp-flag-image" :src="flagsPath + '/' + languageCode + '.png'" width="18" height="12" :alt="languageCode" :title="completeLanguageNames[languageCode]">
                     {{ completeLanguageNames[languageCode] }}
                 </div>
                 <div class="trp-translations-container">
@@ -40,7 +42,8 @@
             'languageNames',
             'settings',
             'showChangesUnsavedMessage',
-            'editorStrings'
+            'editorStrings',
+            'flagsPath'
         ],
         data(){
             return{

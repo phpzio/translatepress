@@ -69,6 +69,7 @@
             merge_rules='<?php echo json_encode( $translation_manager->get_merge_rules() ); ?>'
             localized_text='<?php echo json_encode( $translation_manager->localized_text() ); ?>'
             paid_version="<?php echo trp_is_paid_version() ? 'true' : 'false'; ?>"
+            flags_path="<?php echo apply_filters( 'trp_flags_path', TRP_PLUGIN_URL .'assets/images/flags/' ); ?>"
         >
         </trp-editor>
     </div>
