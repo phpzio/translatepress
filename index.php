@@ -36,3 +36,11 @@ function trp_run_translatepress_hooks(){
 }
 /* make sure we execute our plugin before other plugins so the changes we make apply across the board */
 add_action( 'plugins_loaded', 'trp_run_translatepress_hooks', 1 );
+
+
+/** License classes includes here
+ * Since version 1.4.6
+ * It need to be outside of a hook so it load before the classes that are in the addons, that we are trying to phase out
+ */
+
+require_once plugin_dir_path(__FILE__) . 'includes/class-edd-sl-plugin-updater.php';
