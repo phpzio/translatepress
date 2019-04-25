@@ -226,7 +226,7 @@ class TRP_Settings{
             $this->trp_query->check_gettext_table( $language_code );
         }
 
-        $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['publish-languages'] );
+        $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['translation-languages'] );
 
         // regenerate permalinks in case something changed
         flush_rewrite_rules();

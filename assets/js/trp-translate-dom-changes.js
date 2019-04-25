@@ -10,7 +10,7 @@ function TRP_Translator(){
     var observerConfig = {
         attributes: true,
         childList: true,
-        characterData: true,
+        characterData: false,//this could be CDATA so I set it to false in v 1.4.5
         subtree: true
     };
     var custom_ajax_url = trp_data.trp_custom_ajax_url;
@@ -493,9 +493,7 @@ function trp_allow_detect_dom_changes_to_run(){
 }
 
 
-// Initialize the Translate Press Editor after jQuery is ready
-jQuery( function() {
-    if ( trp_allow_detect_dom_changes_to_run() ) {
-        trpTranslator = new TRP_Translator();
-    }
-});
+// Initialize the Translate Press Editor when the script loads
+if ( trp_allow_detect_dom_changes_to_run() ) {
+    trpTranslator = new TRP_Translator();
+}

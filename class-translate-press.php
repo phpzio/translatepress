@@ -43,7 +43,7 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_BASE', plugin_basename( __DIR__ . '/index.php' ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.4.4' );
+        define( 'TRP_PLUGIN_VERSION', '1.4.5' );
 
 	    wp_cache_add_non_persistent_groups(array('trp'));
 
@@ -142,6 +142,8 @@ class TRP_Translate_Press{
 
 	    $this->loader->add_action( 'admin_menu', $this->upgrade, 'register_menu_page' );
 	    $this->loader->add_action( 'admin_init', $this->upgrade, 'show_admin_notice' );
+	    $this->loader->add_action( 'admin_enqueue_scripts', $this->upgrade, 'enqueue_update_script', 10, 1 );
+	    $this->loader->add_action( 'wp_ajax_trp_update_database', $this->upgrade, 'trp_update_database' );
 
     }
 
@@ -149,7 +151,13 @@ class TRP_Translate_Press{
      * Hooks methods used in front-end
      */
     protected function define_frontend_hooks(){
+
+        //we do not need the plugin in cron requests ?
+        if( isset( $_REQUEST['doing_wp_cron'] ) )
+            return;
+
         $this->loader->add_action( 'init', $this->translation_render, 'start_output_buffer', 0 );
+        $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_scripts', 10 );
         $this->loader->add_action( 'wp_enqueue_scripts', $this->translation_render, 'enqueue_dynamic_translation', 1 );
         $this->loader->add_filter( 'wp_redirect', $this->translation_render, 'force_preview_on_url_redirect', 99, 2 );
         $this->loader->add_filter( 'wp_redirect', $this->translation_render, 'force_language_on_form_url_redirect', 99, 2 );

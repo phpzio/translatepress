@@ -246,8 +246,8 @@ class TranslatePressTest extends WP_UnitTestCase {
         $this->assertTrue( strpos( $proecessed_gettext, '#!trpst#' ) !== false );
 
         $TRP_LANGUAGE = 'en_US';
-        $proecessed_gettext = $this->trp_manager->process_gettext_strings( 'Translated Gettext String', 'Gettext strings', 'phpunit');
-        $this->assertTrue( strpos( $proecessed_gettext, '#!trpst#' ) === false );
+        $proecessed_gettext = $this->trp_manager->process_gettext_strings( 'Translated Gettext String', 'Gettext strings', 'phpunit-two');//changed domain so it won't return the same string as the call above now that we have a global that retains the last processed string
+        $this->assertTrue( strpos( $proecessed_gettext, '#!trpst#' ) === false );//I think it does not have tags here because we don not have the table ?
 
         $string_with_trp_tags = '#!trpst#trp-gettext data-trpgettextoriginal=11#!trpen#Some clean string here#!trpst#/trp-gettext#!trpen#';
         $stripped_tags = TRP_Translation_Manager::strip_gettext_tags( $string_with_trp_tags );

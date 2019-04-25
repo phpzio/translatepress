@@ -49,7 +49,7 @@ msgstr ""
 msgid "<div class=\"warning\">WARNING. Cannot determine your language preference based on your current IP.<br>This is most likely because the website is on a local environment.</div>"
 msgstr ""
 
-#: partials/license-settings-page.php:4, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:10, ../translatepress/partials/trp-remove-duplicate-rows.php:3, ../translatepress/partials/trp-update-database.php:3, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
+#: partials/license-settings-page.php:4, ../tp-add-on-browse-as-other-roles/partials/license-settings-page.php:4, ../tp-add-on-extra-languages/partials/license-settings-page.php:4, ../tp-add-on-navigation-based-on-language/partials/license-settings-page.php:4, ../tp-add-on-seo-pack/partials/license-settings-page.php:4, ../translatepress/partials/addons-settings-page.php:3, ../translatepress/partials/main-settings-page.php:5, ../translatepress/partials/test-google-key-settings-page.php:10, ../translatepress/partials/trp-remove-duplicate-rows.php:3, ../trp-add-on-translator-accounts-add-on/partials/license-settings-page.php:4
 msgid "TranslatePress Settings"
 msgstr ""
 
@@ -153,7 +153,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:389, ../translatepress/includes/class-translation-manager.php:617
+#: ../translatepress/includes/class-settings.php:389, ../translatepress/includes/class-translation-manager.php:618
 msgid "Translate Site"
 msgstr ""
 
@@ -165,7 +165,7 @@ msgstr ""
 msgid "Addons"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:428, ../translatepress/includes/class-translation-manager.php:648
+#: ../translatepress/includes/class-settings.php:428, ../translatepress/includes/class-translation-manager.php:649
 msgid "Settings"
 msgstr ""
 
@@ -205,96 +205,126 @@ msgstr ""
 msgid "Dynamic Added Strings"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:629
+#: ../translatepress/includes/class-translation-manager.php:630
 msgid "Translate Page"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1242
+#: ../translatepress/includes/class-translation-manager.php:1325
 msgid "Security check"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1316
+#: ../translatepress/includes/class-translation-manager.php:1399
 msgid "<strong>Warning:</strong> Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:143
+#: ../translatepress/includes/class-translation-render.php:144
 msgid "Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:149
+#: ../translatepress/includes/class-translation-render.php:150
 msgid "OG Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:155
+#: ../translatepress/includes/class-translation-render.php:156
 msgid "OG Site Name"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:161
+#: ../translatepress/includes/class-translation-render.php:162
 msgid "OG Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:167
+#: ../translatepress/includes/class-translation-render.php:168
 msgid "Twitter Title"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:173
+#: ../translatepress/includes/class-translation-render.php:174
 msgid "Twitter Description"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:179
+#: ../translatepress/includes/class-translation-render.php:180
 msgid "Post Slug"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-render.php:183
+#: ../translatepress/includes/class-translation-render.php:184
 msgid "Page Title"
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:91
+#: ../translatepress/includes/class-upgrade.php:119
 msgid "TranslatePress data update"
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:91
+#: ../translatepress/includes/class-upgrade.php:119
 msgid "We need to update your translations database to the latest version."
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:92
+#: ../translatepress/includes/class-upgrade.php:120, ../translatepress/partials/trp-remove-duplicate-rows.php:12
+msgid ""
+"IMPORTANT: It is strongly recommended to backup the database first!\n"
+"Are you sure you want to continue?"
+msgstr ""
+
+#: ../translatepress/includes/class-upgrade.php:120
 msgid "Run the updater"
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:121
-msgid "<p><strong>Successfully updated database!</strong></p>"
+#: ../translatepress/includes/class-upgrade.php:136
+msgid "Update aborted! Your user account doesn't have the capability to perform database updates."
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:121, ../translatepress/includes/class-upgrade.php:126, ../translatepress/includes/class-upgrade.php:286, ../translatepress/includes/class-upgrade.php:291
+#: ../translatepress/includes/class-upgrade.php:141
+msgid "Update aborted! Invalid nonce."
+msgstr ""
+
+#: ../translatepress/includes/class-upgrade.php:156, ../translatepress/includes/class-upgrade.php:249, ../translatepress/includes/class-upgrade.php:335, ../translatepress/includes/class-upgrade.php:340
 msgid "Back to TranslatePress Settings page"
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:126, ../translatepress/includes/class-upgrade.php:291
-msgid "Invalid nonce."
+#: ../translatepress/includes/class-upgrade.php:160
+msgid "Successfully updated database!"
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:202, ../translatepress/includes/class-upgrade.php:371
-msgid "If the page does not redirect automatically"
+#: ../translatepress/includes/class-upgrade.php:166
+msgid "Updating database to version %s+"
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:202, ../translatepress/includes/class-upgrade.php:371
-msgid "click here"
+#: ../translatepress/includes/class-upgrade.php:167, ../translatepress/includes/class-upgrade.php:222
+msgid "Processing table for language %s..."
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:224
-msgid "Querying table <strong>%s</strong>... "
+#: ../translatepress/includes/class-upgrade.php:171
+msgid "Update aborted! Incorrect action."
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:226, ../translatepress/includes/class-upgrade.php:286
+#: ../translatepress/includes/class-upgrade.php:174
+msgid "Update aborted! Incorrect language code."
+msgstr ""
+
+#: ../translatepress/includes/class-upgrade.php:221, ../translatepress/includes/class-upgrade.php:225
+msgid " done."
+msgstr ""
+
+#: ../translatepress/includes/class-upgrade.php:335
 msgid "Done."
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:311
+#: ../translatepress/includes/class-upgrade.php:340
+msgid "Invalid nonce."
+msgstr ""
+
+#: ../translatepress/includes/class-upgrade.php:360
 msgid "Querying table <strong>%s</strong>"
 msgstr ""
 
-#: ../translatepress/includes/class-upgrade.php:341
+#: ../translatepress/includes/class-upgrade.php:390
 msgid "%s duplicates removed"
+msgstr ""
+
+#: ../translatepress/includes/class-upgrade.php:420
+msgid "If the page does not redirect automatically"
+msgstr ""
+
+#: ../translatepress/includes/class-upgrade.php:420
+msgid "click here"
 msgstr ""
 
 #: ../translatepress/includes/functions.php:258
@@ -577,12 +607,6 @@ msgstr ""
 msgid "<strong>IMPORTANT NOTE: Before performing this action it is strongly recommended to backup the database first.</strong><br><br>This feature can be used to cleanup duplicate entries in TranslatePress trp_dictionary tables. Such duplicates can appear in exceptional situations of unexpected behavior."
 msgstr ""
 
-#: ../translatepress/partials/trp-remove-duplicate-rows.php:12, ../translatepress/partials/trp-update-database.php:12
-msgid ""
-"IMPORTANT: It is strongly recommended to backup the database first!\n"
-"Are you sure you want to continue?"
-msgstr ""
-
 #: ../translatepress/partials/trp-remove-duplicate-rows.php:15
 msgid "Batch size"
 msgstr ""
@@ -595,16 +619,12 @@ msgstr ""
 msgid "Remove duplicate rows"
 msgstr ""
 
+#: ../translatepress/partials/trp-update-database.php:3
+msgid "TranslatePress Database Updater"
+msgstr ""
+
 #: ../translatepress/partials/trp-update-database.php:7
-msgid "Update TranslatePress tables"
-msgstr ""
-
-#: ../translatepress/partials/trp-update-database.php:10
-msgid "<p><strong>IMPORTANT NOTE: Before performing this action it is strongly recommended to backup the database first.</strong></p>"
-msgstr ""
-
-#: ../translatepress/partials/trp-update-database.php:18
-msgid "Update database"
+msgid "Updating TranslatePress tables"
 msgstr ""
 
 #: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:119

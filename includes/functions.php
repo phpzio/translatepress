@@ -635,6 +635,15 @@ function trp_woo_notes_strip_trpst( $note_array ){
 	return $note_array;
 }
 
+/*
+ * Compatibility with WooCommerce back-end display order shipping taxes
+ */
+add_filter('woocommerce_order_item_display_meta_key','trp_woo_data_strip_trpst');
+add_filter('woocommerce_order_item_get_method_title','trp_woo_data_strip_trpst');
+function trp_woo_data_strip_trpst( $data ){
+	return TRP_Translation_Manager::strip_gettext_tags( $data );
+}
+
 /**
  * Compatibility with WooCommerce country list on checkout.
  *
@@ -647,26 +656,46 @@ function trp_woo_skip_dynamic_translation( $skip_selectors ){
 	return array_merge( $skip_selectors, $add_skip_selectors );
 }
 
-function trp_is_paid_version(){
-    $licence = get_option( 'trp_licence_key' );
+/**
+ * Used for showing useful notice in Translation Editor
+ *
+ * @return bool
+ */
+function trp_is_paid_version() {
+	$licence = get_option( 'trp_licence_key' );
 
-    if( !empty( $licence ) )
-        return true;
+	if ( ! empty( $licence ) ) {
+		return true;
+	}
 
-    //list of class names
-    $addons = apply_filters( 'trp_paid_addons', array(
-        'TRP_Automatic_Language_Detection',
-        'TRP_Browse_as_other_Role',
-        'TRP_Extra_Languages',
-        'TRP_Navigation_Based_on_Language',
-        'TRP_Seo_Pack',
-        'TRP_Translator_Accounts',
-    ));
+	//list of class names
+	$addons = apply_filters( 'trp_paid_addons', array(
+		'TRP_Automatic_Language_Detection',
+		'TRP_Browse_as_other_Role',
+		'TRP_Extra_Languages',
+		'TRP_Navigation_Based_on_Language',
+		'TRP_Seo_Pack',
+		'TRP_Translator_Accounts',
+	) );
 
-    foreach( $addons as $className ) {
-        if( class_exists( $className ) )
-            return true;
-    }
+	foreach ( $addons as $className ) {
+		if ( class_exists( $className ) ) {
+			return true;
+		}
+	}
 
-    return false;
+	return false;
+}
+
+/**
+ * Compatibility with WooCommerce product variation.
+ *
+ * Add span tag to woocommerce product variation name.
+ *
+ * Product variation name keep changes, but the prefix is the same. Wrap the prefix to allow translating that part separately.
+ */
+add_filter( 'woocommerce_product_variation_title', 'trp_woo_wrap_variation', 8, 4);
+function trp_woo_wrap_variation($name, $product, $title_base, $title_suffix){
+	$separator  = '<span> - </span>';
+	return $title_suffix ? $title_base . $separator . $title_suffix : $title_base;
 }

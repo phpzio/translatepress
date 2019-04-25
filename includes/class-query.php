@@ -391,23 +391,28 @@ class TRP_Query{
             return null;
     }
 
-    public function update_gettext_strings( $updated_strings, $language_code, $columns_to_update = array('id','original', 'translated', 'domain', 'status') ){
-        if ( count( $updated_strings ) == 0  ){
-            return;
-        }
+    public function update_gettext_strings( $updated_strings, $language_code, $columns_to_update = array('id','original', 'translated', 'domain', 'status') ) {
+	    if ( count( $updated_strings ) == 0 ) {
+		    return;
+	    }
 
-	    $placeholder_array_mapping = array( 'id'=>'%d', 'original'=>'%s', 'translated' => '%s', 'domain' => '%s', 'status'=>'%d' );
-	    $columns_query_part = '';
+	    $placeholder_array_mapping = array( 'id'         => '%d',
+	                                        'original'   => '%s',
+	                                        'translated' => '%s',
+	                                        'domain'     => '%s',
+	                                        'status'     => '%d'
+	    );
+	    $columns_query_part        = '';
 	    foreach ( $columns_to_update as $column ) {
 		    $columns_query_part .= $column . ',';
-		    $placeholders[] = $placeholder_array_mapping[$column];
+		    $placeholders[]     = $placeholder_array_mapping[ $column ];
 	    }
 	    $columns_query_part = rtrim( $columns_query_part, ',' );
 
-        $query = "INSERT INTO `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "` ( " . $columns_query_part . " ) VALUES ";
+	    $query = "INSERT INTO `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "` ( " . $columns_query_part . " ) VALUES ";
 
-        $values = array();
-        $place_holders = array();
+	    $values        = array();
+	    $place_holders = array();
 
 	    $placeholders_query_part = '(';
 	    foreach ( $placeholders as $placeholder ) {
@@ -416,12 +421,15 @@ class TRP_Query{
 	    $placeholders_query_part = rtrim( $placeholders_query_part, ',' );
 	    $placeholders_query_part .= ')';
 
+	    $update_id_and_original = in_array( 'id', $columns_to_update ) && in_array( 'original', $columns_to_update );
         foreach ( $updated_strings as $string ) {
-	        $string['status'] = !empty( $string['status'] ) ? $string['status'] : self::NOT_TRANSLATED;
-	        foreach( $columns_to_update as $column ) {
-		        array_push( $values, $string[$column] );
+	        if ( !$update_id_and_original || ( !empty( $string['id'] ) && is_numeric( $string['id'] ) && !empty( $string['original'] ) ) ) { //we must have an ID and an original if columns to update include id and original
+		        $string['status'] = !empty( $string['status'] ) ? $string['status'] : self::NOT_TRANSLATED;
+		        foreach( $columns_to_update as $column ) {
+			        array_push( $values, $string[$column] );
+		        }
+		        $place_holders[] = $placeholders_query_part;
 	        }
-	        $place_holders[] = $placeholders_query_part;
         }
 
 	    $on_duplicate = ' ON DUPLICATE KEY UPDATE ';
@@ -739,6 +747,20 @@ class TRP_Query{
 		$query = "SELECT " .  $columns_query_part . " FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . " ORDER BY id LIMIT " . $inferior_limit . ", " . $batch_size;
 		$dictionary = $this->db->get_results( $query, ARRAY_A );
 		return $dictionary;
+	}
+
+	/**
+	 * Used for updating database
+	 *
+	 * @param string $language_code     Language code of the table
+	 * @param string $limit             How many strings to affect at most
+	 *
+	 * @return bool|int
+	 */
+	public function delete_empty_gettext_strings( $language_code, $limit ){
+		$limit = (int) $limit;
+		$sql = "DELETE FROM `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ). "` WHERE (original IS NULL OR original = '') LIMIT " . $limit;
+		return $this->db->query( $sql );
 	}
 
 }
