@@ -11,12 +11,14 @@
         "catalog": "gulp catalog"
     },
     "devDependencies": {
-        "browser-sync": "^2.26.3",
+        "@babel/preset-env": "^7.4.4",
+        "browser-sync": "^2.26.5",
         "browser-sync-webpack-plugin": "^2.2.2",
         "gulp": "^4.0.0",
         "gulp-git": "^2.8.1",
         "gulp-wp-pot": "^2.3.3",
-        "laravel-mix": "^4.0.13",
+        "laravel-mix": "^4.0.15",
+        "laravel-mix-polyfill": "^1.0.2",
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.16.0",
         "sass-loader": "^7.1.0",
@@ -24,11 +26,9 @@
         "vue-template-compiler": "^2.5.21"
     },
     "dependencies": {
-        "@wordpress/i18n": "^3.1.1",
         "axios": "^0.18.0",
-        "babel-polyfill": "^6.26.0",
         "he": "^1.2.0",
-        "select2": "^4.0.6-rc.1",
+        "select2": "^4.0.7-rc.0",
         "uuid": "^3.3.2",
         "vue": "^2.5.21"
     }

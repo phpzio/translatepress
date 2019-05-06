@@ -354,7 +354,7 @@
             scanForSelector( baseSelector, typeSlug, languageOfIds ){
                 let self           = this
                 let selectors      = this.prepareSelectorStrings( baseSelector )
-                let nodes          = this.iframe.querySelectorAll( '[' + selectors.join('],[') + ']' )
+                let nodes          = [...this.iframe.querySelectorAll( '[' + selectors.join('],[') + ']' )]
                 let stringIdsArray = [], nodeData = [], nodeEntries = []
 
                 nodes.forEach( function ( node ){
