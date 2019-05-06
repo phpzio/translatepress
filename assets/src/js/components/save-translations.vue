@@ -181,11 +181,19 @@
 
                             self.$parent.mergeData = []
 
+                            //get merged string
+                            let mergedString
+
+                            if( item.translationsArray[self.onScreenLanguage].translated )
+                                mergedString = item.translationsArray[self.onScreenLanguage].translated
+                            else
+                                mergedString = item.original
+
                             //replace HTML in iFrame
                             let translationBlock = self.iframe.querySelector( '.trp-create-translation-block' )
-                            translationBlock.innerHTML = item.translationsArray[self.onScreenLanguage].translated
-                            translationBlock.setAttribute( 'data-trp-translate-id', item.dbID )
-                            translationBlock.classList.remove( 'trp-create-translation-block' )
+                                translationBlock.innerHTML = mergedString
+                                translationBlock.setAttribute( 'data-trp-translate-id', item.dbID )
+                                translationBlock.classList.remove( 'trp-create-translation-block' )
 
                             //setup event listener for new block
                             self.$parent.setupEventListener( translationBlock )
