@@ -9,6 +9,9 @@ function TRP_Iframe_Preview(){
      * Add GET preview parameter for links and forms.
      */
     this.initialize = function() {
+        if( !trpTranslator )
+            return;
+
         trpTranslator.pause_observer();
         jQuery('a').each(function () {
             // target parent brakes from the iframe so we're changing to self.
