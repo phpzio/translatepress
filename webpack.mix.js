@@ -22,4 +22,5 @@ mix.js( 'assets/src/js/trp-editor.js', 'assets/js' )
         externals: {
             "jquery" : "jQuery",
         }
-    });
+    })
+    .sourceMaps();
