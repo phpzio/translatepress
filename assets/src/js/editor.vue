@@ -580,7 +580,7 @@
                 if ( type == 'Images' )
                     return utils.getFilename( name )
 
-                return name
+                return utils.escapeHtml( name )
             },
             isStringsDropdownOpen(){
                 return jQuery( '#trp-string-categories' ).select2( 'isOpen' )

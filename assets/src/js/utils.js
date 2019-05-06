@@ -24,12 +24,13 @@ function removeUrlParameter( url, parameter ) {
 }
 
 function escapeHtml( string ){
-    let escape = document.createElement('textarea');
-    escape.textContent = string;
-    return escape.innerHTML;
+    let doc = new DOMParser().parseFromString( string, 'text/html' )
+
+    return doc.body.textContent || ""
 }
 
-function getFilename( url ) {
+
+function getFilename( url ){
     if ( url )
         return url.substring( url.lastIndexOf( "/" ) + 1, url.lastIndexOf( "." ) )
 
