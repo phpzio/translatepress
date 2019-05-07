@@ -492,15 +492,13 @@ class TRP_Translation_Render{
                         foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
                             $nfv_row->outertext = $nfv_row->innertext();
                             $row->setAttribute($attr_name, $node_from_value->save() );
-                            if( !$row->has_child() ){// if the node doesn't have children set the needed attributes, else it means that there are other nodes inside so probably they are the ones displayed
-                                if( empty( $row->innertext ) && ( $attr_name == 'placeholder' || $attr_name == 'value' || $attr_name == 'alt' ) )// add the no translate attribute only if it does not contain any kind of text or it is an attribute we search for
-                                    $row->setAttribute($no_translate_attribute, '');
-                                // we are in the editor
-                                if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
-                                    $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
-                                    $row->setAttribute('data-trpgettextoriginal-' . $attr_name, $original_gettext_translation_id);
-                                }
+                            $row->setAttribute($no_translate_attribute . '-' . $attr_name, '');
+                            // we are in the editor
+                            if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
+                                $original_gettext_translation_id = $nfv_row->getAttribute('data-trpgettextoriginal');
+                                $row->setAttribute('data-trpgettextoriginal-' . $attr_name, $original_gettext_translation_id);
                             }
+
                         }
                     }
                 }
@@ -572,17 +570,28 @@ class TRP_Translation_Render{
                 }
             }
         }
+	    //set up general links variables
+	    $home_url = home_url();
+	    $admin_url = admin_url();
+	    $wp_login_url = wp_login_url();
 
 	    $node_accessors = $this->get_node_accessors();
 	    foreach( $node_accessors as $node_accessor_key => $node_accessor ){
 	    	if ( isset( $node_accessor['selector'] ) ){
 			    foreach ( $html->find( $node_accessor['selector'] ) as $k => $row ){
 			    	$current_node_accessor_selector = $node_accessor['accessor'];
-				    $trimmed_string = trp_full_trim($row->$current_node_accessor_selector);
+			    	if ( $current_node_accessor_selector === 'href' ) {
+					    $url = $row->$current_node_accessor_selector;
+					    $trimmed_string = ( $this->is_external_link( $url, $home_url ) || $this->url_converter->url_is_file( $url ) ) ? $url : '';
+				    }else{
+					    $trimmed_string = trp_full_trim($row->$current_node_accessor_selector);
+				    }
+
 				    if( $trimmed_string!=""
 				        && !is_numeric($trimmed_string)
 				        && !preg_match('/^\d+%$/',$trimmed_string)
 				        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
+				        && !$this->has_ancestor_attribute( $row, $no_translate_attribute . '-' . $current_node_accessor_selector )
 				        && !$this->has_ancestor_class( $row, 'translation-block') )
 				    {
 					    array_push( $translateable_strings, html_entity_decode( $trimmed_string ) );
@@ -665,11 +674,6 @@ class TRP_Translation_Render{
             }
         }
 
-
-        //set up general links variables
-        $home_url = home_url();
-        $admin_url = admin_url();
-        $wp_login_url = wp_login_url();
 
         // force custom links to have the correct language
         foreach( $html->find('a[href!="#"]') as $a_href)  {

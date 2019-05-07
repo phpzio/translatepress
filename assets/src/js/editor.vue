@@ -259,10 +259,11 @@
                 this.iframe.location = url
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
-                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ? selectedStringArrayIndex : '' ).trigger( 'change' )
 
                 if( this.hasUnsavedChanges() || ( !selectedStringArrayIndex && selectedStringArrayIndex != 0 ) )
                     return
+
+                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ? selectedStringArrayIndex : '' ).trigger( 'change' )
 
                 let selectedString       = this.dictionary[selectedStringArrayIndex]
 
@@ -280,7 +281,7 @@
 
                     nodes.push( currentNode )
 
-                    if ( currentNode.tagName == "IMG" ){
+                    if ( currentNode.tagName != "A" ){
                         // include the anchor's translatable attributes
                         let anchorParent  = currentNode.closest('a')
                         if(  anchorParent != null ) {
