@@ -10,6 +10,8 @@ class TRP_Editor_Api_Regular_Strings {
 	protected $translation_render;
 	/* @var TRP_Translation_Manager */
 	protected $translation_manager;
+	/* @var TRP_Url_Converter */
+	protected $url_converter;
 
 	/**
 	 * TRP_Translation_Manager constructor.
@@ -66,6 +68,21 @@ class TRP_Editor_Api_Regular_Strings {
 	 * @return array
 	 */
 	protected function get_translation_for_strings( $ids, $originals, $block_type = null ){
+		$trp = TRP_Translate_Press::get_trp_instance();
+		if ( ! $this->trp_query ) {
+			$this->trp_query = $trp->get_component( 'query' );
+		}
+		if ( ! $this->slug_manager ) {
+			$this->slug_manager = $trp->get_component('slug_manager');
+		}
+		if ( ! $this->translation_render ) {
+			$this->translation_render = $trp->get_component('translation_render');
+		}
+		if ( ! $this->url_converter ) {
+			$this->url_converter = $trp->get_component('url_converter');
+		}
+
+		$home_url = home_url();
 		$id_array = array();
 		$original_array = array();
 		$dictionaries = array();
@@ -84,22 +101,16 @@ class TRP_Editor_Api_Regular_Strings {
 		}
 		foreach( $originals as $original ){
 			if ( isset( $original ) ) {
-				$original_array[] = trp_full_trim( trp_sanitize_string( $original ) );
+				$trimmed_string = trp_full_trim( trp_sanitize_string( $original ) );
+				// don't allow urls unless they are external or files
+				if ( filter_var($trimmed_string, FILTER_VALIDATE_URL) === false || ( $this->translation_render->is_external_link( $trimmed_string, $home_url ) && $this->url_converter->url_is_file( $trimmed_string ) ) ) {
+					$original_array[] = $trimmed_string;
+				}
 			}
 		}
 
 		$current_language = sanitize_text_field( $_POST['language'] );
 
-		$trp = TRP_Translate_Press::get_trp_instance();
-		if ( ! $this->trp_query ) {
-			$this->trp_query = $trp->get_component( 'query' );
-		}
-		if ( ! $this->slug_manager ) {
-			$this->slug_manager = $trp->get_component('slug_manager');
-		}
-		if ( ! $this->translation_render ) {
-			$this->translation_render = $trp->get_component('translation_render');
-		}
 
 		// necessary in order to obtain all the original strings
 		if ( $this->settings['default-language'] != $current_language ) {

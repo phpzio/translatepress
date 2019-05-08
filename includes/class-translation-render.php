@@ -580,11 +580,9 @@ class TRP_Translation_Render{
 	    	if ( isset( $node_accessor['selector'] ) ){
 			    foreach ( $html->find( $node_accessor['selector'] ) as $k => $row ){
 			    	$current_node_accessor_selector = $node_accessor['accessor'];
+				    $trimmed_string = trp_full_trim($row->$current_node_accessor_selector);
 			    	if ( $current_node_accessor_selector === 'href' ) {
-					    $url = $row->$current_node_accessor_selector;
-					    $trimmed_string = ( $this->is_external_link( $url, $home_url ) || $this->url_converter->url_is_file( $url ) ) ? $url : '';
-				    }else{
-					    $trimmed_string = trp_full_trim($row->$current_node_accessor_selector);
+					    $trimmed_string = ( $this->is_external_link( $trimmed_string, $home_url ) || $this->url_converter->url_is_file( $trimmed_string ) ) ? $trimmed_string : '';
 				    }
 
 				    if( $trimmed_string!=""
@@ -912,7 +910,13 @@ class TRP_Translation_Render{
      * @return array
      */
     public function process_strings( $translateable_strings, $language_code, $block_type = null ){
+	    if ( ! $this->machine_translator ) {
+		    $trp = TRP_Translate_Press::get_trp_instance();
+		    $this->machine_translator = $trp->get_component('machine_translator');
+	    }
+
         $translated_strings = array();
+	    $machine_translation_available = $this->machine_translator->is_available();
 
         if ( ! $this->trp_query ) {
             $trp = TRP_Translate_Press::get_trp_instance();
@@ -925,6 +929,7 @@ class TRP_Translation_Render{
         	return array();
         }
         $new_strings = array();
+	    $machine_translatable_strings = array();
         foreach( $translateable_strings as $i => $string ){
             //strings existing in database,
 
@@ -932,17 +937,17 @@ class TRP_Translation_Render{
                 $translated_strings[$i] = $dictionary[$string]->translated;
             }else{
                 $new_strings[$i] = $translateable_strings[$i];
+                // if the string is not a url then allow machine translation for it
+                if ( $machine_translation_available && filter_var($new_strings[$i], FILTER_VALIDATE_URL) === false ){
+	                $machine_translatable_strings[$i] = $new_strings[$i];
+                }
             }
         }
 
-        if ( ! $this->machine_translator ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
-            $this->machine_translator = $trp->get_component('machine_translator');
-        }
 
         // machine translate new strings
-        if ( $this->machine_translator->is_available() ) {
-            $machine_strings = $this->machine_translator->translate_array( $new_strings, $language_code );
+        if ( $machine_translation_available ) {
+            $machine_strings = $this->machine_translator->translate_array( $machine_translatable_strings, $language_code );
         }else{
             $machine_strings = false;
         }
