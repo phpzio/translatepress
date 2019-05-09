@@ -78,7 +78,7 @@ function TRP_Translator(){
                 var queried_string = strings_to_query[j];
                 var translation_found = false;
                 var initial_value = queried_string.original;
-                for (var i = 0 ; i < response[language_to_query].length; i++){
+                for( var i in response[language_to_query] ) {
                     var response_string = response[language_to_query][i];
                     if (response_string.original.trim() == queried_string.original.trim()) {
                         // We use j instead of i index because the strings_to_query can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
