@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 5.1.1
-Stable tag: 1.4.5
+Stable tag: 1.4.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -125,6 +125,12 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.4.6 =
+* Fixed a js compatibility error with mootools.js
+* Modified how the license page works and added plugin notifications
+* Allow compatibility fix for Translation Editor on certain environments
+* Fixed Safari bug with links when WooCommerce active
+
 = 1.4.5 =
 * Performance improvements
 * Fixed an issue that was causing empty strings to get inserted in the database
