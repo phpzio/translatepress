@@ -32,7 +32,7 @@ function TRP_Translator(){
                 all_languages     : 'false',
                 security          : trp_data['gettranslationsnonceregular'],
                 language          : language_to_query,
-                original_language : original_language,
+                original_language : original_language, // used for trp custom ajax
                 originals         : JSON.stringify( string_originals ),
                 dynamic_strings   : 'true'
             },

@@ -351,6 +351,7 @@
             scanIframeForStrings(){
                 this.scanForSelector( 'data-trp-translate-id', 'regular', this.onScreenLanguage )
                 this.scanForSelector( 'data-trpgettextoriginal', 'gettext', this.currentLanguage )
+                this.scanForSelector( 'data-trp-post-slug', 'postslug', this.currentLanguage )
             },
             scanForSelector( baseSelector, typeSlug, languageOfIds ){
                 let self           = this

@@ -4,8 +4,6 @@ class TRP_Editor_Api_Regular_Strings {
 
 	/* @var TRP_Query */
 	protected $trp_query;
-	/* @var TRP_SP_Slug_Manager*/
-	protected $slug_manager;
 	/* @var TRP_Translation_Render */
 	protected $translation_render;
 	/* @var TRP_Translation_Manager */
@@ -57,7 +55,7 @@ class TRP_Editor_Api_Regular_Strings {
 			}
 		}
 
-		die();
+		wp_die();
 	}
 	/**
 	 * Return dictionary with translated strings.
@@ -72,9 +70,6 @@ class TRP_Editor_Api_Regular_Strings {
 		if ( ! $this->trp_query ) {
 			$this->trp_query = $trp->get_component( 'query' );
 		}
-		if ( ! $this->slug_manager ) {
-			$this->slug_manager = $trp->get_component('slug_manager');
-		}
 		if ( ! $this->translation_render ) {
 			$this->translation_render = $trp->get_component('translation_render');
 		}
@@ -87,7 +82,7 @@ class TRP_Editor_Api_Regular_Strings {
 		$original_array = array();
 		$dictionaries = array();
 		$slug_info = false;
-		//			if ( isset( $string->slug ) && $string->slug === true ){
+//			if ( isset( $string->slug ) && $string->slug === true ){
 //				$slug_info = array(
 //					'post_id'   => (int)$string->slug_post_id,
 //					'id'        => (int)$string->id,

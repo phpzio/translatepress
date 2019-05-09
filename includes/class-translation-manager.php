@@ -119,6 +119,7 @@ class TRP_Translation_Manager{
 
 	public function string_groups(){
 		$string_groups = array(
+			'slugs'           => __( 'Slugs', 'translatepress-multilingual' ),
             'metainformation' => __( 'Meta Information', 'translatepress-multilingual' ),
             'stringlist'      => __( 'String List', 'translatepress-multilingual' ),
             'gettextstrings'  => __( 'Gettext Strings', 'translatepress-multilingual' ),
@@ -130,14 +131,15 @@ class TRP_Translation_Manager{
 
 	public function editor_nonces(){
 		$nonces = array(
-            'gettranslationsnonceregular'  => wp_create_nonce('get_translations'),
-            'savetranslationsnonceregular' => wp_create_nonce('save_translations'),
-            'gettranslationsnoncegettext'  => wp_create_nonce('gettext_get_translations'),
-            'savetranslationsnoncegettext' => wp_create_nonce('gettext_save_translations'),
-            'splittbnonce'                 => wp_create_nonce('split_translation_block'),
-            'mergetbnonce'                 => wp_create_nonce('merge_translation_block'),
-            'mergetbnonce'                 => wp_create_nonce('merge_translation_block'),
-            'logged_out'                   => wp_create_nonce('trp_view_aslogged_out' . get_current_user_id()),
+            'gettranslationsnonceregular'   => wp_create_nonce('get_translations'),
+            'savetranslationsnonceregular'  => wp_create_nonce('save_translations'),
+            'gettranslationsnoncegettext'   => wp_create_nonce('gettext_get_translations'),
+            'savetranslationsnoncegettext'  => wp_create_nonce('gettext_save_translations'),
+            'gettranslationsnoncepostslug'  => wp_create_nonce('postslug_get_translations'),
+            'savetranslationsnoncepostslug' => wp_create_nonce('postslug_save_translations'),
+            'splittbnonce'                  => wp_create_nonce('split_translation_block'),
+            'mergetbnonce'                  => wp_create_nonce('merge_translation_block'),
+            'logged_out'                    => wp_create_nonce('trp_view_aslogged_out' . get_current_user_id()),
 		);
 
 		return apply_filters( 'trp_editor_nonces', $nonces );
@@ -182,18 +184,6 @@ class TRP_Translation_Manager{
         if ( $this->conditions_met( 'preview' ) ) {
             wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery'), TRP_PLUGIN_VERSION );
             wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css', array('dashicons'), TRP_PLUGIN_VERSION );
-        }
-    }
-
-    /**
-     * Echo page slug as meta tag in preview window.
-     *
-     * Hooked to wp_head
-     */
-    public function add_slug_as_meta_tag() {
-        global $post;
-        if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && !is_home() && !is_front_page() && !is_archive() && !is_search() ) {
-            echo '<meta name="trp-slug" original="' . $post->post_name. '" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
         }
     }
 

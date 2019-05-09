@@ -116,7 +116,7 @@ class TRP_Translation_Render{
 	    $string_groups = $this->translation_manager->string_groups();
 
         $node_type_categories = apply_filters( 'trp_node_type_categories', array(
-            $string_groups['metainformation'] => array( 'meta_desc', 'post_slug', 'page_title' ),
+            $string_groups['metainformation'] => array( 'meta_desc', 'page_title' ),
             $string_groups['images']          => array( 'image_src' )
         ));
 
@@ -173,12 +173,6 @@ class TRP_Translation_Render{
                     'attribute'     => 'name',
                     'value'         => 'twitter:description',
                     'description'   => __( 'Twitter Description', 'translatepress-multilingual' )
-                ),
-                array(
-                    'type'          => 'post_slug',
-                    'attribute'     => 'name',
-                    'value'         => 'trp-slug',
-                    'description'   => __( 'Post Slug', 'translatepress-multilingual' )
                 ),
                 array(
                     'type'          => 'page_title',
