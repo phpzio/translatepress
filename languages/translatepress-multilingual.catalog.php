@@ -166,3 +166,6 @@
 <?php __("Remove duplicate rows", "translatepress-multilingual"); ?>
 <?php __("TranslatePress Database Updater", "translatepress-multilingual"); ?>
 <?php __("Updating TranslatePress tables", "translatepress-multilingual"); ?>
+<?php __(" TranslatePress Settings", "translatepress-multilingual"); ?>
+<?php __("Translator", "translatepress-multilingual"); ?>
+<?php __("Allow this user to translate the website.", "translatepress-multilingual"); ?>

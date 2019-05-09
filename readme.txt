@@ -4,7 +4,7 @@ Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 5.1.1
-Stable tag: 1.4.6
+Stable tag: 1.4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -457,3 +457,6 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 = 1.0.0 =
 * Initial release.
+
+    1.4.7
+    
