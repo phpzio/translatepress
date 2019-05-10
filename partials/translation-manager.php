@@ -33,7 +33,7 @@
     <script type="application/javascript">
         var trp_language = '<?php echo esc_js( $TRP_LANGUAGE ); ?>';
         var trp_on_screen_language = '<?php echo esc_js( ( isset( $translation_languages[0] ) ) ? $translation_languages[0] : 'null' ); ?>';
-        var trp_ajax_url = '<?php echo esc_url( apply_filters( 'trp_ajax_url', admin_url( 'admin-ajax.php' ) ) ); ?>';
+        var trp_ajax_url = '<?php echo esc_url( apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ) ); ?>';
     </script>
 </head>
 <body>
