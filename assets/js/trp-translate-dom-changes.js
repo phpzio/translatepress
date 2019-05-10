@@ -74,7 +74,7 @@ function TRP_Translator(){
     this.update_strings = function( response, strings_to_query ) {
         if ( response != null && response[language_to_query] != null ){
             var dictionary = {};
-            for ( var j in strings_to_query ) {
+            for (var j = 0 ; j < strings_to_query.length; j++){
                 var queried_string = strings_to_query[j];
                 var translation_found = false;
                 var initial_value = queried_string.original;
@@ -119,7 +119,7 @@ function TRP_Translator(){
                 }
             }
         }else{
-            for ( var j in strings_to_query ) {
+            for (var j = 0 ; j < strings_to_query.length; j++){
                 strings_to_query[j].node.textContent = strings_to_query[j].original;
             }
         }

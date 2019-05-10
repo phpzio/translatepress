@@ -392,6 +392,12 @@ class TRP_Settings{
             )
         ));
 
+        $tabs[] = array(
+            'name'  => __( 'Addons', 'translatepress-multilingual' ),
+            'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
+            'page'  => 'trp_addons_page'
+        );
+
         if( class_exists('TRP_LICENSE_PAGE') ) {
             $tabs[] = array(
                 'name'  => __( 'License', 'translatepress-multilingual' ),
@@ -399,11 +405,6 @@ class TRP_Settings{
                 'page'  => 'trp_license_key'
             );
         }
-        $tabs[] = array(
-            'name'  => __( 'Addons', 'translatepress-multilingual' ),
-            'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
-            'page'  => 'trp_addons_page'
-        );
 
         $active_tab = 'translate-press';
         if ( isset( $_GET['page'] ) ){

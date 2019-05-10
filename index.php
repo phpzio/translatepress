@@ -3,7 +3,7 @@
 Plugin Name: TranslatePress - Multilingual
 Plugin URI: https://translatepress.com/
 Description: Experience a better way of translating your WordPress site, with full support for WooCommerce and site builders.
-Version: 1.4.5
+Version: 1.4.7
 Author: Cozmoslabs, Razvan Mocanu, Madalin Ungureanu, Cristophor Hurduban
 Author URI: https://cozmoslabs.com/
 Text Domain: translatepress-multilingual
@@ -36,3 +36,11 @@ function trp_run_translatepress_hooks(){
 }
 /* make sure we execute our plugin before other plugins so the changes we make apply across the board */
 add_action( 'plugins_loaded', 'trp_run_translatepress_hooks', 1 );
+
+
+/** License classes includes here
+ * Since version 1.4.6
+ * It need to be outside of a hook so it load before the classes that are in the addons, that we are trying to phase out
+ */
+
+require_once plugin_dir_path(__FILE__) . 'includes/class-edd-sl-plugin-updater.php';
