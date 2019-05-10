@@ -235,7 +235,10 @@ class TRP_Language_Switcher{
         ?>
         <div id="trp-floater-ls" onclick="" data-no-translation class="trp-language-switcher-container <?php echo esc_attr( $floater_class ); ?>" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?>>
             <div id="trp-floater-ls-current-language" class="<?php echo esc_attr( $floater_flags_class ); ?>">
-                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language trp-ls-disabled-language" onclick="void(0)"><?php echo esc_html( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo esc_html( $current_language_label ); ?></a>
+                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language trp-ls-disabled-language" onclick="void(0)">
+					<?php echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); // WPCS: ok.
+					echo esc_html( $current_language_label ); ?>
+				</a>
             </div>
             <div id="trp-floater-ls-language-list" class="<?php echo esc_attr( $floater_flags_class );?>" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : ''?>>
                 <?php
@@ -251,11 +254,20 @@ class TRP_Language_Switcher{
                     }
 
                     ?>
-                    <a href="<?php echo esc_url( $this->url_converter->get_url_for_language($code, false) ); ?>" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?> title="<?php echo esc_attr( $name ); ?>"><?php echo esc_html( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); echo esc_html( $language_label ); ?></a>
+                    <a href="<?php echo esc_url( $this->url_converter->get_url_for_language($code, false) ); ?>" <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?> title="<?php echo esc_attr( $name ); ?>">
+						<?php echo ( $floater_settings['flags'] ? $this->add_flag( $code, $name ) : '' ); // WPCS: ok.
+						echo esc_html( $language_label ); ?>
+					</a>
                 <?php
                 }
                 ?>
-                <a href="javascript:void(0)" class="trp-floater-ls-disabled-language trp-ls-disabled-language"><?php echo esc_html( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); echo esc_html( $current_language_label ); ?></a>
+				<a href="javascript:void(0)"
+				   class="trp-floater-ls-disabled-language trp-ls-disabled-language">
+					<?php
+						echo ( $floater_settings['flags'] ? $this->add_flag( $current_language['code'], $current_language['name'] ) : '' ); // WPCS: ok.
+						echo esc_html( $current_language_label );
+					?>
+				</a>
             </div>
         </div>
 
@@ -281,11 +293,11 @@ class TRP_Language_Switcher{
         $flag_file_name = apply_filters( 'trp_flag_file_name', $flag_file_name, $language_code );
 
         // HTML code to display flag image
-        $flag_html = '<img class="trp-flag-image" src="'. $flags_path . $flag_file_name .'" width="18" height="12" alt="' . $language_code . '" title="' . $language_name . '">';
+        $flag_html = '<img class="trp-flag-image" src="'. esc_url( $flags_path . $flag_file_name ) .'" width="18" height="12" alt="' . esc_attr( $language_code ) . '" title="' . esc_attr( $language_name ) . '">';
 
         if( $location == 'ls_shortcode' ) {
             $flag_url = $flags_path . $flag_file_name;
-            return $flag_url;
+            return esc_url( $flag_url );
         }
 
         return $flag_html;
@@ -318,7 +330,7 @@ class TRP_Language_Switcher{
             $short_name = '';
         }
 
-        return $flag . ' ' . $short_name . $full_name;
+        return $flag . ' ' . esc_html( $short_name . $full_name );
     }
 
     /**

@@ -16,16 +16,20 @@ $current_language_preference = $this->add_shortcode_preferences($shortcode_setti
         })
     </script>
     <div class="trp-ls-shortcode-current-language">
-        <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language trp-ls-disabled-language" title="<?php echo esc_attr( $current_language['name'] ); ?>"><?php echo esc_html( $current_language_preference ); ?></a>
+        <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language trp-ls-disabled-language" title="<?php echo esc_attr( $current_language['name'] ); ?>">
+			<?php echo $current_language_preference; // WPCS: ok. ?>
+		</a>
     </div>
     <div class="trp-ls-shortcode-language">
-        <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language trp-ls-disabled-language"  title="<?php echo esc_attr( $current_language['name'] ); ?>"><?php echo esc_html( $current_language_preference ); ?></a>
+        <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language trp-ls-disabled-language"  title="<?php echo esc_attr( $current_language['name'] ); ?>">
+			<?php echo $current_language_preference; // WPCS: ok. ?>
+		</a>
     <?php foreach ( $other_languages as $code => $name ){
 
         $language_preference = $this->add_shortcode_preferences($shortcode_settings, $code, $name);
         ?>
         <a href="<?php echo esc_url( $this->url_converter->get_url_for_language($code, false) ); ?>" title="<?php echo esc_attr( $name ); ?>">
-            <?php echo esc_html( $language_preference ); ?>
+            <?php echo $language_preference; // WPCS: ok. ?>
         </a>
 
     <?php } ?>
