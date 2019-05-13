@@ -35,6 +35,7 @@
                 else {
                     this.saveStringType( 'gettext' )
                     this.saveStringType( 'regular' )
+                    this.saveStringType( 'postslug' )
                 }
             },
             saveStringType( typeSlug ){
