@@ -164,6 +164,7 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'trp_before_translate_content', $this->translation_render, 'force_form_language_on_url_in_ajax', 20 );
         /* handle CDATA str replacement from the content as it is messing up the renderer */
         $this->loader->add_filter( "trp_before_translate_content", $this->translation_render, 'handle_cdata', 1000 );
+        $this->loader->add_action( "trp_set_translation_for_attribute", $this->translation_render, 'translate_image_srcset_attributes', 10, 3 );
 
         /* apply translation filters for REST API response */
         $post_types = get_post_types();

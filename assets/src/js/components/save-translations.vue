@@ -122,6 +122,9 @@
                         let initialValue = node.getAttribute(string.attribute)
                         textToSet = initialValue.replace(initialValue.trim(), textToSet)
                         node.setAttribute(string.attribute, textToSet)
+                        if( string.attribute === 'src' ){
+                            node.setAttribute('srcset', '')
+                        }
                     }
                 })
             },

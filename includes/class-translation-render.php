@@ -623,6 +623,7 @@ class TRP_Translation_Render{
                         $translateable_string = $alternate_translateable_string;
                     }
                     $nodes[$i]['node']->setAttribute( $accessor, str_replace( $translateable_string, esc_attr( $translated_strings[$i] ), $nodes[$i]['node']->getAttribute( $accessor ) ) );
+                    do_action( 'trp_set_translation_for_attribute', $nodes[$i]['node'], $accessor, $translated_strings[$i] );
                 }else{
                     if ( strpos ( $nodes[$i]['node']->$accessor, $translateable_string ) === false ){
                         $translateable_string = $alternate_translateable_string;
@@ -731,6 +732,27 @@ class TRP_Translation_Render{
         $final_html = $this->remove_trp_html_tags( $final_html );
 
 	    return apply_filters( 'trp_translated_html', $final_html, $TRP_LANGUAGE, $language_code );
+    }
+
+    /*
+     * Update other image attributes (srcset) with the translated image
+     *
+     * Hooked to trp_set_translation_for_attribute
+     */
+    public function translate_image_srcset_attributes( $node, $accessor, $translated_string){
+	    if( $accessor === 'src' && $node->getAttribute('srcset') ){
+	    	$attachment_id = attachment_url_to_postid( $translated_string );
+		    if ( $attachment_id ){
+			    $translated_srcset = wp_get_attachment_image_srcset($attachment_id);
+			    if ( $translated_srcset ) {
+				    $node->setAttribute('srcset', $translated_srcset );
+			    }else{
+				    $node->setAttribute('srcset', '' );
+			    }
+		    }else{
+			    $node->setAttribute('srcset', '' );
+		    }
+	    }
     }
 
     /**
