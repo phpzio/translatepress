@@ -80,6 +80,7 @@ class TRP_Translation_Manager{
         return array(
             'saved'               => __( 'Saved', 'translatepress-multilingual' ),
             'save_translation'    => __( 'Save translation', 'translatepress-multilingual' ),
+            'saving_translation'  => __( 'Saving translation...', 'translatepress-multilingual' ),
             'unsaved_changes'     => __( 'You have unsaved changes !', 'translatepress-multilingual' ),
             'discard'             => __( 'Discard changes', 'translatepress-multilingual' ),
             'discard_all'         => __( 'Discard All', 'translatepress-multilingual' ),

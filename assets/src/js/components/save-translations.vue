@@ -1,7 +1,7 @@
 <template>
     <div id="trp-save-container">
-        <span id="trp-translation-saved" style="display: none">{{ editorStrings.saved }}</span>
-        <button id="trp-save" type="submit" class="button-primary trp-save-string" @click="save">{{ editorStrings.save_translation }}</button>
+        <span id="trp-translation-saved" style="display:none">{{ editorStrings.saved }}</span>
+        <button id="trp-save" :disabled="disabledSaveButton" type="submit" class="button-primary trp-save-string" @click="save">{{ saveButtonText }}</button>
     </div>
 </template>
 <script>
@@ -25,7 +25,24 @@
         ],
         data(){
             return {
+                'saveButtonText'            : this.editorStrings.save_translation,
+                'saveStringsRequestsLeft'   : 0,
+                'disabledSaveButton'        : false,
+            }
+        },
+        watch:{
+            saveStringsRequestsLeft : function( newValue, oldValue ){
+                if ( newValue > 0 ) {
+                    this.disabledSaveButton = true
+                    this.saveButtonText = this.editorStrings.saving_translation
+                }else{
+                    this.disabledSaveButton = false
+                    this.saveButtonText = this.editorStrings.save_translation
 
+                    let translationSaved = jQuery('#trp-translation-saved')
+                    translationSaved.css("display", "inline")
+                    translationSaved.delay(3000).fadeOut(400)
+                }
             }
         },
         methods:{
@@ -39,6 +56,7 @@
                 }
             },
             saveStringType( typeSlug ){
+                this.saveStringsRequestsLeft++
                 let self = this
                 let saveData = {}
                 let updateIframeData  = {}
@@ -77,15 +95,19 @@
                             if ( typeSlug === 'gettext' ) {
                                 axios.get(self.currentURL).then( function( reloadedIframeResponse) {
                                     self.updateIframe(updateIframeData, reloadedIframeResponse.data)
+                                    self.saveStringsRequestsLeft--
                                 })
                             }else {
                                 self.updateIframe(updateIframeData)
+                                self.saveStringsRequestsLeft--
                             }
                             self.$emit('translations-saved')
                         })
                         .catch(function (error) {
                             console.log(error)
                         });
+                }else{
+                    self.saveStringsRequestsLeft--
                 }
             },
             updateIframe( updateIframeData, reloadedIframeResponse = null ){

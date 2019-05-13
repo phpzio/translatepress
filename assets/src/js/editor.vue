@@ -6,25 +6,27 @@
 
                 <div id="trp-close-save">
                     <a id="trp-controls-close" :href="closeURL" :title="editorStrings.close"></a>
-                    <span class="trp-ajax-loader" style="display: none" id="trp-string-saved-ajax-loader">
-                        <div class="trp-spinner"></div>
-                    </span>
-                    <save-translations
-                            :selectedIndexesArray="selectedIndexesArray"
-                            :dictionary="dictionary"
-                            :settings="settings"
-                            :nonces="nonces"
-                            :ajax_url="ajax_url"
-                            :currentLanguage="currentLanguage"
-                            :onScreenLanguage="onScreenLanguage"
-                            :iframe="iframe"
-                            :currentURL="currentURL"
-                            :mergingString="mergingString"
-                            :mergeData="mergeData"
-                            @translations-saved="showChangesUnsavedMessage = false"
-                            :editorStrings="editorStrings"
-                    >
-                    </save-translations>
+                    <div id="trp-save-and-loader-spinner">
+                        <span class="trp-ajax-loader" v-show="loading_strings > 0" id="trp-string-saved-ajax-loader">
+                            <div class="trp-spinner"></div>
+                        </span>
+                        <save-translations
+                                :selectedIndexesArray="selectedIndexesArray"
+                                :dictionary="dictionary"
+                                :settings="settings"
+                                :nonces="nonces"
+                                :ajax_url="ajax_url"
+                                :currentLanguage="currentLanguage"
+                                :onScreenLanguage="onScreenLanguage"
+                                :iframe="iframe"
+                                :currentURL="currentURL"
+                                :mergingString="mergingString"
+                                :mergeData="mergeData"
+                                @translations-saved="showChangesUnsavedMessage = false"
+                                :editorStrings="editorStrings"
+                        >
+                        </save-translations>
+                    </div>
                 </div>
 
                 <div class="trp-controls-section">
@@ -170,6 +172,7 @@
                 mergeData                 : [],
                 showChangesUnsavedMessage : false,
                 viewAs                    : '',
+                loading_strings           : 0,
             }
         },
         created(){
@@ -354,6 +357,7 @@
                 this.scanForSelector( 'data-trp-post-slug', 'postslug', this.currentLanguage )
             },
             scanForSelector( baseSelector, typeSlug, languageOfIds ){
+                this.loading_strings++
                 let self           = this
                 let selectors      = this.prepareSelectorStrings( baseSelector )
                 let nodes          = [...this.iframe.querySelectorAll( '[' + selectors.join('],[') + ']' )]
@@ -385,11 +389,14 @@
 
                     axios.post(this.ajax_url, data)
                         .then(function (response) {
+                            self.loading_strings--
                             self.addToDictionary(response.data, nodeData)
                         })
                         .catch(function (error) {
                             console.log(error);
                         });
+                }else{
+                    self.loading_strings--
                 }
 
             },
