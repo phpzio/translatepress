@@ -447,6 +447,10 @@ spin {
 /*
 Language boxes component
  */
+
+.trp-language-container{
+    padding-bottom: 5px;
+}
 .trp-changes-unsaved-message{
     color: red;
     padding-bottom: 10px;
@@ -456,9 +460,22 @@ Language boxes component
     padding-bottom: 10px;
     color: black;
 }
+.trp-language-box-flag-image{
+    float:right;
+}
+
+.trp-translation-input-footer{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+.trp-attribute-name{
+    padding-left: 3px;
+    font-size: 11px;
+    color: black;
+}
+
 .trp-discard-individual-changes{
-    float: right;
-    margin-top: -15px;
     font-size: 11px;
 }
 
@@ -482,31 +499,20 @@ Language boxes component
 Translation Input component
  */
 
-.trp-translation-input-header{
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 3px;
-}
-.trp-translation-input-header-item{
-    display: inline-block;
-    vertical-align: baseline;
-    position:relative;
-}
-.trp-attribute-name{
-    position: absolute;
-    bottom:0;
-}
-.trp-translation-input-header-item.trp-no-media{
-    padding-top: 20px;
+.trp-input-media-container{
+    width: auto;
+    overflow: hidden;
+    padding-right:13px;
 }
 .trp-add-media{
-    margin-top:5px;
+    float: right;
 }
-
-
+.trp-translation-input-parent.trp-input-media-parent{
+    padding-right: 0;
+}
 .trp-translation-input-parent {
     padding-right: 9px;
-    padding-bottom: 15px;
+    padding-bottom: 2px;
 }
 .trp-translation-input{
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;

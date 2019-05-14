@@ -78,6 +78,15 @@ class TRP_Translation_Manager{
 
 	public function localized_text() {
         return array(
+        	// attribute names
+        	'src'                 => __( 'Image source', 'translatepress-multilingual' ),
+        	'alt'                 => __( 'Alt attribute', 'translatepress-multilingual' ),
+        	'title'               => __( 'Title attribute', 'translatepress-multilingual' ),
+            'href'                => __( 'Anchor link', 'translatepress-multilingual' ),
+            'placeholder'         => __( 'Placeholder attribute', 'translatepress-multilingual' ),
+            'submit'              => __( 'Submit attribute', 'translatepress-multilingual' ),
+            'text'                => __( 'Text', 'translatepress-multilingual' ),
+
             'saved'               => __( 'Saved', 'translatepress-multilingual' ),
             'save_translation'    => __( 'Save translation', 'translatepress-multilingual' ),
             'saving_translation'  => __( 'Saving translation...', 'translatepress-multilingual' ),

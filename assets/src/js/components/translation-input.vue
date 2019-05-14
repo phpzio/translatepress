@@ -1,23 +1,16 @@
 <template>
     <div class="translation-input" :class="{'trp-highlight-unsaved-changes':highlightUnsavedChanges}">
-        <div class="trp-translation-input-header" v-show="attributeName != ''">
-            <div class="trp-translation-input-header-item" :class="{'trp-no-media': inputType != 'inputmedia'}">
-                <div class="trp-attribute-name"  v-show="attributeName != 'Content'">
-                    {{attributeName}}
-                </div>
-            </div>
-            <div class="trp-translation-input-header-item">
-                <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="openMediaUpload($event)">
-            </div>
-        </div>
         <div v-if="inputType == 'textarea'" class="trp-translation-input-parent">
             <textarea class="trp-translation-input trp-textarea" :readonly="readonly" ref="textarea" :value="getValue()" @input="updateValue()"></textarea>
         </div>
         <div v-if="inputType == 'input'" class="trp-translation-input-parent">
             <input class="trp-translation-input trp-input" :class="{'trp-media' : inputType == 'inputmedia' }" :readonly="readonly" ref="input" :value="getValue()" @input="updateValue( null )">
         </div>
-        <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent">
-            <input class="trp-translation-input trp-input trp-media" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
+        <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent trp-input-media-parent">
+            <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="openMediaUpload($event)">
+            <div class="trp-input-media-container">
+                <input class="trp-translation-input trp-input trp-input-media" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
+            </div>
         </div>
     </div>
 </template>
@@ -35,7 +28,6 @@ export default{
     data(){
         return{
             inputType      : 'textarea',
-            attributeName  : this.string.attribute.charAt(0).toUpperCase() + this.string.attribute.slice(1),
         }
     },
     mounted(){

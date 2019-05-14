@@ -6,18 +6,20 @@
                 <div class="trp-language-name">
                     <span v-if="key == 0 ">{{ editorStrings.from }} </span>
                     <span v-else>{{ editorStrings.to }} </span>
-
-                    <img v-if="languageCode != 'original'" class="trp-flag-image" :src="flagsPath + '/' + languageCode + '.png'" width="18" height="12" :alt="languageCode" :title="completeLanguageNames[languageCode]">
                     {{ completeLanguageNames[languageCode] }}
+                    <img v-if="languageCode != 'original'" class="trp-language-box-flag-image" :src="flagsPath + '/' + languageCode + '.png'" width="18" height="12" :alt="languageCode" :title="completeLanguageNames[languageCode]">
                 </div>
                 <div class="trp-translations-container">
                     <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
                         <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
                             <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :highlightUnsavedChanges="showChangesUnsavedMessage && hasUnsavedChanges( selectedIndex, languageCode )" :editorStrings="editorStrings"></translation-input>
-                            <div class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">{{ editorStrings.discard }}</div>
                         </div>
                         <div v-else-if="dictionary[selectedIndex]" :key="selectedIndex">
                             <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original" :editorStrings="editorStrings"></translation-input>
+                        </div>
+                        <div class="trp-translation-input-footer">
+                            <div class="trp-attribute-name"  v-show="dictionary[selectedIndex].attribute != 'content' || dictionary[selectedIndex].attribute != ''">{{ ( editorStrings[ dictionary[selectedIndex].attribute ] ) ? editorStrings[ dictionary[selectedIndex].attribute ] : editorStrings.text }}</div>
+                            <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">{{ editorStrings.discard }}</div>
                         </div>
                     </div>
                 </div>
