@@ -161,7 +161,7 @@ class TRP_Translation_Manager{
      * hooked to trp_translation_manager_footer
      */
     public function enqueue_scripts_and_styles(){
-        wp_enqueue_style( 'trp-editor-style', TRP_PLUGIN_URL . 'assets/css/trp-editor.css', array(), TRP_PLUGIN_VERSION );
+        wp_enqueue_style( 'trp-editor-style', TRP_PLUGIN_URL . 'assets/css/trp-editor.css', array('dashicons'), TRP_PLUGIN_VERSION );
 
         wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
         wp_enqueue_script( 'trp-editor',  TRP_PLUGIN_URL . 'assets/js/trp-editor.js', array( 'wp-i18n' ), TRP_PLUGIN_VERSION );

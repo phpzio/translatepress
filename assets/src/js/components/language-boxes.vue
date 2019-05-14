@@ -9,25 +9,30 @@
                     {{ completeLanguageNames[languageCode] }}
                     <img v-if="languageCode != 'original'" class="trp-language-box-flag-image" :src="flagsPath + '/' + languageCode + '.png'" width="18" height="12" :alt="languageCode" :title="completeLanguageNames[languageCode]">
                 </div>
-                <div class="trp-translations-container">
-                    <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
-                        <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
-                            <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :highlightUnsavedChanges="showChangesUnsavedMessage && hasUnsavedChanges( selectedIndex, languageCode )" :editorStrings="editorStrings"></translation-input>
+                <table class="trp-translations-for-language">
+                    <td class="trp-translation-icon-container" v-if="showImageIcon">
+                        <span class="trp-translation-icon dashicons dashicons-format-image"></span>
+                    </td>
+                    <td class="trp-translations-container">
+                        <div class="trp-string-container" v-for="selectedIndex in selectedIndexesArray">
+                            <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
+                                <translation-input :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :highlightUnsavedChanges="showChangesUnsavedMessage && hasUnsavedChanges( selectedIndex, languageCode )" :editorStrings="editorStrings"></translation-input>
+                            </div>
+                            <div v-else-if="dictionary[selectedIndex]" :key="selectedIndex">
+                                <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original" :editorStrings="editorStrings"></translation-input>
+                            </div>
+                            <div class="trp-translation-input-footer">
+                                <div class="trp-attribute-name"  v-show="dictionary[selectedIndex].attribute != 'content' || dictionary[selectedIndex].attribute != ''">{{ ( editorStrings[ dictionary[selectedIndex].attribute ] ) ? editorStrings[ dictionary[selectedIndex].attribute ] : editorStrings.text }}</div>
+                                <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">{{ editorStrings.discard }}</div>
+                            </div>
                         </div>
-                        <div v-else-if="dictionary[selectedIndex]" :key="selectedIndex">
-                            <translation-input :readonly="true" :string="dictionary[selectedIndex]" :value="dictionary[selectedIndex].original" :editorStrings="editorStrings"></translation-input>
-                        </div>
-                        <div class="trp-translation-input-footer">
-                            <div class="trp-attribute-name"  v-show="dictionary[selectedIndex].attribute != 'content' || dictionary[selectedIndex].attribute != ''">{{ ( editorStrings[ dictionary[selectedIndex].attribute ] ) ? editorStrings[ dictionary[selectedIndex].attribute ] : editorStrings.text }}</div>
-                            <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }">{{ editorStrings.discard }}</div>
+                    </td>
+                    <div v-show="key == othersButtonPosition">
+                        <div class="trp-toggle-languages" @click="showOtherLanguages = !showOtherLanguages" :class="{ 'trp-show-other-languages': showOtherLanguages, 'trp-hide-other-languages': !showOtherLanguages }">
+                            <span>{{ (showOtherLanguages)? '&#11206;' : '&#11208;' }} {{ editorStrings.other_lang }}</span>
                         </div>
                     </div>
-                </div>
-                <div v-show="key == othersButtonPosition">
-                    <div class="trp-toggle-languages" @click="showOtherLanguages = !showOtherLanguages" :class="{ 'trp-show-other-languages': showOtherLanguages, 'trp-hide-other-languages': !showOtherLanguages }">
-                        <span>{{ (showOtherLanguages)? '&#11206;' : '&#11208;' }} {{ editorStrings.other_lang }}</span>
-                    </div>
-                </div>
+                </table>
             </div>
         </div>
     </div>
@@ -53,7 +58,8 @@
                 completeLanguageNames      : Object.assign( { 'original': 'Original String' }, this.languageNames ),
                 othersButtonPositionOffset : 1,
                 showOtherLanguages         : false,
-                orderedLanguages           : []
+                orderedLanguages           : [],
+                showImageIcon              : true
             }
         },
         components:{
@@ -98,11 +104,14 @@
                 let self                        = this
                 let defaultLanguage             = this.settings['default-language']
                 let translateToDefault          = false
+                this.showImageIcon              = false
                 this.othersButtonPositionOffset = 1
 
                 this.selectedIndexesArray.forEach(function (selectedIndex) {
                     if( self.dictionary[selectedIndex] && self.dictionary[selectedIndex].translationsArray[defaultLanguage] )
                         translateToDefault = true
+                    if( self.dictionary[selectedIndex] && self.dictionary[selectedIndex].attribute === 'src' )
+                        self.showImageIcon = true
                 })
 
                 if (translateToDefault) {

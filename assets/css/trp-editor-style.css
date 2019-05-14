@@ -447,7 +447,22 @@ spin {
 /*
 Language boxes component
  */
-
+.trp-translations-for-language{
+    width: 100%;
+    border: 0;
+    border-spacing: 0;
+}
+.trp-translation-icon-container{
+    width: 39px;
+}
+.trp-translations-for-language td{
+    padding: 0;
+}
+span.trp-translation-icon{
+    font-size: 29px;
+    line-height: 0.8276;
+    color: darkgrey;
+}
 .trp-language-container{
     padding-bottom: 5px;
 }
@@ -462,6 +477,7 @@ Language boxes component
 }
 .trp-language-box-flag-image{
     float:right;
+    padding-top: 4px;
 }
 
 .trp-translation-input-footer{
