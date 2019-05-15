@@ -263,10 +263,10 @@
             },
             selectedString: function ( selectedStringArrayIndex, oldString ){
 
-                if( this.hasUnsavedChanges() || ( !selectedStringArrayIndex && selectedStringArrayIndex != 0 ) )
+                if( this.hasUnsavedChanges() || ( !selectedStringArrayIndex && selectedStringArrayIndex !== 0 ) )
                     return
 
-                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex ? selectedStringArrayIndex : '' ).trigger( 'change' )
+                jQuery( '#trp-string-categories' ).val( selectedStringArrayIndex !== null ? selectedStringArrayIndex : '' ).trigger( 'change' )
 
                 let selectedString       = this.dictionary[selectedStringArrayIndex]
 
@@ -622,18 +622,30 @@
             previousString(){
                 let currentValue = document.getElementById('trp-string-categories').value
 
-                if( currentValue == 0 )
-                    return
-
                 let newValue = +currentValue - 1
+
+                while( newValue >= 0 && document.querySelectorAll('#trp-string-categories option[value="' + newValue + '"]').length === 0 ){
+                    newValue--;
+                }
+
+                if( newValue < 0 )
+                    return
 
                 this.selectedString = newValue.toString()
             },
             nextString(){
-                let currentValue = document.getElementById('trp-string-categories').value, newValue = '0'
+                let currentValue = document.getElementById('trp-string-categories').value, newValue = 0
 
                 if( currentValue != '' )
                     newValue = +currentValue + 1
+
+                while( newValue < this.dictionary.length && document.querySelectorAll('#trp-string-categories option[value="' + newValue + '"]').length === 0 ){
+                    newValue++;
+                }
+
+                if ( newValue >= this.dictionary.length ){
+                    return
+                }
 
                 this.selectedString = newValue.toString()
             }

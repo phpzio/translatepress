@@ -81,14 +81,6 @@ class TRP_Editor_Api_Regular_Strings {
 		$id_array = array();
 		$original_array = array();
 		$dictionaries = array();
-		$slug_info = false;
-//			if ( isset( $string->slug ) && $string->slug === true ){
-//				$slug_info = array(
-//					'post_id'   => (int)$string->slug_post_id,
-//					'id'        => (int)$string->id,
-//					'original'  => sanitize_text_field( $string->original ) );
-//				continue;
-//			}
 		foreach ( $ids as $id ) {
 			if ( isset( $id ) && is_numeric( $id ) ) {
 				$id_array[] = (int) $id;
@@ -98,7 +90,7 @@ class TRP_Editor_Api_Regular_Strings {
 			if ( isset( $original ) ) {
 				$trimmed_string = trp_full_trim( trp_sanitize_string( $original ) );
 				// don't allow urls unless they are external or files
-				if ( filter_var($trimmed_string, FILTER_VALIDATE_URL) === false || ( $this->translation_render->is_external_link( $trimmed_string, $home_url ) && $this->url_converter->url_is_file( $trimmed_string ) ) ) {
+				if ( ( filter_var($trimmed_string, FILTER_VALIDATE_URL) === false) || $this->translation_render->is_external_link( $trimmed_string, $home_url ) || $this->url_converter->url_is_file( $trimmed_string ) ) {
 					$original_array[] = $trimmed_string;
 				}
 			}
@@ -113,14 +105,6 @@ class TRP_Editor_Api_Regular_Strings {
 				$this->translation_render->process_strings($original_array, $current_language, $block_type);
 			}
 			$dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
-			if ( $slug_info !== false ) {
-				$dictionaries[$current_language][$slug_info['id']] = array(
-					'id'         => $slug_info['id'],
-					'original'   => $slug_info['original'],
-					'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $current_language ),
-				);
-			}
-
 		}else{
 			$dictionaries[$current_language] = array();
 		}
@@ -142,13 +126,6 @@ class TRP_Editor_Api_Regular_Strings {
 					$this->translation_render->process_strings($original_strings, $language, $block_type);
 				}
 				$dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
-				if ( $slug_info !== false ) {
-					$dictionaries[$language][0] = array(
-						'id'         => 0,
-						'original'   => $slug_info['original'],
-						'translated' => apply_filters( 'trp_translate_slug', $slug_info['original'], $slug_info['post_id'], $language ),
-					);
-				}
 			}
 		}
 
