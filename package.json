@@ -26,6 +26,7 @@
         "vue-template-compiler": "^2.5.21"
     },
     "dependencies": {
+        "autosize": "^4.0.2",
         "axios": "^0.18.0",
         "he": "^1.2.0",
         "select2": "^4.0.7-rc.0",

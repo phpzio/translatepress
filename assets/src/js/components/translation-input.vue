@@ -4,7 +4,7 @@
             <textarea class="trp-translation-input trp-textarea" :readonly="readonly" ref="textarea" :value="getValue()" @input="updateValue()"></textarea>
         </div>
         <div v-if="inputType == 'input'" class="trp-translation-input-parent">
-            <input class="trp-translation-input trp-input" :class="{'trp-media' : inputType == 'inputmedia' }" :readonly="readonly" ref="input" :value="getValue()" @input="updateValue( null )">
+            <input class="trp-translation-input trp-input" readonly :value="getValue()">
         </div>
         <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent trp-input-media-parent">
             <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="openMediaUpload($event)">
@@ -16,6 +16,7 @@
 </template>
 <script>
 import he from 'he'
+import autosize from 'autosize'
 
 export default{
     props:[
@@ -37,13 +38,16 @@ export default{
             'alt'         : 'textarea',
             'title'       : 'textarea',
             'placeholder' : 'textarea',
-            'outertext'   : 'input',
-            'value'       : 'input',
+            'outertext'   : 'textarea',
+            'value'       : 'textarea',
             'src'         : 'inputmedia',
             'href'        : 'inputmedia'
         };
         this.inputType = ( inputTypeArray[this.string.attribute] ) ? inputTypeArray[this.string.attribute] : 'textarea'
         this.inputType = (this.readonly && this.inputType === 'inputmedia' ) ? 'input' : this.inputType;
+
+        autosize(document.querySelectorAll('.trp-textarea'))
+
     },
     methods:{
         getValue(){
