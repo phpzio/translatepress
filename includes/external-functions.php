@@ -80,6 +80,9 @@ function trp_sort_dictionary_by_original( $dictionaries, $type, $group, $languag
 					if ( $language == $languageForId ){
 						$new_entry['dbID'] = $string->id;
 					}
+					if ( isset( $new_entry['translationsArray'][$language]->block_type ) ){
+						$new_entry['blockType'] = $new_entry['translationsArray'][$language]->block_type;
+					}
 
 					$array[] = $new_entry;
 				}

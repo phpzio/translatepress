@@ -454,7 +454,7 @@
                 // see what node groups are found
                 let foundStringGroups = this.stringGroups;
                 strings.forEach( function ( string ) {
-                    if ( foundStringGroups.indexOf( string.group ) === -1 ){
+                    if ( foundStringGroups.indexOf( string.group ) === -1 && ( typeof string.blockType === 'undefined' ) || string.blockType !== '2' ){
                         foundStringGroups.push( string.group )
                     }
                 })
@@ -555,13 +555,17 @@
                 return url
             },
             showString( string, type ){
+                if ( typeof string.blockType !== 'undefined' && string.blockType === '2' ){
+                    // don't show deprecated translation blocks in the dropdown
+                    return false
+                }
                 if ( type == 'Images' && typeof string.attribute != 'undefined' && string.attribute == 'src' )
                     return true
 
-                if ( typeof string.attribute != 'undefined' && ( string.attribute == 'href' || string.attribute == 'src' ) )
+                if ( typeof string.attribute !== 'undefined' && ( string.attribute == 'href' || string.attribute == 'src' ) )
                     return false
 
-                if ( string.group == type )
+                if ( string.group === type )
                     return true
 
                 return false
