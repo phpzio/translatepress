@@ -39,9 +39,7 @@
                     this.disabledSaveButton = false
                     this.saveButtonText = this.editorStrings.save_translation
 
-                    let translationSaved = jQuery('#trp-translation-saved')
-                    translationSaved.css("display", "inline")
-                    translationSaved.delay(3000).fadeOut(400)
+                    this.showTranslationsSaved()
                 }
             }
         },
@@ -53,6 +51,10 @@
                     this.saveStringType( 'gettext' )
                     this.saveStringType( 'regular' )
                     this.saveStringType( 'postslug' )
+                }
+                if ( this.saveStringsRequestsLeft === 0 ) {
+                    // no saving action was triggered
+                    this.showTranslationsSaved()
                 }
             },
             saveStringType( typeSlug ){
@@ -151,6 +153,7 @@
                 })
             },
             createTranslationBlock() {
+                this.saveStringsRequestsLeft++
                 let self = this
                 let saveData = {}, translation = {}, original
                 let foundStringsToSave = false
@@ -194,6 +197,7 @@
 
                     axios.post(this.ajax_url, data)
                         .then(function (response) {
+                            self.saveStringsRequestsLeft--
                             let item = self.dictionary[self.selectedIndexesArray[0]]
 
                             item.dbID = item.translationsArray[self.onScreenLanguage].id
@@ -210,7 +214,7 @@
                             //get merged string
                             let mergedString
 
-                            if( item.translationsArray[self.onScreenLanguage].translated )
+                            if( typeof item.translationsArray[self.currentLanguage] !== 'undefined' && item.translationsArray[self.currentLanguage].translated )
                                 mergedString = item.translationsArray[self.onScreenLanguage].translated
                             else
                                 mergedString = item.original
@@ -227,9 +231,16 @@
                         .catch(function (error) {
                             console.log(error)
                         });
+                }else{
+                    this.saveStringsRequestsLeft--
                 }
-
+            },
+            showTranslationsSaved : function(){
+                let translationSaved = jQuery('#trp-translation-saved')
+                translationSaved.css("display", "inline")
+                translationSaved.delay(3000).fadeOut(400)
             }
+
         }
     }
 </script>

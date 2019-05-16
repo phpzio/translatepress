@@ -61,7 +61,7 @@
 
                 </div>
 
-                <div class="trp-controls-section">
+                <div class="trp-controls-section" v-show="selectedString !== null">
                     <language-boxes
                             :selectedIndexesArray="selectedIndexesArray"
                             :dictionary="dictionary"
@@ -78,6 +78,12 @@
                 </div>
 
                 <extra-content :languageNames="languageNames" :editorStrings="editorStrings" :paidVersion="paid_version"></extra-content>
+
+                <div class="trp-controls-section" v-show="translationNotLoadedYet">
+                    <div id="trp-translation-not-ready-section" class="trp-controls-section-content">
+                        <p v-html="editorStrings.translation_not_loaded_yet"></p>
+                    </div>
+                </div>
             </div>
 
             <div id="trp_select2_overlay"></div>
@@ -164,7 +170,7 @@
                 urlToLoad                 : this.url_to_load,
                 iframe                    : '',
                 dictionary                : [],
-                selectedString            : '',
+                selectedString            : null,
                 selectedIndexesArray      : [],
                 detectedSelectorAndId     : [],
                 stringGroups              : [],
@@ -173,6 +179,7 @@
                 showChangesUnsavedMessage : false,
                 viewAs                    : '',
                 loading_strings           : 0,
+                translationNotLoadedYet   : false,
             }
         },
         created(){
@@ -346,6 +353,7 @@
 
                     self.selectedString = null
                     self.selectedIndexesArray = []
+                    self.translationNotLoadedYet = false
 
                     self.stringsDropdownLoading()
                 }

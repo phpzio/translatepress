@@ -1,8 +1,8 @@
 <template>
     <div id="trp-translation-section" class="trp-controls-section-content" v-if="selectedIndexesArray">
         <div v-show="showChangesUnsavedMessage" class="trp-changes-unsaved-message">{{ editorStrings.unsaved_changes }} <span class="trp-unsaved-changes trp-discard-changes "@click="discardAll">{{ editorStrings.discard_all }}</span>?</div>
-        <div v-for="(languageCode, key) in languages" :id="'trp-language-' + languageCode" class="trp-language-container">
-            <div v-show="( (key <= othersButtonPosition) || showOtherLanguages ) && ( selectedIndexesArray && selectedIndexesArray.length > 0 )">
+        <div v-for="(languageCode, key) in languages" :id="'trp-language-' + languageCode">
+            <div v-show="( (key <= othersButtonPosition) || showOtherLanguages ) && ( selectedIndexesArray && selectedIndexesArray.length > 0 )"  class="trp-language-container">
                 <div class="trp-language-name">
                     <span v-if="key == 0 ">{{ editorStrings.from }} </span>
                     <span v-else>{{ editorStrings.to }} </span>
@@ -27,12 +27,12 @@
                             </div>
                         </div>
                     </td>
-                    <div v-show="key == othersButtonPosition">
-                        <div class="trp-toggle-languages" @click="showOtherLanguages = !showOtherLanguages" :class="{ 'trp-show-other-languages': showOtherLanguages, 'trp-hide-other-languages': !showOtherLanguages }">
-                            <span>{{ (showOtherLanguages)? '&#11206;' : '&#11208;' }} {{ editorStrings.other_lang }}</span>
-                        </div>
-                    </div>
                 </table>
+                <div v-show="key == othersButtonPosition">
+                    <div class="trp-toggle-languages" @click="showOtherLanguages = !showOtherLanguages" :class="{ 'trp-show-other-languages': showOtherLanguages, 'trp-hide-other-languages': !showOtherLanguages }">
+                        <span>{{ (showOtherLanguages)? '&#11206;' : '&#11208;' }} {{ editorStrings.other_lang }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -20,8 +20,9 @@
         ],
         data(){
             return{
-                hoveredStringIndex : '',
-                hoveredTarget      : '',
+                hoveredStringId       : '',
+                hoveredStringSelector : '',
+                hoveredTarget         : '',
             }
         },
         methods:{
@@ -83,7 +84,8 @@
                     })
                 })
 
-                self.hoveredStringIndex = this.$parent.getStringIndex( stringSelector, stringId )
+                self.hoveredStringSelector = stringSelector
+                self.hoveredStringId = stringId
                 self.hoveredTarget      = target
 
                 //figure out if split or merge is available
@@ -123,7 +125,9 @@
 
                 this.$parent.mergingString = false
 
-                this.$parent.selectedString = this.hoveredStringIndex
+                this.$parent.selectedString = this.$parent.getStringIndex( this.hoveredStringSelector, this.hoveredStringId )
+
+                this.$parent.translationNotLoadedYet  = ( this.$parent.selectedString === null )
 
                 jQuery( '#trp-string-categories' ).select2( 'close' )
             },
@@ -138,7 +142,8 @@
                     return
 
                 let strings = []
-                strings.push( this.dictionary[ this.hoveredStringIndex ].original )
+                let hoveredStringIndex = this.$parent.getStringIndex( this.hoveredStringSelector, this.hoveredStringId )
+                strings.push( this.dictionary[ hoveredStringIndex ].original )
 
                 let data = new FormData()
                     data.append( 'action', 'trp_split_translation_block' )
@@ -254,12 +259,11 @@
                 if( !this.mergeRules || !this.mergeRules.self_object_type || !this.mergeRules.top_parents )
                     return 'none'
 
-                let stringIndex
+                let hoveredStringIndex = this.$parent.getStringIndex( this.hoveredStringSelector, this.hoveredStringId )
+                if( !hoveredStringIndex )
+                    hoveredStringIndex = this.$parent.selectedString
 
-                if( !this.hoveredStringIndex || this.hoveredStringIndex == '' )
-                    this.hoveredStringIndex = this.$parent.selectedString
-
-                if( typeof this.dictionary[this.hoveredStringIndex] != 'undefined' && this.dictionary[this.hoveredStringIndex].block_type == 1 )
+                if( typeof this.dictionary[hoveredStringIndex] != 'undefined' && this.dictionary[hoveredStringIndex].block_type == 1 )
                     return 'split'
 
                 let self = this
