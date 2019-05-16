@@ -39,8 +39,8 @@ class TRP_Translation_Manager{
                 return true;
             }else{
                 wp_die(
-                    '<h1>' . esc_html__( 'Cheatin&#8217; uh?' ) . '</h1>' .
-                    '<p>' . esc_html__( 'Sorry, you are not allowed to access this page.' ) . '</p>',
+                    '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                    '<p>' . __( 'Sorry, you are not allowed to access this page.' ) . '</p>',
                     403
                 );
             }
@@ -134,7 +134,7 @@ class TRP_Translation_Manager{
     public function add_slug_as_meta_tag() {
         global $post;
         if ( isset( $post->ID ) && !empty( $post->ID ) && isset( $post->post_name ) && !empty( $post->post_name ) && !is_home() && !is_front_page() && !is_archive() && !is_search() ) {
-            echo '<meta name="trp-slug" original="' . esc_attr( $post->post_name ). '" content="' . esc_attr( $post->post_name ). '" post-id="' . absint( $post->ID ) . '"/>' . "\n";
+            echo '<meta name="trp-slug" original="' . $post->post_name. '" content="' . $post->post_name. '" post-id="' . $post->ID . '"/>' . "\n";
         }
     }
 
@@ -165,7 +165,7 @@ class TRP_Translation_Manager{
 	 *
 	 * @return array
 	 */
-    public function get_translation_for_strings( $strings, $block_type = null ){
+    protected function get_translation_for_strings( $strings, $block_type = null ){
 	    $id_array = array();
 	    $original_array = array();
 	    $dictionaries = array();
@@ -266,7 +266,7 @@ class TRP_Translation_Manager{
 			        }
 			        $block_type = $this->trp_query->get_constant_block_type_regular_string();
 	                $dictionaries = $this->get_translation_for_strings( $strings, $block_type );
-                    echo trp_safe_json_encode( $dictionaries ); // WPCS: ok
+                    echo trp_safe_json_encode( $dictionaries );
                 }
             }
         }
@@ -365,7 +365,7 @@ class TRP_Translation_Manager{
                     }
                 }
 
-                die( trp_safe_json_encode( $dictionaries ) ); // WPCS: ok
+                die( trp_safe_json_encode( $dictionaries ) );
 
             }
         }
@@ -430,7 +430,7 @@ class TRP_Translation_Manager{
                 $this->save_translations_of_strings( $strings );
             }
         }
-	    echo trp_safe_json_encode( array() ); // WPCS: ok
+	    echo trp_safe_json_encode( array() );
         die();
     }
 
@@ -467,7 +467,7 @@ class TRP_Translation_Manager{
                 }
             }
         }
-	    echo trp_safe_json_encode( array() ); // WPCS: ok
+	    echo trp_safe_json_encode( array() );
         die();
     }
 
@@ -556,7 +556,7 @@ class TRP_Translation_Manager{
 							}
 						}
 
-						echo trp_safe_json_encode( $dictionaries ); // WPCS: ok.
+						echo trp_safe_json_encode( $dictionaries );
 					}
 				}
 
@@ -1322,7 +1322,7 @@ class TRP_Translation_Manager{
 
                 if ( $current_user_can_change_roles ) {
                     if ( ! wp_verify_nonce( $_REQUEST['trp-view-as-nonce'], 'trp_view_as'. sanitize_text_field( $_REQUEST['trp-view-as'] ) . get_current_user_id() ) ) {
-                        wp_die( esc_html__( 'Security check', 'translatepress-multilingual' ) );
+                        wp_die( __( 'Security check', 'translatepress-multilingual' ) );
                     } else {
                         global $current_user;
                         $view_as = sanitize_text_field( $_REQUEST['trp-view-as'] );
