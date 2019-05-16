@@ -175,7 +175,8 @@ class TRP_Translation_Manager{
 			    $slug_info = array(
 				    'post_id'   => (int)$string->slug_post_id,
 				    'id'        => (int)$string->id,
-				    'original'  => sanitize_text_field( $string->original ) );
+				    'original'  => ( $string->original == sanitize_title( $string->original ) ? $string->original : sanitize_text_field( $string->original ) ), // condition that validates our string is already a slug and doesn't need validation
+                );
 			    continue;
 		    }
 		    if ( isset( $string->id ) && is_numeric( $string->id ) ) {
