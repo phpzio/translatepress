@@ -138,7 +138,7 @@ function TRP_Translator(){
 
                         /* if it is an anchor add the trp-edit-translation=preview parameter to it */
                         if ( typeof parent.trpEditor !== 'undefined' ) {
-                            jQuery(mutation.addedNodes[i]).find('a').href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(mutation.addedNodes[i]).find('a').href);
+                            jQuery(mutation.addedNodes[i]).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(mutation.addedNodes[i]).find('a').context.href);
                         }
 
                         if ( skip_string(node) ){

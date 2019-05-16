@@ -165,7 +165,7 @@ class TRP_Translation_Manager{
 	 *
 	 * @return array
 	 */
-    public function get_translation_for_strings( $strings, $block_type = null ){
+    protected function get_translation_for_strings( $strings, $block_type = null ){
 	    $id_array = array();
 	    $original_array = array();
 	    $dictionaries = array();
