@@ -57,7 +57,7 @@
                         <form id="trp-language-switch-form" action="" method="GET">
                             <select id="trp-language-select" name='lang' onchange='trpEditor.change_language( this )'>
                                 <?php foreach ( $available_languages as $code => $language ) { ?>
-                                    <option value="<?php echo esc_attr( code ); ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo esc_html( $language ); ?> </option>
+                                    <option value="<?php echo esc_attr( $code ); ?>" <?php echo ( $TRP_LANGUAGE == $code ) ? 'selected' : ''; ?>> <?php echo esc_html( $language ); ?> </option>
                                 <?php } ?>
                             </select>
                             <input type="hidden" name="trp-edit-translation" value="true">
