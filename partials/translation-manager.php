@@ -29,7 +29,7 @@
 
     $selectors = $translation_render->get_accessors_array( '-' ); // suffix selectors such as array( '-alt', '-src', '-title', '-content', '-value', '-placeholder', '-href', '-outertext', '-innertext' )
     $selectors[] = ''; // empty string suffix added for using just the base attribute data-trp-translate-id  (instead of data-trp-translate-id-alt)
-    $data_attributes = array( 'data-trp-translate-id', 'data-trpgettextoriginal', 'data-trp-post-slug' );
+    $data_attributes = $translation_render->get_base_attribute_selectors();
 
     do_action( 'trp_head' );
 

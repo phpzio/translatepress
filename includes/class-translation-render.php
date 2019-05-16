@@ -1172,6 +1172,32 @@ class TRP_Translation_Render{
         }
     }
 
+	/**
+	 * Skip all variations of base_attributes from dynamic translation
+	 *
+	 * hooked to trp_skip_selectors_from_dynamic_translation
+	 *
+	 * @return array
+	 */
+	public function skip_selectors_attributes_from_dynamic_translation( $skip_selectors ){
+    	$selectors_to_skip = array();
+    	$base_attributes = $this->get_base_attribute_selectors();
+    	$accessors_array = $this->get_accessors_array('-' );
+    	foreach( $base_attributes as $base_attribute ){
+    		foreach( $accessors_array as $accessor_suffix ){
+			    $selectors_to_skip[] = '[' . $base_attribute . $accessor_suffix . ']';
+		    }
+	    }
+		return array_merge( $skip_selectors, $selectors_to_skip );
+	}
+
+	/*
+	 * Get base attribute selectors
+	 */
+	public function get_base_attribute_selectors(){
+		return apply_filters( 'trp_base_attribute_selectors', array( 'data-trp-translate-id', 'data-trpgettextoriginal', 'data-trp-post-slug' ) );
+	}
+
 
     /**
      * Add a filter on the wp_mail function so we allow shortcode usage and run it through our translate function so it cleans it up nice and maybe even replace some strings

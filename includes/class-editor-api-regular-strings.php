@@ -91,7 +91,7 @@ class TRP_Editor_Api_Regular_Strings {
 				$trimmed_string = trp_full_trim( trp_sanitize_string( $original ) );
 				// don't allow urls unless they are external or files
 				if ( ( filter_var($trimmed_string, FILTER_VALIDATE_URL) === false) || $this->translation_render->is_external_link( $trimmed_string, $home_url ) || $this->url_converter->url_is_file( $trimmed_string ) ) {
-					$original_array[] = $trimmed_string;
+					$original_array[] = remove_query_arg( 'trp-edit-translation', $trimmed_string ) ;
 				}
 			}
 		}

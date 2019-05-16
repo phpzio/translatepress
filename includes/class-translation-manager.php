@@ -77,7 +77,8 @@ class TRP_Translation_Manager{
 	}
 
 	public function localized_text() {
-        return array(
+
+        return $this->string_groups() + array(
         	// attribute names
         	'src'                                                       => __( 'Image source', 'translatepress-multilingual' ),
 			'alt'                                                       => __( 'Alt attribute', 'translatepress-multilingual' ),

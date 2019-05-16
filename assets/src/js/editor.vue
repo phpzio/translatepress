@@ -242,7 +242,7 @@
                 }
             },
             currentURL: function ( newUrl, oldUrl ) {
-                window.history.pushState( null, null, this.parentURL( newUrl ) )
+                window.history.replaceState( null, null, this.parentURL( newUrl ) )
             },
             viewAs: function( role ) {
                 if( !this.currentURL || !this.iframe )
@@ -462,7 +462,7 @@
                 // see what node groups are found
                 let foundStringGroups = this.stringGroups;
                 strings.forEach( function ( string ) {
-                    if ( foundStringGroups.indexOf( string.group ) === -1 && ( typeof string.blockType === 'undefined' ) || string.blockType !== '2' ){
+                    if ( foundStringGroups.indexOf( string.group ) === -1 && ( ( typeof string.blockType === 'undefined' ) || string.blockType !== '2' ) ){
                         foundStringGroups.push( string.group )
                     }
                 })
@@ -567,7 +567,7 @@
                     // don't show deprecated translation blocks in the dropdown
                     return false
                 }
-                if ( type == 'Images' && typeof string.attribute != 'undefined' && string.attribute == 'src' )
+                if ( type === this.editorStrings.images && typeof string.attribute != 'undefined' && string.attribute == 'src' )
                     return true
 
                 if ( typeof string.attribute !== 'undefined' && ( string.attribute == 'href' || string.attribute == 'src' ) )
