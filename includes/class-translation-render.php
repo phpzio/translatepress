@@ -1160,7 +1160,8 @@ class TRP_Translation_Render{
 				'trp_language_to_query'               => $language_to_query,
 				'trp_original_language'               => $this->settings['default-language'],
 				'trp_current_language'                => $TRP_LANGUAGE,
-				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trpgettextoriginal]', '[data-trp-translate-id]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ),
+				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ),
+				'trp_base_selectors'                  => $this->get_base_attribute_selectors(),
 				'trp_attributes_selectors'            => $this->get_node_accessors(),
 				'trp_attributes_accessors'            => $this->get_accessors_array(),
 				'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
@@ -1173,23 +1174,24 @@ class TRP_Translation_Render{
     }
 
 	/**
-	 * Skip all variations of base_attributes from dynamic translation
+	 * Skip base selectors (data-trp-translate-id, data-trpgettextoriginal etc.)
 	 *
-	 * hooked to trp_skip_selectors_from_dynamic_translation
+	 * The base selectors (without any suffixes) are placed only if their children do not contain any nodes that are translatable
+	 *
+ 	 * hooked to trp_skip_selectors_from_dynamic_translation
+	 *
+	 * @param $skip_selectors
 	 *
 	 * @return array
 	 */
-	public function skip_selectors_attributes_from_dynamic_translation( $skip_selectors ){
-    	$selectors_to_skip = array();
-    	$base_attributes = $this->get_base_attribute_selectors();
-    	$accessors_array = $this->get_accessors_array('-' );
-    	foreach( $base_attributes as $base_attribute ){
-    		foreach( $accessors_array as $accessor_suffix ){
-			    $selectors_to_skip[] = '[' . $base_attribute . $accessor_suffix . ']';
-		    }
+    public function skip_base_attributes_from_dynamic_translation( $skip_selectors ){
+	    $base_attributes = $this->get_base_attribute_selectors();
+	    $selectors_to_skip = array();
+	    foreach( $base_attributes as $base_attribute ){
+		    $selectors_to_skip[] = '[' . $base_attribute . ']';
 	    }
-		return array_merge( $skip_selectors, $selectors_to_skip );
-	}
+	    return array_merge( $skip_selectors, $selectors_to_skip );
+    }
 
 	/*
 	 * Get base attribute selectors

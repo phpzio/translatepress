@@ -136,7 +136,7 @@ class TRP_Translate_Press{
 
 
         $this->loader->add_action( 'wp_ajax_trp_process_js_strings_in_translation_editor', $this->translation_render, 'process_js_strings_in_translation_editor' );
-        $this->loader->add_filter( 'trp_skip_selectors_from_dynamic_translation', $this->translation_render, 'skip_selectors_attributes_from_dynamic_translation', 10, 1 );
+        $this->loader->add_filter( 'trp_skip_selectors_from_dynamic_translation', $this->translation_render, 'skip_base_attributes_from_dynamic_translation', 10, 1 );
 
 
 	    $this->loader->add_action( 'admin_menu', $this->upgrade, 'register_menu_page' );

@@ -187,7 +187,7 @@ function TRP_Translator(){
                 if ( ! _this.in_array( mutation.attributeName, trp_data.trp_attributes_accessors ) ){
                     return
                 }
-                if ( _this.skip_string(mutation.target) ){
+                if ( _this.skip_string_attribute( mutation.target, mutation.attributeName ) || _this.skip_string(mutation.target) ){
                     return
                 }
 
@@ -208,6 +208,17 @@ function TRP_Translator(){
         var selectors = trp_data.trp_skip_selectors;
         for (var i = 0; i < selectors.length ; i++ ){
             if ( jQuery(node).closest( selectors[ i ] ).length > 0 ){
+                return true;
+            }
+        }
+        return false;
+    };
+
+    this.skip_string_attribute = function(node, attribute){
+        // skip nodes containing these attributes
+        var selectors = trp_data.trp_base_selectors;
+        for (var i = 0; i < selectors.length ; i++ ){
+            if ( typeof jQuery(node).attr( selectors[ i ] + '-' + attribute ) !== 'undefined' ){
                 return true;
             }
         }
@@ -281,6 +292,10 @@ function TRP_Translator(){
 
                     var all_nodes_length = all_nodes.length
                     for (var j = 0; j < all_nodes_length; j++ ) {
+                        if ( _this.skip_string( all_nodes[j] ) || _this.skip_string_attribute( all_nodes[j], attribute_selector_item.accessor ) ){
+                            continue;
+                        }
+
                         var attribute_content = all_nodes[j].getAttribute( attribute_selector_item.accessor )
                         if ( attribute_content && _this.trim( attribute_content.trim(), except_characters ) != '' ) {
                             nodesInfo.push({node: all_nodes[j], original: attribute_content, attribute: attribute_selector_item.accessor });
