@@ -194,6 +194,7 @@
                 this.viewAs = 'current_user'
         },
         mounted(){
+            this.addKeyboardShortcutsListener()
             let self = this
             // initialize select2
             jQuery( '#trp-language-select, #trp-view-as-select' ).select2( { width : '100%' })
@@ -660,6 +661,26 @@
                 }
 
                 this.selectedString = newValue.toString()
+            },
+            addKeyboardShortcutsListener(){
+                document.addEventListener("keydown", function(e) {
+                    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.altKey ) {
+                        // CTRL + ALT + right arrow
+                        if( e.keyCode === 39 ){
+                            e.preventDefault();
+                            window.dispatchEvent( new Event( 'trp_trigger_next_string_event' ) );
+                        }else{
+                            // CTRL + ALT + left arrow
+                            if( e.keyCode === 37 ) {
+                                e.preventDefault();
+                                window.dispatchEvent( new Event( 'trp_trigger_previous_string_event' ) );
+                            }
+                        }
+                    }
+                }, false);
+
+                window.addEventListener( 'trp_trigger_next_string_event', this.nextString )
+                window.addEventListener( 'trp_trigger_previous_string_event', this.previousString )
             }
         },
         //add support for v-model in select2

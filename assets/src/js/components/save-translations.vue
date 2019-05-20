@@ -30,6 +30,9 @@
                 'disabledSaveButton'        : false,
             }
         },
+        mounted(){
+            this.addKeyboardShortcutsListener()
+        },
         watch:{
             saveStringsRequestsLeft : function( newValue, oldValue ){
                 if ( newValue > 0 ) {
@@ -239,6 +242,19 @@
                 let translationSaved = jQuery('#trp-translation-saved')
                 translationSaved.css("display", "inline")
                 translationSaved.delay(3000).fadeOut(400)
+            },
+            addKeyboardShortcutsListener(){
+                document.addEventListener("keydown", function(e) {
+
+                    // CTRL + S
+                    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode === 83) {
+                        e.preventDefault();
+
+                        window.dispatchEvent( new Event( 'trp_trigger_save_translations_event' ) );
+                    }
+                }, false);
+
+                window.addEventListener( 'trp_trigger_save_translations_event', this.save )
             }
 
         }

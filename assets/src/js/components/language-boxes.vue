@@ -67,6 +67,7 @@
         },
         mounted(){
             this.determineLanguageOrder()
+            this.addKeyboardShortcutsListener()
         },
         watch: {
             selectedIndexesArray: function () {
@@ -138,6 +139,17 @@
                         }
                     })
                 })
+            },
+            addKeyboardShortcutsListener(){
+                document.addEventListener("keydown", function(e) {
+                    // CTRL + ALT + Z
+                    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.altKey && e.keyCode === 90 ) {
+                        e.preventDefault();
+                        window.dispatchEvent(new Event('trp_trigger_discard_all_changes_event'));
+                    }
+                }, false);
+
+                window.addEventListener( 'trp_trigger_discard_all_changes_event', this.discardAll )
             }
         }
     }

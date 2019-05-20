@@ -44,8 +44,43 @@ function TRP_Iframe_Preview(){
         jQuery('form').each(function () {
             jQuery( this ).append( jQuery('<input></input>').attr({ type: 'hidden', value: 'preview', name: 'trp-edit-translation' }) );
         });
+
+        addKeyboardShortcutsListener();
         trpTranslator.resume_observer();
     };
+
+    function addKeyboardShortcutsListener(){
+        document.addEventListener("keydown", function(e) {
+            // CTRL + S
+            if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode === 83) {
+                e.preventDefault();
+                window.parent.dispatchEvent( new Event( 'trp_trigger_save_translations_event' ) );
+            }
+
+            if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.altKey ) {
+                switch (e.keyCode){
+
+                    // CTRL + ALT + right arrow
+                    case 39:
+                        e.preventDefault();
+                        window.parent.dispatchEvent( new Event( 'trp_trigger_next_string_event' ) );
+                        break;
+
+                    // CTRL + ALT + left arrow
+                    case 37:
+                        e.preventDefault();
+                        window.parent.dispatchEvent( new Event( 'trp_trigger_previous_string_event' ) );
+                        break;
+
+                    // CTRL + ALT + Z
+                    case 90:
+                        e.preventDefault();
+                        window.parent.dispatchEvent(new Event('trp_trigger_discard_all_changes_event'));
+                        break;
+                }
+            }
+        }, false);
+    }
 
     /**
      * Update url with query string.
