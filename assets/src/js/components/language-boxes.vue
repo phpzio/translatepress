@@ -97,7 +97,8 @@
                 });
                 this.orderedLanguages = []
                 this.orderedLanguages.push( this.settings['default-language'] )
-                this.orderedLanguages.push( this.onScreenLanguage )
+                if ( this.onScreenLanguage !== '' )
+                    this.orderedLanguages.push( this.onScreenLanguage )
                 this.orderedLanguages = this.orderedLanguages.concat( filteredLanguages )
             },
             updateLanguages: function () {

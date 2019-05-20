@@ -197,8 +197,36 @@ class TRP_Translation_Manager{
         if ( $this->conditions_met( 'preview' ) ) {
             wp_enqueue_script( 'trp-translation-manager-preview-script',  TRP_PLUGIN_URL . 'assets/js/trp-iframe-preview-script.js', array('jquery'), TRP_PLUGIN_VERSION );
             wp_enqueue_style('trp-preview-iframe-style',  TRP_PLUGIN_URL . 'assets/css/trp-preview-iframe-style.css', array('dashicons'), TRP_PLUGIN_VERSION );
+
+            $custom_css = $this->add_gettext_green_pencil_css_for_attributes();
+	        wp_add_inline_style( 'trp-preview-iframe-style', apply_filters( 'trp_custom_iframe_preview_css', $custom_css )  );
         }
     }
+
+	/**
+	 * For each gettext attribute we need a CSS rule to make the edit pencil icon green
+	 *
+	 * @return string
+	 */
+	public function add_gettext_green_pencil_css_for_attributes(){
+		if( ! $this->translation_render ) {
+			$trp = TRP_Translate_Press::get_trp_instance();
+			$this->translation_render = $trp->get_component( 'translation_render' );
+		}
+    	$attributes = $this->translation_render->get_accessors_array('-');
+		$css = '';
+		foreach( $attributes as $attribute ){
+			$css .= '.trp-icon, .trpgettext-wrap .trp-icon + *[data-trpgettextoriginal' . $attribute . ']{
+					    background: #00ba3f !important;
+					}	
+					*.trp-icon:hover, .trpgettext-wrap .trp-icon:hover + [data-trpgettextoriginal' . $attribute . '] {
+					    background: #00ce44 !important;
+					}
+					';
+		}
+
+		return $css;
+	}
 
     /**
      * Display button to enter translation Editor in admin bar

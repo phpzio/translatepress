@@ -393,7 +393,11 @@ function TRP_Translator(){
      * Resume observing new strings added.
      */
     this.resume_observer = function(){
-        observer.observe( document.body , observerConfig );
+        if ( language_to_query === '' ) {
+            // No translation languages are set other than default language
+            return;
+        }
+        observer.observe(document.body, observerConfig);
     };
 
     /**
@@ -405,6 +409,10 @@ function TRP_Translator(){
         So we are calling takeRecords to save them first, disconnect, then detect the strings
         Disconnect happens before detect_new_strings to avoid detecting mutations from within detect new strings functions
          */
+        if ( language_to_query === '' ) {
+            // No translation languages are set other than default language
+            return;
+        }
         var mutations = observer.takeRecords()
         observer.disconnect()
         if ( mutations.length > 0 ) {

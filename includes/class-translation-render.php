@@ -1155,6 +1155,8 @@ class TRP_Translation_Render{
                     }
                 }
             }
+	        $language_to_query = ( count ( $this->settings['translation-languages'] ) < 2 ) ? '' : $language_to_query;
+
 	        $trp = TRP_Translate_Press::get_trp_instance();
 	        if ( ! $this->translation_manager ) {
 		        $this->translation_manager = $trp->get_component( 'translation_manager' );

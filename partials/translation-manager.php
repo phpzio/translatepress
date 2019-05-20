@@ -60,7 +60,7 @@
             language_names='<?php echo json_encode( $language_names ); ?>'
             ordered_secondary_languages='<?php echo json_encode( $ordered_secondary_languages ); ?>'
             current_language="<?php echo $TRP_LANGUAGE; ?>"
-            on_screen_language="<?php echo ( isset( $ordered_secondary_languages[0] ) ) ? $ordered_secondary_languages[0] : 'null' ; ?>"
+            on_screen_language="<?php echo ( isset( $ordered_secondary_languages[0] ) ) ? $ordered_secondary_languages[0] : '' ; ?>"
             view_as_roles='<?php echo json_encode( $view_as_roles ); ?>'
             url_to_load="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
             string_selectors='<?php echo json_encode( $selectors ); ?>'
