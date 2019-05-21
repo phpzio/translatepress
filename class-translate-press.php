@@ -20,6 +20,9 @@ class TRP_Translate_Press{
     protected $languages;
     protected $slug_manager;
     protected $upgrade;
+    protected $plugin_updater;
+    protected $license_page;
+    public $active_pro_addons = array();
     public static $translate_press = null;
 
     /**
@@ -43,12 +46,13 @@ class TRP_Translate_Press{
         define( 'TRP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
         define( 'TRP_PLUGIN_BASE', plugin_basename( __DIR__ . '/index.php' ) );
         define( 'TRP_PLUGIN_SLUG', 'translatepress-multilingual' );
-        define( 'TRP_PLUGIN_VERSION', '1.4.5' );
+        define( 'TRP_PLUGIN_VERSION', '1.4.7' );
 
 	    wp_cache_add_non_persistent_groups(array('trp'));
 
         $this->load_dependencies();
         $this->initialize_components();
+        $this->get_active_pro_addons();
         $this->define_admin_hooks();
         $this->define_frontend_hooks();
     }
@@ -107,6 +111,36 @@ class TRP_Translate_Press{
         $this->editor_api_gettext_strings = new TRP_Editor_Api_Gettext_Strings( $this->settings->get_settings() );
         $this->notifications              = new TRP_Trigger_Plugin_Notifications();
         $this->upgrade                    = new TRP_Upgrade( $this->settings->get_settings() );
+        $this->plugin_updater             = new TRP_Plugin_Updater();
+        $this->license_page               = new TRP_LICENSE_PAGE();
+    }
+
+    /**
+     * We use this function to detect if we have any addons that require a license
+     */
+    public function get_active_pro_addons(){
+
+        //don't do nothing in frontend
+        if( !is_admin() )
+            return;
+
+        // the names of your product should match the download names in EDD exactly
+        $trp_all_pro_addons = array(
+            "tp-add-on-automatic-language-detection" => "Automatic User Language Detection",
+            "tp-add-on-browse-as-other-roles" => "Browse as other Role",
+            "tp-add-on-extra-languages" => "Multiple Languages",
+            "tp-add-on-navigation-based-on-language" => "Navigation Based on Language",
+            "tp-add-on-seo-pack" => "SEO Pack",
+            "tp-add-on-translator-accounts" => "Translator Accounts",
+        );
+        $active_plugins = get_option('active_plugins');
+        foreach ( $trp_all_pro_addons as $trp_pro_addon_folder => $trp_pro_addon_name ){
+            foreach( $active_plugins as $active_plugin ){
+                if( strpos( $active_plugin, $trp_pro_addon_folder.'/' ) === 0  ){
+                    $this->active_pro_addons[$trp_pro_addon_folder] = $trp_pro_addon_name;
+                }
+            }
+        }
     }
 
     /**
@@ -143,6 +177,21 @@ class TRP_Translate_Press{
 	    $this->loader->add_action( 'admin_init', $this->upgrade, 'show_admin_notice' );
 	    $this->loader->add_action( 'admin_enqueue_scripts', $this->upgrade, 'enqueue_update_script', 10, 1 );
 	    $this->loader->add_action( 'wp_ajax_trp_update_database', $this->upgrade, 'trp_update_database' );
+
+        /* add hooks for license operations  */
+        if( !empty( $this->active_pro_addons ) ) {
+            $this->loader->add_action('admin_init', $this->plugin_updater, 'activate_license');
+            $this->loader->add_filter('pre_set_site_transient_update_plugins', $this->plugin_updater, 'check_license');
+            $this->loader->add_action('admin_init', $this->plugin_updater, 'deactivate_license');
+            $this->loader->add_action('admin_notices', $this->plugin_updater, 'admin_activation_notices');
+        }
+
+        /* add license page */
+        global $trp_license_page;//this global was used in the addons, so we need to use it here also so we don't initialize the license page multiple times (backward compatibility)
+        if( !isset( $trp_license_page )  ) {
+            $trp_license_page = $this->license_page;
+            $this->loader->add_action('admin_menu', $this->license_page, 'license_menu');
+        }
 
     }
 

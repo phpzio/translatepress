@@ -12,11 +12,13 @@ class TRP_Add_General_Notices{
     public $notificationClass = '';
     public $startDate = '';
     public $endDate = '';
+    public $force_show = false;//this attribute ignores the dismiss notification
 
-    function __construct( $notificationId, $notificationMessage, $notificationClass = 'updated' , $startDate = '', $endDate = '' ){
+    function __construct( $notificationId, $notificationMessage, $notificationClass = 'updated' , $startDate = '', $endDate = '', $force_show = false ){
         $this->notificationId = $notificationId;
         $this->notificationMessage = $notificationMessage;
         $this->notificationClass = $notificationClass;
+        $this->force_show = $force_show;
 
         if( !empty( $startDate ) && time() < strtotime( $startDate ) )
             return;
@@ -39,7 +41,7 @@ class TRP_Add_General_Notices{
 
         if ( current_user_can( 'manage_options' ) ){
             // Check that the user hasn't already clicked to ignore the message
-            if ( ! get_user_meta($user_id, $this->notificationId.'_dismiss_notification' ) ) {
+            if ( ! get_user_meta($user_id, $this->notificationId.'_dismiss_notification' ) || $this->force_show  ) {//ignore the dismissal if we have force_show
                 echo $finalMessage = apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage);
             }
             do_action( $this->notificationId.'_notification_displayed', $current_user, $pagenow );
@@ -156,7 +158,7 @@ Class TRP_Plugin_Notifications {
      *
      *
      */
-    public function add_notification( $notification_id = '', $notification_message = '', $notification_class = 'update-nag', $count_in_menu = true, $count_in_submenu = array() ) {
+    public function add_notification( $notification_id = '', $notification_message = '', $notification_class = 'update-nag', $count_in_menu = true, $count_in_submenu = array(), $show_in_all_backend = false ) {
 
         if( empty( $notification_id ) )
             return;
@@ -166,8 +168,20 @@ Class TRP_Plugin_Notifications {
 
         global $current_user;
 
-        if( get_user_meta( $current_user->ID, $notification_id . '_dismiss_notification' ) )
-            return;
+
+        /**
+         * added a $show_in_all_backend argument in version 1.4.6  that allows some notifications to be displayed on all the pages not just the plugin pages
+         * we needed it for license notifications
+         */
+        $force_show = false;
+        if( get_user_meta( $current_user->ID, $notification_id . '_dismiss_notification' ) ) {
+            if( !($this->is_plugin_page() && $show_in_all_backend) ){
+                return;
+            }
+            else{
+                $force_show = true; //if $show_in_all_backend is true then we ignore the dismiss on plugin pages, but on the rest of the pages it can be dismissed
+            }
+        }
 
         $this->notifications[$notification_id] = array(
             'id' 	  		   => $notification_id,
@@ -178,8 +192,8 @@ Class TRP_Plugin_Notifications {
         );
 
 
-        if( $this->is_plugin_page() ) {
-            new TRP_Add_General_Notices( $notification_id, $notification_message, $notification_class );
+        if( $this->is_plugin_page() || $show_in_all_backend ) {
+            new TRP_Add_General_Notices( $notification_id, $notification_message, $notification_class, '', '', $force_show );
         }
 
     }
@@ -269,10 +283,10 @@ Class TRP_Plugin_Notifications {
 
 
     /**
-     *
+     * Test if we are an a page that belong to our plugin
      *
      */
-    protected function is_plugin_page() {
+    public function is_plugin_page() {
         if( !empty( $this->pluginPages ) ){
             foreach ( $this->pluginPages as $pluginPage ){
                 if( ! empty( $_GET['page'] ) && false !== strpos( $_GET['page'], $pluginPage ) )
@@ -315,6 +329,54 @@ class TRP_Trigger_Plugin_Notifications{
             $notifications->add_notification($notification_id, $message, 'trp-notice trp-narrow notice notice-info', true, array('translate-press'));
         }
 
+
+        /* License Notifications */
+        $license_details = get_option( 'trp_license_details' );
+        if( !empty($license_details) ){
+            /* if we have any invalid response for any of the addon show just the error notification and ignore any valid responses */
+            if( !empty( $license_details['invalid'] ) ){
+
+                //take the first addon details (it should be the same for the rest of the invalid ones)
+                $license_detail = $license_details['invalid'][0];
+
+                /* this must be unique */
+                $notification_id = 'trp_invalid_license';
+                $message = '<p style="padding-right:30px;">';
+                if( $license_detail->error == 'missing' )
+                    $message .= sprintf( __('<p>Your <strong>TranslatePress</strong> serial number is invalid or missing. <br/>Please %1$sregister your copy%2$s to receive access to automatic updates and support. Need a license key? %3$sPurchase one now%4$s</p>' , 'translatepress-multilingual' ), "<a href='". admin_url('/admin.php?page=trp_license_key') ."'>", "</a>", "<a href='https://translatepress.com/pricing/?utm_source=TP&utm_medium=dashboard&utm_campaign=TP-SN-Purchase' target='_blank' class='button-primary'>", "</a>" );
+                elseif($license_detail->error == 'expired')
+                    $message .= sprintf( __('<p>Your <strong>TranslatePress</strong> license has expired. <br/>Please %1$sRenew Your Licence%2$s to continue receiving access to product downloads, automatic updates and support. %3$sRenew now %4$s</p>' , 'translatepress-multilingual' ), "<a href='https://www.translatepress.com/account/?utm_source=TP&utm_medium=dashboard&utm_campaign=TP-Renewal' target='_blank'>", "</a>", "<a href='https://www.translatepress.com/account/?utm_source=TP&utm_medium=dashboard&utm_campaign=TP-Renewal' target='_blank' class='button-primary'>", "</a>" );
+                $message .= '</p>';
+
+                if( !$notifications->is_plugin_page() ) {
+                    //make sure to use the trp_dismiss_admin_notification arg
+                    $message .= '<a style="text-decoration: none;z-index:100;" href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
+                }
+
+                $notifications->add_notification( $notification_id, $message, 'trp-notice notice error is-dismissible', true, array('translate-press'), true);
+            }
+            elseif( !empty( $license_details['valid'] ) ){
+
+                //take the first addon details (it should be the same for the rest of the valid ones)
+                $license_detail =  $license_details['valid'][0];
+
+                if( isset($license_detail->auto_billing) && !$license_detail->auto_billing ) {//auto_billing was added by us in a filter on translatepress.com
+                    if ((strtotime($license_detail->expires) - time()) / (60 * 60 * 24) < 30) {
+
+                        /* this must be unique */
+                        $notification_id = 'trp_will_expire_license';
+                        $message = '<p style="padding-right:30px;">' . sprintf( __( 'Your <strong>TranslatePress</strong> license will expire on %1$s. Please %2$sRenew Your Licence%3$s to continue receiving access to product downloads, automatic updates and support.', 'translatepress-multilingual'), date_i18n( get_option( 'date_format' ), strtotime( $license_detail->expires, current_time( 'timestamp' ) ) ), '<a href="https://translatepress.com/account/?utm_source=TP&utm_medium=dashboard&utm_campaign=TP-Renewal" target="_blank">', '</a>'). '</p>';
+
+                        if (!$notifications->is_plugin_page()) {
+                            //make sure to use the trp_dismiss_admin_notification arg
+                            $message .= '<a style="text-decoration: none;z-index:100;" href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
+                        }
+
+                        $notifications->add_notification($notification_id, $message, 'trp-notice notice notice-info is-dismissible', true, array('translate-press'), true);
+                    }
+                }
+            }
+        }
 
 	    /* this must be unique */
 	    $notification_id = 'trp_new_addon_auto_detect_language';

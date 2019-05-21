@@ -142,3 +142,14 @@ input.trp-translation-published{
 .trp-settings-delimiter-border {
     border-top: 1px solid #d9d9d9;
 }
+
+/* License Page */
+.trp-active-license{
+    line-height: 29px;
+    color: #008000;
+}
+
+.trp-invalid-license{
+    line-height: 29px;
+    color:#ca4a1f;
+}

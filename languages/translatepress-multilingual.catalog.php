@@ -24,8 +24,19 @@
 <?php __("Choose...", "translatepress-multilingual"); ?>
 <?php __("Add", "translatepress-multilingual"); ?>
 <?php __("Select the languages you wish to make your website available in.", "translatepress-multilingual"); ?>
+<?php __("An error occurred, please try again.", "translatepress-multilingual"); ?>
+<?php __("Your license key expired on %s.", "translatepress-multilingual"); ?>
+<?php __("Your license key has been disabled.", "translatepress-multilingual"); ?>
+<?php __("Invalid license.", "translatepress-multilingual"); ?>
+<?php __("Your license is not active for this URL.", "translatepress-multilingual"); ?>
+<?php __("This appears to be an invalid license key for %s.", "translatepress-multilingual"); ?>
+<?php __("Your license key has reached its activation limit.", "translatepress-multilingual"); ?>
+<?php __("You have successfully activated your license", "translatepress-multilingual"); ?>
 <?php __("You are not using a permalink structure! Please <a href=\"%s\">enable</a> one or install our <a href=\"%s\">\"Language by GET parameter\"</a> addon so TranslatePress can function properly.", "translatepress-multilingual"); ?>
 <?php __("Dismiss this notice.", "translatepress-multilingual"); ?>
+<?php __("<p>Your <strong>TranslatePress</strong> serial number is invalid or missing. <br/>Please %1$sregister your copy%2$s to receive access to automatic updates and support. Need a license key? %3$sPurchase one now%4$s</p>", "translatepress-multilingual"); ?>
+<?php __("<p>Your <strong>TranslatePress</strong> license has expired. <br/>Please %1$sRenew Your Licence%2$s to continue receiving access to product downloads, automatic updates and support. %3$sRenew now %4$s</p>", "translatepress-multilingual"); ?>
+<?php __("Your <strong>TranslatePress</strong> license will expire on %1$s. Please %2$sRenew Your Licence%3$s to continue receiving access to product downloads, automatic updates and support.", "translatepress-multilingual"); ?>
 <?php __("Redirect users to their preferred language based on their browser language or IP address using our new <a href=\"https://translatepress.com/docs/addons/automatic-user-language-detection/\" >Automatic User Language Detection Add-on</a>.", "translatepress-multilingual"); ?>
 <?php __("Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Short Language Names", "translatepress-multilingual"); ?>
@@ -35,8 +46,8 @@
 <?php __("Current Language", "translatepress-multilingual"); ?>
 <?php __("General", "translatepress-multilingual"); ?>
 <?php __("Translate Site", "translatepress-multilingual"); ?>
-<?php __("License", "translatepress-multilingual"); ?>
 <?php __("Addons", "translatepress-multilingual"); ?>
+<?php __("License", "translatepress-multilingual"); ?>
 <?php __("Settings", "translatepress-multilingual"); ?>
 <?php __("Pro Features", "translatepress-multilingual"); ?>
 <?php __("Translate", "translatepress-multilingual"); ?>
@@ -78,6 +89,9 @@
 <?php __("If the page does not redirect automatically", "translatepress-multilingual"); ?>
 <?php __("click here", "translatepress-multilingual"); ?>
 <?php __("<strong>TranslatePress</strong> requires <strong><a href=\"http://php.net/manual/en/book.mbstring.php\">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server.", "translatepress-multilingual"); ?>
+<?php __("Active on this site", "translatepress-multilingual"); ?>
+<?php __("Your license is invalid", "translatepress-multilingual"); ?>
+<?php __("If you do not have any of the <a href=\"%s\">Advanced or Pro Addons</a> activated you do not need a license key", "translatepress-multilingual"); ?>
 <?php __("Select the language you wish to make your website available in.", "translatepress-multilingual"); ?>
 <?php __("To add <strong>more then two languages</strong> and support for SEO Title, Description, Slug and more check out <a href=\"%s\" class=\"button button-primary\" target=\"_blank\" title=\"TranslatePress Pro\">TranslatePress PRO</a>", "translatepress-multilingual"); ?>
 <?php __("Not only you are getting extra features and premium support, you also help fund the future development of TranslatePress.", "translatepress-multilingual"); ?>

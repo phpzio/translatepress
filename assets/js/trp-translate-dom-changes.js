@@ -77,7 +77,7 @@ function TRP_Translator(){
         _this.pause_observer();
         if ( response != null && response.length > 0 ){
             var newEntries = [];
-            for ( var j in nodesInfo ) {
+            for (var j = 0 ; j < nodesInfo.length; j++){
                 var nodeInfo = nodesInfo[j];
                 var translation_found = false;
                 var initial_value = nodeInfo.original;
@@ -131,7 +131,7 @@ function TRP_Translator(){
                 window.parent.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
             }
         }else{
-            for ( var j in nodesInfo ) {
+            for (var j = 0 ; j < nodesInfo.length; j++){
                 if ( nodesInfo[j].attribute ){
                     nodesInfo[j].node.setAttribute( nodesInfo[j].attribute, nodesInfo[j].original )
                 }else {
