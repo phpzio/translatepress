@@ -608,7 +608,7 @@ class TRP_Translation_Render{
 
         foreach ( $nodes as $i => $node ) {
             $translation_available = isset( $translated_strings[$i] );
-            if ( ! ( $translation_available || $preview_mode ) ){
+            if ( ! ( $translation_available || $preview_mode ) || !isset( $node_accessors [$nodes[$i]['type']] )){
                 continue;
             }
             $current_node_accessor = $node_accessors[ $nodes[$i]['type'] ];
