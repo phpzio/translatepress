@@ -50,19 +50,19 @@
     outline: 2px solid #e2e4e7 !important;
 }
 
-*[data-trpgettextoriginal] .trp-icon, .trpgettext-wrap .trp-icon{
+.trp-gettext-pencil{
     background: #00ba3f !important;
 }
 
-*[data-trpgettextoriginal]  *[data-trp-translate-id] .trp-icon{
+*[data-trp-translate-id] .trp-icon.trp-gettext-pencil{
     background: #0085ba!important;
 }
 
-*[data-trpgettextoriginal] .trp-icon:hover, .trpgettext-wrap .trp-icon:hover{
+.trp-gettext-pencil:hover{
     background: #00ce44 !important;
 }
 
-*[data-trpgettextoriginal]  *[data-trp-translate-id] .trp-icon:hover{
+*[data-trp-translate-id] .trp-gettext-pencil.trp-icon:hover{
     background: #008ec2!important;
 }
 

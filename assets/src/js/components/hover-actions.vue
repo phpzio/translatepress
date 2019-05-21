@@ -70,6 +70,7 @@
 
                 //edit string button
                 let editButton = this.iframe.querySelector( 'trp-edit' )
+                let foundNonGettext = false
 
                 self.dataAttributes.forEach( function( baseSelector ) {
 
@@ -80,6 +81,10 @@
                         if ( relatedNodeAttr ) {
                             stringId = relatedNodeAttr
                             stringSelector = selector
+                            if ( ! stringSelector.includes( 'data-trpgettextoriginal' ) ){
+                                // includes at least one data-base-selector that is not gettext. Useful for determining edit pencil color
+                                foundNonGettext = true
+                            }
                         }
                     })
                 })
@@ -87,6 +92,13 @@
                 self.hoveredStringSelector = stringSelector
                 self.hoveredStringId = stringId
                 self.hoveredTarget      = target
+
+                // show green edit pencil
+                if ( foundNonGettext ){
+                    editButton.classList.remove( 'trp-gettext-pencil' )
+                }else{
+                    editButton.classList.add( 'trp-gettext-pencil' )
+                }
 
                 //figure out if split or merge is available
                 mergeOrSplit = self.checkMergeOrSplit( target )
