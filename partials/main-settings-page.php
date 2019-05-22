@@ -80,7 +80,7 @@
                         <option value="yes" <?php selected( $this->settings['g-translate'], 'yes' ); ?>><?php esc_html_e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php echo wp_kses( __( 'Enable or disable the automatic translation of the site with Google Translate. Only untranslated strings will receive a translation.<br>You can later edit these automatic translations.<br>Note: Not all languages support automatic translation. Please consult the <a href="https://cloud.google.com/translate/docs/languages" target="_blank" title="Automatic translation supported languages.">supported languages list</a>. ', 'translatepress-multilingual' ), [ 'a' => [ 'href' => [] ] ] ); ?>
+                        <?php echo wp_kses( __( 'Enable or disable the automatic translation of the site with Google Translate. Only untranslated strings will receive a translation.<br>You can later edit these automatic translations.<br>Note: Not all languages support automatic translation. Please consult the <a href="https://cloud.google.com/translate/docs/languages" target="_blank" title="Automatic translation supported languages.">supported languages list</a>. ', 'translatepress-multilingual' ), [ 'a' => [ 'href' => [], 'title' => [], 'target' => [] ], 'br' => [] ] ); ?>
                     </p>
                 </td>
             </tr>
@@ -91,7 +91,7 @@
                     <input type="text" id="trp-g-translate-key" class="trp-text-input" name="trp_settings[g-translate-key]" value="<?php if( !empty( $this->settings['g-translate-key'] ) ) echo esc_attr( $this->settings['g-translate-key']);?>"/>
                     <?php if( !empty( $this->settings['g-translate-key'] ) ) echo '<a href="'.esc_url( admin_url( 'admin.php?page=trp_test_google_key_page' ) ).'">'.esc_html__( "Test API key", 'translatepress-multilingual' ).'</a>'; ?>
                     <p class="description">
-                        <?php echo wp_kses( __( 'Visit <a href="https://cloud.google.com/docs/authentication/api-keys" target="_blank">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions.', 'translatepress-multilingual' ), [ 'a' => [ 'href' => [] ], 'strong' => [] ] ); ?>
+                        <?php echo wp_kses( __( 'Visit <a href="https://cloud.google.com/docs/authentication/api-keys" target="_blank">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions.', 'translatepress-multilingual' ), [ 'a' => [ 'href' => [], 'title' => [], 'target' => [] ], 'strong' => [] ] ); ?>
                         <br><?php echo sprintf( esc_html__( 'Your HTTP referrer is: %s', 'translatepress-multilingual' ), $gtranslate_referer ); ?>
                     </p>
                 </td>
