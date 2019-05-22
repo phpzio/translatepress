@@ -141,7 +141,7 @@
                 }
 
                 nodes.forEach(function(node){
-                    if (typeof string.attribute === 'undefined' || string.attribute === "") {
+                    if (typeof string.attribute === 'undefined' || string.attribute === "" || string.attribute === 'innertext') {
                         let initialValue = node.textContent;
                         textToSet = initialValue.replace(initialValue.trim(), textToSet);
                         node.innerHTML = textToSet

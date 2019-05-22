@@ -89,9 +89,15 @@ class TRP_Editor_Api_Regular_Strings {
 		foreach( $originals as $original ){
 			if ( isset( $original ) ) {
 				$trimmed_string = trp_full_trim( trp_sanitize_string( $original ) );
-				// don't allow urls unless they are external or files
-				if ( ( filter_var($trimmed_string, FILTER_VALIDATE_URL) === false) || $this->translation_render->is_external_link( $trimmed_string, $home_url ) || $this->url_converter->url_is_file( $trimmed_string ) ) {
-					$original_array[] = remove_query_arg( 'trp-edit-translation', $trimmed_string ) ;
+				if ( ( filter_var($trimmed_string, FILTER_VALIDATE_URL) === false) ){
+					// not url
+					$original_array[] = $trimmed_string;
+				}else{
+					// is url
+					if ( $this->translation_render->is_external_link( $trimmed_string, $home_url ) || $this->url_converter->url_is_file( $trimmed_string ) ) {
+						// allow only external url or file urls
+						$original_array[] = remove_query_arg( 'trp-edit-translation', $trimmed_string );
+					}
 				}
 			}
 		}
@@ -238,7 +244,7 @@ class TRP_Editor_Api_Regular_Strings {
 					$active_block_type = $this->trp_query->get_constant_block_type_active();
 					foreach( $this->settings['translation-languages'] as $language ){
 						if ( $language != $this->settings['default-language'] ){
-							$dictionaries = $this->get_translation_for_strings( array(), array( $_POST['original'] ), $active_block_type );
+							$dictionaries = $this->get_translation_for_strings( array(), array( stripslashes( $_POST['original'] ) ), $active_block_type );
 							break;
 						}
 					}

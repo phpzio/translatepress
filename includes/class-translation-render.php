@@ -1168,7 +1168,7 @@ class TRP_Translation_Render{
 				'trp_language_to_query'               => $language_to_query,
 				'trp_original_language'               => $this->settings['default-language'],
 				'trp_current_language'                => $TRP_LANGUAGE,
-				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ),
+				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trp-translate-id-innertext]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ), // data-trp-translate-id-innertext refers to translation block and it shouldn't be detected
 				'trp_base_selectors'                  => $this->get_base_attribute_selectors(),
 				'trp_attributes_selectors'            => $this->get_node_accessors(),
 				'trp_attributes_accessors'            => $this->get_accessors_array(),

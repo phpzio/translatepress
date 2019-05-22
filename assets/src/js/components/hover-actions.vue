@@ -326,7 +326,9 @@
 
                 attributesToReplace.forEach( function( attribute ) {
                     copy.querySelectorAll( '[data-trp-original-' + attribute + ']' ).forEach( function( node ) {
-                        node.setAttribute( attribute, node.getAttribute( 'data-trp-original-' + attribute ) )
+                        let dataTrpOriginalAttribute = 'data-trp-original-' + attribute;
+                        node.setAttribute( attribute, node.getAttribute( dataTrpOriginalAttribute ) )
+                        node.removeAttribute(dataTrpOriginalAttribute)
                     })
                 })
 
@@ -334,11 +336,11 @@
                 let otherAttributes = [ 'data-trp-placeholder', 'data-trp-unpreviewable' ]
                 let attributesToRemove = otherAttributes.concat( self.$parent.prepareSelectorStrings( 'data-trp-translate-id' ), self.$parent.prepareSelectorStrings( 'data-trp-node-group' ), self.$parent.prepareSelectorStrings( 'data-trp-node-description' ) )
 
-                for(node of copy.children) {
-                    attributesToRemove.forEach( function( attribute ) {
+                attributesToRemove.forEach( function( attribute ) {
+                    copy.querySelectorAll( '[' + attribute + ']' ).forEach( function( node ) {
                         node.removeAttribute( attribute )
                     })
-                }
+                })
 
                 return copy.innerHTML
 
