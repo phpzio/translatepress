@@ -470,6 +470,11 @@
 
                 // put the node groups in the order that we want, according to the prop this.stringGroupOrder
                 let orderedStringGroups = [];
+
+                if ( this.editorStrings.seo_update_notice != 'seo_pack_update_not_needed' ){
+                    orderedStringGroups.push( this.editorStrings.seo_update_notice );
+                }
+
                 this.stringGroupOrder.forEach( function( group ){
                     if ( foundStringGroups.indexOf( group ) !== -1 ){
                         orderedStringGroups.push( group )
