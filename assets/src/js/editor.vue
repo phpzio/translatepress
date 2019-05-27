@@ -618,7 +618,8 @@
                 if ( this.selectedIndexesArray.length > 0 ) {
                     this.selectedIndexesArray.forEach(function (selectedIndex) {
                         self.settings['translation-languages'].forEach(function (languageCode) {
-                            if (self.dictionary[selectedIndex].translationsArray[languageCode] &&
+                            if (self.dictionary[selectedIndex] &&
+                                self.dictionary[selectedIndex].translationsArray[languageCode] &&
                                 (self.dictionary[selectedIndex].translationsArray[languageCode].translated !== self.dictionary[selectedIndex].translationsArray[languageCode].editedTranslation)) {
                                 unsavedChanges = true
                             }

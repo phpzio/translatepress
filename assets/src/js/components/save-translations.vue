@@ -201,13 +201,15 @@
                     axios.post(this.ajax_url, data)
                         .then(function (response) {
                             self.saveStringsRequestsLeft--
+                            self.$parent.mergingString = false
                             let item = self.dictionary[self.selectedIndexesArray[0]]
-
-                            item.dbID = item.translationsArray[self.onScreenLanguage].id
 
                             //update dictionary string ids
                             Object.keys( item.translationsArray ).forEach( function(key) {
                                 Object.keys( response.data[key] ).forEach( function(index) {
+                                    if ( key === self.onScreenLanguage ){
+                                        self.dictionary[self.selectedIndexesArray[0]].dbID = response.data[key][index].id
+                                    }
                                     item.translationsArray[key].id = response.data[key][index].id
                                 })
                             })
@@ -232,6 +234,7 @@
                             self.$parent.setupEventListener( translationBlock )
                         })
                         .catch(function (error) {
+                            self.$parent.mergingString = false
                             console.log(error)
                         });
                 }else{

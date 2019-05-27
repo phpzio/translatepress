@@ -129,6 +129,7 @@ function TRP_Translator(){
             // this should always be outside the for loop
             if ( _this.is_editor ) {
                 window.parent.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
+                window.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
             }
         }else{
             for (var j = 0 ; j < nodesInfo.length; j++){

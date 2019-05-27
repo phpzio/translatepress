@@ -110,7 +110,7 @@ class TRP_Translation_Manager{
 			'merge'                                                     => __( 'Merge', 'translatepress-multilingual' ),
 			'split'                                                     => __( 'Split', 'translatepress-multilingual' ),
 			'split_confirmation'                                        => __( 'Are you sure you want to split this string ?', 'translatepress-multilingual' ),
-			'translation_not_loaded_yet'                                => __( 'This string is not yet ready for translation. <br>Try again in a moment...', 'translatepress-multilingual'),
+			'translation_not_loaded_yet'                                => __( 'This string is not ready for translation yet. <br>Try again in a moment...', 'translatepress-multilingual'),
 
 	        'bor_update_notice'                                         => __( 'For this option to work, please update the Browse as other role add-on to the latest version.', 'translatepress-multilingual' ),
 	        'seo_update_notice'                                         => ($update_seo_add_on) ? __( 'To translate slugs, please update the SEO Pack add-on to the latest version.', 'translatepress-multilingual' ) : 'seo_pack_update_not_needed',

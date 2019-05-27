@@ -133,9 +133,7 @@ var trp_preview_iframe;
 
 jQuery( function(){
     trp_preview_iframe = new TRP_Iframe_Preview();
-    jQuery( window ).on( 'trp_page_loaded' , function(){
-        trp_preview_iframe.initialize();
-    } );
+    window.addEventListener( 'trp_iframe_page_updated', trp_preview_iframe.initialize )
 });
 
 /**

@@ -23,6 +23,7 @@
                 hoveredStringId       : '',
                 hoveredStringSelector : '',
                 hoveredTarget         : '',
+                counter               : 0
             }
         },
         methods:{
@@ -224,11 +225,12 @@
                     type              : 'regular',
                     attribute         : '',
                     block_type        : '1',
-                    dbID              : 'create_translation_block',
+                    dbID              : 'create_translation_block' + this.counter,
                     original          : self.stripEditorData( parent ),
                     selector          : 'data-trp-translate-id',
                     translationsArray : {}
                 }
+                this.counter++
 
                 let dummyTranslations = {}
 
