@@ -39,8 +39,8 @@ class TRP_Translation_Manager{
                 return true;
             }else{
                 wp_die(
-                    '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
-                    '<p>' . __( 'Sorry, you are not allowed to access this page.' ) . '</p>',
+                    '<h1>' . esc_html__( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                    '<p>' . esc_html__( 'Sorry, you are not allowed to access this page.' ) . '</p>',
                     403
                 );
             }
@@ -81,66 +81,66 @@ class TRP_Translation_Manager{
 
         return $this->string_groups() + array(
         	// attribute names
-        	'src'                                                       => __( 'Image source', 'translatepress-multilingual' ),
-			'alt'                                                       => __( 'Alt attribute', 'translatepress-multilingual' ),
-			'title'                                                     => __( 'Title attribute', 'translatepress-multilingual' ),
-			'href'                                                      => __( 'Anchor link', 'translatepress-multilingual' ),
-			'placeholder'                                               => __( 'Placeholder attribute', 'translatepress-multilingual' ),
-			'submit'                                                    => __( 'Submit attribute', 'translatepress-multilingual' ),
-			'text'                                                      => __( 'Text', 'translatepress-multilingual' ),
+        	'src'                                                       => esc_html__( 'Image source', 'translatepress-multilingual' ),
+			'alt'                                                       => esc_html__( 'Alt attribute', 'translatepress-multilingual' ),
+			'title'                                                     => esc_html__( 'Title attribute', 'translatepress-multilingual' ),
+			'href'                                                      => esc_html__( 'Anchor link', 'translatepress-multilingual' ),
+			'placeholder'                                               => esc_html__( 'Placeholder attribute', 'translatepress-multilingual' ),
+			'submit'                                                    => esc_html__( 'Submit attribute', 'translatepress-multilingual' ),
+			'text'                                                      => esc_html__( 'Text', 'translatepress-multilingual' ),
 
-			'saved'                                                     => __( 'Saved', 'translatepress-multilingual' ),
-			'save_translation'                                          => __( 'Save translation', 'translatepress-multilingual' ),
-			'saving_translation'                                        => __( 'Saving translation...', 'translatepress-multilingual' ),
-			'unsaved_changes'                                           => __( 'You have unsaved changes !', 'translatepress-multilingual' ),
-			'discard'                                                   => __( 'Discard changes', 'translatepress-multilingual' ),
-			'discard_all'                                               => __( 'Discard All', 'translatepress-multilingual' ),
-			'strings_loading'                                           => __( 'Loading Strings...', 'translatepress-multilingual' ),
-			'select_string'                                             => __( 'Select string to translate...', 'translatepress-multilingual' ),
-			'close'                                                     => __( 'Close Editor', 'translatepress-multilingual' ),
-			'from'                                                      => __( 'From', 'translatepress-multilingual' ),
-			'to'                                                        => __( 'To', 'translatepress-multilingual' ),
-			'next'                                                      => __( 'Next', 'translatepress-multilingual' ),
-			'previous'                                                  => __( 'Previous', 'translatepress-multilingual' ),
-			'add_media'                                                 => __( 'Add Media', 'translatepress-multilingual' ),
-			'other_lang'                                                => __( 'Other languages', 'translatepress-multilingual' ),
-			'view_as'                                                   => __( 'View As', 'translatepress-multilingual' ),
-			'view_as_pro'                                               => __( 'Available in our Pro Versions', 'translatepress-multilingual' ),
-			'edit'                                                      => __( 'Edit', 'translatepress-multilingual' ),
-			'merge'                                                     => __( 'Merge', 'translatepress-multilingual' ),
-			'split'                                                     => __( 'Split', 'translatepress-multilingual' ),
-			'split_confirmation'                                        => __( 'Are you sure you want to split this string ?', 'translatepress-multilingual' ),
-			'translation_not_loaded_yet'                                => __( 'This string is not ready for translation yet. <br>Try again in a moment...', 'translatepress-multilingual'),
+			'saved'                                                     => esc_html__( 'Saved', 'translatepress-multilingual' ),
+			'save_translation'                                          => esc_html__( 'Save translation', 'translatepress-multilingual' ),
+			'saving_translation'                                        => esc_html__( 'Saving translation...', 'translatepress-multilingual' ),
+			'unsaved_changes'                                           => esc_html__( 'You have unsaved changes !', 'translatepress-multilingual' ),
+			'discard'                                                   => esc_html__( 'Discard changes', 'translatepress-multilingual' ),
+			'discard_all'                                               => esc_html__( 'Discard All', 'translatepress-multilingual' ),
+			'strings_loading'                                           => esc_attr__( 'Loading Strings...', 'translatepress-multilingual' ),
+			'select_string'                                             => esc_attr__( 'Select string to translate...', 'translatepress-multilingual' ),
+			'close'                                                     => esc_attr__( 'Close Editor', 'translatepress-multilingual' ),
+			'from'                                                      => esc_html__( 'From', 'translatepress-multilingual' ),
+			'to'                                                        => esc_html__( 'To', 'translatepress-multilingual' ),
+			'next'                                                      => esc_html__( 'Next', 'translatepress-multilingual' ),
+			'previous'                                                  => esc_html__( 'Previous', 'translatepress-multilingual' ),
+			'add_media'                                                 => esc_html__( 'Add Media', 'translatepress-multilingual' ),
+			'other_lang'                                                => esc_html__( 'Other languages', 'translatepress-multilingual' ),
+			'view_as'                                                   => esc_html__( 'View As', 'translatepress-multilingual' ),
+			'view_as_pro'                                               => esc_html__( 'Available in our Pro Versions', 'translatepress-multilingual' ),
+			'edit'                                                      => esc_attr__( 'Edit', 'translatepress-multilingual' ),
+			'merge'                                                     => esc_attr__( 'Merge', 'translatepress-multilingual' ),
+			'split'                                                     => esc_attr__('Split', 'translatepress-multilingual' ),
+			'split_confirmation'                                        => esc_js( __( 'Are you sure you want to split this string ?', 'translatepress-multilingual' ) ),
+			'translation_not_loaded_yet'                                => wp_kses( __( 'This string is not ready for translation yet. <br>Try again in a moment...', 'translatepress-multilingual'), array( 'br' => array() ) ),
 
-	        'bor_update_notice'                                         => __( 'For this option to work, please update the Browse as other role add-on to the latest version.', 'translatepress-multilingual' ),
-	        'seo_update_notice'                                         => ($update_seo_add_on) ? __( 'To translate slugs, please update the SEO Pack add-on to the latest version.', 'translatepress-multilingual' ) : 'seo_pack_update_not_needed',
+	        'bor_update_notice'                                         => esc_js( __( 'For this option to work, please update the Browse as other role add-on to the latest version.', 'translatepress-multilingual' ) ),
+	        'seo_update_notice'                                         => ($update_seo_add_on) ? esc_js( __( 'To translate slugs, please update the SEO Pack add-on to the latest version.', 'translatepress-multilingual' ) ) : 'seo_pack_update_not_needed' ,
 
 			//Notice when the user has not defined a secondary language
-			'extra_lang_row1'                                           => sprintf( __( 'You can add a new language from <a href="%s">Settings->TranslatePress</a>', 'translatepress-multilingual' ), admin_url( 'options-general.php?page=translate-press' ) ),
-			'extra_lang_row2'                                           => __( 'However, you can still use TranslatePress to <strong style="background: #f5fb9d;">modify gettext strings</strong> available in your page.', 'translatepress-multilingual' ),
-			'extra_lang_row3'                                           => __( 'Strings that are user created can not be modified, only those from themes and plugins.', 'translatepress-multilingual' ),
+			'extra_lang_row1'                                           => wp_kses( sprintf( __( 'You can add a new language from <a href="%s">Settings->TranslatePress</a>', 'translatepress-multilingual' ), esc_url( admin_url( 'options-general.php?page=translate-press' ) ) ), array( 'a' => ['href' => []] ) ),
+			'extra_lang_row2'                                           => wp_kses( __( 'However, you can still use TranslatePress to <strong style="background: #f5fb9d;">modify gettext strings</strong> available in your page.', 'translatepress-multilingual' ), array( 'strong' => ['style' => [] ] )),
+			'extra_lang_row3'                                           => esc_html__( 'Strings that are user created can not be modified, only those from themes and plugins.', 'translatepress-multilingual' ),
 			//Pro version upselling
-			'extra_upsell_title'                                        => __( 'Extra Translation Features', 'translatepress-multilingual' ),
-			'extra_upsell_row1'                                         => __( 'Support for 221 Extra Languages', 'translatepress-multilingual' ),
-			'extra_upsell_row2'                                         => __( 'Yoast SEO support', 'translatepress-multilingual' ),
-			'extra_upsell_row3'                                         => __( 'Translate SEO Title, Description, Slug', 'translatepress-multilingual' ),
-			'extra_upsell_row4'                                         => __( 'Publish only when translation is done', 'translatepress-multilingual' ),
-			'extra_upsell_row5'                                         => __( 'Translate by Browsing as User Role', 'translatepress-multilingual' ),
-			'extra_upsell_row6'                                         => __( 'Different Menus Items per Language', 'translatepress-multilingual' ),
-			'extra_upsell_row7'                                         => __( 'Automatic User Language Detection', 'translatepress-multilingual' ),
-			'extra_upsell_row8'                                         => __( 'Supported By Real People', 'translatepress-multilingual' ),
-			'extra_upsell_button'                                       => sprintf( '<a class="button-primary" target="_blank" href="%s">%s</a>', trp_add_affiliate_id_to_link( 'https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree' ), __( 'Find Out More', 'translatepress-multilingual' ) )
+			'extra_upsell_title'                                        => esc_html__( 'Extra Translation Features', 'translatepress-multilingual' ),
+			'extra_upsell_row1'                                         => esc_html__( 'Support for 221 Extra Languages', 'translatepress-multilingual' ),
+			'extra_upsell_row2'                                         => esc_html__( 'Yoast SEO support', 'translatepress-multilingual' ),
+			'extra_upsell_row3'                                         => esc_html__( 'Translate SEO Title, Description, Slug', 'translatepress-multilingual' ),
+			'extra_upsell_row4'                                         => esc_html__( 'Publish only when translation is done', 'translatepress-multilingual' ),
+			'extra_upsell_row5'                                         => esc_html__( 'Translate by Browsing as User Role', 'translatepress-multilingual' ),
+			'extra_upsell_row6'                                         => esc_html__( 'Different Menus Items per Language', 'translatepress-multilingual' ),
+			'extra_upsell_row7'                                         => esc_html__( 'Automatic User Language Detection', 'translatepress-multilingual' ),
+			'extra_upsell_row8'                                         => esc_html__( 'Supported By Real People', 'translatepress-multilingual' ),
+			'extra_upsell_button'                                       => wp_kses( sprintf( '<a class="button-primary" target="_blank" href="%s">%s</a>', esc_url( trp_add_affiliate_id_to_link( 'https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree' ) ), __( 'Find Out More', 'translatepress-multilingual' ) ), array( 'a' => ['class'=> [] , 'target'=> [],'href'=> []] )  )
         );
 	}
 
 	public function string_groups(){
 		$string_groups = array(
-			'slugs'           => __( 'Slugs', 'translatepress-multilingual' ),
-            'metainformation' => __( 'Meta Information', 'translatepress-multilingual' ),
-            'stringlist'      => __( 'String List', 'translatepress-multilingual' ),
-            'gettextstrings'  => __( 'Gettext Strings', 'translatepress-multilingual' ),
-            'images'          => __( 'Images', 'translatepress-multilingual' ),
-            'dynamicstrings'  => __( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+			'slugs'           => esc_html__( 'Slugs', 'translatepress-multilingual' ),
+            'metainformation' => esc_html__( 'Meta Information', 'translatepress-multilingual' ),
+            'stringlist'      => esc_html__( 'String List', 'translatepress-multilingual' ),
+            'gettextstrings'  => esc_html__( 'Gettext Strings', 'translatepress-multilingual' ),
+            'images'          => esc_html__( 'Images', 'translatepress-multilingual' ),
+            'dynamicstrings'  => esc_html__( 'Dynamic Added Strings', 'translatepress-multilingual' ),
 		);
 		return apply_filters( 'trp_string_groups', $string_groups );
 	}
@@ -925,7 +925,7 @@ class TRP_Translation_Manager{
 
                 if ( $current_user_can_change_roles ) {
                     if ( ! wp_verify_nonce( $_REQUEST['trp-view-as-nonce'], 'trp_view_as'. sanitize_text_field( $_REQUEST['trp-view-as'] ) . get_current_user_id() ) ) {
-                        wp_die( __( 'Security check', 'translatepress-multilingual' ) );
+                        wp_die( esc_html__( 'Security check', 'translatepress-multilingual' ) );
                     } else {
                         global $current_user;
                         $view_as = sanitize_text_field( $_REQUEST['trp-view-as'] );

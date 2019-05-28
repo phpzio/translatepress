@@ -56,22 +56,22 @@
     <div id="trp-editor-container">
         <trp-editor
             ref='trp_editor'
-            trp_settings='<?php echo json_encode( $trp_settings ); ?>'
-            language_names='<?php echo json_encode( $language_names ); ?>'
-            ordered_secondary_languages='<?php echo json_encode( $ordered_secondary_languages ); ?>'
-            current_language="<?php echo $TRP_LANGUAGE; ?>"
-            on_screen_language="<?php echo ( isset( $ordered_secondary_languages[0] ) ) ? $ordered_secondary_languages[0] : '' ; ?>"
-            view_as_roles='<?php echo json_encode( $view_as_roles ); ?>'
-            url_to_load="<?php echo add_query_arg( 'trp-edit-translation', 'preview', $current_url );?>"
-            string_selectors='<?php echo json_encode( $selectors ); ?>'
-            data_attributes='<?php echo json_encode( $data_attributes ); ?>'
-            editor_nonces='<?php echo json_encode( $translation_manager->editor_nonces() ); ?>'
-            ajax_url='<?php echo apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ); ?>'
-            string_group_order='<?php echo json_encode( $string_groups ); ?>'
-            merge_rules='<?php echo json_encode( $translation_manager->get_merge_rules() ); ?>'
-            localized_text='<?php echo json_encode( $translation_manager->localized_text() ); ?>'
-            paid_version="<?php echo trp_is_paid_version() ? 'true' : 'false'; ?>"
-            flags_path="<?php echo apply_filters( 'trp_flags_path', TRP_PLUGIN_URL .'assets/images/flags/' ); ?>"
+            trp_settings='<?php echo esc_attr( json_encode( $trp_settings ) ); ?>'
+            language_names='<?php echo esc_attr( json_encode( $language_names ) ); ?>'
+            ordered_secondary_languages='<?php echo esc_attr( json_encode( $ordered_secondary_languages ) ); ?>'
+            current_language="<?php echo esc_attr( $TRP_LANGUAGE ); ?>"
+            on_screen_language="<?php echo esc_attr( ( isset( $ordered_secondary_languages[0] ) ) ? $ordered_secondary_languages[0] : '' ); ?>"
+            view_as_roles='<?php echo esc_attr( json_encode( $view_as_roles ) ); ?>'
+            url_to_load="<?php echo esc_url( add_query_arg( 'trp-edit-translation', 'preview', $current_url ) );?>"
+            string_selectors='<?php echo esc_attr( json_encode( $selectors ) ); ?>'
+            data_attributes='<?php echo esc_attr( json_encode( $data_attributes ) ); ?>'
+            editor_nonces='<?php echo esc_attr( json_encode( $translation_manager->editor_nonces() ) ); ?>'
+            ajax_url='<?php echo esc_url( apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ) ); ?>'
+            string_group_order='<?php echo esc_attr( json_encode( $string_groups ) ); ?>'
+            merge_rules='<?php echo esc_attr( json_encode( $translation_manager->get_merge_rules() ) ); ?>'
+            localized_text='<?php echo esc_attr( json_encode( $translation_manager->localized_text() ) ); ?>'
+            paid_version="<?php echo esc_attr( trp_is_paid_version() ? 'true' : 'false' ); ?>"
+            flags_path="<?php echo esc_url( apply_filters( 'trp_flags_path', TRP_PLUGIN_URL .'assets/images/flags/' ) ); ?>"
         >
         </trp-editor>
     </div>
@@ -79,7 +79,5 @@
     <?php do_action( 'trp_translation_manager_footer' ); ?>
 </body>
 </html>
-
-
 
 <?php
