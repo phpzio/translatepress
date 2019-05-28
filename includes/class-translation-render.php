@@ -379,13 +379,14 @@ class TRP_Translation_Render{
 		    foreach ( $all_existing_translation_blocks as $key => $existing_tb ) {
 			    $all_existing_translation_blocks[ $key ]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[ $key ]->original );
 		    }
-
+		    error_log('All the translation blocks:' . serialize($all_existing_translation_blocks));
 		    //try to find if there are any blocks on the current page html
             foreach( $all_existing_translation_blocks as $key => $existing_translation_block ){
                 if (  strpos( $this->trim_translation_block( $output ), $existing_translation_block->trimmed_original ) === false ){
                     unset($all_existing_translation_blocks[$key] );//if it isn't present remove it, this way we don't look for them on pages that don't contain blocks
                 }
             }
+            error_log('Found translation blocks:' . serialize($all_existing_translation_blocks));
             $count_translation_blocks = count( $all_existing_translation_blocks );//see here how many remain on the current page
 
 		    $merge_rules = $this->translation_manager->get_merge_rules();
@@ -434,6 +435,7 @@ class TRP_Translation_Render{
 					            // make sure we find it later exactly the way it is in DB
 					            $row->innertext = $translation_block->original;
 					            $row->setAttribute( 'class', $existing_classes . ' translation-block' );
+					            error_log('Found individual translation block:' . serialize($translation_block));
 				            }
 			            } else if ( $preview_mode && $translation_block->block_type == 2 && $translation_block->status != 0 ) {
 				            // refactor to not do this for each
@@ -540,6 +542,7 @@ class TRP_Translation_Render{
             {
                 array_push( $translateable_strings, $trimmed_string );
                 array_push( $nodes, array('node' => $row, 'type' => 'block'));
+                error_log('Mark translation block string for translation: ' . serialize($trimmed_string) );
             }
         }
 
@@ -675,6 +678,9 @@ class TRP_Translation_Render{
                         $translateable_string = $alternate_translateable_string;
                     }
                     $nodes[$i]['node']->$accessor = str_replace( $translateable_string, $translated_strings[$i], $nodes[$i]['node']->$accessor );
+                    if ( $nodes[$i]['type'] === 'block' ){
+	                    error_log('Replacing translation block string with translation: ' . serialize($translated_strings[$i]) );
+                    }
                 }
 
             }

@@ -40,10 +40,10 @@ class TRP_Settings{
      */
     public function output_language_switcher_select( $ls_type, $ls_setting ){
         $ls_options = $this->get_language_switcher_options();
-        $output = '<select id=' . $ls_type . ' name=trp_settings[' . $ls_type .'] class="trp-select trp-ls-select-option">';
+        $output = '<select id="' . esc_attr( $ls_type ) . '" name="trp_settings[' . esc_attr( $ls_type ) .']" class="trp-select trp-ls-select-option">';
         foreach( $ls_options as $key => $ls_option ){
             $selected = ( $ls_setting == $key ) ? 'selected' : '';
-            $output .= '<option value="' . $key . '" ' . $selected . ' >' . $ls_option['label'] . '</option>';
+            $output .= '<option value="' . esc_attr( $key ) . '" ' . esc_attr( $selected ) . ' >' . esc_html( $ls_option['label'] ). '</option>';
         }
         $output .= '</select>';
 
@@ -408,7 +408,7 @@ class TRP_Settings{
 
         $active_tab = 'translate-press';
         if ( isset( $_GET['page'] ) ){
-            $active_tab = esc_attr( $_GET['page'] );
+            $active_tab = esc_attr( wp_unslash( $_GET['page'] ) );
         }
 
         require ( TRP_PLUGIN_DIR . 'partials/settings-navigation-tabs.php');

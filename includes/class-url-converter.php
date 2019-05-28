@@ -129,7 +129,7 @@ class TRP_Url_Converter {
             // hreflang should have - instead of _ . For example: en-EN, not en_EN like the locale
             $hreflang = str_replace('_', '-', $language);
             $hreflang = apply_filters('trp_hreflang', $hreflang, $language);
-            echo '<link rel="alternate" hreflang="' . $hreflang . '" href="' . $this->get_url_for_language( $language ) . '"/>';
+            echo '<link rel="alternate" hreflang="' . esc_attr( $hreflang ). '" href="' . esc_url( $this->get_url_for_language( $language ) ) . '"/>';
         }
     }
 

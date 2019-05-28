@@ -1,7 +1,7 @@
 <h3 class="nav-tab-wrapper">
         <?php
-        foreach( $tabs as $tab ) {
-            echo '<a href="' . $tab['url'] . '" '. ( $tab['page'] == 'trp_translation_editor' ? 'target="_blank"' : '' ) .' class="nav-tab ' . ( ( $active_tab == $tab['page'] ) ? 'nav-tab-active' : '' ) . ( ( $tab['page'] == 'trp_translation_editor' ) ? 'trp-translation-editor' : '' ) . '">' . $tab['name'] . '</a>';
+        foreach( $tabs as $tb ) {
+            echo '<a href="' . esc_url( $tb['url'] ) . '" '. ( $tb['page'] == 'trp_translation_editor' ? 'target="_blank"' : '' ) .' class="nav-tab ' . ( ( $active_tab == $tb['page'] ) ? 'nav-tab-active' : '' ) . ( ( $tb['page'] == 'trp_translation_editor' ) ? 'trp-translation-editor' : '' ) . '">' . esc_html( $tb['name'] ) . '</a>';
         }
         ?>
 </h3>

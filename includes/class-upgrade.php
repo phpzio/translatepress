@@ -332,12 +332,12 @@ class TRP_Upgrade {
 		}
 		if ( $_GET['trp_rm_duplicates'] === 'done' ){
 			// iteration finished
-			echo __('Done.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+			echo esc_html__('Done.', 'translatepress-multilingual' ) . '<br><br><a href="' . esc_url( site_url('wp-admin/options-general.php?page=translate-press') ) . '"> <input type="button" value="' . esc_attr__('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
 			return;
 		}
 		$nonce = wp_verify_nonce( $_GET['trp_rm_nonce'], 'tpremoveduplicaterows' );
 		if ( $nonce === false ){
-			echo __('Invalid nonce.', 'translatepress-multilingual' ) . '<br><br><a href="' . site_url('wp-admin/options-general.php?page=translate-press') . '"> <input type="button" value="' . __('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
+			echo esc_html__('Invalid nonce.', 'translatepress-multilingual' ) . '<br><br><a href="' . esc_url( site_url('wp-admin/options-general.php?page=translate-press') ) . '"> <input type="button" value="' . esc_attr__('Back to TranslatePress Settings page', 'translatepress-multilingual' ) . '" class="button-primary"></a>';
 			return;
 		}
 
@@ -357,7 +357,7 @@ class TRP_Upgrade {
 					$this->trp_query = $trp->get_component( 'query' );
 				}
 				$table_name = $this->trp_query->get_table_name( $language_code );
-				echo '<div>' . sprintf( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), $table_name ) . '</div>';
+				echo '<div>' . sprintf( wp_kses( __( 'Querying table <strong>%s</strong>', 'translatepress-multilingual' ), [ 'strong' => [] ] ), $table_name ) . '</div>';
 
 				$last_id = $this->trp_query->get_last_id( $table_name );
 				if ( !empty( $_GET['trp_rm_batch'] ) && (int) $_GET['trp_rm_batch'] > 0 ) {
@@ -387,7 +387,7 @@ class TRP_Upgrade {
 					return;
 				}else{
 					$result = $result1 + $result2;
-					echo '<div>' . sprintf( __( '%s duplicates removed', 'translatepress-multilingual' ), $result ) . '</div>';
+					echo '<div>' . sprintf( esc_html__( '%s duplicates removed', 'translatepress-multilingual' ), $result ) . '</div>';
 				}
 			}
 			if ( $next_get_batch == 1 ) {
@@ -416,8 +416,8 @@ class TRP_Upgrade {
 			'trp_rm_batch_size'         => $batch_size,
 			'trp_rm_nonce'              => wp_create_nonce('tpremoveduplicaterows')
 		), site_url('wp-admin/admin.php') );
-		echo "<meta http-equiv='refresh' content='0; url={$url}' />";
-		echo "<br> " . __( 'If the page does not redirect automatically', 'translatepress-multilingual' ) . " <a href='$url' >" . __( 'click here', 'translatepress-multilingual' ) . ".</a>";
+		echo '<meta http-equiv="refresh" content="0; url=' . esc_url( $url ) . '" />';
+		echo '<br> ' . esc_html__( 'If the page does not redirect automatically', 'translatepress-multilingual' ) . ' <a href="' . esc_url( $url ) . '" >' . esc_html__( 'click here', 'translatepress-multilingual' ) . '.</a>';
 		exit;
 	}
 

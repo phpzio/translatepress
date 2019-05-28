@@ -42,7 +42,7 @@ class TRP_Add_General_Notices{
         if ( current_user_can( 'manage_options' ) ){
             // Check that the user hasn't already clicked to ignore the message
             if ( ! get_user_meta($user_id, $this->notificationId.'_dismiss_notification' ) || $this->force_show  ) {//ignore the dismissal if we have force_show
-                echo $finalMessage = apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage);
+                echo $finalMessage = wp_kses( apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage), [ 'div' => [ 'class' => [] ] ] );
             }
             do_action( $this->notificationId.'_notification_displayed', $current_user, $pagenow );
         }

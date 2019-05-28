@@ -255,7 +255,7 @@ add_filter( 'trp_allow_language_redirect', 'trp_elementor_compatibility' );
  * Mb Strings missing PHP library error notice
  */
 function trp_mbstrings_notification(){
-	echo '<div class="notice notice-error"><p>' . __( '<strong>TranslatePress</strong> requires <strong><a href="http://php.net/manual/en/book.mbstring.php">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server.','translatepress-multilingual' ) . '</p></div>';
+	echo '<div class="notice notice-error"><p>' . wp_kses( __( '<strong>TranslatePress</strong> requires <strong><a href="http://php.net/manual/en/book.mbstring.php">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server.','translatepress-multilingual' ), [ 'a' => [ 'href' => [] ], 'strong' => [] ] ) . '</p></div>';
 }
 
 function trp_missing_mbstrings_library( $allow_to_run ){
