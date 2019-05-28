@@ -62,7 +62,7 @@
 
                 if( !trpSpan )
                     return
-                    
+
                 //get node info based on where we inserted our button
                 if( position == 'afterbegin' )
                     relatedNode = trpSpan.parentNode
@@ -91,8 +91,8 @@
                 })
 
                 self.hoveredStringSelector = stringSelector
-                self.hoveredStringId = stringId
-                self.hoveredTarget      = target
+                self.hoveredStringId       = stringId
+                self.hoveredTarget         = target
 
                 // show green edit pencil
                 if ( foundNonGettext ){
@@ -136,7 +136,8 @@
                 if( this.$parent.mergingString )
                     this.removeHighlight( true )
 
-                this.$parent.mergingString = false
+                this.$parent.mergingString  = false
+                this.$parent.mergeData      = []
 
                 this.$parent.selectedString = this.$parent.getStringIndex( this.hoveredStringSelector, this.hoveredStringId )
 
@@ -354,6 +355,7 @@
                     let i
 
                     for ( i = 0; i < previouslyHighlighted.length; i++ ) {
+
                         if ( removeFromBlocks )
                             previouslyHighlighted[i].classList.remove( 'trp-highlight' )
                         else if ( !removeFromBlocks && !previouslyHighlighted[i].classList.contains( 'trp-create-translation-block' ) )
@@ -364,15 +366,18 @@
                 return true
             },
             fitPencilIconInsideView( pencil, target, mergeOrSplit ){
-                let rect = target.getBoundingClientRect(), margin
+                let rect = target.getBoundingClientRect()
 
-                if( mergeOrSplit != 'none' )
-                    margin = 60
-                else
-                    margin = 30
+                if( rect.left < 35 ) {
+                    let margin
 
-                if( rect.left < 35 )
+                    if( mergeOrSplit != 'none' )
+                        margin = 60
+                    else
+                        margin = 30
+
                     pencil.setAttribute( 'style', 'margin-left: ' + margin + 'px !important' )
+                }
             },
             getTrpSpan() {
                 return '<trp-span><trp-merge title="'+ this.editorStrings.merge +'" class="trp-icon trp-merge dashicons dashicons-arrow-up-alt"></trp-merge><trp-split title="'+ this.editorStrings.split +'" class="trp-icon trp-split dashicons dashicons-arrow-down-alt"></trp-split><trp-edit title="'+ this.editorStrings.edit +'" class="trp-icon trp-edit-translation dashicons dashicons-edit"></trp-edit></trp-span>'
