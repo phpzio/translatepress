@@ -136,7 +136,6 @@
                 if( this.$parent.mergingString )
                     this.removeHighlight( true )
 
-                this.$parent.mergingString  = false
                 this.$parent.mergeData      = []
 
                 this.$parent.selectedString = this.$parent.getStringIndex( this.hoveredStringSelector, this.hoveredStringId )

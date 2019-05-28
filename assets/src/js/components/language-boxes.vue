@@ -140,6 +140,19 @@
                         }
                     })
                 })
+
+                if ( this.$parent.mergingString === true ){
+                    this.$parent.selectedString = null
+                    let previouslyHighlighted = this.iframe.getElementsByClassName( 'trp-create-translation-block' )
+                    if( previouslyHighlighted.length > 0 ) {
+                        let i
+                        for ( i = 0; i < previouslyHighlighted.length; i++ ) {
+                            previouslyHighlighted[i].classList.remove('trp-highlight')
+                            previouslyHighlighted[i].classList.remove('trp-create-translation-block')
+                        }
+                    }
+                    this.$parent.mergingString = false
+                }
             },
             addKeyboardShortcutsListener(){
                 document.addEventListener("keydown", function(e) {
