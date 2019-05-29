@@ -50,7 +50,8 @@
             'settings',
             'showChangesUnsavedMessage',
             'editorStrings',
-            'flagsPath'
+            'flagsPath',
+            'iframe'
         ],
         data(){
             return{
@@ -152,6 +153,7 @@
                         }
                     }
                     this.$parent.mergingString = false
+                    this.$parent.mergeData = []
                 }
             },
             addKeyboardShortcutsListener(){

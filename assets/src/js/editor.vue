@@ -73,6 +73,7 @@
                             @discarded-changes="hasUnsavedChanges()"
                             :editorStrings="editorStrings"
                             :flagsPath="flags_path"
+                            :iframe="iframe"
                     >
                     </language-boxes>
                 </div>
