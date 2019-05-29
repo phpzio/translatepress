@@ -81,7 +81,7 @@
         },
         computed:{
             othersButtonPosition: function (){
-                if (this.currentLanguage === this.settings['default-language']) {
+                if (this.currentLanguage === this.settings['default-language'] || this.settings['translation-languages'].length <= 2 ) {
                     // don't display it
                     return 999
                 }else{
