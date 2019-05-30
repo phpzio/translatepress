@@ -42,7 +42,7 @@ class TRP_Add_General_Notices{
         if ( current_user_can( 'manage_options' ) ){
             // Check that the user hasn't already clicked to ignore the message
             if ( ! get_user_meta($user_id, $this->notificationId.'_dismiss_notification' ) || $this->force_show  ) {//ignore the dismissal if we have force_show
-                echo $finalMessage = wp_kses( apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage), [ 'div' => [ 'class' => [] ] ] );
+                echo $finalMessage = wp_kses( apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage), [ 'div' => [ 'class' => [] ], 'p' => ['style' => [], 'class' => []], 'a' => ['href' => [], 'type'=> [], 'class'=> []], 'span' => ['class'=> []] ] );
             }
             do_action( $this->notificationId.'_notification_displayed', $current_user, $pagenow );
         }
@@ -105,7 +105,7 @@ Class TRP_Plugin_Notifications {
 
         if( ! empty( $submenu[$this->menu_slug] ) ) {
             foreach( $submenu[$this->menu_slug] as $menu_position => $menu_data ) {
-                $menu_count = $notifications->get_count_in_submenu( $menu_data[2] );                
+                $menu_count = $notifications->get_count_in_submenu( $menu_data[2] );
                 if( ! empty( $menu_count ) )
                     $submenu[$this->menu_slug][$menu_position][0] .= '<span class="update-plugins '.$this->prefix.'-update-plugins"><span class="plugin-count">' . $menu_count . '</span></span>';
             }
@@ -379,9 +379,9 @@ class TRP_Trigger_Plugin_Notifications{
         }
 
 	    /* this must be unique */
-	    $notification_id = 'trp_new_addon_auto_detect_language';
+	    $notification_id = 'trp_new_feature_image_translation';
 
-	    $message = '<p style="padding-right:30px;">' . __('Redirect users to their preferred language based on their browser language or IP address using our new <a href="https://translatepress.com/docs/addons/automatic-user-language-detection/" >Automatic User Language Detection Add-on</a>.' , 'translatepress-multilingual' ) . '</p>';
+	    $message = '<p style="padding-right:30px;">' . __('Show different images for different languages! Check out <a href="https://translatepress.com/docs/translation-editor/#image-translation" >how to translate images</a> in the TranslatePress Editor.' , 'translatepress-multilingual' ) . '</p>';
 	    //make sure to use the trp_dismiss_admin_notification arg
 	    $message .= '<a href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
 
