@@ -1,7 +1,7 @@
 <template>
     <div id="trp-save-container">
         <span id="trp-translation-saved" style="display:none">{{ editorStrings.saved }}</span>
-        <button id="trp-save" :disabled="disabledSaveButton" type="submit" class="button-primary trp-save-string" @click="save">{{ saveButtonText }}</button>
+        <button id="trp-save" :disabled="disabledSaveButton" type="submit" class="button-primary trp-save-string" @click="save" :title="editorStrings.save_title_attr">{{ saveButtonText }}</button>
     </div>
 </template>
 <script>

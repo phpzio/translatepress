@@ -92,7 +92,7 @@ class TRP_Translation_Manager{
 			'saved'                                                     => esc_html__( 'Saved', 'translatepress-multilingual' ),
 			'save_translation'                                          => esc_html__( 'Save translation', 'translatepress-multilingual' ),
 			'saving_translation'                                        => esc_html__( 'Saving translation...', 'translatepress-multilingual' ),
-			'unsaved_changes'                                           => esc_html__( 'You have unsaved changes !', 'translatepress-multilingual' ),
+			'unsaved_changes'                                           => esc_html__( 'You have unsaved changes!', 'translatepress-multilingual' ),
 			'discard'                                                   => esc_html__( 'Discard changes', 'translatepress-multilingual' ),
 			'discard_all'                                               => esc_html__( 'Discard All', 'translatepress-multilingual' ),
 			'strings_loading'                                           => esc_attr__( 'Loading Strings...', 'translatepress-multilingual' ),
@@ -106,9 +106,16 @@ class TRP_Translation_Manager{
 			'other_lang'                                                => esc_html__( 'Other languages', 'translatepress-multilingual' ),
 			'view_as'                                                   => esc_html__( 'View As', 'translatepress-multilingual' ),
 			'view_as_pro'                                               => esc_html__( 'Available in our Pro Versions', 'translatepress-multilingual' ),
+
+			// title attributes
 			'edit'                                                      => esc_attr__( 'Translate', 'translatepress-multilingual' ),
 			'merge'                                                     => esc_attr__( 'Translate entire block element', 'translatepress-multilingual' ),
 			'split'                                                     => esc_attr__( 'Split block to translate strings individually', 'translatepress-multilingual' ),
+			'save_title_attr'                                           => esc_attr__( 'Save changes to translation. Shortcut: CTRL(⌘) + S', 'translatepress-multilingual' ),
+			'next_title_attr'                                           => esc_attr__( 'Navigate to next string in dropdown list. Shortcut: CTRL(⌘) + ALT + Right Arrow', 'translatepress-multilingual' ),
+			'previous_title_attr'                                       => esc_attr__( 'Navigate to previous string in dropdown list. Shortcut: CTRL(⌘) + ALT + Left Arrow', 'translatepress-multilingual' ),
+			'discard_all_title_attr'                                    => esc_attr__( 'Discard all changes. Shortcut: CTRL(⌘) + ALT + Z', 'translatepress-multilingual' ),
+
 			'split_confirmation'                                        => esc_js( __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ) ),
 			'translation_not_loaded_yet'                                => wp_kses( __( 'This string is not ready for translation yet. <br>Try again in a moment...', 'translatepress-multilingual'), array( 'br' => array() ) ),
 

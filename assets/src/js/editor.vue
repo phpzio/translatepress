@@ -47,8 +47,8 @@
                         </div>
 
                         <div id="trp-next-previous">
-                            <button type="button" id="trp-previous" class="trp-next-previous-buttons" v-on:click="previousString()"><span>&laquo;</span> {{ editorStrings.previous }}</button>
-                            <button type="button" id="trp-next" class="trp-next-previous-buttons" v-on:click="nextString()">{{ editorStrings.next }} <span>&raquo;</span></button>
+                            <button type="button" id="trp-previous" class="trp-next-previous-buttons" v-on:click="previousString()" :title="editorStrings.previous_title_attr"><span>&laquo;</span> {{ editorStrings.previous }}</button>
+                            <button type="button" id="trp-next" class="trp-next-previous-buttons" v-on:click="nextString()" :title="editorStrings.next_title_attr">{{ editorStrings.next }} <span>&raquo;</span></button>
                         </div>
 
                         <div id="trp-view-as">
@@ -314,7 +314,17 @@
                         selectors.forEach(function (selector) {
                             let stringId = node.getAttribute(selector)
                             if (stringId) {
-                                selectedIndexesArray.push(self.getStringIndex(selector, stringId))
+                                let found = false
+                                let i
+                                for( i = 0; i < selectedIndexesArray.length; i++ ){
+                                    if ( typeof self.dictionary[selectedIndexesArray[i]] !== 'undefined' && self.dictionary[selectedIndexesArray[i]].dbID !== 'undefined' && self.dictionary[selectedIndexesArray[i]].dbID === stringId ){
+                                        found = true
+                                        break;
+                                    }
+                                }
+                                if ( ! found ) {
+                                    selectedIndexesArray.push(self.getStringIndex(selector, stringId))
+                                }
                             }
                         })
                     })

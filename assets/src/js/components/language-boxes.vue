@@ -1,6 +1,6 @@
 <template>
     <div id="trp-translation-section" class="trp-controls-section-content" v-if="selectedIndexesArray">
-        <div v-show="showChangesUnsavedMessage" class="trp-changes-unsaved-message">{{ editorStrings.unsaved_changes }} <span class="trp-unsaved-changes trp-discard-changes "@click="discardAll">{{ editorStrings.discard_all }}</span>?</div>
+        <div v-show="showChangesUnsavedMessage" class="trp-changes-unsaved-message">{{ editorStrings.unsaved_changes }} <span class="trp-unsaved-changes trp-discard-changes "@click="discardAll" :title="editorStrings.discard_all_title_attr">{{ editorStrings.discard_all }}</span>?</div>
         <div v-for="(languageCode, key) in languages" :id="'trp-language-' + languageCode">
             <div v-show="( (key <= othersButtonPosition) || showOtherLanguages ) && ( selectedIndexesArray && selectedIndexesArray.length > 0 )"  class="trp-language-container">
                 <div class="trp-language-name">
