@@ -107,6 +107,10 @@ class TRP_Translation_Manager{
 			'view_as'                                                   => esc_html__( 'View As', 'translatepress-multilingual' ),
 			'view_as_pro'                                               => esc_html__( 'Available in our Pro Versions', 'translatepress-multilingual' ),
 
+			//wp media upload
+			'select_or_upload'                                          => esc_html__( 'Select or Upload Media', 'translatepress-multilingual' ),
+			'use_this_media'                                            => esc_html__( 'Use this media', 'translatepress-multilingual' ),
+
 			// title attributes
 			'edit'                                                      => esc_attr__( 'Translate', 'translatepress-multilingual' ),
 			'merge'                                                     => esc_attr__( 'Translate entire block element', 'translatepress-multilingual' ),

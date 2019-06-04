@@ -7,7 +7,7 @@
             <input class="trp-translation-input trp-input" readonly :value="getValue()">
         </div>
         <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent trp-input-media-parent">
-            <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="openMediaUpload($event)">
+            <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="uploadMediaFrame.open()">
             <div class="trp-input-media-container">
                 <input class="trp-translation-input trp-input trp-input-media" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
             </div>
@@ -28,7 +28,8 @@ export default{
     ],
     data(){
         return{
-            inputType      : 'textarea',
+            inputType        : 'textarea',
+            uploadMediaFrame : null
         }
     },
     mounted(){
@@ -48,6 +49,9 @@ export default{
 
         autosize(document.querySelectorAll('.trp-textarea'))
 
+        if ( this.inputType === 'inputmedia' )
+            this.setupMediaUploader()
+
     },
     methods:{
         getValue(){
@@ -60,18 +64,26 @@ export default{
             value = ( value ) ? value : this.$refs[this.inputType].value
             this.$emit( 'input', value )
         },
-        openMediaUpload(event){
-            event.preventDefault()
+        setupMediaUploader(){
+            // Create a new media frame
             let self = this
-            if (wp.media && wp.media.editor) {
-                wp.media.editor.send.attachment = function (props, attachment) {
-                    self.updateValue(attachment.url)
-                }
-                wp.media.editor.open()
-            }else{
-                console.log( 'TranslatePress Error: WP Media not loaded')
-            }
-            return false
+
+            this.uploadMediaFrame = wp.media({
+                title: self.editorStrings.select_or_upload,
+                button: {
+                    text: self.editorStrings.use_this_media
+                },
+                multiple: false  // Set to true to allow multiple files to be selected
+            })
+
+            // When an image is selected in the media frame...
+            this.uploadMediaFrame.on( 'select', function() {
+                // Get media attachment details from the frame state
+                let attachment = self.uploadMediaFrame.state().get('selection').first().toJSON();
+
+                // Send the attachment URL to our custom image input field.
+                self.updateValue(attachment.url)
+            });
         }
     }
 }

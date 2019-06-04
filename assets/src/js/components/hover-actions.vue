@@ -368,8 +368,8 @@
             },
             fitPencilIconInsideView( pencil, target, mergeOrSplit ){
                 let rect = target.getBoundingClientRect()
-
-                if( rect.left < 35 ) {
+                //  target.classList.contains('slick-slide-image') is a fix for elementor image slider to display pencil icon
+                if( rect.left < 35 || ( target.tagName === 'IMG' && target.classList.contains('slick-slide-image') ) ) {
                     let margin
 
                     if( mergeOrSplit != 'none' )
