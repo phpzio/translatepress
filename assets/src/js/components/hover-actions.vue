@@ -132,6 +132,7 @@
             },
             editHandler( event ){
                 event.preventDefault()
+                event.stopPropagation()
 
                 if( this.$parent.mergingString )
                     this.removeHighlight( true )
@@ -146,7 +147,7 @@
             },
             splitHandler( event ) {
                 event.preventDefault()
-
+                event.stopPropagation()
                 this.$parent.mergingString = false
 
                 let split = confirm( this.editorStrings.split_confirmation )
@@ -175,6 +176,7 @@
             },
             mergeHandler( event ) {
                 event.preventDefault()
+                event.stopPropagation()
 
                 let self = this
                 let parent, isDeprecated = null, deprecatedString = null, stringId

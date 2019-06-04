@@ -367,6 +367,14 @@ class TRP_Translation_Render{
 	    if ( ! $this->translation_manager ) {
 		    $this->translation_manager = $trp->get_component( 'translation_manager' );
 	    }
+
+	    $html = TranslatePress\str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
+	    if ( $html === false ){
+		    $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $output );
+		    $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
+		    return $trpremoved;
+	    }
+
 	    $count_translation_blocks = 0;
 	    if ( $translate_normal_strings ) {
 		    $all_existing_translation_blocks = $this->trp_query->get_all_translation_blocks( $language_code );
@@ -376,20 +384,16 @@ class TRP_Translation_Render{
 		    }
 
 		    //try to find if there are any blocks on the current page html
+		    $html_body = $html->find('body', 0 );
+		    $trimmed_html_body = $this->trim_translation_block( $html_body->innertext );
             foreach( $all_existing_translation_blocks as $key => $existing_translation_block ){
-                if (  strpos( $this->trim_translation_block( $output ), $existing_translation_block->trimmed_original ) === false ){
+                if (  strpos( $trimmed_html_body, $existing_translation_block->trimmed_original ) === false ){
                     unset($all_existing_translation_blocks[$key] );//if it isn't present remove it, this way we don't look for them on pages that don't contain blocks
                 }
             }
             $count_translation_blocks = count( $all_existing_translation_blocks );//see here how many remain on the current page
 
 		    $merge_rules = $this->translation_manager->get_merge_rules();
-	    }
-        $html = TranslatePress\str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
-	    if ( $html === false ){
-		    $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $output );
-		    $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
-			return $trpremoved;
 	    }
 
         /**
