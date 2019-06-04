@@ -9,7 +9,7 @@
         <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent trp-input-media-parent">
             <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="uploadMediaFrame.open()">
             <div class="trp-input-media-container">
-                <input class="trp-translation-input trp-input trp-input-media" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
+                <input class="trp-translation-input trp-input trp-input-media" :placeholder="this.placeholder" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
             </div>
         </div>
     </div>
@@ -29,7 +29,8 @@ export default{
     data(){
         return{
             inputType        : 'textarea',
-            uploadMediaFrame : null
+            uploadMediaFrame : null,
+            placeholder      : ''
         }
     },
     mounted(){
@@ -49,8 +50,12 @@ export default{
 
         autosize(document.querySelectorAll('.trp-textarea'))
 
-        if ( this.inputType === 'inputmedia' )
+        if ( this.inputType === 'inputmedia' ){
             this.setupMediaUploader()
+            if ( this.string.attribute === 'href' ) {
+                this.placeholder = 'http://example.com/'
+            }
+        }
 
     },
     methods:{
