@@ -178,9 +178,7 @@ class TRP_Translation_Manager{
      * hooked to trp_translation_manager_footer
      */
     public function enqueue_scripts_and_styles(){
-        wp_enqueue_style( 'trp-editor-style', TRP_PLUGIN_URL . 'assets/css/trp-editor.css', array('dashicons'), TRP_PLUGIN_VERSION );
-
-        wp_enqueue_style( 'trp-translation-manager-style',  TRP_PLUGIN_URL . 'assets/css/trp-editor-style.css', array('buttons'), TRP_PLUGIN_VERSION );
+        wp_enqueue_style( 'trp-editor-style', TRP_PLUGIN_URL . 'assets/css/trp-editor.css', array('dashicons', 'buttons'), TRP_PLUGIN_VERSION );
         wp_enqueue_script( 'trp-editor',  TRP_PLUGIN_URL . 'assets/js/trp-editor.js', array( 'wp-i18n' ), TRP_PLUGIN_VERSION );
 
         // Show upload media dialog in default language
@@ -193,7 +191,7 @@ class TRP_Translation_Manager{
 	    restore_current_locale();
 
 	    $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-core', 'jquery-effects-core', 'jquery-ui-resizable', 'trp-editor' ) );
-        $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'trp-translation-manager-style', 'dashicons', 'trp-editor-style','media-views', 'imgareaselect' /*'wp-admin', 'common', 'site-icon', 'buttons'*/ ) );
+        $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'dashicons', 'trp-editor-style','media-views', 'imgareaselect' /*'wp-admin', 'common', 'site-icon', 'buttons'*/ ) );
         wp_print_scripts( $scripts_to_print );
         wp_print_styles( $styles_to_print );
 
