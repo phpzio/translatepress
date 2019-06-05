@@ -119,6 +119,7 @@ class TRP_Translation_Manager{
 			'next_title_attr'                                           => esc_attr__( 'Navigate to next string in dropdown list. Shortcut: CTRL(⌘) + ALT + Right Arrow', 'translatepress-multilingual' ),
 			'previous_title_attr'                                       => esc_attr__( 'Navigate to previous string in dropdown list. Shortcut: CTRL(⌘) + ALT + Left Arrow', 'translatepress-multilingual' ),
 			'discard_all_title_attr'                                    => esc_attr__( 'Discard all changes. Shortcut: CTRL(⌘) + ALT + Z', 'translatepress-multilingual' ),
+			'discard_individual_changes_title_attribute'                => esc_attr__( 'Discard changes to this text box. To discard changes to all text boxes use shortcut: CTRL(⌘) + ALT + Z', 'translatepress-multilingual' ),
 
 			'split_confirmation'                                        => esc_js( __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ) ),
 			'translation_not_loaded_yet'                                => wp_kses( __( 'This string is not ready for translation yet. <br>Try again in a moment...', 'translatepress-multilingual'), array( 'br' => array() ) ),
@@ -179,7 +180,7 @@ class TRP_Translation_Manager{
      */
     public function enqueue_scripts_and_styles(){
         wp_enqueue_style( 'trp-editor-style', TRP_PLUGIN_URL . 'assets/css/trp-editor.css', array('dashicons', 'buttons'), TRP_PLUGIN_VERSION );
-        wp_enqueue_script( 'trp-editor',  TRP_PLUGIN_URL . 'assets/js/trp-editor.js', array( 'wp-i18n' ), TRP_PLUGIN_VERSION );
+        wp_enqueue_script( 'trp-editor',  TRP_PLUGIN_URL . 'assets/js/trp-editor.js', array(), TRP_PLUGIN_VERSION );
 
         // Show upload media dialog in default language
 	    switch_to_locale( $this->settings['default-language'] );
