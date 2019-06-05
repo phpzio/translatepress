@@ -4,12 +4,12 @@
             <textarea class="trp-translation-input trp-textarea" :readonly="readonly" ref="textarea" :value="getValue()" @input="updateValue()"></textarea>
         </div>
         <div v-if="inputType == 'input'" class="trp-translation-input-parent">
-            <input class="trp-translation-input trp-input" readonly :value="getValue()">
+            <input class="trp-translation-input trp-input" readonly :value="getValue()" type="text">
         </div>
         <div v-if="inputType == 'inputmedia'" class="trp-translation-input-parent trp-input-media-parent">
             <input v-show="inputType == 'inputmedia'" type="button" class="trp-add-media" :value="editorStrings.add_media" @click="uploadMediaFrame.open()">
             <div class="trp-input-media-container">
-                <input class="trp-translation-input trp-input trp-input-media" :placeholder="this.placeholder" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
+                <input class="trp-translation-input trp-input trp-input-media" type="text" :placeholder="this.placeholder" :readonly="readonly" ref="inputmedia" :value="getValue()" @input="updateValue( null )">
             </div>
         </div>
     </div>

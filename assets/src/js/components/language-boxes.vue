@@ -70,6 +70,20 @@
             this.determineLanguageOrder()
             this.addKeyboardShortcutsListener()
         },
+        updated(){
+            // place the cursor in the first textarea or input for translation
+            let translationSection = document.getElementById( 'trp-translation-section' )
+            if ( translationSection )  {
+                let focusableSelectors = ['textarea:not([readonly])', 'input[type="text"]:not([readonly])']
+                for ( var i = 0; i<focusableSelectors.length; i++ ){
+                    let focusable = document.getElementById( 'trp-translation-section' ).querySelector(focusableSelectors[i])
+                    if ( focusable ) {
+                        focusable.focus()
+                        break;
+                    }
+                }
+            }
+        },
         watch: {
             selectedIndexesArray: function () {
                 this.updateLanguages()
