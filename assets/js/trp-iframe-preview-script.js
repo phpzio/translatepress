@@ -9,6 +9,10 @@ function TRP_Iframe_Preview(){
      * Add GET preview parameter for links and forms.
      */
     this.initialize = function() {
+        if( !trpTranslator )
+            return;
+
+        trpTranslator.pause_observer();
         jQuery('a').each(function () {
             // target parent brakes from the iframe so we're changing to self.
             // We cannot remove it because we need it in Translation blocks
@@ -41,7 +45,42 @@ function TRP_Iframe_Preview(){
             jQuery( this ).append( jQuery('<input></input>').attr({ type: 'hidden', value: 'preview', name: 'trp-edit-translation' }) );
         });
 
+        addKeyboardShortcutsListener();
+        trpTranslator.resume_observer();
     };
+
+    function addKeyboardShortcutsListener(){
+        document.addEventListener("keydown", function(e) {
+            // CTRL + S
+            if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode === 83) {
+                e.preventDefault();
+                window.parent.dispatchEvent( new Event( 'trp_trigger_save_translations_event' ) );
+            }
+
+            if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.altKey ) {
+                switch (e.keyCode){
+
+                    // CTRL + ALT + right arrow
+                    case 39:
+                        e.preventDefault();
+                        window.parent.dispatchEvent( new Event( 'trp_trigger_next_string_event' ) );
+                        break;
+
+                    // CTRL + ALT + left arrow
+                    case 37:
+                        e.preventDefault();
+                        window.parent.dispatchEvent( new Event( 'trp_trigger_previous_string_event' ) );
+                        break;
+
+                    // CTRL + ALT + Z
+                    case 90:
+                        e.preventDefault();
+                        window.parent.dispatchEvent(new Event('trp_trigger_discard_all_changes_event'));
+                        break;
+                }
+            }
+        }, false);
+    }
 
     /**
      * Update url with query string.
@@ -94,9 +133,7 @@ var trp_preview_iframe;
 
 jQuery( function(){
     trp_preview_iframe = new TRP_Iframe_Preview();
-    jQuery( window ).on( 'trp_page_loaded' , function(){
-        trp_preview_iframe.initialize();
-    } );
+    window.addEventListener( 'trp_iframe_page_updated', trp_preview_iframe.initialize )
 });
 
 /**

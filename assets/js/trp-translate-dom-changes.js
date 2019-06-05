@@ -4,10 +4,16 @@
  */
 function TRP_Translator(){
 
+    this.is_editor = false;
     var _this = this;
     var observer = null;
-    var active = true;
-    var ajax_url = trp_data.trp_ajax_url;
+    var observerConfig = {
+        attributes: true,
+        childList: true,
+        characterData: false,//this could be CDATA so I set it to false in v 1.4.5
+        subtree: true
+    };
+    var custom_ajax_url = trp_data.trp_custom_ajax_url;
     var wp_ajax_url = trp_data.trp_wp_ajax_url;
     var language_to_query;
     var except_characters = " \t\n\r  �.,/`~!@#$€£%^&*():;-_=+[]{}\\|?/<>1234567890'";
@@ -16,38 +22,34 @@ function TRP_Translator(){
     /**
      * Ajax request to get translations for strings
      */
-    this.ajax_get_translation = function( strings_to_query, url ) {
-        var all_languages_true_false = 'false';
-        if ( typeof parent.trpEditor !== 'undefined' ) {
-            all_languages_true_false = 'true';
-        }
+    this.ajax_get_translation = function( nodesInfo, string_originals, url ) {
         jQuery.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
             data: {
-                action: 'trp_get_translations',
-                all_languages: all_languages_true_false,
-                security: trp_localized_text['gettranslationsnonce'],
-                language: language_to_query,
-                original_language: original_language,
-                strings: JSON.stringify( strings_to_query )
+                action            : 'trp_get_translations_regular',
+                all_languages     : 'false',
+                security          : trp_data['gettranslationsnonceregular'],
+                language          : language_to_query,
+                original_language : original_language, // used for trp custom ajax
+                originals         : JSON.stringify( string_originals ),
+                dynamic_strings   : 'true'
             },
             success: function( response ) {
                 if ( response === 'error' ) {
-                    _this.ajax_get_translation( strings_to_query, wp_ajax_url );
+                    _this.ajax_get_translation( nodesInfo, string_originals, wp_ajax_url );
                     console.log( 'Notice: TranslatePress trp-ajax request uses fall back to admin ajax.' );
                 }else{
-                    _this.update_strings( response, strings_to_query );
-                    //window.parent.jQuery('#trp-preview-iframe').trigger('load');
+                    _this.update_strings( response, nodesInfo );
                 }
             },
             error: function( errorThrown ){
-                if ( url == ajax_url ){
-                    _this.ajax_get_translation( strings_to_query, wp_ajax_url );
+                if ( url == custom_ajax_url ){
+                    _this.ajax_get_translation( nodesInfo, string_originals, wp_ajax_url );
                     console.log( 'Notice: TranslatePress trp-ajax request uses fall back to admin ajax.' );
                 }else{
-                    _this.update_strings( null, strings_to_query );
+                    _this.update_strings( null, nodesInfo );
                     console.log( 'TranslatePress AJAX Request Error' );
                 }
             }
@@ -71,124 +73,138 @@ function TRP_Translator(){
     /**
      * Replace original strings with translations if found.
      */
-    this.update_strings = function( response, strings_to_query ) {
-        if ( response != null && response[language_to_query] != null ){
-            var dictionary = {};
-            for (var j = 0 ; j < strings_to_query.length; j++){
-                var queried_string = strings_to_query[j];
+    this.update_strings = function( response, nodesInfo ) {
+        _this.pause_observer();
+        if ( response != null && response.length > 0 ){
+            var newEntries = [];
+            for (var j = 0 ; j < nodesInfo.length; j++){
+                var nodeInfo = nodesInfo[j];
                 var translation_found = false;
-                var initial_value = queried_string.original;
-                for( var i in response[language_to_query] ) {
-                    var response_string = response[language_to_query][i];
-                    if (response_string.original.trim() == queried_string.original.trim()) {
-                        // We use j instead of i index because the strings_to_query can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
-                        dictionary[j] = {};
-                        dictionary[j].id = response[language_to_query][i].id;
-                        dictionary[j].original = response[language_to_query][i].original;
-                        dictionary[j].translated = response[language_to_query][i].translated;
-                        dictionary[j].status = response[language_to_query][i].status;
-                        dictionary[j].jquery_object = jQuery( queried_string.node ).parent( 'translate-press' );
-                        if ( typeof parent.trpEditor !== 'undefined' ) {
-                            dictionary[j].jquery_object.attr('data-trp-translate-id', response[language_to_query][i].id);
-                            dictionary[j].jquery_object.attr('data-trp-node-type', 'Dynamic Added Strings');
+                var initial_value = nodeInfo.original;
+                for( var i in response ) {
+                    var response_string = response[i].translationsArray[language_to_query];
+                    if (response[i].original.trim() == nodeInfo.original.trim()) {
+                        // The nodeInfo can contain duplicates and response cannot. We need duplicates to refer to different jQuery objects where the same string appears in different places on the page.
+                        var entry = response[i]
+                        entry.selector = 'data-trp-translate-id'
+                        entry.attribute = ''
+                        newEntries.push( entry )
+                        if ( _this.is_editor ) {
+                            var jquery_object;
+                            var trp_translate_id = 'data-trp-translate-id'
+                            var trp_node_group = 'data-trp-node-group'
+                            if ( nodeInfo.attribute ) {
+                                jquery_object = jQuery(nodeInfo.node)
+                                trp_translate_id = trp_translate_id + '-' + nodeInfo.attribute
+                                trp_node_group = trp_node_group + '-' + nodeInfo.attribute
+                            }else{
+                                jquery_object = jQuery(nodeInfo.node).parent('translate-press');
+                            }
+                            jquery_object.attr( trp_translate_id, response[i].dbID );
+                            jquery_object.attr( trp_node_group, response[i].group );
                         }
 
                         if (response_string.translated != '' && language_to_query == current_language ) {
-                            var text_to_set = initial_value.replace(initial_value.trim(), response_string.translated);
-                            _this.pause_observer();
-                            queried_string.node.textContent = _this.decode_html(text_to_set);
-                            _this.unpause_observer();
+                            var text_to_set = _this.decode_html( initial_value.replace(initial_value.trim(), response_string.translated));
+                            if ( nodeInfo.attribute ){
+                                nodeInfo.node.setAttribute( nodeInfo.attribute, text_to_set )
+                            }else {
+                                nodeInfo.node.textContent = text_to_set;
+                            }
                             translation_found = true;
-                            break;
                         }
+                        break;
                     }
                 }
 
                 if ( ! translation_found ){
-                    _this.pause_observer();
-                    queried_string.node.textContent = initial_value;
-                    _this.unpause_observer();
+                    if ( nodeInfo.attribute ){
+                        nodeInfo.node.setAttribute( nodeInfo.attribute, initial_value )
+                    }else {
+                        nodeInfo.node.textContent = initial_value;
+                    }
                 }
+
             }
             // this should always be outside the for loop
-            if ( typeof parent.trpEditor !== 'undefined' ) {
-                response[language_to_query] = dictionary;
-                parent.trpEditor.populate_strings( response );
-                if ( parent.trpEditor.trp_lister != null ) {
-                    parent.trpEditor.trp_lister.reload_list();
-                }
+            if ( _this.is_editor ) {
+                window.parent.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
+                window.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
             }
         }else{
-            for (var j = 0 ; j < strings_to_query.length; j++){
-                strings_to_query[j].node.textContent = strings_to_query[j].original;
+            for (var j = 0 ; j < nodesInfo.length; j++){
+                if ( nodesInfo[j].attribute ){
+                    nodesInfo[j].node.setAttribute( nodesInfo[j].attribute, nodesInfo[j].original )
+                }else {
+                    nodesInfo[j].node.textContent = nodesInfo[j].original;
+                }
+
             }
         }
+        _this.resume_observer();
     };
+
+    /*
+     * Separated from the detect_new_strings function to allow disconnecting observer.
+     */
+    this.detect_new_strings_callback = function( mutations ){
+        // calling disconnect directly instead of calling pause_observer because we don't need to takeRecords() (called from pause_observer) because we would duplicate mutations
+        observer.disconnect()
+        _this.detect_new_strings( mutations );
+        _this.resume_observer();
+    }
 
     /**
      * Detect and remember added strings.
      */
     this.detect_new_strings = function( mutations ){
-        if ( active ) {
-            var strings = [];
-            mutations.forEach( function (mutation) {
-                for (var i = 0; i < mutation.addedNodes.length; i++) {
-                    if ( mutation.addedNodes[i].textContent && _this.trim( mutation.addedNodes[i].textContent.trim(), except_characters ) != '' ) {
-                        var node = jQuery( mutation.addedNodes[i] );
-
-                        /* if it is an anchor add the trp-edit-translation=preview parameter to it */
-                        if ( typeof parent.trpEditor !== 'undefined' ) {
-                            jQuery(mutation.addedNodes[i]).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(mutation.addedNodes[i]).find('a').context.href);
-                        }
-
-                        if ( skip_string(node) ){
-                            continue;
-                        }
-
-                        var direct_string = get_string_from_node( mutation.addedNodes[i] );
-                        if ( direct_string ) {
-                            if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
-                                strings.push({
-                                    node: mutation.addedNodes[i],
-                                    original: _this.trim(direct_string.textContent, trim_characters)
-                                });
-
-                                direct_string.textContent = '';
-                                if (typeof parent.trpEditor !== 'undefined') {
-                                    jQuery(mutation.addedNodes[i]).wrap('<translate-press></translate-press>');
-                                }
-                            }
-                        }else{
-                            var all_nodes = jQuery( mutation.addedNodes[i]).find( '*').addBack();
-                            var all_strings = all_nodes.contents().filter(function(){
-                                if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
-                                        if ( ! skip_string(this) ){
-                                                return this;
-                                            }
-                                    }});
-                            if ( typeof parent.trpEditor !== 'undefined' ) {
-                                all_strings.wrap('<translate-press></translate-press>');
-                            }
-                            var all_strings_length = all_strings.length;
-                            for (var j = 0; j < all_strings_length; j++ ) {
-                                if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                                    strings.push({node: all_strings[j], original: all_strings[j].textContent });
-                                    if ( trp_localized_text ['showdynamiccontentbeforetranslation'] == false ) {
-                                        all_strings[j].textContent = '';
-                                    }
-                                }
-                            }
-                        }
-                    }
+        var string_originals = [];
+        var nodesInfo = [];
+        var translateable;
+        mutations.forEach( function (mutation) {
+            for (var i = 0; i < mutation.addedNodes.length; i++) {
+                var node = mutation.addedNodes[i]
+                /* if it is an anchor add the trp-edit-translation=preview parameter to it */
+                if ( _this.is_editor ) {
+                    jQuery(node).find('a').context.href = _this.update_query_string('trp-edit-translation', 'preview', jQuery(node).find('a').context.href);
                 }
-            });
-            if ( strings.length > 0 ) {
-                _this.ajax_get_translation( strings, ajax_url );
+
+                if ( _this.skip_string(node) ){
+                    continue;
+                }
+
+                // Search for innertext modifications or newly added nodes with innertext
+                translateable = _this.get_translateable_textcontent( node )
+                string_originals = string_originals.concat( translateable.string_originals );
+                nodesInfo = nodesInfo.concat( translateable.nodesInfo );
+
+                // Search for text inside attributes of newly added nodes
+                translateable = _this.get_translateable_attributes( node )
+                string_originals = string_originals.concat( translateable.string_originals );
+                nodesInfo = nodesInfo.concat( translateable.nodesInfo );
             }
+
+            if ( mutation.attributeName ){
+                if ( ! _this.in_array( mutation.attributeName, trp_data.trp_attributes_accessors ) ){
+                    return
+                }
+                if ( _this.skip_string_attribute( mutation.target, mutation.attributeName ) || _this.skip_string(mutation.target) ){
+                    return
+                }
+
+                // Search for modified text inside attributes of existing nodes
+                translateable = _this.get_translateable_attributes( mutation.target )
+                string_originals = string_originals.concat( translateable.string_originals );
+                nodesInfo = nodesInfo.concat( translateable.nodesInfo );
+            }
+        });
+        if ( nodesInfo.length > 0 ) {
+            var ajax_url_to_call = (_this.is_editor) ? wp_ajax_url : custom_ajax_url;
+            _this.ajax_get_translation( nodesInfo, string_originals, ajax_url_to_call );
         }
     };
 
-    function skip_string(node){
+    this.skip_string = function(node){
         // skip nodes containing these attributes
         var selectors = trp_data.trp_skip_selectors;
         for (var i = 0; i < selectors.length ; i++ ){
@@ -197,17 +213,114 @@ function TRP_Translator(){
             }
         }
         return false;
+    };
+
+    this.skip_string_attribute = function(node, attribute){
+        // skip nodes containing these attributes
+        var selectors = trp_data.trp_base_selectors;
+        for (var i = 0; i < selectors.length ; i++ ){
+            if ( typeof jQuery(node).attr( selectors[ i ] + '-' + attribute ) !== 'undefined' ){
+                return true;
+            }
+        }
+        return false;
+    };
+
+    this.in_array = function (needle, array ) {
+        var i
+        var length = array.length
+        for( i = 0; i < length; i++ ){
+            if ( array[i] === needle ){
+                return true
+            }
+        }
+        return false
+    }
+
+    this.get_translateable_textcontent = function( node ){
+        var string_originals = [];
+        var nodesInfo = [];
+        if ( node.textContent && _this.trim( node.textContent.trim(), except_characters ) != '' ) {
+
+            var direct_string = get_string_from_node( node );
+            if ( direct_string ) {
+                // a text without HTML was added
+                if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
+                    var extracted_original = _this.trim(direct_string.textContent, trim_characters);
+                    nodesInfo.push({ node: node, original: extracted_original, attribute: '' });
+                    string_originals.push(extracted_original)
+
+                    direct_string.textContent = '';
+                    if ( _this.is_editor ) {
+                        jQuery(node).wrap('<translate-press></translate-press>');
+                    }
+                }
+            }else{
+                // node contains HTML
+                var all_nodes = jQuery( node ).find( '*').addBack();
+                var all_strings = all_nodes.contents().filter(function(){
+                    if( this.nodeType === 3 && /\S/.test(this.nodeValue) ){
+                        if ( ! _this.skip_string(this) ){
+                            return this;
+                        }
+                    }});
+                if ( _this.is_editor ) {
+                    all_strings.wrap('<translate-press></translate-press>');
+                }
+                var all_strings_length = all_strings.length;
+                for (var j = 0; j < all_strings_length; j++ ) {
+                    if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
+                        nodesInfo.push({node: all_strings[j], original: all_strings[j].textContent, attribute: '' });
+                        string_originals.push( all_strings[j].textContent )
+                        if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
+                            all_strings[j].textContent = '';
+                        }
+                    }
+                }
+            }
+        }
+        return { 'string_originals': string_originals, 'nodesInfo': nodesInfo };
+    }
+
+    this.get_translateable_attributes = function ( node ) {
+        var nodesInfo = []
+        var string_originals = []
+        for (var trp_attribute_key in trp_data.trp_attributes_selectors) {
+            if (trp_data.trp_attributes_selectors.hasOwnProperty(trp_attribute_key)) {
+                var attribute_selector_item = trp_data.trp_attributes_selectors[trp_attribute_key]
+                if ( typeof attribute_selector_item['selector'] !== 'undefined' ){
+                    var all_nodes = jQuery( node ).find( attribute_selector_item.selector ).addBack( attribute_selector_item.selector )
+
+                    var all_nodes_length = all_nodes.length
+                    for (var j = 0; j < all_nodes_length; j++ ) {
+                        if ( _this.skip_string( all_nodes[j] ) || _this.skip_string_attribute( all_nodes[j], attribute_selector_item.accessor ) ){
+                            continue;
+                        }
+
+                        var attribute_content = all_nodes[j].getAttribute( attribute_selector_item.accessor )
+                        if ( attribute_content && _this.trim( attribute_content.trim(), except_characters ) != '' ) {
+                            nodesInfo.push({node: all_nodes[j], original: attribute_content, attribute: attribute_selector_item.accessor });
+                            string_originals.push( attribute_content )
+                            if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
+                                all_nodes[j].setAttribute( attribute_selector_item.accessor, '' );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return { 'string_originals': string_originals, 'nodesInfo': nodesInfo };
     }
 
     function get_string_from_node( node ){
         if( node.nodeType === 3 && /\S/.test(node.nodeValue) ){
-            if ( ! skip_string(node) ){
+            if ( ! _this.skip_string(node) ){
                 return node;
             }
         }
     }
 
-    //function that cleans the gettext wrappers
+    // cleans the gettext wrappers
     this.cleanup_gettext_wrapper = function(){
         jQuery('trp-gettext').contents().unwrap();
     };
@@ -253,30 +366,22 @@ function TRP_Translator(){
      * Initialize and configure observer.
      */
     this.initialize = function() {
+        this.is_editor = (typeof window.parent.tpEditorApp !== 'undefined' )
 
         current_language = trp_data.trp_current_language;
         original_language = trp_data.trp_original_language;
         language_to_query = trp_data.trp_language_to_query;
 
         // create an observer instance
-        observer = new MutationObserver( _this.detect_new_strings );
-        // configuration of the observer:
-        var config = {
-            attributes: true,
-            childList: true,
-            characterData: false,//this could be CDATA so I set it to false in v 1.4.5
-            subtree: true
-        };
+        observer = new MutationObserver( _this.detect_new_strings_callback );
 
-
-        observer.observe( document.documentElement , config );
+        _this.resume_observer();
 
         jQuery( document ).ajaxComplete(function( event, request, settings ) {
             if( typeof window.parent.jQuery !== "undefined" && window.parent.jQuery('#trp-preview-iframe').length != 0 ) {
                 var settingsdata = "" + settings.data;
                 if( typeof settings.data == 'undefined' || jQuery.isEmptyObject( settings.data ) || settingsdata.indexOf('action=trp_') === -1 ) {
-                    window.parent.jQuery('#trp-preview-iframe').trigger('trp_page_loaded');
-                    jQuery( window ).trigger('trp_page_loaded');
+                    window.parent.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
                 }
             }
         });
@@ -286,24 +391,35 @@ function TRP_Translator(){
     };
 
     /**
-     * Stop observing new strings.
-     */
-    this.disconnect = function(){
-        observer.disconnect();
-    };
-
-    /**
      * Resume observing new strings added.
      */
-    this.unpause_observer = function(){
-        active = true;
+    this.resume_observer = function(){
+        if ( language_to_query === '' ) {
+            // No translation languages are set other than default language
+            return;
+        }
+        observer.observe(document.body, observerConfig);
     };
 
     /**
-     * Pause observing new string added.
+     * Pause observing new strings added.
      */
     this.pause_observer = function(){
-        active = false;
+        /*
+        Disconnect will delete the existing mutations detected prior to being passed to callback function.
+        So we are calling takeRecords to save them first, disconnect, then detect the strings
+        Disconnect happens before detect_new_strings to avoid detecting mutations from within detect new strings functions
+         */
+        if ( language_to_query === '' ) {
+            // No translation languages are set other than default language
+            return;
+        }
+        var mutations = observer.takeRecords()
+        observer.disconnect()
+        if ( mutations.length > 0 ) {
+            _this.detect_new_strings(mutations)
+        }
+
     };
 
     this.trim = function (str, charlist) {
@@ -405,5 +521,3 @@ function trp_allow_detect_dom_changes_to_run(){
 if ( trp_allow_detect_dom_changes_to_run() ) {
     trpTranslator = new TRP_Translator();
 }
-
-

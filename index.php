@@ -28,19 +28,36 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-require_once plugin_dir_path(__FILE__) . 'class-translate-press.php';
+function trp_enable_translatepress(){
+	$enable_translatepress = true;
+	$current_php_version = apply_filters( 'trp_php_version', phpversion() );
 
-function trp_run_translatepress_hooks(){
-    $trp = TRP_Translate_Press::get_trp_instance();
-    $trp->run();
+	// 5.6.20 is the minimum version supported by WordPress
+	if ( $current_php_version !== false && version_compare( $current_php_version, '5.6.20', '<' ) ){
+		$enable_translatepress = false;
+		add_action( 'admin_menu', 'trp_translatepress_disabled_notice' );
+	}
+
+	return apply_filters( 'trp_enable_translatepress', $enable_translatepress );
 }
-/* make sure we execute our plugin before other plugins so the changes we make apply across the board */
-add_action( 'plugins_loaded', 'trp_run_translatepress_hooks', 1 );
 
+if ( trp_enable_translatepress() ) {
+	require_once plugin_dir_path( __FILE__ ) . 'class-translate-press.php';
 
-/** License classes includes here
- * Since version 1.4.6
- * It need to be outside of a hook so it load before the classes that are in the addons, that we are trying to phase out
- */
+	/** License classes includes here
+	 * Since version 1.4.6
+	 * It need to be outside of a hook so it load before the classes that are in the addons, that we are trying to phase out
+	 */
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-edd-sl-plugin-updater.php';
 
-require_once plugin_dir_path(__FILE__) . 'includes/class-edd-sl-plugin-updater.php';
+	/* make sure we execute our plugin before other plugins so the changes we make apply across the board */
+	add_action( 'plugins_loaded', 'trp_run_translatepress_hooks', 1 );
+}
+function trp_run_translatepress_hooks(){
+	$trp = TRP_Translate_Press::get_trp_instance();
+	$trp->run();
+}
+
+function trp_translatepress_disabled_notice(){
+	echo '<div class="notice notice-error"><p>' . wp_kses( __( '<strong>TranslatePress</strong> requires at least PHP version 5.6.20+ to run. It is the <a href="https://wordpress.org/about/requirements/">minimum requirement of the latest WordPress version</a>. Please contact your server administrator to update your PHP version.','translatepress-multilingual' ), array( 'a' => array( 'href' => array() ), 'strong' => array() ) ) . '</p></div>';
+}

@@ -9,9 +9,12 @@ if [ $freeversion == 'y' ]; then
     read version
 
     #create translation pot
-    gulp pot
+    npm run pot
     #create translation catalog
-    gulp catalog
+    npm run catalog
+
+    #compile assets
+    npm run production
 
     #change version in readme index and class-translate-press
     sed -i -e "s/^Version: .*$/Version: $version/g" $repositoryroot/index.php
@@ -70,6 +73,11 @@ if [ $freeversion == 'y' ]; then
     rm -rf $trunk_dir/node_modules
     rm -rf $trunk_dir/gulpfile.js
     rm -rf $trunk_dir/package-lock.json
+
+    #remove vue files
+    rm -rf $trunk_dir/webpack.mix.js
+    rm -rf $trunk_dir/package.json
+    rm -rf $trunk_dir/assets/src
 
     #remove testing files
     rm -rf $trunk_dir/bin

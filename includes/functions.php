@@ -170,44 +170,6 @@ function trp_sanitize_string( $filtered ){
 }
 
 /**
- * Trim strings.
- *
- * @param string $string      Raw string.
- * @return string           Trimmed string.
- */
-function trp_full_trim( $string ) {
-	/* Make sure you update full_trim function from trp-ajax too*/
-
-	/* Apparently the � char in the trim function turns some strings in an empty string so they can't be translated but I don't really know if we should remove it completely
-	Removed chr( 194 ) . chr( 160 ) because it altered some special characters (¿¡)
-	Also removed \xA0 (the same as chr(160) for altering special characters */
-	//$word = trim($word," \t\n\r\0\x0B\xA0�".chr( 194 ) . chr( 160 ) );
-
-	/* Solution to replace the chr(194).chr(160) from trim function, in order to escape the whitespace character ( \xc2\xa0 ), an old bug that couldn't be replicated anymore. */
-	/* Trim nbsp the same way as the whitespace (chr194 chr160) above */
-	$prefixes = array( "\xc2\xa0", "&nbsp;" );
-	do{
-		$previous_iteration_string = $string;
-		$string = trim($string, " \t\n\r\0\x0B");
-		foreach( $prefixes as $prefix ) {
-			$prefix_length = strlen($prefix);
-			if (substr($string, 0, $prefix_length) == $prefix) {
-				$string = substr($string, $prefix_length);
-			}
-			if (substr($string, -$prefix_length, $prefix_length) == $prefix) {
-				$string = substr($string, 0, -$prefix_length);
-			}
-		}
-	}while( $string != $previous_iteration_string );
-
-	if ( strip_tags( $string ) == "" || trim ($string, " \t\n\r\0\x0B\xA0�.,/`~!@#\$€£%^&*():;-_=+[]{}\\|?/<>1234567890'\"" ) == '' ){
-		$string = '';
-	}
-
-	return $string;
-}
-
-/**
  * function that checks if $_REQUEST['trp-edit-translation'] is set or if it has a certain value
  */
 function trp_is_translation_editor( $value = '' ){
@@ -692,6 +654,37 @@ add_filter( 'trp_skip_selectors_from_dynamic_translation', 'trp_woo_skip_dynamic
 function trp_woo_skip_dynamic_translation( $skip_selectors ){
 	$add_skip_selectors = array( '#select2-billing_country-results', '#select2-shipping_country-results' );
 	return array_merge( $skip_selectors, $add_skip_selectors );
+}
+
+/**
+ * Used for showing useful notice in Translation Editor
+ *
+ * @return bool
+ */
+function trp_is_paid_version() {
+	$licence = get_option( 'trp_licence_key' );
+
+	if ( ! empty( $licence ) ) {
+		return true;
+	}
+
+	//list of class names
+	$addons = apply_filters( 'trp_paid_addons', array(
+		'TRP_Automatic_Language_Detection',
+		'TRP_Browse_as_other_Role',
+		'TRP_Extra_Languages',
+		'TRP_Navigation_Based_on_Language',
+		'TRP_Seo_Pack',
+		'TRP_Translator_Accounts',
+	) );
+
+	foreach ( $addons as $className ) {
+		if ( class_exists( $className ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**
