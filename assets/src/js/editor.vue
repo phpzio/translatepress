@@ -214,6 +214,22 @@
                     e.preventDefault()
                 }
             })
+
+            // resize sidebar and consequently the iframe
+            let previewContainer = jQuery( '#trp-preview' );
+            let total_width = jQuery(window).width();
+            jQuery( '#trp-controls' ).resizable({
+                start: function( ) { previewContainer.toggle(); },
+                stop: function( ) { previewContainer.toggle(); },
+                handles: 'e',
+                minWidth: 285,
+                maxWidth: total_width - 20
+            }).bind( "resize", this.resizeIframe );
+
+            // resize iframe when resizing window
+            jQuery( window ).resize(function () {
+                self.resizeIframe();
+            });
         },
         watch: {
             currentLanguage: function( currentLanguage ) {
@@ -698,6 +714,19 @@
 
                 window.addEventListener( 'trp_trigger_next_string_event', this.nextString )
                 window.addEventListener( 'trp_trigger_previous_string_event', this.previousString )
+            },
+            resizeIframe (event, ui) {
+                let total_width = jQuery(window).width();
+                let width = jQuery( '#trp-controls' ).width();
+
+                if(width > total_width) {
+                    width = total_width;
+                    controls.css('width', width);
+                }
+                let previewContainer = jQuery( '#trp-preview' );
+                previewContainer.css('right', width );
+                previewContainer.css('left', ( width - 348 ) );
+                previewContainer.css('width', (total_width - width));
             }
         },
         //add support for v-model in select2
