@@ -73,9 +73,11 @@ if [ $freeversion == 'y' ]; then
     rm -rf $trunk_dir/node_modules
     rm -rf $trunk_dir/gulpfile.js
     rm -rf $trunk_dir/package-lock.json
+    rm -rf $trunk_dir/.gitignore
 
     #remove vue files
     rm -rf $trunk_dir/webpack.mix.js
+    rm -rf $trunk_dir/mix-manifest.json
     rm -rf $trunk_dir/package.json
     rm -rf $trunk_dir/assets/src
 
