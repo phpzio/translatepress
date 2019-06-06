@@ -3,8 +3,9 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.cozmoslabs.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 5.1.1
-Stable tag: 1.4.7
+Tested up to: 5.2.1
+Requires PHP: 5.6.20
+Stable tag: 1.4.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -125,6 +126,22 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.4.8 =
+* Added support for translating images
+* Added support for translating title attribute
+* Added support for translating href pointing to internal files and href pointing to any external links
+* Added support for translating attributes modified dynamically through JS
+* Added support for translating multiple attributes on the same node
+* Added support for translating nodes containing mixt of gettext and user-inputted strings
+* Added notification and disabled TP for servers not running minimum PHP version 5.6.20
+* Refactored and improved Translation Editor user interface
+* Added Keyboard shortcuts: CTRL + S (save), CTRL + ALT + Z (discard all changes), CTRL + ALT + LEFT (previous string), CTRL + ALT + RIGHT (next string)
+* Fixed issues with translation blocks not working on some instances
+* Security improvements
+
+= 1.4.7 =
+* Fixed a php error in previous commit
+
 = 1.4.6 =
 * Fixed a js compatibility error with mootools.js
 * Modified how the license page works and added plugin notifications
@@ -458,5 +475,3 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 = 1.0.0 =
 * Initial release.
 
-    1.4.7
-    
