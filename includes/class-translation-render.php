@@ -383,9 +383,14 @@ class TRP_Translation_Render{
 			    $all_existing_translation_blocks[ $key ]->trimmed_original = $this->trim_translation_block( $all_existing_translation_blocks[ $key ]->original );
 		    }
 
-		    //try to find if there are any blocks on the current page html
+		    /* Try to find if there are any blocks in the output for translation.
+		     * If the output is an actual html page, use only the innertext of body tag
+		     * Else use the entire output (ex. the output is from JSON REST API content, or just a string)
+		     */
 		    $html_body = $html->find('body', 0 );
-		    $trimmed_html_body = $this->trim_translation_block( $html_body->innertext );
+		    $output_to_translate = ( $html_body ) ?  $html_body->innertext : $output;
+
+		    $trimmed_html_body = $this->trim_translation_block( $output_to_translate );
             foreach( $all_existing_translation_blocks as $key => $existing_translation_block ){
                 if (  strpos( $trimmed_html_body, $existing_translation_block->trimmed_original ) === false ){
                     unset($all_existing_translation_blocks[$key] );//if it isn't present remove it, this way we don't look for them on pages that don't contain blocks
