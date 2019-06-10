@@ -27,6 +27,7 @@ class TRP_Ajax{
 
             $this->output_translations(
             	$this->sanitize_strings( $_POST['originals'] ),
+            	$this->sanitize_strings( $_POST['skip_machine_translation'] ),
 	            mysqli_real_escape_string( $this->connection, filter_var( $_POST['language'], FILTER_SANITIZE_STRING ) ),
 	            mysqli_real_escape_string( $this->connection, filter_var( $_POST['original_language'], FILTER_SANITIZE_STRING ) )
             );
@@ -143,18 +144,21 @@ class TRP_Ajax{
      * @param string $language          Language to translate into.
      * @param string $original_language Language to translate from. Default language.
      */
-    protected function output_translations( $strings, $language, $original_language ){
-        $sql = 'SELECT original, translated FROM ' . $this->table_prefix . 'trp_dictionary_' . strtolower( $original_language ) . '_' . strtolower( $language ) . ' WHERE original IN (\'' . implode( "','", $strings ) .'\') AND status != 0';
+    protected function output_translations( $strings, $skip_machine_translation, $language, $original_language ){
+        $sql = 'SELECT original, translated, status FROM ' . $this->table_prefix . 'trp_dictionary_' . strtolower( $original_language ) . '_' . strtolower( $language ) . ' WHERE original IN (\'' . implode( "','", $strings ) .'\') AND status != 0';
         $result = mysqli_query( $this->connection, $sql );
         if ( $result === false ){
             $this->return_error();
         }else {
             $dictionaries[$language] = array();
             while ($row = mysqli_fetch_object($result)) {
+            	// do not retrieve a row that should not be machine translated ( ex. src, href )
+            	if ( $row->status === 1 && in_array( $row->original, $skip_machine_translation ) ) {
+            		continue;
+	            }
                 $dictionaries[$language][] = $row;
             }
 
-	        error_log(json_encode($dictionaries));
 	        $dictionary_by_original = trp_sort_dictionary_by_original( $dictionaries, 'regular', 'dynamicstrings', null, null );
             echo json_encode($dictionary_by_original);
         }
