@@ -7,7 +7,7 @@
                     <span v-if="key == 0 ">{{ editorStrings.from }} </span>
                     <span v-else>{{ editorStrings.to }} </span>
                     {{ completeLanguageNames[languageCode] }}
-                    <img v-if="languageCode != 'original'" class="trp-language-box-flag-image" :src="flagsPath + '/' + languageCode + '.png'" width="18" height="12" :alt="languageCode" :title="completeLanguageNames[languageCode]">
+                    <img v-if="languageCode != 'original'" class="trp-language-box-flag-image" :src="flagsPath[languageCode] + '/' + languageCode + '.png'" width="18" height="12" :alt="languageCode" :title="completeLanguageNames[languageCode]">
                 </div>
                 <table class="trp-translations-for-language">
                     <td class="trp-translation-icon-container" v-if="showImageIcon">

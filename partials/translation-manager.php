@@ -47,6 +47,12 @@
 
     $view_as_roles = apply_filters( 'trp_view_as_values', $view_as_roles );
     $string_groups = apply_filters( 'trp_string_group_order', array_values( $translation_manager->string_groups() ) );
+
+    $flags_path = array();
+    foreach( $trp_settings['translation-languages'] as $language_code ) {
+	    $default_path = TRP_PLUGIN_URL . 'assets/images/flags/';
+	    $flags_path[$language_code] = apply_filters( 'trp_flags_path', $default_path, $language_code );
+    }
     ?>
 
     <title>TranslatePress</title>
@@ -71,7 +77,7 @@
             merge_rules='<?php echo esc_attr( json_encode( $translation_manager->get_merge_rules() ) ); ?>'
             localized_text='<?php echo esc_attr( json_encode( $translation_manager->localized_text() ) ); ?>'
             paid_version="<?php echo esc_attr( trp_is_paid_version() ? 'true' : 'false' ); ?>"
-            flags_path="<?php echo esc_url( apply_filters( 'trp_flags_path', TRP_PLUGIN_URL .'assets/images/flags/' ) ); ?>"
+            flags_path="<?php echo esc_attr( json_encode( $flags_path ) ); ?>"
         >
         </trp-editor>
     </div>
