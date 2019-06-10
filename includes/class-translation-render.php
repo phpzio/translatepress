@@ -1099,7 +1099,7 @@ class TRP_Translation_Render{
 			    'attribute' => true
 		    ),
 		    'title' => array(
-		    	'selector' => '[title]',
+		    	'selector' => '[title]:not(link)',
 			    'accessor' => 'title',
 			    'attribute' => true
 		    ),
