@@ -72,7 +72,7 @@
                             :showChangesUnsavedMessage="showChangesUnsavedMessage"
                             @discarded-changes="hasUnsavedChanges()"
                             :editorStrings="editorStrings"
-                            :flagsPath="flags_path"
+                            :flagsPath="flagsPath"
                             :iframe="iframe"
                     >
                     </language-boxes>
@@ -164,6 +164,7 @@
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 mergeRules                : JSON.parse( this.merge_rules ),
                 editorStrings             : JSON.parse( this.localized_text ),
+                flagsPath                 : JSON.parse( this.flags_path ),
                 //data
                 currentLanguage           : this.current_language,
                 onScreenLanguage          : this.on_screen_language,
