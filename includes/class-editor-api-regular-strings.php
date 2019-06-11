@@ -31,6 +31,7 @@ class TRP_Editor_Api_Regular_Strings {
 			check_ajax_referer( 'get_translations', 'security' );
 			if ( isset( $_POST['action'] ) && $_POST['action'] === 'trp_get_translations_regular' && !empty( $_POST['language'] ) && in_array( $_POST['language'], $this->settings['translation-languages'] ) ) {
 				$originals = (empty($_POST['originals']) )? array() : json_decode(stripslashes($_POST['originals']));
+				$skip_machine_translation = (empty($_POST['skip_machine_translation']) )? array() : json_decode(stripslashes($_POST['skip_machine_translation']));
 				$ids = (empty($_POST['string_ids']) )? array() : json_decode(stripslashes($_POST['string_ids']));
 				if ( is_array( $ids ) || is_array( $originals) ) {
 					$trp = TRP_Translate_Press::get_trp_instance();
@@ -41,7 +42,7 @@ class TRP_Editor_Api_Regular_Strings {
 						$this->translation_manager = $trp->get_component('translation_manager');
 					}
 					$block_type = $this->trp_query->get_constant_block_type_regular_string();
-					$dictionaries = $this->get_translation_for_strings( $ids, $originals, $block_type );
+					$dictionaries = $this->get_translation_for_strings( $ids, $originals, $block_type, $skip_machine_translation );
 
 					$localized_text = $this->translation_manager->string_groups();
 					$string_group = __('Others', 'translatepress-multilingual'); // this type is not registered in the string types because it will be overwritten by the content in data-trp-node-type
@@ -65,7 +66,7 @@ class TRP_Editor_Api_Regular_Strings {
 	 *
 	 * @return array
 	 */
-	protected function get_translation_for_strings( $ids, $originals, $block_type = null ){
+	protected function get_translation_for_strings( $ids, $originals, $block_type = null, $skip_machine_translation = array() ){
 		$trp = TRP_Translate_Press::get_trp_instance();
 		if ( ! $this->trp_query ) {
 			$this->trp_query = $trp->get_component( 'query' );
@@ -108,7 +109,7 @@ class TRP_Editor_Api_Regular_Strings {
 		// necessary in order to obtain all the original strings
 		if ( $this->settings['default-language'] != $current_language ) {
 			if ( !empty ( $original_array ) && current_user_can ( apply_filters( 'trp_translating_capability', 'manage_options' ) ) ) {
-				$this->translation_render->process_strings($original_array, $current_language, $block_type);
+				$this->translation_render->process_strings($original_array, $current_language, $block_type, $skip_machine_translation);
 			}
 			$dictionaries[$current_language] = $this->trp_query->get_string_rows( $id_array, $original_array, $current_language );
 		}else{
@@ -129,9 +130,24 @@ class TRP_Editor_Api_Regular_Strings {
 					$original_strings = $this->extract_original_strings($dictionaries[$current_language], $original_array, $id_array);
 				}
 				if (current_user_can(apply_filters( 'trp_translating_capability', 'manage_options' ))) {
-					$this->translation_render->process_strings($original_strings, $language, $block_type);
+					$this->translation_render->process_strings($original_strings, $language, $block_type, $skip_machine_translation);
 				}
 				$dictionaries[$language] = $this->trp_query->get_string_rows(array(), $original_strings, $language);
+			}
+		}
+
+		if ( count( $skip_machine_translation ) > 0 ) {
+			foreach ( $dictionaries as $language => $dictionary ) {
+				if ( $language === $this->settings['default-language'] ) {
+					continue;
+				}
+				foreach ( $dictionary as $key => $string ) {
+					if ( $string->status == 1 && in_array( $string->original, $skip_machine_translation ) ) {
+						// do not return translation for href and src
+						$dictionaries[ $language ][ $key ]->translated = '';
+						$dictionaries[ $language ][ $key ]->status     = 0;
+					}
+				}
 			}
 		}
 
@@ -244,7 +260,7 @@ class TRP_Editor_Api_Regular_Strings {
 					$active_block_type = $this->trp_query->get_constant_block_type_active();
 					foreach( $this->settings['translation-languages'] as $language ){
 						if ( $language != $this->settings['default-language'] ){
-							$dictionaries = $this->get_translation_for_strings( array(), array( stripslashes( $_POST['original'] ) ), $active_block_type );
+							$dictionaries = $this->get_translation_for_strings( array(), array( stripslashes( $_POST['original'] ) ), $active_block_type, array() );
 							break;
 						}
 					}

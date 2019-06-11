@@ -63,7 +63,7 @@ class TRP_Query{
         }else {
 	        $and_block_type = " AND block_type = " . $block_type;
         }
-        $query = "SELECT original,translated FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . $and_block_type . " AND original IN ";
+        $query = "SELECT original,translated, status FROM `" . sanitize_text_field( $this->get_table_name( $language_code ) ) . "` WHERE status != " . self::NOT_TRANSLATED . $and_block_type . " AND original IN ";
 
         $placeholders = array();
         $values = array();

@@ -358,6 +358,7 @@ class TRP_Translation_Render{
         $no_translate_attribute = 'data-no-translation';
 
         $translateable_strings = array();
+	    $skip_machine_translating_strings = array();
         $nodes = array();
 
 	    $trp = TRP_Translate_Press::get_trp_instance();
@@ -595,8 +596,12 @@ class TRP_Translation_Render{
 				        && !$this->has_ancestor_attribute( $row, $no_translate_attribute . '-' . $current_node_accessor_selector )
 				        && !$this->has_ancestor_class( $row, 'translation-block') )
 				    {
-					    array_push( $translateable_strings, html_entity_decode( $trimmed_string ) );
+					    $entity_decoded_trimmed_string = html_entity_decode( $trimmed_string );
+					    array_push( $translateable_strings, $entity_decoded_trimmed_string );
 					    array_push( $nodes, array( 'node'=>$row, 'type' => $node_accessor_key ) );
+					    if ( ! apply_filters( 'trp_allow_machine_translation_for_string', true, $entity_decoded_trimmed_string, $current_node_accessor_selector, $node_accessor ) ){
+					    	array_push( $skip_machine_translating_strings, $entity_decoded_trimmed_string );
+					    }
 				    }
 			    }
 		    }
@@ -607,7 +612,7 @@ class TRP_Translation_Render{
         $translateable_strings = $translateable_information['translateable_strings'];
         $nodes = $translateable_information['nodes'];
 
-        $translated_strings = $this->process_strings( $translateable_strings, $language_code );
+        $translated_strings = $this->process_strings( $translateable_strings, $language_code, null, $skip_machine_translating_strings );
 
         do_action('trp_translateable_information', $translateable_information, $translated_strings, $language_code);
 
@@ -768,6 +773,20 @@ class TRP_Translation_Render{
 		    }
 	    }
 
+    }
+
+    /*
+     * Do not translate src and href attributes
+     *
+     * Hooked to trp_allow_machine_translation_for_string
+     */
+    public function allow_machine_translation_for_string( $allow, $entity_decoded_trimmed_string, $current_node_accessor_selector, $node_accessor ){
+    	$skip_attributes = apply_filters( 'trp_skip_machine_translation_for_attr', array( 'href', 'src' ) );
+	    if ( in_array( $current_node_accessor_selector, $skip_attributes ) ){
+	    	// do not machine translate href and src
+	    	return false;
+	    }
+	    return $allow;
     }
 
     /**
@@ -940,7 +959,7 @@ class TRP_Translation_Render{
      * @param $language_code
      * @return array
      */
-    public function process_strings( $translateable_strings, $language_code, $block_type = null ){
+    public function process_strings( $translateable_strings, $language_code, $block_type = null, $skip_machine_translating_strings = array() ){
 	    if ( ! $this->machine_translator ) {
 		    $trp = TRP_Translate_Press::get_trp_instance();
 		    $this->machine_translator = $trp->get_component('machine_translator');
@@ -962,14 +981,18 @@ class TRP_Translation_Render{
         $new_strings = array();
 	    $machine_translatable_strings = array();
         foreach( $translateable_strings as $i => $string ){
-            //strings existing in database,
-
+        	// prevent accidentally machine translated strings from db such as for src to be displayed
+	        $skip_string = in_array( $string, $skip_machine_translating_strings );
+	        if ( isset( $dictionary[$string]->translated ) && $dictionary[$string]->status == $this->trp_query->get_constant_machine_translated() && $skip_string ){
+	        	continue;
+	        }
+	        //strings existing in database,
             if ( isset( $dictionary[$string]->translated ) ){
                 $translated_strings[$i] = $dictionary[$string]->translated;
             }else{
                 $new_strings[$i] = $translateable_strings[$i];
                 // if the string is not a url then allow machine translation for it
-                if ( $machine_translation_available && filter_var($new_strings[$i], FILTER_VALIDATE_URL) === false ){
+                if ( $machine_translation_available && !$skip_string && filter_var($new_strings[$i], FILTER_VALIDATE_URL) === false ){
 	                $machine_translatable_strings[$i] = $new_strings[$i];
                 }
             }
@@ -1020,7 +1043,7 @@ class TRP_Translation_Render{
         }
 
         $this->trp_query->insert_strings( $new_strings, $language_code, $block_type );
-        $this->trp_query->update_strings( $update_strings, $language_code );
+        $this->trp_query->update_strings( $update_strings, $language_code, array( 'id','original', 'translated', 'status' ) );
 
         return $translated_strings;
     }

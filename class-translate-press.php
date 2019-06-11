@@ -214,6 +214,7 @@ class TRP_Translate_Press{
         /* handle CDATA str replacement from the content as it is messing up the renderer */
         $this->loader->add_filter( "trp_before_translate_content", $this->translation_render, 'handle_cdata', 1000 );
         $this->loader->add_action( "trp_set_translation_for_attribute", $this->translation_render, 'translate_image_srcset_attributes', 10, 3 );
+        $this->loader->add_action( "trp_allow_machine_translation_for_string", $this->translation_render, 'allow_machine_translation_for_string', 10, 4 );
 
         /* apply translation filters for REST API response */
         $post_types = get_post_types();
