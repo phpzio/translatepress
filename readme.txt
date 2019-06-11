@@ -126,6 +126,11 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.4.9 =
+* Fixed incompatibility with custom code for changing flags
+* Fixed some pages not being translated due to incorrectly encoded character
+* Fixed some images missing when automatic translation is on
+
 = 1.4.8 =
 * Added support for translating images
 * Added support for translating title attribute
@@ -475,14 +480,3 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 = 1.0.0 =
 * Initial release.
 
-
-
-    1.4.9
-    523266e Merged in iss5978 (pull request #210)
-7d8dd4e Fixed notice PHP Notice:  Undefined index: block_type
-4aeb1ce Fixed previous commit
-8e6a6b8 Skip machine translating src and href
-8518cea Merged in iss5977 (pull request #209)
-5b8ae79 Do not translate title attribute of link tag
-0e39bd2 Merged in iss5979 (pull request #208)
-663936e Added second parameter to trp_flags_path filter
