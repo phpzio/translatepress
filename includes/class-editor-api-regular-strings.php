@@ -136,15 +136,17 @@ class TRP_Editor_Api_Regular_Strings {
 			}
 		}
 
-		foreach( $dictionaries as $language => $dictionary ){
-			if ( $language === $this->settings['default-language'] ){
-				continue;
-			}
-			foreach ( $dictionary as $key => $string ){
-				if ( $string->status === 1 && in_array( $string->original, $skip_machine_translation ) ){
-					// do not return translation for href and src
-					$dictionaries[$language][$key]->translated = '';
-					$dictionaries[$language][$key]->status = 0;
+		if ( count( $skip_machine_translation ) > 0 ) {
+			foreach ( $dictionaries as $language => $dictionary ) {
+				if ( $language === $this->settings['default-language'] ) {
+					continue;
+				}
+				foreach ( $dictionary as $key => $string ) {
+					if ( $string->status == 1 && in_array( $string->original, $skip_machine_translation ) ) {
+						// do not return translation for href and src
+						$dictionaries[ $language ][ $key ]->translated = '';
+						$dictionaries[ $language ][ $key ]->status     = 0;
+					}
 				}
 			}
 		}

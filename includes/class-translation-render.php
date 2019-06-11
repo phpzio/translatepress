@@ -982,7 +982,8 @@ class TRP_Translation_Render{
 	    $machine_translatable_strings = array();
         foreach( $translateable_strings as $i => $string ){
         	// prevent accidentally machine translated strings from db such as for src to be displayed
-	        if ( isset( $dictionary[$string]->translated ) && $dictionary[$string]->status === 1 && in_array( $string, $skip_machine_translating_strings ) ){
+	        $skip_string = in_array( $string, $skip_machine_translating_strings );
+	        if ( isset( $dictionary[$string]->translated ) && $dictionary[$string]->status == $this->trp_query->get_constant_machine_translated() && $skip_string ){
 	        	continue;
 	        }
 	        //strings existing in database,
@@ -991,7 +992,7 @@ class TRP_Translation_Render{
             }else{
                 $new_strings[$i] = $translateable_strings[$i];
                 // if the string is not a url then allow machine translation for it
-                if ( $machine_translation_available && filter_var($new_strings[$i], FILTER_VALIDATE_URL) === false ){
+                if ( $machine_translation_available && !$skip_string && filter_var($new_strings[$i], FILTER_VALIDATE_URL) === false ){
 	                $machine_translatable_strings[$i] = $new_strings[$i];
                 }
             }

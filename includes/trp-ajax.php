@@ -153,7 +153,7 @@ class TRP_Ajax{
             $dictionaries[$language] = array();
             while ($row = mysqli_fetch_object($result)) {
             	// do not retrieve a row that should not be machine translated ( ex. src, href )
-            	if ( $row->status === 1 && in_array( $row->original, $skip_machine_translation ) ) {
+            	if ( $row->status == 1 && in_array( $row->original, $skip_machine_translation ) ) {
             		continue;
 	            }
                 $dictionaries[$language][] = $row;

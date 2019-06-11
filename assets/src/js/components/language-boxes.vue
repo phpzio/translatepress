@@ -71,6 +71,10 @@
             this.addKeyboardShortcutsListener()
         },
         updated(){
+            // if already active do nothing
+            if ( document.activeElement.classList.contains( 'trp-translation-input' )){
+                return
+            }
             // place the cursor in the first textarea or input for translation
             let translationSection = document.getElementById( 'trp-translation-section' )
             if ( translationSection )  {
