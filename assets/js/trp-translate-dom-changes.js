@@ -109,6 +109,10 @@ function TRP_Translator(){
                             var text_to_set = _this.decode_html( initial_value.replace(initial_value.trim(), response_string.translated));
                             if ( nodeInfo.attribute ){
                                 nodeInfo.node.setAttribute( nodeInfo.attribute, text_to_set )
+                                if ( nodeInfo.attribute == 'src' ){
+                                    nodeInfo.node.setAttribute( 'srcset', '' )
+                                    nodeInfo.node.setAttribute( 'data-src', text_to_set )
+                                }
                             }else {
                                 nodeInfo.node.textContent = text_to_set;
                             }
@@ -307,7 +311,7 @@ function TRP_Translator(){
                         if ( attribute_content && _this.trim( attribute_content.trim(), except_characters ) != '' ) {
                             nodesInfo.push({node: all_nodes[j], original: attribute_content, attribute: attribute_selector_item.accessor });
                             string_originals.push( attribute_content )
-                            if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
+                            if ( trp_data ['showdynamiccontentbeforetranslation'] == false && ( attribute_selector_item.accessor != 'src' ) ) {
                                 all_nodes[j].setAttribute( attribute_selector_item.accessor, '' );
                             }
                             for ( var s = 0; s < skip_attr_machine_translation.length; s++ ){
