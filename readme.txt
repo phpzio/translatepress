@@ -5,7 +5,7 @@ Tags: translate, translation, multilingual, automatic translation, bilingual, fr
 Requires at least: 3.1.0
 Tested up to: 5.2.1
 Requires PHP: 5.6.20
-Stable tag: 1.4.9
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -126,6 +126,9 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 6. Menu Language Switcher
 
 == Changelog ==
+= 1.5.0 =
+* Fixed some dynamic images not showing up in translated pages.
+
 = 1.4.9 =
 * Fixed incompatibility with custom code for changing flags
 * Fixed some pages not being translated due to incorrectly encoded character
