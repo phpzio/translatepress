@@ -124,7 +124,9 @@ function TRP_Translator(){
 
                 if ( ! translation_found ){
                     if ( nodeInfo.attribute ){
-                        nodeInfo.node.setAttribute( nodeInfo.attribute, initial_value )
+                        if ( nodeInfo.attribute != 'src' ) {
+                            nodeInfo.node.setAttribute(nodeInfo.attribute, initial_value)
+                        }
                     }else {
                         nodeInfo.node.textContent = initial_value;
                     }
@@ -139,7 +141,9 @@ function TRP_Translator(){
         }else{
             for (var j = 0 ; j < nodesInfo.length; j++){
                 if ( nodesInfo[j].attribute ){
-                    nodesInfo[j].node.setAttribute( nodesInfo[j].attribute, nodesInfo[j].original )
+                    if ( nodesInfo[j].attribute != 'src' ) {
+                        nodesInfo[j].node.setAttribute(nodesInfo[j].attribute, nodesInfo[j].original)
+                    }
                 }else {
                     nodesInfo[j].node.textContent = nodesInfo[j].original;
                 }
