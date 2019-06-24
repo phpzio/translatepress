@@ -758,7 +758,13 @@ class TRP_Translation_Render{
 		    if ( $node->getAttribute( 'srcset' ) ) {
 			    $attachment_id = attachment_url_to_postid( $translated_string );
 			    if ( $attachment_id ) {
-				    $translated_srcset = wp_get_attachment_image_srcset( $attachment_id );
+				    $translated_srcset = null;
+				    if ( function_exists( 'wp_get_attachment_image_srcset' ) ) {
+				    	// get width of the image in order, to set the largest possible size for srcset
+					    $meta_data = wp_get_attachment_metadata( $attachment_id );
+					    $width = ( $meta_data && isset( $meta_data['width'] ) ) ? $meta_data['width'] : 'large';
+					    $translated_srcset = wp_get_attachment_image_srcset( $attachment_id, $width );
+				    }
 				    if ( $translated_srcset ) {
 					    $node->setAttribute( 'srcset', $translated_srcset );
 				    } else {
