@@ -613,6 +613,11 @@ class TRP_Plugin_Updater{
 
             }
         }
+        else{
+            //we need to throw a notice if we have a pro addon active and no license entered
+            $license_information_for_all_addons['invalid'][] = (object) array( 'error' => 'missing' );
+            $this->update_option('trp_license_details', $license_information_for_all_addons);
+        }
 
         return $transient_data;
     }
