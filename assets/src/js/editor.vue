@@ -100,6 +100,7 @@
                 :ajax_url="ajax_url"
                 :mergeData="mergeData"
                 :editorStrings="editorStrings"
+                :currentLanguage="currentLanguage"
             >
             </hover-actions>
         </div>
