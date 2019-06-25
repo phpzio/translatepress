@@ -16,7 +16,8 @@
             'ajax_url',
             'nonces',
             'mergeData',
-            'editorStrings'
+            'editorStrings',
+            'currentLanguage'
         ],
         data(){
             return{
@@ -321,6 +322,19 @@
 
                 if( buttons )
                     buttons.remove()
+
+                /** In case we are in secondary language and the strings that will be merged are already translated,
+                 *  we must use the originals of these strings instead of what is in the preview iframe HTML page at this point
+                 */
+                if ( this.settings['default-language'] != this.currentLanguage ){
+                    copy.querySelectorAll( '[data-trp-translate-id]' ).forEach( function( node ) {
+                        let stringId = node.getAttribute( 'data-trp-translate-id' )
+                        let index = self.$parent.getStringIndex( 'data-trp-translate-id', stringId )
+                        if ( self.dictionary[index].translationsArray[self.currentLanguage] && self.dictionary[index].translationsArray[self.currentLanguage].status != 0 ) {
+                            node.innerHTML = node.innerText.replace( self.dictionary[index].translationsArray[self.currentLanguage].translated, self.dictionary[index].original )
+                        }
+                    })
+                }
 
                 copy.querySelectorAll( 'translate-press, trp-wrap, trp-highlight' ).forEach( function( node ) {
                     utils.unwrap( node )
