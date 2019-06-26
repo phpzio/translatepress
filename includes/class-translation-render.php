@@ -594,7 +594,8 @@ class TRP_Translation_Render{
 				        && !preg_match('/^\d+%$/',$trimmed_string)
 				        && !$this->has_ancestor_attribute( $row, $no_translate_attribute )
 				        && !$this->has_ancestor_attribute( $row, $no_translate_attribute . '-' . $current_node_accessor_selector )
-				        && !$this->has_ancestor_class( $row, 'translation-block') )
+				        && !$this->has_ancestor_class( $row, 'translation-block')
+				        && $row->tag != 'link' )
 				    {
 					    $entity_decoded_trimmed_string = html_entity_decode( $trimmed_string );
 					    array_push( $translateable_strings, $entity_decoded_trimmed_string );
@@ -1123,12 +1124,12 @@ class TRP_Translation_Render{
 			    'attribute' => true
 		    ),
 		    'placeholder' => array(
-		    	'selector' => 'input[type=\'text\'][placeholder],input[type=\'password\'][placeholder],input[type=\'search\'][placeholder],input[type=\'email\'][placeholder],input[placeholder]:not([type]),textarea[placeholder]',
+		    	'selector' => 'input[type=\'text\'][placeholder],input[type=\'password\'][placeholder],input[type=\'search\'][placeholder],input[type=\'email\'][placeholder],textarea[placeholder]',
 			    'accessor' => 'placeholder',
 			    'attribute' => true
 		    ),
 		    'title' => array(
-		    	'selector' => '[title]:not(link)',
+		    	'selector' => '[title]',
 			    'accessor' => 'title',
 			    'attribute' => true
 		    ),
