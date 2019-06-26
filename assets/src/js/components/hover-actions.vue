@@ -381,9 +381,23 @@
                 return true
             },
             fitPencilIconInsideView( pencil, target, mergeOrSplit ){
+                // 'slick-slide-image' is a fix for elementor image slider to display pencil icon
+                // 'attachment-woocommerce_thumbnail' - is a fix for WooCommerce product images on shop page (Hestia theme and others)
+                // 'woocommerce-placeholder' - is a fix for WooCommerce product placeholder image on shop page (Hestia theme and others)
+                let forcePencilDisplayClasses = ['slick-slide-image', 'attachment-woocommerce_thumbnail', 'woocommerce-placeholder']
+                let forcePencilDisplay = false
+                if ( target.tagName === 'IMG' ){
+                    let i
+                    for ( i = 0; i < forcePencilDisplayClasses.length; i++ ){
+                        if ( target.classList.contains( forcePencilDisplayClasses[i] ) ) {
+                            forcePencilDisplay = true
+                            break;
+                        }
+                    }
+                }
+
                 let rect = target.getBoundingClientRect()
-                //  target.classList.contains('slick-slide-image') is a fix for elementor image slider to display pencil icon
-                if( rect.left < 35 || ( target.tagName === 'IMG' && target.classList.contains('slick-slide-image') ) ) {
+                if( forcePencilDisplay || rect.left < 35 ) {
                     let margin
 
                     if( mergeOrSplit != 'none' )
