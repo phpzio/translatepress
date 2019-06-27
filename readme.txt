@@ -3,7 +3,7 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.translatepress.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 5.2.1
+Tested up to: 5.2.2
 Requires PHP: 5.6.20
 Stable tag: 1.5.0
 License: GPLv2 or later
@@ -131,9 +131,9 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Screenshots ==
-1. Front-end translation editor used to translate the entire page content
-2. How to translate a Dynamic String (gettext) using TranslatePress - Multilingual
-3. Translate Woocommerce Shop Page
+1. TranslatePress front-end visual translation editor in action
+2. Front-end translation editor used to translate the entire page content
+3. How to translate a Dynamic String (gettext) using TranslatePress - Multilingual
 4. Translate WooCommerce Products using TranslatePress - Multilingual
 5. Translate Images and Image Sliders
 6. Settings Page for TranslatePress - Multilingual
