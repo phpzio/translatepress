@@ -1,6 +1,6 @@
 ﻿=== TranslatePress - Translate Multilingual sites ===
 Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
-Donate link: https://www.cozmoslabs.com/
+Donate link: https://www.translatepress.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
 Tested up to: 5.2.1
@@ -15,7 +15,7 @@ Easily translate your entire site directly from the front-end and go multilingua
 
 **Experience a better way to translate your WordPress site and go multilingual, directly from the front-end using a friendly user interface.**
 
-TranslatePress is a WordPress translation plugin that anyone can use.
+TranslatePress is a [WordPress translation plugin](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) that anyone can use.
 
 The interface allows you to easily translate the entire page at once, including output from shortcodes, forms and page builders. It also works out of the box with WooCommerce.
 
@@ -23,22 +23,24 @@ Built the WordPress way, TranslatePress - Multilingual is a GPL and self hosted 
 
 https://www.youtube.com/watch?v=pUlYisvBm8g
 
-= Multilingual & Translation Features =
+== Multilingual & Translation Features ==
 
 * Translate all your website content directly from the front-end, in a friendly user interface (translation displayed in real-time).
 * Fully compatible with all themes and plugins
 * Live preview of your translated pages, as you edit your translations.
+* [Image translation](https://translatepress.com/docs/image-translation/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) support, allowing you to [translate images, sliders and other media](https://translatepress.com/translate-images-in-wordpress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree).
 * Support for both manual and automatic translation (via Google Translate)
-* Ability to translate dynamic strings (gettext) added by WordPress, plugins and themes.
+* Ability to [translate dynamic strings](https://translatepress.com/translate-dynamic-strings-wordpress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) (gettext) added by WordPress, plugins and themes.
 * Integrates with Google Translate, allowing you to set up Automatic Translation using your own Google API key.
 * Translate larger html blocks by merging strings into translation blocks.
 * Select specific html blocks for translation using the css class **translation-block**. `<p class="translation-block">Translate <em>everything</em> inside</p>`
 * Place language switchers anywhere using shortcode **[language-switcher]**, WP menu item or as a floating dropdown.
 * Editorial control allowing you to publish your language only when all your translations are done
 * Conditional display content shortcode based on language [trp_language language="en_US"] English content only [/trp_language]
-* Possibility to edit gettext strings from themes and plugins from english to english, without adding another language. Basically a string-replace functionality.
+* Possibility to [edit gettext strings](https://translatepress.com/edit-plugin-strings/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) from themes and plugins from english to english, without adding another language. Basically a string-replace functionality.
 * Translation Block feature in which you can translate multiple html elements together
-* Native **Gutenberg** support
+* Native **Gutenberg** support, so you can easily [translate Gutenberg blocks](https://translatepress.com/translate-gutenberg-blocks-in-wordpress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree)
+* Out of the box [WooCommerce](https://translatepress.com/translate-woocommerce-products-translatepress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) compatibility
 
 Note: this WordPress translation plugin uses the Google Translation API to translate the strings on your site. This feature can be enabled or disabled according to your preferences.
 
@@ -50,14 +52,14 @@ Users with administrator rights have access to the following translate settings:
 * enable or disable url subdirectory for the default language
 * enable automatic translation via Google Translate
 
-= Powerful Translation Add-ons =
+== Powerful Translation Add-ons ==
 
-TranslatePress - Multilingual has a range of premium [Add-ons](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) that allow you to extend the power of the WordPress translation plugin:
+TranslatePress - Multilingual has a range of [premium Add-ons](https://translatepress.com/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) that allow you to extend the power of the WordPress translation plugin:
 
 **Pro Add-ons** (available in the [premium versions](https://translatepress.com/pricing/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) only)
 
 * [Extra Languages](https://translatepress.com/docs/addons/seo-pack/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - allows you to add an unlimited number of translation languages, with the possibility to publish languages later after you complete the translation
-* [SEO Pack](https://translatepress.com/docs/addons/multiple-languages/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - allows you to translate meta information (like page title, description, url slug, image alt tag, Twitter and Facebook Social Graph tags & more) for boosting your website's SEO and increase traffic
+* [SEO Pack](https://translatepress.com/docs/addons/multiple-languages/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - allows you to translate meta information (like page title, description, url slug, image alt tag, Twitter and Facebook Social Graph tags & more) for boosting your multilingual SEO and increase traffic
 * [Translator Accounts](https://translatepress.com/docs/addons/translator-accounts/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - create or allow existing users to translate the site without admin rights
 * [Browse as User Role](https://translatepress.com/docs/addons/browse-as-role/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - view and translate content that is visible only to a particular user role
 * [Navigation Based on Language](https://translatepress.com/docs/addons/navigate-based-language/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) - configure and display different menu items for different languages
@@ -66,6 +68,13 @@ TranslatePress - Multilingual has a range of premium [Add-ons](https://translate
 **Free Add-ons**
 
 * [Language by GET parameter](https://translatepress.com/docs/addons/language-get-parameter/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) -  enables the language in the URL to be encoded as a GET Parameter
+
+**Keyboard Shortcuts**
+
+* **CTRL ( ⌘ ) + S** – Save translation for the currently editing strings
+* **CTRL ( ⌘ ) + ALT + Z** – Discard all changes for the currently editing strings
+* **CTRL ( ⌘ ) + ALT + →** (Right Arrow) – Navigate to next string to translate
+* **CTRL ( ⌘ ) + ALT + ←** (Left Arrow) – Navigate to previous string to translate
 
 = Website =
 
@@ -112,6 +121,10 @@ After installing the plugin, select your secondary language and click "Translate
 
 TranslatePress will have little impact on your site speed. For more details see [Top WordPress Translation Plugins Compared Based on Page Load Time](https://translatepress.com/top-wordpress-translation-plugins-compared-based-on-page-load-time/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree)
 
+= Does it work with WooCommerce? =
+
+Yes, TranslatePress works out of the box with WooCommerce. You can use it to [translate WooCommerce products](https://translatepress.com/translate-woocommerce-products-translatepress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree) and build a multilingual store.
+
 = Where can I find out more information? =
 
 For more information please check out [TranslatePress - Multilingual plugin documentation](https://translatepress.com/docs/translatepress/?utm_source=wp.org&utm_medium=tp-description-page&utm_campaign=TPFree).
@@ -121,9 +134,12 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 1. Front-end translation editor used to translate the entire page content
 2. How to translate a Dynamic String (gettext) using TranslatePress - Multilingual
 3. Translate Woocommerce Shop Page
-4. Settings Page for TranslatePress - Multilingual
-5. Floating Language Switcher added by TranslatePress - Multilingual
-6. Menu Language Switcher
+4. Translate WooCommerce Products using TranslatePress - Multilingual
+5. Translate Images and Image Sliders
+6. Settings Page for TranslatePress - Multilingual
+7. Floating Language Switcher added by TranslatePress - Multilingual
+8. Menu Language Switcher
+
 
 == Changelog ==
 = 1.5.0 =
