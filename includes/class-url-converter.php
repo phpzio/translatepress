@@ -587,6 +587,11 @@ class TRP_Url_Converter {
         if( $TRP_LANGUAGE != $this->settings['default-language'] ) {
             if( trim($value['product_base'], '/') === trp_x( 'product', 'slug', 'woocommerce', $this->settings['default-language'] ) ){
                 $value['product_base'] = '';
+            }else{
+            	// if the custom base permalink starts with product, WooCommerce will translate it when on other languages
+	            if ( substr( $value['product_base'], 0, strlen('/product/' ) ) === '/product/' ) {
+		            $value['product_base'] = substr_replace( $value['product_base'], '/' . trp_x( 'product', 'slug', 'woocommerce', $TRP_LANGUAGE ) . '/', 0, strlen('/product/' ) );
+	            }
             }
 
             if( trim($value['category_base'], '/') === trp_x( 'product-category', 'slug', 'woocommerce', $this->settings['default-language'] ) ){
