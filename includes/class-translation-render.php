@@ -631,18 +631,13 @@ class TRP_Translation_Render{
             if ( $translation_available && isset( $current_node_accessor ) && ! ( $preview_mode && ( $this->settings['default-language'] == $TRP_LANGUAGE ) ) ) {
 
                 $translateable_string = $translateable_strings[$i];
-                $alternate_translateable_string = htmlentities($translateable_strings[$i]);
 
                 if ( $current_node_accessor[ 'attribute' ] ){
-                    if ( strpos ( $nodes[$i]['node']->getAttribute( $accessor ), $translateable_string ) === false ){
-                        $translateable_string = $alternate_translateable_string;
-                    }
+	                $translateable_string = $this->maybe_correct_translatable_string( $translateable_string, $nodes[$i]['node']->getAttribute( $accessor ) );
                     $nodes[$i]['node']->setAttribute( $accessor, str_replace( $translateable_string, esc_attr( $translated_strings[$i] ), $nodes[$i]['node']->getAttribute( $accessor ) ) );
                     do_action( 'trp_set_translation_for_attribute', $nodes[$i]['node'], $accessor, $translated_strings[$i] );
                 }else{
-                    if ( strpos ( $nodes[$i]['node']->$accessor, $translateable_string ) === false ){
-                        $translateable_string = $alternate_translateable_string;
-                    }
+	                $translateable_string = $this->maybe_correct_translatable_string( $translateable_string, $nodes[$i]['node']->$accessor );
                     $nodes[$i]['node']->$accessor = str_replace( $translateable_string, $translated_strings[$i], $nodes[$i]['node']->$accessor );
                 }
 
@@ -747,6 +742,24 @@ class TRP_Translation_Render{
         $final_html = $this->remove_trp_html_tags( $final_html );
 
 	    return apply_filters( 'trp_translated_html', $final_html, $TRP_LANGUAGE, $language_code );
+    }
+
+    /*
+     * Adjust translatable string so that it must match the content of the node value
+     *
+     * We use str_replace method in order to preserve any existent spacing before or after the string.
+     * If the encoding of the node is not the same as the translatable string then the string won't match so try applying htmlentities.
+     * If that doesn't work either, just forget about any possible before and after spaces.
+     *
+     */
+    public function maybe_correct_translatable_string( $translatable_string, $node_value ){
+	    if ( strpos ( $node_value, $translatable_string ) === false ){
+		    $translatable_string = htmlentities( $translatable_string );
+		    if ( strpos ( $node_value, $translatable_string ) === false ){
+			    $translatable_string = $node_value;
+		    }
+	    }
+	    return $translatable_string;
     }
 
     /*
