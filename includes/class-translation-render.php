@@ -1267,15 +1267,19 @@ class TRP_Translation_Render{
      * @return array
      */
     public function wp_mail_filter( $args ){
-        $trp_wp_mail = array(
-            'to'          => $args['to'],
-            'subject'     => $this->translate_page( do_shortcode( $args['subject'] ) ),
-            'message'     => $this->translate_page( do_shortcode( $args['message'] ) ),
-            'headers'     => $args['headers'],
-            'attachments' => $args['attachments'],
-        );
+        if (!is_array($args)){
+            return $args;
+        }
 
-        return $trp_wp_mail;
+        if(array_key_exists('subject', $args)){
+            $args['subject'] = $this->translate_page( do_shortcode( $args['subject'] ) );
+        }
+
+        if(array_key_exists('message', $args)){
+            $args['message'] = $this->translate_page( do_shortcode( $args['message'] ) );
+        }
+
+        return $args;
     }
 
     /**
