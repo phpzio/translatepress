@@ -9,7 +9,7 @@ function TRP_Iframe_Preview(){
      * Add GET preview parameter for links and forms.
      */
     this.initialize = function() {
-        if( !trpTranslator )
+        if( typeof trpTranslator === 'undefined' )
             return;
 
         trpTranslator.pause_observer();
