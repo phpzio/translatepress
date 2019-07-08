@@ -192,7 +192,7 @@ class TRP_Translation_Manager{
 	    restore_current_locale();
 
 	    // Necessary for translate-dom-changes to have a nonce as the same user as the Editor.
-	    // The Preview iframe (which loads translate-dom-changes script) can load as logged out which
+	    // The Preview iframe (which loads translate-dom-changes script) can load as logged out which sets an different nonce
 	    $nonces = $this->editor_nonces();
 	    wp_add_inline_script('trp-editor', 'var trp_dynamic_nonce = "' . $nonces['gettranslationsnonceregular'] . '";');
 
