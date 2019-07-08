@@ -191,6 +191,11 @@ class TRP_Translation_Manager{
 	    wp_print_media_templates();
 	    restore_current_locale();
 
+	    // Necessary for translate-dom-changes to have a nonce as the same user as the Editor.
+	    // The Preview iframe (which loads translate-dom-changes script) can load as logged out which sets an different nonce
+	    $nonces = $this->editor_nonces();
+	    wp_add_inline_script('trp-editor', 'var trp_dynamic_nonce = "' . $nonces['gettranslationsnonceregular'] . '";');
+
 	    $scripts_to_print = apply_filters( 'trp-scripts-for-editor', array( 'jquery', 'jquery-ui-core', 'jquery-effects-core', 'jquery-ui-resizable', 'trp-editor' ) );
         $styles_to_print = apply_filters( 'trp-styles-for-editor', array( 'dashicons', 'trp-editor-style','media-views', 'imgareaselect' /*'wp-admin', 'common', 'site-icon', 'buttons'*/ ) );
         wp_print_scripts( $scripts_to_print );
