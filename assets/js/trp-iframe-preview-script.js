@@ -9,10 +9,10 @@ function TRP_Iframe_Preview(){
      * Add GET preview parameter for links and forms.
      */
     this.initialize = function() {
-        if( typeof trpTranslator === 'undefined' )
-            return;
+        if( typeof trpTranslator !== 'undefined' ) {
+            trpTranslator.pause_observer();
+        }
 
-        trpTranslator.pause_observer();
         jQuery('a').each(function () {
             // target parent brakes from the iframe so we're changing to self.
             // We cannot remove it because we need it in Translation blocks
@@ -46,7 +46,9 @@ function TRP_Iframe_Preview(){
         });
 
         addKeyboardShortcutsListener();
-        trpTranslator.resume_observer();
+        if( typeof trpTranslator !== 'undefined' ) {
+            trpTranslator.resume_observer();
+        }
     };
 
     function addKeyboardShortcutsListener(){
