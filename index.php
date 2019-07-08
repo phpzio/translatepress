@@ -59,5 +59,5 @@ function trp_run_translatepress_hooks(){
 }
 
 function trp_translatepress_disabled_notice(){
-	echo '<div class="notice notice-error"><p>' . wp_kses( __( '<strong>TranslatePress</strong> requires at least PHP version 5.6.20+ to run. It is the <a href="https://wordpress.org/about/requirements/">minimum requirement of the latest WordPress version</a>. Please contact your server administrator to update your PHP version.','translatepress-multilingual' ), array( 'a' => array( 'href' => array() ), 'strong' => array() ) ) . '</p></div>';
+	echo '<div class="notice notice-error"><p>' . wp_kses( sprintf( __( '<strong>TranslatePress</strong> requires at least PHP version 5.6.20+ to run. It is the <a href="%s">minimum requirement of the latest WordPress version</a>. Please contact your server administrator to update your PHP version.','translatepress-multilingual' ), 'https://wordpress.org/about/requirements/' ), array( 'a' => array( 'href' => array() ), 'strong' => array() ) ) . '</p></div>';
 }

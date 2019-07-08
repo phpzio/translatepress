@@ -121,7 +121,7 @@ class TRP_Translation_Manager{
 			'discard_all_title_attr'                                    => esc_attr__( 'Discard all changes. Shortcut: CTRL(⌘) + ALT + Z', 'translatepress-multilingual' ),
 			'discard_individual_changes_title_attribute'                => esc_attr__( 'Discard changes to this text box. To discard changes to all text boxes use shortcut: CTRL(⌘) + ALT + Z', 'translatepress-multilingual' ),
 
-			'split_confirmation'                                        => esc_js( __( 'Are you sure you want to split this phrase into smaller pieces?', 'translatepress-multilingual' ) ),
+			'split_confirmation'                                        => esc_js( __( 'Are you sure you want to split this phrase into smaller parts?', 'translatepress-multilingual' ) ),
 			'translation_not_loaded_yet'                                => wp_kses( __( 'This string is not ready for translation yet. <br>Try again in a moment...', 'translatepress-multilingual'), array( 'br' => array() ) ),
 
 	        'bor_update_notice'                                         => esc_js( __( 'For this option to work, please update the Browse as other role add-on to the latest version.', 'translatepress-multilingual' ) ),
@@ -130,15 +130,15 @@ class TRP_Translation_Manager{
 			//Notice when the user has not defined a secondary language
 			'extra_lang_row1'                                           => wp_kses( sprintf( __( 'You can add a new language from <a href="%s">Settings->TranslatePress</a>', 'translatepress-multilingual' ), esc_url( admin_url( 'options-general.php?page=translate-press' ) ) ), array( 'a' => ['href' => []] ) ),
 			'extra_lang_row2'                                           => wp_kses( __( 'However, you can still use TranslatePress to <strong style="background: #f5fb9d;">modify gettext strings</strong> available in your page.', 'translatepress-multilingual' ), array( 'strong' => ['style' => [] ] )),
-			'extra_lang_row3'                                           => esc_html__( 'Strings that are user created can not be modified, only those from themes and plugins.', 'translatepress-multilingual' ),
+			'extra_lang_row3'                                           => esc_html__( 'Strings that are user-created cannot be modified, only those from themes and plugins.', 'translatepress-multilingual' ),
 			//Pro version upselling
 			'extra_upsell_title'                                        => esc_html__( 'Extra Translation Features', 'translatepress-multilingual' ),
 			'extra_upsell_row1'                                         => esc_html__( 'Support for 221 Extra Languages', 'translatepress-multilingual' ),
 			'extra_upsell_row2'                                         => esc_html__( 'Yoast SEO support', 'translatepress-multilingual' ),
 			'extra_upsell_row3'                                         => esc_html__( 'Translate SEO Title, Description, Slug', 'translatepress-multilingual' ),
-			'extra_upsell_row4'                                         => esc_html__( 'Publish only when translation is done', 'translatepress-multilingual' ),
+			'extra_upsell_row4'                                         => esc_html__( 'Publish only when translation is complete', 'translatepress-multilingual' ),
 			'extra_upsell_row5'                                         => esc_html__( 'Translate by Browsing as User Role', 'translatepress-multilingual' ),
-			'extra_upsell_row6'                                         => esc_html__( 'Different Menus Items per Language', 'translatepress-multilingual' ),
+			'extra_upsell_row6'                                         => esc_html__( 'Different Menu Items for each Language', 'translatepress-multilingual' ),
 			'extra_upsell_row7'                                         => esc_html__( 'Automatic User Language Detection', 'translatepress-multilingual' ),
 			'extra_upsell_row8'                                         => esc_html__( 'Supported By Real People', 'translatepress-multilingual' ),
 			'extra_upsell_button'                                       => wp_kses( sprintf( '<a class="button-primary" target="_blank" href="%s">%s</a>', esc_url( trp_add_affiliate_id_to_link( 'https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree' ) ), __( 'Find Out More', 'translatepress-multilingual' ) ), array( 'a' => ['class'=> [] , 'target'=> [],'href'=> []] )  )
@@ -152,7 +152,7 @@ class TRP_Translation_Manager{
             'stringlist'      => esc_html__( 'String List', 'translatepress-multilingual' ),
             'gettextstrings'  => esc_html__( 'Gettext Strings', 'translatepress-multilingual' ),
             'images'          => esc_html__( 'Images', 'translatepress-multilingual' ),
-            'dynamicstrings'  => esc_html__( 'Dynamic Added Strings', 'translatepress-multilingual' ),
+            'dynamicstrings'  => esc_html__( 'Dynamically Added Strings', 'translatepress-multilingual' ),
 		);
 		return apply_filters( 'trp_string_groups', $string_groups );
 	}

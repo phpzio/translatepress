@@ -18,7 +18,7 @@
                         <?php }?>
                     </select>
                     <p class="description">
-                        <?php esc_html_e( 'Select the original language your website was written in. ', 'translatepress-multilingual' ); ?>
+                        <?php esc_html_e( 'Select the original language of your content.', 'translatepress-multilingual' ); ?>
                     </p>
 
                     <p class="warning" style="display: none;" >
@@ -41,20 +41,20 @@
                         <option value="native_name" <?php selected( $this->settings['native_or_english_name'], 'native_name' ); ?>><?php esc_html_e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php esc_html_e( 'Select Yes if you want languages to display in their native names. Otherwise, they will be displayed in English.', 'translatepress-multilingual' ); ?>
+                        <?php esc_html_e( 'Select Yes if you want to display languages in their native names. Otherwise, languages will be displayed in English.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
             </tr>
 
             <tr>
-                <th scope="row"><?php esc_html_e( 'Use subdirectory for default language', 'translatepress-multilingual' ); ?> </th>
+                <th scope="row"><?php esc_html_e( 'Use a subdirectory for the default language', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <select id="trp-subdirectory-for-default-language" name="trp_settings[add-subdirectory-to-default-language]" class="trp-select">
                         <option value="no" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'no' ); ?>><?php esc_html_e( 'No', 'translatepress-multilingual') ?></option>
                         <option value="yes" <?php selected( $this->settings['add-subdirectory-to-default-language'], 'yes' ); ?>><?php esc_html_e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
                     <p class="description">
-                        <?php echo wp_kses ( __( 'Select Yes if you want to add the subdirectory in the url for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the "All Languages" list.', 'translatepress-multilingual' ), array( 'br' => array() )  ); ?>
+                        <?php echo wp_kses ( __( 'Select Yes if you want to add the subdirectory in the URL for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the "All Languages" list.', 'translatepress-multilingual' ), array( 'br' => array() )  ); ?>
                     </p>
                 </td>
             </tr>
@@ -119,7 +119,7 @@
                             <?php
                             $link_start = '<a href="' . esc_url( admin_url( 'nav-menus.php' ) ) .'">';
                             $link_end = '</a>';
-                            printf( wp_kses( __( 'Go to  %1$s Appearance -> Menus%2$s to add Language Switcher Languages in any menu.', 'translatepress-multilingual' ), [ 'a' => [ 'href' => [] ] ] ), $link_start, $link_end ); ?>
+                            printf( wp_kses( __( 'Go to  %1$s Appearance -> Menus%2$s to add languages to the Language Switcher in any menu.', 'translatepress-multilingual' ), [ 'a' => [ 'href' => [] ] ] ), $link_start, $link_end ); ?>
                             <a href="https://translatepress.com/docs/settings/#language-switcher"><?php esc_html_e( 'Learn more in our documentation.', 'translatepress-multilingual' ); ?></a>
                         </p>
                     </div>
@@ -129,7 +129,7 @@
                             <?php $this->output_language_switcher_select( 'floater-options', $this->settings['floater-options'] ); ?>
                         </div>
                         <p class="description">
-                            <?php esc_html_e( 'Have a floating dropdown following the user on every page.', 'translatepress-multilingual' ); ?>
+                            <?php esc_html_e( 'Add a floating dropdown that follows the user on every page.', 'translatepress-multilingual' ); ?>
                         </p>
                     </div>
                 </td>
