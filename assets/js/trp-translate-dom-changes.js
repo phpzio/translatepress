@@ -387,6 +387,9 @@ function TRP_Translator(){
      */
     this.initialize = function() {
         this.is_editor = (typeof window.parent.tpEditorApp !== 'undefined' )
+        if ( this.is_editor ) {
+            trp_data['gettranslationsnonceregular'] = window.parent.trp_dynamic_nonce;
+        }
 
         current_language = trp_data.trp_current_language;
         original_language = trp_data.trp_original_language;
