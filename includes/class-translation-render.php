@@ -210,7 +210,7 @@ class TRP_Translation_Render{
 	 * @return string
 	 */
     public function trim_translation_block( $string ){
-	    return preg_replace('/\s+/', ' ', strip_tags( html_entity_decode( htmlspecialchars_decode( trp_full_trim( $string ), ENT_QUOTES ) ) ));
+	    return preg_replace('/\s+/', ' ', wp_strip_all_tags ( html_entity_decode( htmlspecialchars_decode( trp_full_trim( $string ), ENT_QUOTES ) ) ));
     }
 
     /**
