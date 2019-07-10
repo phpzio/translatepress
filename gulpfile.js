@@ -54,7 +54,7 @@ gulp.task( 'pot', function () {
             domain: 'translatepress-multilingual',
             package: 'TranslatePress Multilingual'
         }) )
-        .pipe( gulp.dest( 'languages/translatepress-multilingual.pot' ) );
+        .pipe( gulp.dest( 'languages/translatepress-multilingual.pot', { cwd: './../translatepress' } ) );
 });
 
 //create a php catalog that contain all the strings in the pot. this will reside in the translation folder and is used for translate.wordpress.org when they scan for the strings and the string is not in the free version
