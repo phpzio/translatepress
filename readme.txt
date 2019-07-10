@@ -5,7 +5,7 @@ Tags: translate, translation, multilingual, automatic translation, bilingual, fr
 Requires at least: 3.1.0
 Tested up to: 5.2.2
 Requires PHP: 5.6.20
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,6 +142,22 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
+= 1.5.1 =
+* Added maximum possible size to srcset for translated images
+* Added compatibility with Query Monitor plugin
+* Better handling of licenses when pro addons are active
+* Improved descriptions in settings page and other places
+* Added filter to allow translation of href as an exception
+* Fixed translation blocks not working on live in some edge cases
+* Fixed translation block created in secondary language not working when strings were already translated
+* Fixed JS error when dynamic translation is disabled by filter
+* Fixed translating dynamic strings in Editor when viewing as Logged out
+* Fixed page titles containing special characters not being translated
+* Fixed title attribute not being translated
+* Fixed certain custom WooCommerce permalinks not working on translated products
+* Fixed pencil icon not showing for WooCommerce product images in Shop page on certain themes
+* Fixed modifying wp_mail headers when we didn't have to
+
 = 1.5.0 =
 * Fixed some dynamic images not showing up in translated pages.
 
@@ -499,3 +515,41 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 = 1.0.0 =
 * Initial release.
 
+
+
+    1.5.1
+    d213c69 Fixed previous commit on placeholder
+db1c2ef Merged in iss6118 (pull request #225)
+3e4bf1c Fixed placeholder attribute not being translated for inputs
+a74a536 Merged in iss6112 (pull request #224)
+7f322d7 Use wp_strip_all_tags instead of strip_tags for trimming translation blocks
+4d0f6ee internationalized the account page
+bb2d4cf Merged in iss6076 (pull request #223)
+b70c061 Add filter to allow translation of href as an exception. Fixed trpTranslator in iframe not adding GET preview paramater when dynamic detection is disabled
+418e26d Merge branch 'master' of bitbucket.org:cozmoslabs/translatepress
+8fc9eb6 modified some strgings
+5abc297 Merged in iss6084 (pull request #222)
+c330958 Fiexd variable trpTranslator is undefined when dynamic detection is turned off by filter
+6c41e99 Merged in iss6083 (pull request #221)
+9ac9a0d Updated comment
+4980236 Fixed translate-dom-changes not working in Editor when viewing as logged out
+b4d1049 Merged in iss6088 (pull request #220)
+a466ddf modify just the subject and message is they exist in wp_mail filter with translatepress
+e8b9d1a Merged in iss6029 (pull request #219)
+344fbd5 Fixed custom WooCommerce permalinks not working on translated products
+dcc6dac Merged in iss6059 (pull request #218)
+a53dc2b Fixed page title not being translated in live mode
+17c40b9 removed an unwanted file and small readme changes
+0e06384 update readme.txt to include image translation
+0be0f51 Merged in iss6048 (pull request #217)
+d964287 Fix pencil icon not showing for WooCommerce product images in Shop page on Hestia
+3bc9c2a Merged in iss6051 (pull request #216)
+9a0bcb3 Fixed title not being translated
+07b0a77 Merged in iss6002 (pull request #215)
+7f69260 Added compatibility with Query Monitor
+ea400a3 Merged in iss6003 (pull request #214)
+160c1a4 Fixed Translation block created in secondary language didn't work when strings are already translated
+e15f6cd Merge branch 'master' of bitbucket.org:cozmoslabs/translatepress
+10ab44e handle the case in which the user did not enter a licence but has active pro addons for license notices
+1db7f92 Merged in iss6016 (pull request #213)
+9490c54 Added maximum possible sizes to srcset of translated images
