@@ -1139,7 +1139,7 @@ class TRP_Translation_Render{
 			    'attribute' => true
 		    ),
 		    'placeholder' => array(
-		    	'selector' => 'input[type=\'text\'][placeholder],input[type=\'password\'][placeholder],input[type=\'search\'][placeholder],input[type=\'email\'][placeholder],textarea[placeholder]',
+			    'selector' => 'input[placeholder]','textarea[placeholder]',
 			    'accessor' => 'placeholder',
 			    'attribute' => true
 		    ),
