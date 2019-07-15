@@ -750,3 +750,48 @@ function trp_qm_strip_gettext( $data ){
 	}
 	return $data;
 }
+
+/**
+ * Compatibility with SeedProd Coming Soon
+ *
+ * Manually include the scripts and styles if do_action('enqueue_scripts') is not called
+ */
+add_filter( 'trp_translated_html', 'trp_force_include_scripts', 10, 4 );
+function trp_force_include_scripts( $final_html, $TRP_LANGUAGE, $language_code, $preview_mode ){
+	if ( $preview_mode ){
+		$trp = TRP_Translate_Press::get_trp_instance();
+		$translation_render = $trp->get_component( 'translation_render' );
+		$trp_data = $translation_render->get_trp_data();
+
+		$scripts_and_styles = apply_filters('trp_editor_missing_scripts_and_styles', array(
+			'jquery'                        => "<script type='text/javascript' src='" . includes_url( '/js/jquery/jquery.js' ) . "'></script>",
+			'trp-iframe-preview-script.js'  => "<script type='text/javascript' src='" . TRP_PLUGIN_URL . "assets/js/trp-iframe-preview-script.js'></script>",
+			'trp-translate-dom-changes.js'  => "<script>trp_data = '" . addslashes(json_encode($trp_data) ) . "'; trp_data = JSON.parse(trp_data);</script><script type='text/javascript' src='" . TRP_PLUGIN_URL . "assets/js/trp-translate-dom-changes.js'></script>",
+			'trp-preview-iframe-style-css'  => "<link rel='stylesheet' id='trp-preview-iframe-style-css'  href='" . TRP_PLUGIN_URL . "assets/css/trp-preview-iframe-style.css' type='text/css' media='all' />",
+			'dashicons'                     => "<link rel='stylesheet' id='dashicons-css'  href='" . includes_url( '/css/dashicons.min.css' ) . "' type='text/css' media='all' />"
+		));
+
+		$missing_script = '';
+		foreach($scripts_and_styles as $key => $value ){
+			if ( strpos( $final_html, $key ) === false ){
+				$missing_script .= $value;
+			}
+		}
+
+		if ( $missing_script !== '' ){
+			$html = TranslatePress\str_get_html( $final_html, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT );
+			if ( $html === false ) {
+				return $final_html;
+			}
+
+			$body = $html->find( 'body', 0 );
+			if ( $body ) {
+				$body->innertext = $body->innertext . $missing_script;
+			}
+
+			$final_html = $html->save();
+		}
+	}
+	return $final_html;
+}
+
