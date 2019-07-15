@@ -743,7 +743,7 @@ class TRP_Translation_Render{
         /* perform preg replace on the remaining trp-gettext tags */
         $final_html = $this->remove_trp_html_tags( $final_html );
 
-	    return apply_filters( 'trp_translated_html', $final_html, $TRP_LANGUAGE, $language_code );
+	    return apply_filters( 'trp_translated_html', $final_html, $TRP_LANGUAGE, $language_code, $preview_mode );
     }
 
     /*
@@ -1188,6 +1188,41 @@ class TRP_Translation_Render{
 
 	}
 
+	public function get_trp_data(){
+		global $TRP_LANGUAGE;
+
+		$trp = TRP_Translate_Press::get_trp_instance();
+		if ( ! $this->translation_manager ) {
+			$this->translation_manager = $trp->get_component( 'translation_manager' );
+		}
+		$nonces = $this->translation_manager->editor_nonces();
+
+		$language_to_query = $TRP_LANGUAGE;
+		if ( $TRP_LANGUAGE == $this->settings['default-language']  ) {
+			foreach ($this->settings['translation-languages'] as $language) {
+				if ( $language != $this->settings['default-language'] ) {
+					$language_to_query = $language;
+					break;
+				}
+			}
+		}
+		$language_to_query = ( count ( $this->settings['translation-languages'] ) < 2 ) ? '' : $language_to_query;
+
+		return array(
+			'trp_custom_ajax_url'                 => apply_filters('trp_custom_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
+			'trp_wp_ajax_url'                     => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
+			'trp_language_to_query'               => $language_to_query,
+			'trp_original_language'               => $this->settings['default-language'],
+			'trp_current_language'                => $TRP_LANGUAGE,
+			'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trp-translate-id-innertext]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ), // data-trp-translate-id-innertext refers to translation block and it shouldn't be detected
+			'trp_base_selectors'                  => $this->get_base_attribute_selectors(),
+			'trp_attributes_selectors'            => $this->get_node_accessors(),
+			'trp_attributes_accessors'            => $this->get_accessors_array(),
+			'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
+			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
+		);
+	}
+
     /**
      * Enqueue dynamic translation script.
      */
@@ -1200,38 +1235,9 @@ class TRP_Translation_Render{
         global $TRP_LANGUAGE;
 
         if ( $TRP_LANGUAGE != $this->settings['default-language'] || ( isset( $_REQUEST['trp-edit-translation'] ) && $_REQUEST['trp-edit-translation'] == 'preview' ) ) {
-            $language_to_query = $TRP_LANGUAGE;
-            if ( $TRP_LANGUAGE == $this->settings['default-language']  ) {
-                foreach ($this->settings['translation-languages'] as $language) {
-                    if ( $language != $this->settings['default-language'] ) {
-                        $language_to_query = $language;
-                        break;
-                    }
-                }
-            }
-	        $language_to_query = ( count ( $this->settings['translation-languages'] ) < 2 ) ? '' : $language_to_query;
-
-	        $trp = TRP_Translate_Press::get_trp_instance();
-	        if ( ! $this->translation_manager ) {
-		        $this->translation_manager = $trp->get_component( 'translation_manager' );
-	        }
-	        $nonces = $this->translation_manager->editor_nonces();
-            $trp_data = array(
-                'trp_custom_ajax_url'                 => apply_filters('trp_custom_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
-				'trp_wp_ajax_url'                     => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
-				'trp_language_to_query'               => $language_to_query,
-				'trp_original_language'               => $this->settings['default-language'],
-				'trp_current_language'                => $TRP_LANGUAGE,
-				'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trp-translate-id-innertext]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ), // data-trp-translate-id-innertext refers to translation block and it shouldn't be detected
-				'trp_base_selectors'                  => $this->get_base_attribute_selectors(),
-				'trp_attributes_selectors'            => $this->get_node_accessors(),
-				'trp_attributes_accessors'            => $this->get_accessors_array(),
-				'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
-				'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
-            );
 
             wp_enqueue_script('trp-dynamic-translator', TRP_PLUGIN_URL . 'assets/js/trp-translate-dom-changes.js', array('jquery'), TRP_PLUGIN_VERSION, true );
-            wp_localize_script('trp-dynamic-translator', 'trp_data', $trp_data);
+            wp_localize_script('trp-dynamic-translator', 'trp_data', $this->get_trp_data() );
         }
     }
 
