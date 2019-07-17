@@ -153,3 +153,19 @@ input.trp-translation-published{
     line-height: 29px;
     color:#ca4a1f;
 }
+
+/* Advanced Settings Page */
+
+table.trp-adst-list-option{
+    width: 1px;
+    margin-left: -30px
+}
+table.trp-adst-list-option td{
+    padding: 5px;
+}
+table.trp-adst-list-option th{
+    text-align: center;
+}
+.trp-add-list-entry{
+
+}

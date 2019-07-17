@@ -185,6 +185,22 @@ jQuery( function() {
         };
     };
 
+    function TRP_Advanced_Settings_List( element ){
+        var _this = this;
+
+        // add event listener on ADD button
+        element.querySelector('trp-adst-button-add-new-item').addEventListener("click", function(){
+
+            // add new entry in database table
+            //
+            // element.copy
+        } );
+
+        this.add_new_item_to_list = function ( element ) {
+
+        };
+    }
+
     var trpSettingsLanguages = new TRP_Settings_Language_Selector();
 
     jQuery('#trp-default-language').on("select2:selecting", function(e) {
@@ -193,6 +209,12 @@ jQuery( function() {
 
     var trpGoogleTranslate = TRP_Field_Toggler();
     trpGoogleTranslate.init('#trp-g-translate', '#trp-g-translate-key', 'yes' );
+
+    var trpListOptions = document.querySelectorAll( '.trp-add-list-entry' );
+    for ( var i = 0 ; i < trpListOptions.length ; i++ ){
+        trpAdvancedSettingsList = new TRP_Advanced_Settings_List( trpListOptions[i] );
+    }
+
 
 });
 

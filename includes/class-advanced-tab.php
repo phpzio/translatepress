@@ -95,21 +95,52 @@ class TRP_Advanced_Tab {
 	 */
 	public function add_to_list_setting( $setting ){
 		$option = get_option( 'trp_advanced_settings', true );
-		$checked = ( isset( $option[ $setting['name'] ] ) && $option[ $setting['name'] ] === 'yes' ) ? 'checked' : '';
 		$html = "
              <tr>
                 <th scope='row'>" . $setting['label'] . "</th>
                 <td>
-	                <label>
-	                    <input type='checkbox' id='" . $setting['name'] . "' name='trp_advanced_settings[" . $setting['name'] . "]' value='yes' " . $checked . ">
-	                    " . __('Yes', 'translatepress-multilingual' ). "
-			        </label>
-                    <p class='description'>
+	                <table class='trp-adst-list-option'>
+						<thead>
+							";
+		foreach( $setting['columns'] as $key => $value ){
+			$html .= '<th><strong>' . $value . '</strong></th>';
+		}
+		//"Remove" button
+		$html .= "<th></th>";
+
+		// list existing entries
+		$html .= "		</thead>";
+
+		$first_column = '';
+		foreach( $setting['columns'] as $column => $column_name ) {
+			$first_column = $column;
+			break;
+		}
+		if ( isset( $option[ $setting['name'] ] ) && is_array( $option[ $setting['name'] ] ) ) {
+			foreach ( $option[ $setting['name'] ][ $first_column ] as $index ) {
+				$html .= "<tr>";
+				foreach ( $setting['columns'] as $column => $column_name ) {
+					$html .= "<td><textarea disabled value='" . $option[ $setting['name'] ][ $column ][ $index ] . "' name='trp_advanced_settings[" . $setting['name'] . "][" . $column . "][]'></textarea></td>";
+				}
+				$html .= "<td><span>" . __( 'Remove', 'translatepress-multilingual' ) . "</span></td>";
+				$html .= "</tr>";
+			}
+		}
+
+		// add new entry to list
+		$html .= "<tr class='trp-add-list-entry'>";
+		foreach( $setting['columns'] as $column => $column_name ) {
+			$html .= "<td><textarea id='new_entry_" . $setting['name'] . "_" . $column . "' data-setting-name='" . $setting['name'] . "' data-column-name='" . $column . "'></textarea></td>";
+		}
+		$html .= "<td><input type='button' class='button-secondary trp-adst-button-add-new-item' value='" . __( 'Add', 'translatepress-multilingual' ) . "'></td>";
+		$html .= "</tr></table>";
+
+		$html .= "<p class='description'>
                         " . $setting['description'] . "
                     </p>
                 </td>
             </tr>";
-		return apply_filters('trp_advanced_setting_checkbox', $html );
+		return apply_filters( 'trp_advanced_setting_checkbox', $html );
 	}
 
 }

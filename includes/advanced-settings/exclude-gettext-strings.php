@@ -1,10 +1,14 @@
 <?php
 
 add_filter( 'trp_register_advanced_settings', 'trp_register_exclude_gettext_strings' );
-function trp_register_disable_dynamic_translation( $settings_array ){
+function trp_register_exclude_gettext_strings( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'exclude_gettext_strings',
 		'type'          => 'list',
+		'columns'       => array(
+								'string' => __('Gettext String', 'translatepress-multilingual' ),
+								'domain' => __('Domain', 'translatepress-multilingual')
+							),
 		'label'         => esc_html__( 'Exclude Gettext Strings', 'translatepress-multilingual' ),
 		'description'   => wp_kses( __( 'Exclude these strings from being translated as Gettext strings. <br/>Can still be translated as regular strings.', 'translatepress-multilingual' ), array( 'br' => array() ) ),
 	);
