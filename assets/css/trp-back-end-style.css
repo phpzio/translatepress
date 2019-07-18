@@ -166,6 +166,13 @@ table.trp-adst-list-option td{
 table.trp-adst-list-option th{
     text-align: center;
 }
-.trp-add-list-entry{
-
+.trp-adst-list-option textarea{
+    width: 250px;
+}
+.trp-adst-remove-element{
+    color: #a00;
+    cursor: pointer;
+}
+.trp-adst-remove-element:hover{
+    color: red;
 }

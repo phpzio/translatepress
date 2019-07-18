@@ -185,20 +185,39 @@ jQuery( function() {
         };
     };
 
-    function TRP_Advanced_Settings_List( element ){
-        var _this = this;
+    function TRP_Advanced_Settings_List( table ){
 
-        // add event listener on ADD button
-        element.querySelector('trp-adst-button-add-new-item').addEventListener("click", function(){
+        var _this = this
 
-            // add new entry in database table
-            //
-            // element.copy
-        } );
+        this.addEventHandlers = function( table ){
+            var add_list_entry = table.querySelector( '.trp-add-list-entry' );
 
-        this.add_new_item_to_list = function ( element ) {
+            // add event listener on ADD button
+            add_list_entry.querySelector('.trp-adst-button-add-new-item').addEventListener("click", function(){
 
-        };
+                var clone = add_list_entry.cloneNode(true)
+
+                clone.querySelector( '.trp-adst-button-add-new-item' ).style.display = 'none'
+                clone.querySelector( '.trp-adst-remove-element' ).style.display = 'block'
+
+                var item_inserted = add_list_entry.parentElement.insertBefore( clone, add_list_entry );
+
+                var removeButton = item_inserted.querySelector('.trp-adst-remove-element');
+                removeButton.addEventListener("click", _this.remove_item );
+            });
+
+            var removeButtons = table.querySelectorAll( '.trp-adst-remove-element' );
+            for( var i = 0 ; i < removeButtons.length ; i++ ) {
+                removeButtons[i].addEventListener("click", _this.remove_item)
+            }
+        }
+        this.remove_item = function( event ){
+            if ( confirm( event.target.getAttribute( 'data-confirm-message' ) ) ){
+                jQuery( event.target ).closest( '.trp-list-entry' ).remove()
+            }
+        }
+
+        _this.addEventHandlers( table )
     }
 
     var trpSettingsLanguages = new TRP_Settings_Language_Selector();
@@ -210,9 +229,10 @@ jQuery( function() {
     var trpGoogleTranslate = TRP_Field_Toggler();
     trpGoogleTranslate.init('#trp-g-translate', '#trp-g-translate-key', 'yes' );
 
-    var trpListOptions = document.querySelectorAll( '.trp-add-list-entry' );
+    // var trpListOptions = document.querySelectorAll( '.trp-add-list-entry' );
+    var trpListOptions = document.querySelectorAll( '.trp-adst-list-option' );
     for ( var i = 0 ; i < trpListOptions.length ; i++ ){
-        trpAdvancedSettingsList = new TRP_Advanced_Settings_List( trpListOptions[i] );
+        new TRP_Advanced_Settings_List( trpListOptions[i] );
     }
 
 

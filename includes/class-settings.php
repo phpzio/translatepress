@@ -296,7 +296,7 @@ class TRP_Settings{
             );
         }
 
-        if ( $hook == 'settings_page_translate-press' ) {
+        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_advanced_page' ) {
             wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery', 'jquery-ui-sortable' ), TRP_PLUGIN_VERSION );
             if ( ! $this->trp_languages ){
                 $trp = TRP_Translate_Press::get_trp_instance();

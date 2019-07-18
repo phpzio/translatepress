@@ -28,6 +28,15 @@ class TRP_Advanced_Tab {
 		) );
 	}
 
+	/**
+	 * Register setting
+	 *
+	 * Hooked to admin_init
+	 */
+	public function register_setting(){
+		register_setting( 'trp_settings', 'trp_settings', array( $this, 'sanitize_settings' ) );
+	}
+
 	/*
 	 * Advanced page content
 	 */
@@ -118,21 +127,21 @@ class TRP_Advanced_Tab {
 		}
 		if ( isset( $option[ $setting['name'] ] ) && is_array( $option[ $setting['name'] ] ) ) {
 			foreach ( $option[ $setting['name'] ][ $first_column ] as $index ) {
-				$html .= "<tr>";
+				$html .= "<tr class='trp-list-entry'>";
 				foreach ( $setting['columns'] as $column => $column_name ) {
 					$html .= "<td><textarea disabled value='" . $option[ $setting['name'] ][ $column ][ $index ] . "' name='trp_advanced_settings[" . $setting['name'] . "][" . $column . "][]'></textarea></td>";
 				}
-				$html .= "<td><span>" . __( 'Remove', 'translatepress-multilingual' ) . "</span></td>";
+				$html .= "<td><span class='trp-adst-remove-element' data-confirm-message='" . __('Are you sure you want to remove this item?', 'translatepress-multilingual') . "'>" . __( 'Remove', 'translatepress-multilingual' ) . "</span></td>";
 				$html .= "</tr>";
 			}
 		}
 
 		// add new entry to list
-		$html .= "<tr class='trp-add-list-entry'>";
+		$html .= "<tr class='trp-add-list-entry trp-list-entry'>";
 		foreach( $setting['columns'] as $column => $column_name ) {
-			$html .= "<td><textarea id='new_entry_" . $setting['name'] . "_" . $column . "' data-setting-name='" . $setting['name'] . "' data-column-name='" . $column . "'></textarea></td>";
+			$html .= "<td><textarea id='new_entry_" . $setting['name'] . "_" . $column . "' name='trp_advanced_settings[" . $setting['name'] . "][" . $column . "][]' data-setting-name='" . $setting['name'] . "' data-column-name='" . $column . "'></textarea></td>";
 		}
-		$html .= "<td><input type='button' class='button-secondary trp-adst-button-add-new-item' value='" . __( 'Add', 'translatepress-multilingual' ) . "'></td>";
+		$html .= "<td><input type='button' class='button-secondary trp-adst-button-add-new-item' value='" . __( 'Add', 'translatepress-multilingual' ) . "'><span class='trp-adst-remove-element' style='display: none;' data-confirm-message='" . __('Are you sure you want to remove this item?', 'translatepress-multilingual') . "'>" . __( 'Remove', 'translatepress-multilingual' ) . "</span></td>";
 		$html .= "</tr></table>";
 
 		$html .= "<p class='description'>
