@@ -18,20 +18,15 @@ function trp_register_exclude_gettext_strings( $settings_array ){
 /**
  * Exclude gettext from being translated
  */
-//add_filter('gettext', 'trpc_exclude_strings', 1000, 3 );
+add_filter('gettext', 'trpc_exclude_strings', 1000, 3 );
 function trpc_exclude_strings ($translation, $text, $domain ){
-	// domain and string
+	$option = get_option( 'trp_advanced_settings', true );
+	if ( isset( $option['exclude_gettext_strings'] ) ) {
 
-	if ( $domain == 'wprentals-core' || $domain == 'wprentals' ) {
-		$exclude_strings = array(
-			'Reservation fee',
-			'Listing',
-			'Upgrade to Featured',
-			'Publish Listing with Featured',
-			'Package'
-		);
-		if ( in_array( $text, $exclude_strings ) ) {
-			return $text;
+		foreach( $option['exclude_gettext_strings']['domain'] as $key => $value ){
+			if ( $domain === $value && $text === $option['exclude_gettext_strings']['string'][$key] ){
+				return $text;
+			}
 		}
 	}
 	return $translation;

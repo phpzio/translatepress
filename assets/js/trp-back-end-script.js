@@ -185,6 +185,9 @@ jQuery( function() {
         };
     };
 
+    /*
+     * Manage adding and removing items from an option of tpe list from Advanced Settings page
+     */
     function TRP_Advanced_Settings_List( table ){
 
         var _this = this
@@ -197,12 +200,27 @@ jQuery( function() {
 
                 var clone = add_list_entry.cloneNode(true)
 
+                // Show Add button, hide Remove button
                 clone.querySelector( '.trp-adst-button-add-new-item' ).style.display = 'none'
                 clone.querySelector( '.trp-adst-remove-element' ).style.display = 'block'
 
-                var item_inserted = add_list_entry.parentElement.insertBefore( clone, add_list_entry );
+                // Add row with new item in the html table
+                var itemInserted = add_list_entry.parentElement.insertBefore( clone, add_list_entry );
 
-                var removeButton = item_inserted.querySelector('.trp-adst-remove-element');
+                // Set name attributes
+                var dataNames = clone.querySelectorAll( '[data-name]' )
+                for( var i = 0 ; i < dataNames.length ; i++ ) {
+                    dataNames[i].setAttribute( 'name', dataNames[i].getAttribute('data-name') );
+                }
+
+                // Reset values of textareas with new items
+                var dataValues = add_list_entry.querySelectorAll( '[data-name]' )
+                for( var i = 0 ; i < dataValues.length ; i++ ) {
+                    dataValues[i].value = ''
+                }
+
+                // Add click listener on new row's Remove button
+                var removeButton = itemInserted.querySelector('.trp-adst-remove-element');
                 removeButton.addEventListener("click", _this.remove_item );
             });
 
@@ -211,6 +229,7 @@ jQuery( function() {
                 removeButtons[i].addEventListener("click", _this.remove_item)
             }
         }
+
         this.remove_item = function( event ){
             if ( confirm( event.target.getAttribute( 'data-confirm-message' ) ) ){
                 jQuery( event.target ).closest( '.trp-list-entry' ).remove()
@@ -229,7 +248,7 @@ jQuery( function() {
     var trpGoogleTranslate = TRP_Field_Toggler();
     trpGoogleTranslate.init('#trp-g-translate', '#trp-g-translate-key', 'yes' );
 
-    // var trpListOptions = document.querySelectorAll( '.trp-add-list-entry' );
+    // Options of type List adding, from Advanced Settings page
     var trpListOptions = document.querySelectorAll( '.trp-adst-list-option' );
     for ( var i = 0 ; i < trpListOptions.length ; i++ ){
         new TRP_Advanced_Settings_List( trpListOptions[i] );
