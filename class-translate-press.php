@@ -164,6 +164,7 @@ class TRP_Translate_Press{
 	    $this->loader->add_action( 'admin_menu', $this->advanced_tab, 'add_submenu_page_advanced' );
 	    $this->loader->add_action( 'trp_output_advanced_settings_options', $this->advanced_tab, 'output_advanced_options' );
 	    $this->loader->add_action( 'admin_init', $this->advanced_tab, 'register_setting' );
+	    $this->loader->add_action( 'admin_notices', $this->advanced_tab, 'admin_notices' );
 
 
 	    $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations', $this->editor_api_regular_strings, 'get_translations' );

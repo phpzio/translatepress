@@ -37,6 +37,16 @@ class TRP_Advanced_Tab {
 		register_setting( 'trp_advanced_settings', 'trp_advanced_settings', array( $this, 'sanitize_settings' ) );
 	}
 
+	/**
+	 * Output admin notices after saving settings.
+	 */
+	public function admin_notices(){
+		settings_errors( 'trp_advanced_settings' );
+	}
+
+	/*
+	 * Sanitize settings
+	 */
 	public function sanitize_settings( $submitted_settings ){
 		$registered_settings = $this->get_settings();
 		$settings = array();
@@ -81,6 +91,7 @@ class TRP_Advanced_Tab {
 				}
 			}
 		}
+		add_settings_error( 'trp_advanced_settings', 'settings_updated', __( 'Settings saved.' ), 'updated' );
 
 		return apply_filters( 'trp_extra_sanitize_advanced_settings', $settings, $submitted_settings );
 	}

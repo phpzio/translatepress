@@ -1,6 +1,6 @@
 <?php
 
-add_filter( 'trp_register_advanced_settings', 'trp_register_disable_dynamic_translation' );
+add_filter( 'trp_register_advanced_settings', 'trp_register_disable_dynamic_translation', 8 );
 function trp_register_disable_dynamic_translation( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'disable_dynamic_translation',
