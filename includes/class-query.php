@@ -159,6 +159,10 @@ class TRP_Query{
             $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
             $this->db->query( $sql_index );
 
+            // full text index for original
+            $sql_index = "CREATE FULLTEXT INDEX original_fulltext ON `" . $table_name . "`(original);";
+            $this->db->query( $sql_index );
+
 	        //syncronize all translation blocks.
             $this->copy_all_translation_blocks_into_table( $default_language, $language_code );
         }else{
@@ -210,6 +214,10 @@ class TRP_Query{
             dbDelta( $sql );
 
             $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
+            $this->db->query( $sql_index );
+
+            // full text index for original
+            $sql_index = "CREATE FULLTEXT INDEX original_fulltext ON `" . $table_name . "`(original);";
             $this->db->query( $sql_index );
         }
     }
@@ -645,6 +653,20 @@ class TRP_Query{
 		    }
 	    }
 	    return $return_tables;
+    }
+
+    public function get_all_gettext_table_names(){
+        global $wpdb;
+        $table_name = $wpdb->get_blog_prefix() . 'trp_gettext_';
+        $return_tables = array();
+
+        $table_names = $this->db->get_results( "SHOW TABLES LIKE '$table_name%'", ARRAY_N );
+        foreach ( $table_names as $table_name ){
+            if ( isset( $table_name[0]) ) {
+                $return_tables[] = $table_name[0];
+            }
+        }
+        return $return_tables;
     }
 
 	public function update_translation_blocks_by_original( $table_names, $original_array, $block_type ) {
