@@ -58,7 +58,8 @@ class TRP_Upgrade {
             $this->add_full_text_index_to_tables();
         }
 
-        if(version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '!=' )){
+        // don't update the db version unless they are different. Otherwise the query is run on every page load.
+        if( version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '!=' ) ){
             update_option( 'trp_plugin_version', TRP_PLUGIN_VERSION );
 		}
 	}
@@ -453,7 +454,7 @@ class TRP_Upgrade {
 
         foreach (array_merge($table_names, $gettext_table_names) as $table_name){
             $possible_index = "SHOW INDEX FROM {$table_name} WHERE Key_name = 'original_fulltext';";
-            if ($this->db->query($possible_index) !== 1){
+            if ($this->db->query($possible_index) === 1){
                 continue;
             };
 
