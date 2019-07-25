@@ -9,7 +9,7 @@ function trp_register_skip_dynamic_selectors( $settings_array ){
 			'selector' => __('Selector', 'translatepress-multilingual' ),
 		),
 		'label'         => esc_html__( 'Exclude from dynamic translation', 'translatepress-multilingual' ),
-		'description'   => wp_kses( __( 'Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of a HTML node matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible.', 'translatepress-multilingual' ), array( 'br' => array() ) ),
+		'description'   => wp_kses( __( 'Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible.', 'translatepress-multilingual' ), array( 'br' => array() ) ),
 	);
 	return $settings_array;
 }
