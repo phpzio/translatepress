@@ -75,7 +75,6 @@
             ajax_url='<?php echo esc_url( apply_filters( 'trp_wp_ajax_url', admin_url( 'admin-ajax.php' ) ) ); ?>'
             string_group_order='<?php echo esc_attr( json_encode( $string_groups ) ); ?>'
             merge_rules='<?php echo esc_attr( json_encode( $translation_manager->get_merge_rules() ) ); ?>'
-            localized_text='<?php echo esc_attr( json_encode( $translation_manager->localized_text() ) ); ?>'
             paid_version="<?php echo esc_attr( trp_is_paid_version() ? 'true' : 'false' ); ?>"
             flags_path="<?php echo esc_attr( json_encode( $flags_path ) ); ?>"
         >

@@ -182,6 +182,9 @@ class TRP_Translation_Manager{
         wp_enqueue_style( 'trp-editor-style', TRP_PLUGIN_URL . 'assets/css/trp-editor.css', array('dashicons', 'buttons'), TRP_PLUGIN_VERSION );
         wp_enqueue_script( 'trp-editor',  TRP_PLUGIN_URL . 'assets/js/trp-editor.js', array(), TRP_PLUGIN_VERSION );
 
+        wp_localize_script( 'trp-editor', 'trp_localized_strings', $this->localized_text() );
+
+
         // Show upload media dialog in default language
 	    switch_to_locale( $this->settings['default-language'] );
 	    // Necessary for add media button
