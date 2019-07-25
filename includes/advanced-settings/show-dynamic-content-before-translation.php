@@ -1,6 +1,6 @@
 <?php
 
-add_filter( 'trp_register_advanced_settings', 'trp_register_show_dynamic_content_before_translation', 7 );
+add_filter( 'trp_register_advanced_settings', 'trp_register_show_dynamic_content_before_translation', 20 );
 function trp_register_show_dynamic_content_before_translation( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'show_dynamic_content_before_translation',

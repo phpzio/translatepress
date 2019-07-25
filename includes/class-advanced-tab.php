@@ -130,13 +130,13 @@ class TRP_Advanced_Tab {
 	public function output_advanced_options(){
 		$advanced_settings_array = $this->get_settings();
 		foreach( $advanced_settings_array as $setting ){
-			if ( $setting['type'] === 'checkbox' ){
-				echo $this->checkbox_setting( $setting );
-			}
-		}
-		foreach( $advanced_settings_array as $setting ){
-			if ( $setting['type'] === 'list' ){
-				echo $this->add_to_list_setting( $setting );
+			switch( $setting['type'] ){
+				case 'checkbox':
+					echo $this->checkbox_setting( $setting );
+					break;
+				case 'list':
+					echo $this->add_to_list_setting( $setting );
+					break;
 			}
 		}
 	}

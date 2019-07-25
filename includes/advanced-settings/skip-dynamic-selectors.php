@@ -1,6 +1,6 @@
 <?php
 
-add_filter( 'trp_register_advanced_settings', 'trp_register_skip_dynamic_selectors' );
+add_filter( 'trp_register_advanced_settings', 'trp_register_skip_dynamic_selectors', 110 );
 function trp_register_skip_dynamic_selectors( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'skip_dynamic_selectors',

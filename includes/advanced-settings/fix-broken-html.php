@@ -1,6 +1,6 @@
 <?php
 
-add_filter( 'trp_register_advanced_settings', 'trp_register_fix_broken_html', 12 );
+add_filter( 'trp_register_advanced_settings', 'trp_register_fix_broken_html', 50 );
 function trp_register_fix_broken_html( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'fix_broken_html',
