@@ -25,6 +25,30 @@
 <?php __("Limit this menu item to the following languages", "translatepress-multilingual"); ?>
 <?php __("The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when submitting the sitemap to Google.", "translatepress-multilingual"); ?>
 <?php __("Post Slug", "translatepress-multilingual"); ?>
+<?php __("Disable dynamic translation", "translatepress-multilingual"); ?>
+<?php __("It disables detection of strings displayed dynamically using JavaScript. <br/>Strings loaded via a server side AJAX call will still be translated.", "translatepress-multilingual"); ?>
+<?php __("Automatically translate slugs", "translatepress-multilingual"); ?>
+<?php __("Generate automatic translations of slugs for posts, pages and Custom Post Types.<br/>Requires <a href=\"https://translatepress.com/docs/addons/seo-pack/\" title=\"TranslatePress Add-on SEO Pack documentation\" target=\"_blank\"> SEO Pack Add-on</a> to be installed and activated.", "translatepress-multilingual"); ?>
+<?php __("Gettext String", "translatepress-multilingual"); ?>
+<?php __("Domain", "translatepress-multilingual"); ?>
+<?php __("Exclude Gettext Strings", "translatepress-multilingual"); ?>
+<?php __("Exclude these strings from being translated as Gettext strings. <br/>Can still be translated as regular strings.", "translatepress-multilingual"); ?>
+<?php __("Fix broken HTML", "translatepress-multilingual"); ?>
+<?php __("General attempt to fix broken or missing HTML on translated pages.<br/><strong>Only try this if the \"Fix spaces between html attribute\" did not solve the issue.</strong>", "translatepress-multilingual"); ?>
+<?php __("Fix spaces between HTML attributes", "translatepress-multilingual"); ?>
+<?php __("Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages.", "translatepress-multilingual"); ?>
+<?php __("Show dynamic content before translation", "translatepress-multilingual"); ?>
+<?php __("Shows dynamically inserted content in original language for a moment before the translation request is finished. <br> May help fix missing content inserted using JavaScript.", "translatepress-multilingual"); ?>
+<?php __("Selector", "translatepress-multilingual"); ?>
+<?php __("Exclude from dynamic translation", "translatepress-multilingual"); ?>
+<?php __("Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible.", "translatepress-multilingual"); ?>
+<?php __("Filter Gettext wrapping from post content and title", "translatepress-multilingual"); ?>
+<?php __("Filters gettext wrapping such as #!trpst#trp-gettext from all updated post content and post title. Does not affect previous post content. <br/><strong>Database backup is recommended before switching on.</strong>", "translatepress-multilingual"); ?>
+<?php __("Filter Gettext wrapping from post meta", "translatepress-multilingual"); ?>
+<?php __("Filters gettext wrapping such as #!trpst#trp-gettext from all updated post meta. Does not affect previous post meta. <br/><strong>Database backup is recommended before switching on.</strong>", "translatepress-multilingual"); ?>
+<?php __("Advanced", "translatepress-multilingual"); ?>
+<?php __("Yes", "translatepress-multilingual"); ?>
+<?php __("Are you sure you want to remove this item?", "translatepress-multilingual"); ?>
 <?php __("An error occurred, please try again.", "translatepress-multilingual"); ?>
 <?php __("Your license key expired on %s.", "translatepress-multilingual"); ?>
 <?php __("Your license key has been disabled.", "translatepress-multilingual"); ?>
@@ -153,6 +177,8 @@
 <?php __("Free Addons", "translatepress-multilingual"); ?>
 <?php __("Extend your translation plugin with these free addons.", "translatepress-multilingual"); ?>
 <?php __("Use GET parameter to encode language in the url, replacing the language directory. </br> Your urls will look like this: www.example.com?lang=en", "translatepress-multilingual"); ?>
+<?php __("TranslatePress Advanced Settings", "translatepress-multilingual"); ?>
+<?php __("Save Changes", "translatepress-multilingual"); ?>
 <?php __("Active on this site", "translatepress-multilingual"); ?>
 <?php __("Your license is invalid", "translatepress-multilingual"); ?>
 <?php __("If you do not have any of the <a href=\"%s\">Advanced or Pro Addons</a> activated you do not need a license key", "translatepress-multilingual"); ?>
@@ -167,7 +193,6 @@
 <?php __("replace the default flag", "translatepress-multilingual"); ?>
 <?php __("Native language name", "translatepress-multilingual"); ?>
 <?php __("No", "translatepress-multilingual"); ?>
-<?php __("Yes", "translatepress-multilingual"); ?>
 <?php __("Select Yes if you want to display languages in their native names. Otherwise, languages will be displayed in English.", "translatepress-multilingual"); ?>
 <?php __("Use a subdirectory for the default language", "translatepress-multilingual"); ?>
 <?php __("Select Yes if you want to add the subdirectory in the URL for the default language.</br>By selecting Yes, the default language seen by website visitors will become the first one in the \"All Languages\" list.", "translatepress-multilingual"); ?>
