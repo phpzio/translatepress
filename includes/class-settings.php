@@ -287,7 +287,7 @@ class TRP_Settings{
      * @param string $hook          Admin page.
      */
     public function enqueue_scripts_and_styles( $hook ) {
-        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_license_key' || $hook == 'admin_page_trp_addons_page' ) {
+        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_license_key' || $hook == 'admin_page_trp_addons_page' || $hook == 'admin_page_trp_advanced_page' ) {
             wp_enqueue_style(
                 'trp-settings-style',
                 TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css',
@@ -296,7 +296,7 @@ class TRP_Settings{
             );
         }
 
-        if ( $hook == 'settings_page_translate-press' ) {
+        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_advanced_page' ) {
             wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery', 'jquery-ui-sortable' ), TRP_PLUGIN_VERSION );
             if ( ! $this->trp_languages ){
                 $trp = TRP_Translate_Press::get_trp_instance();
@@ -379,7 +379,7 @@ class TRP_Settings{
      *
      */
     public function add_navigation_tabs(){
-        $tabs = apply_filters( 'trp_settings_tabs', array(
+        $tabs = array(
             array(
                 'name'  => __( 'General', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'options-general.php?page=translate-press' ),
@@ -389,13 +389,12 @@ class TRP_Settings{
                 'name'  => __( 'Translate Site', 'translatepress-multilingual' ),
                 'url'   => add_query_arg( 'trp-edit-translation', 'true', home_url() ),
                 'page'  => 'trp_translation_editor'
-            )
-        ));
-
-        $tabs[] = array(
-            'name'  => __( 'Addons', 'translatepress-multilingual' ),
-            'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
-            'page'  => 'trp_addons_page'
+            ),
+	        array(
+		        'name'  => __( 'Addons', 'translatepress-multilingual' ),
+		        'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
+		        'page'  => 'trp_addons_page'
+	        )
         );
 
         if( class_exists('TRP_LICENSE_PAGE') ) {
@@ -405,6 +404,8 @@ class TRP_Settings{
                 'page'  => 'trp_license_key'
             );
         }
+
+	    $tabs = apply_filters( 'trp_settings_tabs', $tabs );
 
         $active_tab = 'translate-press';
         if ( isset( $_GET['page'] ) ){

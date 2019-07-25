@@ -22,6 +22,7 @@ class TRP_Translate_Press{
     protected $upgrade;
     protected $plugin_updater;
     protected $license_page;
+    protected $advanced_tab;
     public $active_pro_addons = array();
     public static $translate_press = null;
 
@@ -88,6 +89,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-uri.php';
 	    require_once TRP_PLUGIN_DIR . 'includes/class-upgrade.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-plugin-notices.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-advanced-tab.php';
         require_once TRP_PLUGIN_DIR . 'includes/external-functions.php';
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
@@ -98,6 +100,9 @@ class TRP_Translate_Press{
      * Instantiates components.
      */
     protected function initialize_components() {
+	    $this->advanced_tab               = new TRP_Advanced_Tab();
+	    $this->advanced_tab->include_custom_codes();
+
         $this->loader                     = new TRP_Hooks_Loader();
         $this->languages                  = new TRP_Languages();
         $this->settings                   = new TRP_Settings();
@@ -154,6 +159,12 @@ class TRP_Translate_Press{
         $this->loader->add_filter( 'plugin_action_links_' . TRP_PLUGIN_BASE , $this->settings, 'plugin_action_links', 10, 1 );
         $this->loader->add_action( 'trp_settings_navigation_tabs', $this->settings, 'add_navigation_tabs' );
         $this->loader->add_action( 'trp_language_selector', $this->settings, 'languages_selector', 10, 1 );
+
+	    $this->loader->add_action( 'trp_settings_tabs', $this->advanced_tab, 'add_advanced_tab_to_settings', 10, 1 );
+	    $this->loader->add_action( 'admin_menu', $this->advanced_tab, 'add_submenu_page_advanced' );
+	    $this->loader->add_action( 'trp_output_advanced_settings_options', $this->advanced_tab, 'output_advanced_options' );
+	    $this->loader->add_action( 'admin_init', $this->advanced_tab, 'register_setting' );
+	    $this->loader->add_action( 'admin_notices', $this->advanced_tab, 'admin_notices' );
 
 
 	    $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations', $this->editor_api_regular_strings, 'get_translations' );

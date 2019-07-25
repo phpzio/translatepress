@@ -185,6 +185,60 @@ jQuery( function() {
         };
     };
 
+    /*
+     * Manage adding and removing items from an option of tpe list from Advanced Settings page
+     */
+    function TRP_Advanced_Settings_List( table ){
+
+        var _this = this
+
+        this.addEventHandlers = function( table ){
+            var add_list_entry = table.querySelector( '.trp-add-list-entry' );
+
+            // add event listener on ADD button
+            add_list_entry.querySelector('.trp-adst-button-add-new-item').addEventListener("click", function(){
+
+                var clone = add_list_entry.cloneNode(true)
+
+                // Show Add button, hide Remove button
+                clone.querySelector( '.trp-adst-button-add-new-item' ).style.display = 'none'
+                clone.querySelector( '.trp-adst-remove-element' ).style.display = 'block'
+
+                // Add row with new item in the html table
+                var itemInserted = add_list_entry.parentElement.insertBefore( clone, add_list_entry );
+
+                // Set name attributes
+                var dataNames = clone.querySelectorAll( '[data-name]' )
+                for( var i = 0 ; i < dataNames.length ; i++ ) {
+                    dataNames[i].setAttribute( 'name', dataNames[i].getAttribute('data-name') );
+                }
+
+                // Reset values of textareas with new items
+                var dataValues = add_list_entry.querySelectorAll( '[data-name]' )
+                for( var i = 0 ; i < dataValues.length ; i++ ) {
+                    dataValues[i].value = ''
+                }
+
+                // Add click listener on new row's Remove button
+                var removeButton = itemInserted.querySelector('.trp-adst-remove-element');
+                removeButton.addEventListener("click", _this.remove_item );
+            });
+
+            var removeButtons = table.querySelectorAll( '.trp-adst-remove-element' );
+            for( var i = 0 ; i < removeButtons.length ; i++ ) {
+                removeButtons[i].addEventListener("click", _this.remove_item)
+            }
+        }
+
+        this.remove_item = function( event ){
+            if ( confirm( event.target.getAttribute( 'data-confirm-message' ) ) ){
+                jQuery( event.target ).closest( '.trp-list-entry' ).remove()
+            }
+        }
+
+        _this.addEventHandlers( table )
+    }
+
     var trpSettingsLanguages = new TRP_Settings_Language_Selector();
 
     jQuery('#trp-default-language').on("select2:selecting", function(e) {
@@ -193,6 +247,13 @@ jQuery( function() {
 
     var trpGoogleTranslate = TRP_Field_Toggler();
     trpGoogleTranslate.init('#trp-g-translate', '#trp-g-translate-key', 'yes' );
+
+    // Options of type List adding, from Advanced Settings page
+    var trpListOptions = document.querySelectorAll( '.trp-adst-list-option' );
+    for ( var i = 0 ; i < trpListOptions.length ; i++ ){
+        new TRP_Advanced_Settings_List( trpListOptions[i] );
+    }
+
 
 });
 
