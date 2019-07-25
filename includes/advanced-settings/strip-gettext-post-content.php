@@ -1,5 +1,5 @@
 <?php
-add_filter( 'trp_register_advanced_settings', 'trp_register_strip_gettext_post_content', 15 );
+add_filter( 'trp_register_advanced_settings', 'trp_register_strip_gettext_post_content', 60 );
 function trp_register_strip_gettext_post_content( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'strip_gettext_post_content',

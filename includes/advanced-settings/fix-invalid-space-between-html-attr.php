@@ -1,6 +1,6 @@
 <?php
 
-add_filter( 'trp_register_advanced_settings', 'trp_register_fix_invalid_space_between_html_attr', 11 );
+add_filter( 'trp_register_advanced_settings', 'trp_register_fix_invalid_space_between_html_attr', 40 );
 function trp_register_fix_invalid_space_between_html_attr( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'fix_invalid_space_between_html_attr',

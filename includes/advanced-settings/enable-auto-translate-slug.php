@@ -1,6 +1,6 @@
 <?php
 
-add_filter( 'trp_register_advanced_settings', 'trp_register_enable_auto_translate_slug', 30 );
+add_filter( 'trp_register_advanced_settings', 'trp_register_enable_auto_translate_slug', 80 );
 function trp_register_enable_auto_translate_slug( $settings_array ){
 	$settings_array[] = array(
 		'name'          => 'enable_auto_translate_slug',
