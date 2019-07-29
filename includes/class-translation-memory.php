@@ -15,10 +15,10 @@ class TRP_Translation_Memory {
         $this->db = $wpdb;
         $this->settings = $settings;
 
-        $trp = TRP_Translate_Press::get_trp_instance();
-        if ( ! $this->trp_query ) {
-            $this->trp_query = $trp->get_component( 'query' );
-        }
+        //$trp = TRP_Translate_Press::get_trp_instance();
+        //if ( ! $this->trp_query ) {
+            //$this->trp_query = $trp->get_component( 'query' );
+        //}
     }
 
     /**
@@ -45,7 +45,12 @@ class TRP_Translation_Memory {
      * @return array                    Array with (original => translated ) pairs based on the number of strings we should account for. Empty array if nothing is found.
      */
     public function get_similar_string_translation_multiple( $strings, $language ){
+        if ( !isset( $this->settings['advanced_settings']['enable_translation_memory'] ) || $this->settings['advanced_settings']['enable_translation_memory'] !== "yes" ){
+            return array();
+        }
 
+
+        return array();
     }
 
     /**
