@@ -164,7 +164,7 @@
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 mergeRules                : JSON.parse( this.merge_rules ),
-                editorStrings             : JSON.parse( this.localized_text ),
+                editorStrings             : trp_localized_strings,
                 flagsPath                 : JSON.parse( this.flags_path ),
                 //data
                 currentLanguage           : this.current_language,
