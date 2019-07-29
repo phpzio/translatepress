@@ -51,6 +51,12 @@ class TRP_Advanced_Tab {
 		$registered_settings = $this->get_settings();
 		$settings = array();
 		foreach ( $registered_settings as $registered_setting ){
+
+		    // checkboxes are not set so we're setting them up as false
+            if(!isset( $submitted_settings[$registered_setting['name']] )){
+                $submitted_settings[$registered_setting['name']] = false;
+            }
+
 			if ( isset( $submitted_settings[$registered_setting['name']] ) ){
 				switch ($registered_setting['type'] ) {
 					case 'checkbox': {
