@@ -212,6 +212,24 @@ function trp_elementor_compatibility( $allow_redirect ){
 }
 add_filter( 'trp_allow_language_redirect', 'trp_elementor_compatibility' );
 
+/**
+ * Remove '?fl_builder' query param from edit translation url (when clicking the admin bar button to enter the translation Editor)
+ *
+ * Otherwise after publishing out of BB and clicking TP admin bar button, it’s still showing the BB interface
+ *
+ * @param $url
+ *
+ * @return bool
+ */
+function trp_beaver_builder_compatibility( $url ){
+
+    $url = remove_query_arg('fl_builder', $url );
+
+    return esc_url ($url);
+
+}
+add_filter( 'trp_edit_translation_url', 'trp_beaver_builder_compatibility' );
+
 
 /**
  * Mb Strings missing PHP library error notice
