@@ -244,7 +244,8 @@ class TRP_Translation_Manager{
 	        }
 
 	        $url = $this->url_converter->cur_page_url();
-	        $url = add_query_arg( 'trp-edit-translation', 'true', $url );
+
+	        $url = apply_filters( 'trp_edit_translation_url', add_query_arg( 'trp-edit-translation', 'true', $url ) );
 
             $title = __( 'Translate Page', 'translatepress-multilingual' );
             $url_target = '';
