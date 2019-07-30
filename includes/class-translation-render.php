@@ -13,7 +13,9 @@ class TRP_Translation_Render{
 	/* @var TRP_Url_Converter */
     protected $url_converter;
     /* @var TRP_Translation_Manager */
-	protected $translation_manager;
+    protected $translation_manager;
+    /* @var TRP_Translation_Memory */
+    protected $translation_memory;
 
     /**
      * TRP_Translation_Render constructor.
@@ -1066,6 +1068,32 @@ class TRP_Translation_Render{
 
         $this->trp_query->insert_strings( $new_strings, $language_code, $block_type );
         $this->trp_query->update_strings( $update_strings, $language_code, array( 'id','original', 'translated', 'status' ) );
+
+        $trp = TRP_Translate_Press::get_trp_instance();
+        if ( ! $this->translation_memory ) {
+            $this->translation_memory = $trp->get_component( 'translation_memory' );
+        }
+
+        // translation memory
+        $time_start = microtime(true);
+        foreach( array_diff_key( $translateable_strings, $translated_strings ) as $key => $string ){
+            if(strlen($string) < $this->settings['advanced_settings']['translation_memory_min_chars'] ){
+                continue;
+            }
+
+            $possible_strings = $this->translation_memory->get_similar_string_translation($string, $language_code, 1);
+            foreach ($possible_strings as $possible_string) {
+                $similarity = similar_text($string, $possible_string['original'], $percent);
+                if ( $percent > $this->settings['advanced_settings']['translation_memory_min_similarity'] ){
+                    $translated_strings[$key] = $possible_string['translated'];
+                }
+
+
+            }
+        }
+
+        $time_end = microtime(true);
+        $execution_time = ($time_end - $time_start) . ' sec';
 
         return $translated_strings;
     }
