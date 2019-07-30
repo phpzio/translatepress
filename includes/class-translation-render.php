@@ -1070,7 +1070,7 @@ class TRP_Translation_Render{
         $this->trp_query->update_strings( $update_strings, $language_code, array( 'id','original', 'translated', 'status' ) );
 
         // translation memory
-        if( !(isset( $this->settings['advanced_settings']['enable_translation_memory'] ) && $this->settings['advanced_settings']['enable_translation_memory'] === "yes") ){
+        if( !(isset( $this->settings['advanced_settings']['enable_translation_memory'] ) && $this->settings['advanced_settings']['enable_translation_memory'] === "yes") || isset($_GET['trp-edit-translation']) ){
             return $translated_strings; // exit early for translation memory.
         }
 
@@ -1089,6 +1089,10 @@ class TRP_Translation_Render{
                 $similarity = similar_text($string, $possible_string['original'], $percent);
                 if ( $percent > $this->settings['advanced_settings']['translation_memory_min_similarity'] ){
                     $translated_strings[$key] = $possible_string['translated'];
+
+                    if( current_user_can(manage_options) || current_user_can('translate_strings') ){
+                        $translated_strings[$key] = '<trp-span style="background-color: #feffc2;" title="Suggested translation from string ~'. esc_attr($possible_string['original']) .'~ . This notice is only visible by an admin.">' . $possible_string['translated'] . '</trp-span>';
+                    }
                 }
 
 
