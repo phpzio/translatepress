@@ -1069,13 +1069,16 @@ class TRP_Translation_Render{
         $this->trp_query->insert_strings( $new_strings, $language_code, $block_type );
         $this->trp_query->update_strings( $update_strings, $language_code, array( 'id','original', 'translated', 'status' ) );
 
+        // translation memory
+        if( !(isset( $this->settings['advanced_settings']['enable_translation_memory'] ) && $this->settings['advanced_settings']['enable_translation_memory'] === "yes") ){
+            return $translated_strings; // exit early for translation memory.
+        }
+
         $trp = TRP_Translate_Press::get_trp_instance();
         if ( ! $this->translation_memory ) {
             $this->translation_memory = $trp->get_component( 'translation_memory' );
         }
 
-        // translation memory
-        $time_start = microtime(true);
         foreach( array_diff_key( $translateable_strings, $translated_strings ) as $key => $string ){
             if(strlen($string) < $this->settings['advanced_settings']['translation_memory_min_chars'] ){
                 continue;
@@ -1091,9 +1094,6 @@ class TRP_Translation_Render{
 
             }
         }
-
-        $time_end = microtime(true);
-        $execution_time = ($time_end - $time_start) . ' sec';
 
         return $translated_strings;
     }
