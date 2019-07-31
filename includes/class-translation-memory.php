@@ -73,6 +73,8 @@ class TRP_Translation_Memory {
                 wp_die();
             }
         }
+        return json_encode(array());
+        wp_die();
     }
 
     /**
