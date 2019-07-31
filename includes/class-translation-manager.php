@@ -168,6 +168,7 @@ class TRP_Translation_Manager{
             'splittbnonce'                  => wp_create_nonce('split_translation_block'),
             'mergetbnonce'                  => wp_create_nonce('merge_translation_block'),
             'logged_out'                    => wp_create_nonce('trp_view_aslogged_out' . get_current_user_id()),
+            'getsimilarstring'              => wp_create_nonce('getsimilarstring'),
 		);
 
 		return apply_filters( 'trp_editor_nonces', $nonces );

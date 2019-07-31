@@ -50,6 +50,32 @@ class TRP_Translation_Memory {
     }
 
     /**
+     * Ajax Callback for getting similar translations for strings.
+     *
+     *
+     * @param string    $string         The original string we're searching a similar one.
+     * @param string    $language_code  The original string we're searching a similar one.
+     * @param int       $number         The original string we're searching a similar one.
+     * @return array                    Array with (original => translated ) pairs based on the number of strings we should account for. Empty array if nothing is found.
+     */
+    public function ajax_get_similar_string_translation(){
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            if (isset($_POST['action']) && $_POST['action'] === 'trp_get_similar_string_translation' && !empty($_POST['original_string']) && !empty($_POST['language']) && in_array($_POST['language'], $this->settings['translation-languages']) )
+            {
+                check_ajax_referer('getsimilarstring', 'security');
+                $string = ( isset($_POST['original_string']) ) ? $_POST['original_string'] : '';
+                $language_code = ( isset($_POST['language']) ) ? $_POST['language'] : TRP_LANGUAGE;
+                $number = ( isset($_POST['number']) ) ? $_POST['number'] : 3;
+
+                $current_language = sanitize_text_field($_POST['language']);
+                $dictionary = $this->get_similar_string_translation($string, $language_code, $number);
+                echo json_encode($dictionary);
+                wp_die();
+            }
+        }
+    }
+
+    /**
      * Finding similar gettext strings in the database and returning an array with possible translations.
      *
      *

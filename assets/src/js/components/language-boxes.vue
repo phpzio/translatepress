@@ -25,18 +25,8 @@
                                 <div class="trp-attribute-name"  v-show="dictionary[selectedIndex].attribute != 'content' || dictionary[selectedIndex].attribute != ''">{{ ( editorStrings[ dictionary[selectedIndex].attribute ] ) ? editorStrings[ dictionary[selectedIndex].attribute ] : editorStrings.text }}</div>
                                 <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }" :title="editorStrings.discard_individual_changes_title_attribute">{{ editorStrings.discard }}</div>
                             </div>
-
                             <div class="trp-translation-memory-wrap" v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
-                                <details open="open">
-                                    <summary>Suggestions From Translation Memory</summary>
-                                    <div class="trp-translation-memory-suggestions">
-                                        <ul>
-                                            <li>Suggestion One</li>
-                                            <li>Suggestion Two</li>
-                                            <li>Suggestion Three</li>
-                                        </ul>
-                                    </div>
-                                </details>
+                                <translation-memory :string="dictionary[selectedIndex]" v-model="dictionary[selectedIndex].translationsArray[languageCode].editedTranslation" :editorStrings="editorStrings" :ajax_url="ajax_url" :nonces="nonces"></translation-memory>
                             </div>
 
                         </div>
@@ -54,6 +44,7 @@
 
 <script>
     import translationInput from './translation-input.vue'
+    import translationMemory from './translation-memory.vue'
     export default{
         props:[
             'selectedIndexesArray',
@@ -65,7 +56,9 @@
             'showChangesUnsavedMessage',
             'editorStrings',
             'flagsPath',
-            'iframe'
+            'iframe',
+            'nonces',
+            'ajax_url'
         ],
         data(){
             return{
@@ -78,7 +71,8 @@
             }
         },
         components:{
-            translationInput
+            translationInput,
+            translationMemory
         },
         mounted(){
             this.determineLanguageOrder()
