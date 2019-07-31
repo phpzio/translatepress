@@ -5,7 +5,7 @@ Tags: translate, translation, multilingual, automatic translation, bilingual, fr
 Requires at least: 3.1.0
 Tested up to: 5.2.2
 Requires PHP: 5.6.20
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,8 +142,10 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
-= 1.5.2 =
+= 1.5.3 =
 * Fixed blank page when opening Translation Editor in some localized languages
+
+= 1.5.2 =
 * Added -Advanced- tab with various custom settings
 * Added compatibility to allow translating SeedProd plugin Coming Soon page
 
