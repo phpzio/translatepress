@@ -3124,7 +3124,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3617,10 +3616,12 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var simplediff__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! simplediff */ "./node_modules/simplediff/simplediff.js");
-/* harmony import */ var simplediff__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(simplediff__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! string-similarity */ "./node_modules/string-similarity/compare-strings.js");
-/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(string_similarity__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var autosize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! autosize */ "./node_modules/autosize/dist/autosize.js");
+/* harmony import */ var autosize__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(autosize__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var simplediff__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! simplediff */ "./node_modules/simplediff/simplediff.js");
+/* harmony import */ var simplediff__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(simplediff__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! string-similarity */ "./node_modules/string-similarity/compare-strings.js");
+/* harmony import */ var string_similarity__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(string_similarity__WEBPACK_IMPORTED_MODULE_3__);
 //
 //
 //
@@ -3638,17 +3639,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['value', 'string', 'editorStrings', 'ajax_url', 'nonces', 'language'],
+  props: ['value', 'string', 'editorStrings', 'ajax_url', 'nonces', 'languageCode', 'inputValue'],
   data: function data() {
     return {
       suggestions: [],
       available_suggestions: false,
       similarity: 0,
-      mystring: this.string
+      currentstring: this.string
     };
   },
   mounted: function mounted() {
@@ -3660,39 +3664,26 @@ __webpack_require__.r(__webpack_exports__);
       data.append('action', 'trp_get_similar_string_translation');
       data.append('security', this.nonces['getsimilarstring']);
       data.append('original_string', this.string.original);
-      data.append('language', this.language);
+      data.append('language', this.languageCode);
+      data.append('selector', this.string.selector);
       data.append('number', 3);
       var self = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(this.ajax_url, data).then(function (response) {
         var suggestions = response.data;
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var i;
 
-        try {
-          for (var _iterator = suggestions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var suggestion = _step.value;
-            suggestion['similarity'] = Math.round(string_similarity__WEBPACK_IMPORTED_MODULE_2___default.a.compareTwoStrings(self.string.original, suggestion['original']) * 10000) / 100;
-            suggestion['original'] = simplediff__WEBPACK_IMPORTED_MODULE_1___default.a.htmlDiff(self.string.original, suggestion['original']);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-              _iterator["return"]();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
+        for (i = suggestions.length - 1; i >= 0; --i) {
+          suggestions[i]['similarity'] = Math.round(string_similarity__WEBPACK_IMPORTED_MODULE_3___default.a.compareTwoStrings(self.string.original, suggestions[i]['original']) * 100);
+          suggestions[i]['original'] = simplediff__WEBPACK_IMPORTED_MODULE_2___default.a.htmlDiff(self.string.original, suggestions[i]['original']);
+
+          if (suggestions[i]['similarity'] < 10) {
+            suggestions.splice(i, 1); // drop suggestions less then 70%
           }
         }
 
         self.suggestions = suggestions;
 
-        if (self.suggestions.length > 0) {
+        if (suggestions.length > 0) {
           self.available_suggestions = true;
         }
       })["catch"](function (error) {
@@ -3700,10 +3691,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     copy: function copy(translated) {
-      //let self = this
-      //self.string = 'basdjksdfjkdfs';
-      console.log(this.mystring);
-      this.mystring.translationsArray[this.language].editedTranslation = translated;
+      this.currentstring.translationsArray[this.languageCode].editedTranslation = translated; //autosize.update(document.querySelectorAll('.trp-textarea'))
+      //console.log(document.querySelectorAll('.trp-textarea'))
     }
   }
 });
@@ -6045,24 +6034,6 @@ var render = function() {
                                             ajax_url: _vm.ajax_url,
                                             nonces: _vm.nonces,
                                             languageCode: languageCode
-                                          },
-                                          model: {
-                                            value:
-                                              _vm.dictionary[selectedIndex]
-                                                .translationsArray[languageCode]
-                                                .editedTranslation,
-                                            callback: function($$v) {
-                                              _vm.$set(
-                                                _vm.dictionary[selectedIndex]
-                                                  .translationsArray[
-                                                  languageCode
-                                                ],
-                                                "editedTranslation",
-                                                $$v
-                                              )
-                                            },
-                                            expression:
-                                              "dictionary[selectedIndex].translationsArray[languageCode].editedTranslation"
                                           }
                                         })
                                       ],
@@ -6301,78 +6272,84 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "p",
-      {
-        directives: [
+  return _c(
+    "div",
+    [
+      _c(
+        "p",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: !_vm.available_suggestions,
+              expression: "!available_suggestions"
+            }
+          ],
+          staticClass: "trp-no-available-suggestions"
+        },
+        [_vm._v("No available suggestions")]
+      ),
+      _vm._v(" "),
+      _c("transition", { attrs: { name: "fade" } }, [
+        _c(
+          "details",
           {
-            name: "show",
-            rawName: "v-show",
-            value: !_vm.available_suggestions,
-            expression: "!available_suggestions"
-          }
-        ]
-      },
-      [_vm._v("No available suggestions")]
-    ),
-    _vm._v(" "),
-    _c(
-      "details",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.available_suggestions,
-            expression: "available_suggestions"
-          }
-        ],
-        attrs: { open: "open" }
-      },
-      [
-        _c("summary", [_vm._v("Suggestions From Translation Memory")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "trp-translation-memory-suggestions" }, [
-          _c(
-            "ul",
-            _vm._l(_vm.suggestions, function(suggestion, index) {
-              return _c(
-                "li",
-                {
-                  key: index,
-                  on: {
-                    click: function($event) {
-                      _vm.copy(suggestion.translated)
-                    }
-                  }
-                },
-                [
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(suggestion.similarity) +
-                      "% "
-                  ),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("span", {
-                    domProps: { innerHTML: _vm._s(suggestion.original) }
-                  }),
-                  _c("br"),
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(suggestion.translated) +
-                      "\n                "
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.available_suggestions,
+                expression: "available_suggestions"
+              }
+            ],
+            attrs: { open: "open" }
+          },
+          [
+            _c("summary", [_vm._v("Suggestions From Translation Memory")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "trp-translation-memory-suggestions" }, [
+              _c(
+                "ul",
+                _vm._l(_vm.suggestions, function(suggestion, index) {
+                  return _c(
+                    "li",
+                    {
+                      key: index,
+                      attrs: { title: "Click to Copy" },
+                      on: {
+                        click: function($event) {
+                          _vm.copy(suggestion.translated)
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "percentage" }, [
+                        _c("span", [
+                          _vm._v(_vm._s(suggestion.similarity) + "%")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "translated" }, [
+                        _vm._v(_vm._s(suggestion.translated))
+                      ]),
+                      _vm._v(" "),
+                      _c("span", {
+                        staticClass: "original",
+                        domProps: { innerHTML: _vm._s(suggestion.original) }
+                      })
+                    ]
                   )
-                ]
+                }),
+                0
               )
-            }),
-            0
-          )
-        ])
-      ]
-    )
-  ])
+            ])
+          ]
+        )
+      ])
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

@@ -24,11 +24,20 @@ class TRP_Translation_Memory {
      *
      * @param string    $string         The original string we're searching a similar one.
      * @param string    $language_code  The language in which we want to search for the similar translated string.
+     * @param string    $table          The table where we should look for similar strings in. Default dictionary.
      * @param int       $number         The number of similar strings we want to return.
      * @return array                    Array with (original => translated ) pairs based on the number of strings we should account for. Empty array if nothing is found.
      */
-    public function get_similar_string_translation( $string, $language_code, $number ){
+    public function get_similar_string_translation( $string, $language_code, $number, $table_name ){
+        error_log($string);
+        error_log($language_code);
+        error_log($number);
+        error_log($table_name);
         if ( !isset( $this->settings['advanced_settings']['enable_translation_memory'] ) || $this->settings['advanced_settings']['enable_translation_memory'] !== "yes" ){
+            return array();
+        }
+
+        if( empty($table_name) ){
             return array();
         }
 
@@ -39,36 +48,47 @@ class TRP_Translation_Memory {
 
         $query = '';
         $query .= "SELECT original,translated, status FROM `"
-                 . sanitize_text_field( $this->trp_query->get_table_name( $language_code ) )
+                 . sanitize_text_field( $table_name )
                  . "` WHERE status != " . TRP_Query::NOT_TRANSLATED . " AND `original` != '%s' AND MATCH(original) AGAINST ('%s' IN NATURAL LANGUAGE MODE ) LIMIT " . $number;
 
-
         $query = $this->db->prepare( $query, array($string, $string) );
-        $dictionary = $this->db->get_results( $query, ARRAY_A );
+        error_log($query);
+        error_log('--------------------------------------');
+        $result = $this->db->get_results( $query, ARRAY_A );
 
-        return $dictionary;
+        return $result;
     }
 
     /**
      * Ajax Callback for getting similar translations for strings.
      *
-     *
-     * @param string    $string         The original string we're searching a similar one.
-     * @param string    $language_code  The original string we're searching a similar one.
-     * @param int       $number         The original string we're searching a similar one.
-     * @return array                    Array with (original => translated ) pairs based on the number of strings we should account for. Empty array if nothing is found.
+     * @return string       Json Array with (original => translated ) pairs based on the number of strings we should account for. Empty json array if nothing is found.
      */
     public function ajax_get_similar_string_translation(){
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            if (isset($_POST['action']) && $_POST['action'] === 'trp_get_similar_string_translation' && !empty($_POST['original_string']) && !empty($_POST['language']) && in_array($_POST['language'], $this->settings['translation-languages']) )
+            if (isset($_POST['action']) && $_POST['action'] === 'trp_get_similar_string_translation' && !empty($_POST['original_string']) && !empty($_POST['language']) && !empty($_POST['selector']) && in_array($_POST['language'], $this->settings['translation-languages']) )
             {
                 check_ajax_referer('getsimilarstring', 'security');
                 $string = ( isset($_POST['original_string']) ) ? $_POST['original_string'] : '';
                 $language_code = ( isset($_POST['language']) ) ? $_POST['language'] : TRP_LANGUAGE;
+                $selector = ( isset($_POST['selector']) ) ? $_POST['selector'] : '';
                 $number = ( isset($_POST['number']) ) ? $_POST['number'] : 3;
-
                 $current_language = sanitize_text_field($_POST['language']);
-                $dictionary = $this->get_similar_string_translation($string, $language_code, $number);
+
+                $trp = TRP_Translate_Press::get_trp_instance();
+                if ( ! $this->trp_query ) {
+                    $this->trp_query = $trp->get_component( 'query' );
+                }
+
+
+                // data-trp-translate-id, data-trp-translate-id-innertext are in the wp_trp_dictionary_* tables
+                $table_name = $this->trp_query->get_table_name( $language_code );
+
+                if($selector === "data-trpgettextoriginal"){
+                    $table_name = $this->trp_query->get_gettext_table_name( $language_code );
+                }
+
+                $dictionary = $this->get_similar_string_translation($string, $language_code, $number, $table_name);
                 echo json_encode($dictionary);
                 wp_die();
             }
@@ -76,18 +96,4 @@ class TRP_Translation_Memory {
         return json_encode(array());
         wp_die();
     }
-
-    /**
-     * Finding similar gettext strings in the database and returning an array with possible translations.
-     *
-     *
-     * @param string    $string         The original string we're searching a similar one.
-     * @param string    $language_code  The original string we're searching a similar one.
-     * @param int       $number         The original string we're searching a similar one.
-     * @return array                    Array with (original => translated ) pairs based on the number of strings we should account for. Empty array if nothing is found.
-     */
-    public function get_similar_gettext_translation( $string, $language_code, $number ){
-        return array();
-    }
-
 }

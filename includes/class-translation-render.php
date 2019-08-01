@@ -1084,7 +1084,7 @@ class TRP_Translation_Render{
                 continue;
             }
 
-            $possible_strings = $this->translation_memory->get_similar_string_translation($string, $language_code, 1);
+            $possible_strings = $this->translation_memory->get_similar_string_translation($string, $language_code, 1, $this->trp_query->get_table_name($language_code));
             foreach ($possible_strings as $possible_string) {
                 $similarity = similar_text($string, $possible_string['original'], $percent);
                 if ( $percent > $this->settings['advanced_settings']['translation_memory_min_similarity'] ){

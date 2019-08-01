@@ -1155,5 +1155,100 @@ Translation Input component
   /* many screen reader and browser combinations announce broken words as they would appear visually */
 }
 
+/*
+ * Translation Memory Component
+ */
+
+.trp-translation-memory-wrap {
+  font-size: 12px;
+  color: #111;
+}
+
+.trp-no-available-suggestions {
+  margin-top: 0;
+  color: #c1c1c1;
+}
+
+.trp-translation-memory-wrap ul {
+  margin: 12px -12px;
+  padding: 12px;
+  background-color: #f1f1f1;
+}
+
+.trp-translation-memory-wrap ul li {
+  margin-bottom: 10px;
+  padding: 10px 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 26px auto;
+  grid-template-rows: auto;
+  grid-row-gap: 1px;
+  grid-column-gap: 10px;
+}
+
+.trp-translation-memory-wrap ul li:hover {
+  cursor: pointer;
+  background-color: #e2e6f0;
+}
+
+.trp-translation-memory-wrap ul li .percentage {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  justify-self: center;
+  align-self: center;
+  display: table;
+}
+
+.trp-translation-memory-wrap ul li .percentage span {
+  display: table-cell;
+  vertical-align: middle;
+  width: 26px;
+  height: 26px;
+  font-size: 10px;
+  text-align: center;
+  border-radius: 30px;
+  background-color: #caffc3;
+}
+
+.trp-translation-memory-wrap ul li .original {
+  grid-column-start: 2;
+  grid-column-end: 5;
+  grid-row-start: 2;
+  grid-row-end: 2;
+  color: #636363;
+}
+
+.trp-translation-memory-wrap ul li .original ins {
+  text-decoration: none;
+  color: #31843F;
+  background: #B5E1B9;
+}
+
+.trp-translation-memory-wrap ul li .original del {
+  text-decoration: none;
+  color: #9A2323;
+  background-color: #F1ADAD;
+}
+
+.trp-translation-memory-wrap ul li .translated {
+  grid-column-start: 2;
+  grid-column-end: 5;
+  grid-row-start: 1;
+  grid-row-end: 1;
+  color: #111;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
 
 /*# sourceMappingURL=trp-editor.css.map*/
