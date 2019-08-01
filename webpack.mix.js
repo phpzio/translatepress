@@ -16,4 +16,4 @@ mix.js( 'assets/src/js/trp-editor.js', 'assets/js' )
             "jquery" : "jQuery",
         }
     })
-    .sourceMaps();
+    .sourceMaps(true, 'source-map')

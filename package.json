@@ -29,6 +29,8 @@
         "axios": "^0.18.0",
         "he": "^1.2.0",
         "select2": "^4.0.7-rc.0",
+        "simplediff": "^0.1.1",
+        "string-similarity": "^3.0.0",
         "uuid": "^3.3.2",
         "vue": "^2.5.21"
     }

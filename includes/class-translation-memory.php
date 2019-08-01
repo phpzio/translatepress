@@ -40,10 +40,10 @@ class TRP_Translation_Memory {
         $query = '';
         $query .= "SELECT original,translated, status FROM `"
                  . sanitize_text_field( $this->trp_query->get_table_name( $language_code ) )
-                 . "` WHERE status != " . TRP_Query::NOT_TRANSLATED . " AND MATCH(original) AGAINST ('%s' IN NATURAL LANGUAGE MODE ) LIMIT " . $number;
+                 . "` WHERE status != " . TRP_Query::NOT_TRANSLATED . " AND `original` != '%s' AND MATCH(original) AGAINST ('%s' IN NATURAL LANGUAGE MODE ) LIMIT " . $number;
 
 
-        $query = $this->db->prepare( $query, $string );
+        $query = $this->db->prepare( $query, array($string, $string) );
         $dictionary = $this->db->get_results( $query, ARRAY_A );
 
         return $dictionary;
