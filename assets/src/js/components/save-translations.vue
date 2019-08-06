@@ -182,6 +182,7 @@
 
                             saveData[languageCode].push( translation )
 
+
                             foundStringsToSave = true
                         }
                     })

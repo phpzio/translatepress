@@ -29,14 +29,6 @@ class TRP_Translation_Memory {
      * @return array                    Array with (original => translated ) pairs based on the number of strings we should account for. Empty array if nothing is found.
      */
     public function get_similar_string_translation( $string, $language_code, $number, $table_name ){
-        error_log($string);
-        error_log($language_code);
-        error_log($number);
-        error_log($table_name);
-        if ( !isset( $this->settings['advanced_settings']['enable_translation_memory'] ) || $this->settings['advanced_settings']['enable_translation_memory'] !== "yes" ){
-            return array();
-        }
-
         if( empty($table_name) ){
             return array();
         }
@@ -52,8 +44,6 @@ class TRP_Translation_Memory {
                  . "` WHERE status != " . TRP_Query::NOT_TRANSLATED . " AND `original` != '%s' AND MATCH(original) AGAINST ('%s' IN NATURAL LANGUAGE MODE ) LIMIT " . $number;
 
         $query = $this->db->prepare( $query, array($string, $string) );
-        error_log($query);
-        error_log('--------------------------------------');
         $result = $this->db->get_results( $query, ARRAY_A );
 
         return $result;
@@ -95,5 +85,27 @@ class TRP_Translation_Memory {
         }
         return json_encode(array());
         wp_die();
+    }
+
+    public function allow_automatic_translation_memory(){
+        $enable_auto_translation_memory = ( isset( $this->settings['advanced_settings']['enable_translation_memory'] ) ) ? $this->settings['advanced_settings']['enable_translation_memory'] : 'off';
+
+        if( isset($_GET['trp-edit-translation']) ){
+            return false; // exit early if we're inside the editor
+        }
+
+        if( $enable_auto_translation_memory === "on-for-admin" && !( current_user_can('manage_options') || current_user_can('translate_strings') ) ) {
+            return false; // exit early if on-for-admin and user is not admin
+        }
+
+        if( $enable_auto_translation_memory === "off" ){
+            return false; // exit early if off
+        }
+
+        if( $enable_auto_translation_memory !== "on-for-all" && $enable_auto_translation_memory !== "on-for-admin" ){
+            return false; // exit early if setting is a weird value. Further code gets executed only if on-for-add is the setting's value
+        }
+
+        return true;
     }
 }

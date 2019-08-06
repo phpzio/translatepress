@@ -4,9 +4,14 @@ add_filter( 'trp_register_advanced_settings', 'trp_register_translation_memory',
 function trp_register_translation_memory( $settings_array ){
     $settings_array[] = array(
         'name'          => 'enable_translation_memory',
-        'type'          => 'checkbox',
+        'type'          => 'radio',
+        'options'       => array('on-for-admin', 'on-for-all', 'off'),
+        'labels'        => array(   esc_html__( 'On for administrators and translators', 'translatepress-multilingual' ),
+                                    esc_html__( 'On for all users (not recommended)', 'translatepress-multilingual' ),
+                                    esc_html__( 'Off', 'translatepress-multilingual' )
+                            ),
         'label'         => esc_html__( 'Automatic Translation Memory', 'translatepress-multilingual' ),
-        'description'   => wp_kses( __( 'For strings without a translation it tries to serve the translation of similar strings.<br/> This is good for when you make small changes to the original content so you do not loose the translation entirely. <br/>Works on the front-end only.', 'translatepress-multilingual' ), array( 'br' => array() ) ),
+        'description'   => wp_kses( __( 'For strings without a translation it tries to serve the translation of similar strings.<br/> This is good for when you make small changes to the original content so you do not loose the translation entirely. <br/>Works on the front-end only. A similar feature is already available in the editor.', 'translatepress-multilingual' ), array( 'br' => array() ) ),
     );
 
     $settings_array[] = array(
@@ -37,7 +42,7 @@ function trp_translation_memory_enable_by_default()
 {
     $option = get_option('trp_advanced_settings', array());
     if (is_array($option) && !isset($option['enable_translation_memory'])) {
-        $option['enable_translation_memory'] = "yes";
+        $option['enable_translation_memory'] = "on-for-admin";
         update_option('trp_advanced_settings', $option);
     }
 

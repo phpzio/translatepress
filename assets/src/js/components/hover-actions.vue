@@ -246,7 +246,8 @@
                             block_type : '1',
                             id         : languageCode,
                             status     : '0',
-                            translated : ''
+                            translated : '',
+                            editedTranslation: ''
                         }
 
                         //populate existing translations

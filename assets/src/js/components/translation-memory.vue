@@ -81,8 +81,11 @@
             },
             copy(translated){
                 this.currentstring.translationsArray[this.languageCode].editedTranslation = translated
-                //autosize.update(document.querySelectorAll('.trp-textarea'))
-                //console.log(document.querySelectorAll('.trp-textarea'))
+
+                // why no store for you? Go with setTimeout.
+                setTimeout(function(){
+                    autosize.update(document.querySelectorAll('.trp-textarea'))
+                }, 50);
             }
         }
     }

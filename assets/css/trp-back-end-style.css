@@ -176,3 +176,10 @@ table.trp-adst-list-option th{
 .trp-adst-remove-element:hover{
     color: red;
 }
+.trp-adst-radio label{
+    display: inline-block;
+    margin-right: 3em;
+}
+.trp-adst-radio .description{
+    margin-top: 2em;
+}

@@ -144,6 +144,9 @@ class TRP_Advanced_Tab {
 				case 'checkbox':
 					echo $this->checkbox_setting( $setting );
 					break;
+                case 'radio':
+                    echo $this->radio_setting( $setting );
+                    break;
                 case 'input':
                     echo $this->input_setting( $setting );
                     break;
@@ -182,6 +185,39 @@ class TRP_Advanced_Tab {
             </tr>";
 		return apply_filters('trp_advanced_setting_checkbox', $html );
 	}
+
+    /**
+     * Return HTML of a radio button type setting
+     *
+     * @param $setting
+     *
+     * @return 'string'
+     */
+    public function radio_setting( $setting ){
+        $adv_options = get_option( 'trp_advanced_settings', true );
+
+        $html = "
+             <tr>
+                <th scope='row'>" . $setting['label'] . "</th>
+                <td class='trp-adst-radio'>";
+
+        foreach($setting[ 'options' ] as $key => $option ){
+            $checked = ( isset( $adv_options[ $setting['name'] ] ) && $adv_options[ $setting['name'] ] === $option ) ? 'checked' : '';
+            $setting_name  = $setting['name'];
+            $label  = $setting[ 'labels' ][$key];
+            $html .= "<label>
+	                    <input type='radio' id='$setting_name' name='trp_advanced_settings[$setting_name]' value='$option' $checked>
+	                    $label
+			          </label>";
+        }
+
+        $html .= "  <p class='description'>
+                        " . $setting['description'] . "
+                    </p>
+                </td>
+            </tr>";
+        return apply_filters('trp_advanced_setting_checkbox', $html );
+    }
 
     /**
      * Return HTML of a input type setting
