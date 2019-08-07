@@ -54,7 +54,7 @@ class TRP_Upgrade {
 			}
 		}
 
-        if( !empty( $stored_database_version ) && version_compare( $stored_database_version, '1.5.2', '<' )  ) {
+        if( !empty( $stored_database_version ) && version_compare( $stored_database_version, '1.5.3', '<=' )  ) {
             $this->add_full_text_index_to_tables();
         }
 
