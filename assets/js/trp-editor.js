@@ -3633,7 +3633,7 @@ __webpack_require__.r(__webpack_exports__);
           suggestions[i]['similarity'] = Math.round(string_similarity__WEBPACK_IMPORTED_MODULE_3___default.a.compareTwoStrings(self.string.original, suggestions[i]['original']) * 100);
           suggestions[i]['original'] = simplediff__WEBPACK_IMPORTED_MODULE_2___default.a.htmlDiff(self.string.original, suggestions[i]['original']);
 
-          if (suggestions[i]['similarity'] < 10) {
+          if (suggestions[i]['similarity'] < 70) {
             suggestions.splice(i, 1); // drop suggestions less then 70%
           }
         }

@@ -65,7 +65,7 @@
                             suggestions[i]['similarity'] = Math.round(similarity.compareTwoStrings(self.string.original,suggestions[i]['original'])*100)
                             suggestions[i]['original'] = simplediff.htmlDiff(self.string.original, suggestions[i]['original'])
 
-                            if (suggestions[i]['similarity'] < 10 ) {
+                            if (suggestions[i]['similarity'] < 70 ) {
                                 suggestions.splice(i, 1); // drop suggestions less then 70%
                             }
                         }
