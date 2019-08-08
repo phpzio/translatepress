@@ -87,6 +87,7 @@
     height: 1px;
     overflow: hidden;
     visibility: hidden;
+    z-index: 1;
 }
 
 .trp-language-switcher:focus .trp-ls-shortcode-language,

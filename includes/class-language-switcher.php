@@ -108,10 +108,14 @@ class TRP_Language_Switcher{
 	 *
 	 * @return string                   HTML for shortcode language switcher
 	 */
-	public function language_switcher(){
+	public function language_switcher( $atts ){
 		ob_start();
 
 		global $TRP_LANGUAGE;
+
+		$shortcode_attributes = shortcode_atts( array(
+			'display' => 0,
+		), $atts );
 
 		if ( ! $this->trp_languages ){
 			$trp = TRP_Translate_Press::get_trp_instance();
@@ -136,7 +140,11 @@ class TRP_Language_Switcher{
 			$this->trp_settings_object = $trp->get_component( 'settings' );
 		}
 		$ls_options = $this->trp_settings_object->get_language_switcher_options();
-		$shortcode_settings = $ls_options[$this->settings['shortcode-options']];
+		if ( isset( $shortcode_attributes['display'] ) && isset( $ls_options[$shortcode_attributes['display']] ) ){
+			$shortcode_settings = $ls_options[ $shortcode_attributes['display'] ];
+        }else {
+			$shortcode_settings = $ls_options[ $this->settings['shortcode-options'] ];
+		}
 
 		require TRP_PLUGIN_DIR . 'partials/language-switcher-shortcode.php';
 
