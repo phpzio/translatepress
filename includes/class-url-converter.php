@@ -108,7 +108,8 @@ class TRP_Url_Converter {
                 return false;
         }
         else { //if the path is empty check the request URI
-            if (strpos( $_SERVER['REQUEST_URI'], 'sitemap') !== false && strpos( $_SERVER['REQUEST_URI'], '.xml') !== false)
+            global $wp_current_filter;
+            if (strpos( $_SERVER['REQUEST_URI'], 'sitemap') !== false && strpos( $_SERVER['REQUEST_URI'], '.xml') !== false && !in_array( 'wpseo_sitemap_url', $wp_current_filter ) )
                 return true;
         }
 
