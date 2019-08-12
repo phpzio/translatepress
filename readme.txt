@@ -5,7 +5,7 @@ Tags: translate, translation, multilingual, automatic translation, bilingual, fr
 Requires at least: 3.1.0
 Tested up to: 5.2.2
 Requires PHP: 5.6.20
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,6 +142,13 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
+= 1.5.4 =
+* Added Translation Memory feature
+* Beaver Builder compatibility
+* Fixed isseu with gettext special characters inside attributes breaking html sometimes
+* Fixed an issue with urls slugs not being translated in site-map for secondary languages if "Use subdirectory on default language" was on
+* Added support for display attribute for language-switcher shortcode
+
 = 1.5.3 =
 * Fixed blank page when opening Translation Editor in some localized languages
 

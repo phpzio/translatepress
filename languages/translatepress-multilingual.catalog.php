@@ -127,6 +127,9 @@
 <?php __("Automatic User Language Detection", "translatepress-multilingual"); ?>
 <?php __("Supported By Real People", "translatepress-multilingual"); ?>
 <?php __("Find Out More", "translatepress-multilingual"); ?>
+<?php __("No available suggestions", "translatepress-multilingual"); ?>
+<?php __("Suggestions from translation memory", "translatepress-multilingual"); ?>
+<?php __("Click to Copy", "translatepress-multilingual"); ?>
 <?php __("Slugs", "translatepress-multilingual"); ?>
 <?php __("Meta Information", "translatepress-multilingual"); ?>
 <?php __("String List", "translatepress-multilingual"); ?>
