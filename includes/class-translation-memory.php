@@ -24,7 +24,7 @@ class TRP_Translation_Memory {
      *
      * @param string    $string         The original string we're searching a similar one.
      * @param string    $language_code  The language in which we want to search for the similar translated string.
-     * @param string    $table          The table where we should look for similar strings in. Default dictionary.
+     * @param string    $table_name          The table where we should look for similar strings in. Default dictionary.
      * @param int       $number         The number of similar strings we want to return.
      * @return array                    Array with (original => translated ) pairs based on the number of strings we should account for. Empty array if nothing is found.
      */
@@ -69,7 +69,6 @@ class TRP_Translation_Memory {
                 if ( ! $this->trp_query ) {
                     $this->trp_query = $trp->get_component( 'query' );
                 }
-
 
                 // data-trp-translate-id, data-trp-translate-id-innertext are in the wp_trp_dictionary_* tables
                 $table_name = $this->trp_query->get_table_name( $language_code );

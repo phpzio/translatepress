@@ -6216,7 +6216,7 @@ var render = function() {
           ],
           staticClass: "trp-no-available-suggestions"
         },
-        [_vm._v("No available suggestions")]
+        [_vm._v(_vm._s(_vm.editorStrings.translation_memory_no_suggestions))]
       ),
       _vm._v(" "),
       _c("transition", { attrs: { name: "fade" } }, [
@@ -6234,7 +6234,9 @@ var render = function() {
             attrs: { open: "open" }
           },
           [
-            _c("summary", [_vm._v("Suggestions From Translation Memory")]),
+            _c("summary", [
+              _vm._v(_vm._s(_vm.editorStrings.translation_memory_suggestions))
+            ]),
             _vm._v(" "),
             _c("div", { staticClass: "trp-translation-memory-suggestions" }, [
               _c(
@@ -6244,7 +6246,10 @@ var render = function() {
                     "li",
                     {
                       key: index,
-                      attrs: { title: "Click to Copy" },
+                      attrs: {
+                        title:
+                          _vm.editorStrings.translation_memory_click_to_copy
+                      },
                       on: {
                         click: function($event) {
                           _vm.copy(suggestion.translated)

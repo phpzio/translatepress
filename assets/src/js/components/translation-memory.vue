@@ -1,12 +1,12 @@
 <template>
     <div>
-        <p class="trp-no-available-suggestions" v-show="!available_suggestions">No available suggestions</p>
+        <p class="trp-no-available-suggestions" v-show="!available_suggestions">{{ editorStrings.translation_memory_no_suggestions }}</p>
         <transition name="fade">
             <details open="open" v-show="available_suggestions">
-                <summary>Suggestions From Translation Memory</summary>
+                <summary>{{ editorStrings.translation_memory_suggestions }}</summary>
                 <div class="trp-translation-memory-suggestions">
                     <ul>
-                        <li v-for="(suggestion, index) in suggestions" @click="copy(suggestion.translated)" :key="index" title="Click to Copy">
+                        <li v-for="(suggestion, index) in suggestions" @click="copy(suggestion.translated)" :key="index" :title="editorStrings.translation_memory_click_to_copy">
                             <span class="percentage"><span>{{suggestion.similarity}}%</span></span>
                             <span class="translated">{{suggestion.translated}}</span>
                             <span class="original" v-html="suggestion.original"></span>
@@ -32,14 +32,14 @@
             'ajax_url',
             'nonces',
             'languageCode',
-            'inputValue'
+            'inputValue',
         ],
         data(){
             return{
                 suggestions : [],
                 available_suggestions : false,
                 similarity : 0,
-                currentstring : this.string,
+                currentstring : this.string
             }
         },
         mounted(){

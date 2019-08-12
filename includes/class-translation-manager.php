@@ -141,7 +141,11 @@ class TRP_Translation_Manager{
 			'extra_upsell_row6'                                         => esc_html__( 'Different Menu Items for each Language', 'translatepress-multilingual' ),
 			'extra_upsell_row7'                                         => esc_html__( 'Automatic User Language Detection', 'translatepress-multilingual' ),
 			'extra_upsell_row8'                                         => esc_html__( 'Supported By Real People', 'translatepress-multilingual' ),
-			'extra_upsell_button'                                       => wp_kses( sprintf( '<a class="button-primary" target="_blank" href="%s">%s</a>', esc_url( trp_add_affiliate_id_to_link( 'https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree' ) ), __( 'Find Out More', 'translatepress-multilingual' ) ), array( 'a' => ['class'=> [] , 'target'=> [],'href'=> []] )  )
+			'extra_upsell_button'                                       => wp_kses( sprintf( '<a class="button-primary" target="_blank" href="%s">%s</a>', esc_url( trp_add_affiliate_id_to_link( 'https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=tpeditor&utm_campaign=tpfree' ) ), __( 'Find Out More', 'translatepress-multilingual' ) ), array( 'a' => ['class'=> [] , 'target'=> [],'href'=> []] )  ),
+            // Translation Memory
+            'translation_memory_no_suggestions'                         => esc_html__( 'No available suggestions', 'translatepress-multilingual' ),
+            'translation_memory_suggestions'                            => esc_html__( 'Suggestions from translation memory', 'translatepress-multilingual' ),
+            'translation_memory_click_to_copy'                          => esc_html__( 'Click to Copy', 'translatepress-multilingual' )
         );
 	}
 
@@ -168,6 +172,7 @@ class TRP_Translation_Manager{
             'splittbnonce'                  => wp_create_nonce('split_translation_block'),
             'mergetbnonce'                  => wp_create_nonce('merge_translation_block'),
             'logged_out'                    => wp_create_nonce('trp_view_aslogged_out' . get_current_user_id()),
+            'getsimilarstring'              => wp_create_nonce('getsimilarstring' ),
 		);
 
 		return apply_filters( 'trp_editor_nonces', $nonces );
