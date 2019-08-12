@@ -74,6 +74,8 @@
                             :editorStrings="editorStrings"
                             :flagsPath="flagsPath"
                             :iframe="iframe"
+                            :nonces="nonces"
+                            :ajax_url="ajax_url"
                     >
                     </language-boxes>
                 </div>

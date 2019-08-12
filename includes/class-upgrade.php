@@ -8,6 +8,7 @@
 class TRP_Upgrade {
 
 	protected $settings;
+	protected $db;
 	/* @var TRP_Query */
 	protected $trp_query;
 
@@ -17,6 +18,8 @@ class TRP_Upgrade {
 	 * @param $settings
 	 */
 	public function __construct( $settings ){
+        global $wpdb;
+        $this->db = $wpdb;
 		$this->settings = $settings;
 	}
 
@@ -51,7 +54,14 @@ class TRP_Upgrade {
 			}
 		}
 
-		update_option( 'trp_plugin_version', TRP_PLUGIN_VERSION );
+        if( !empty( $stored_database_version ) && version_compare( $stored_database_version, '1.5.3', '<=' )  ) {
+            $this->add_full_text_index_to_tables();
+        }
+
+        // don't update the db version unless they are different. Otherwise the query is run on every page load.
+        if( version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '!=' ) ){
+            update_option( 'trp_plugin_version', TRP_PLUGIN_VERSION );
+		}
 	}
 
 	/**
@@ -433,4 +443,23 @@ class TRP_Upgrade {
 			'nonce' => wp_create_nonce('tpupdatedatabase')
 		) );
 	}
+
+    /**
+     * Add full text index on the dictionary and gettext tables.
+     * Gets executed once after update.
+     */
+	private function add_full_text_index_to_tables(){
+	    $table_names = $this->trp_query->get_all_table_names('', array());
+        $gettext_table_names = $this->trp_query->get_all_gettext_table_names();
+
+        foreach (array_merge($table_names, $gettext_table_names) as $table_name){
+            $possible_index = "SHOW INDEX FROM {$table_name} WHERE Key_name = 'original_fulltext';";
+            if ($this->db->query($possible_index) === 1){
+                continue;
+            };
+
+            $sql_index = "CREATE FULLTEXT INDEX original_fulltext ON `" . $table_name . "`(original);";
+            $this->db->query( $sql_index );
+        }
+    }
 }

@@ -51,12 +51,22 @@ class TRP_Advanced_Tab {
 		$registered_settings = $this->get_settings();
 		$settings = array();
 		foreach ( $registered_settings as $registered_setting ){
+
+		    // checkboxes are not set so we're setting them up as false
+            if(!isset( $submitted_settings[$registered_setting['name']] )){
+                $submitted_settings[$registered_setting['name']] = false;
+            }
+
 			if ( isset( $submitted_settings[$registered_setting['name']] ) ){
 				switch ($registered_setting['type'] ) {
 					case 'checkbox': {
 						$settings[ $registered_setting['name'] ] = ( $submitted_settings[ $registered_setting['name'] ] === 'yes' ) ? 'yes' : 'no';
 						break;
 					}
+                    case 'input': {
+                        $settings[ $registered_setting['name'] ] = sanitize_text_field($submitted_settings[ $registered_setting['name'] ]);
+                        break;
+                    }
 					case 'list': {
 						$settings[ $registered_setting['name'] ] = array();
 						foreach ( $registered_setting['columns'] as $column => $column_name ) {
@@ -134,6 +144,15 @@ class TRP_Advanced_Tab {
 				case 'checkbox':
 					echo $this->checkbox_setting( $setting );
 					break;
+                case 'radio':
+                    echo $this->radio_setting( $setting );
+                    break;
+                case 'input':
+                    echo $this->input_setting( $setting );
+                    break;
+                case 'separator':
+                    echo $this->separator_setting( $setting );
+                    break;
 				case 'list':
 					echo $this->add_to_list_setting( $setting );
 					break;
@@ -166,6 +185,81 @@ class TRP_Advanced_Tab {
             </tr>";
 		return apply_filters('trp_advanced_setting_checkbox', $html );
 	}
+
+    /**
+     * Return HTML of a radio button type setting
+     *
+     * @param $setting
+     *
+     * @return 'string'
+     */
+    public function radio_setting( $setting ){
+        $adv_options = get_option( 'trp_advanced_settings', true );
+
+        $html = "
+             <tr>
+                <th scope='row'>" . $setting['label'] . "</th>
+                <td class='trp-adst-radio'>";
+
+        foreach($setting[ 'options' ] as $key => $option ){
+            $checked = ( isset( $adv_options[ $setting['name'] ] ) && $adv_options[ $setting['name'] ] === $option ) ? 'checked' : '';
+            $setting_name  = $setting['name'];
+            $label  = $setting[ 'labels' ][$key];
+            $html .= "<label>
+	                    <input type='radio' id='$setting_name' name='trp_advanced_settings[$setting_name]' value='$option' $checked>
+	                    $label
+			          </label>";
+        }
+
+        $html .= "  <p class='description'>
+                        " . $setting['description'] . "
+                    </p>
+                </td>
+            </tr>";
+        return apply_filters('trp_advanced_setting_checkbox', $html );
+    }
+
+    /**
+     * Return HTML of a input type setting
+     *
+     * @param $setting
+     *
+     * @return 'string'
+     */
+    public function input_setting( $setting ){
+        $option = get_option( 'trp_advanced_settings', true );
+        $default = ( isset( $setting['default'] )) ? $setting['default'] : '';
+        $value = ( isset( $option[ $setting['name'] ] ) ) ? $option[ $setting['name'] ] : $default;
+        $html = "
+             <tr>
+                <th scope='row'>" . $setting['label'] . "</th>
+                <td>
+	                <label>
+	                    <input type='text' id='" . $setting['name'] . "' name='trp_advanced_settings[" . $setting['name'] . "]' value='". $value ."'>
+			        </label>
+                    <p class='description'>
+                        " . $setting['description'] . "
+                    </p>
+                </td>
+            </tr>";
+        return apply_filters('trp_advanced_setting_input', $html );
+    }
+
+    /**
+     * Return HTML of a separator type setting
+     *
+     * @param $setting
+     *
+     * @return 'string'
+     */
+    public function separator_setting( $setting ){
+        $html = "
+             <tr style='border-bottom: 1px solid #ccc;'>
+                <th scope='row'></th>
+                <td></td>
+            </tr>";
+        return apply_filters('trp_advanced_setting_separator', $html );
+    }
 
 	/**
 	 * Return HTML of a checkbox type setting
@@ -221,7 +315,7 @@ class TRP_Advanced_Tab {
                     </p>
                 </td>
             </tr>";
-		return apply_filters( 'trp_advanced_setting_checkbox', $html );
+		return apply_filters( 'trp_advanced_setting_list', $html );
 	}
 
 }

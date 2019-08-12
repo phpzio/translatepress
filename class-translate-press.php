@@ -23,6 +23,8 @@ class TRP_Translate_Press{
     protected $plugin_updater;
     protected $license_page;
     protected $advanced_tab;
+    protected $translation_memory;
+
     public $active_pro_addons = array();
     public static $translate_press = null;
 
@@ -90,6 +92,7 @@ class TRP_Translate_Press{
 	    require_once TRP_PLUGIN_DIR . 'includes/class-upgrade.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-plugin-notices.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-advanced-tab.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-translation-memory.php';
         require_once TRP_PLUGIN_DIR . 'includes/external-functions.php';
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
@@ -118,6 +121,7 @@ class TRP_Translate_Press{
         $this->upgrade                    = new TRP_Upgrade( $this->settings->get_settings() );
         $this->plugin_updater             = new TRP_Plugin_Updater();
         $this->license_page               = new TRP_LICENSE_PAGE();
+        $this->translation_memory         = new TRP_Translation_Memory( $this->settings->get_settings() );
     }
 
     /**
@@ -176,6 +180,8 @@ class TRP_Translate_Press{
 
 	    $this->loader->add_action( 'wp_ajax_trp_get_translations_gettext', $this->editor_api_gettext_strings, 'gettext_get_translations' );
 	    $this->loader->add_action( 'wp_ajax_trp_save_translations_gettext', $this->editor_api_gettext_strings, 'gettext_save_translations' );
+
+        $this->loader->add_action( 'wp_ajax_trp_get_similar_string_translation', $this->translation_memory, 'ajax_get_similar_string_translation' );
 
 	    $this->loader->add_filter( 'trp_get_existing_translations', $this->translation_manager, 'display_possible_db_errors', 20, 3 );
 

@@ -24,7 +24,8 @@ export default{
         'string',
         'readonly',
         'highlightUnsavedChanges',
-        'editorStrings'
+        'editorStrings',
+        'nonces',
     ],
     data(){
         return{
