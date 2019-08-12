@@ -86,26 +86,4 @@ class TRP_Translation_Memory {
         return json_encode(array());
         wp_die();
     }
-
-    public function allow_automatic_translation_memory(){
-        $enable_auto_translation_memory = ( isset( $this->settings['advanced_settings']['enable_translation_memory'] ) ) ? $this->settings['advanced_settings']['enable_translation_memory'] : 'off';
-
-        if( isset($_GET['trp-edit-translation']) ){
-            return false; // exit early if we're inside the editor
-        }
-
-        if( $enable_auto_translation_memory === "on-for-admin" && !( current_user_can('manage_options') || current_user_can('translate_strings') ) ) {
-            return false; // exit early if on-for-admin and user is not admin
-        }
-
-        if( $enable_auto_translation_memory === "off" ){
-            return false; // exit early if off
-        }
-
-        if( $enable_auto_translation_memory !== "on-for-all" && $enable_auto_translation_memory !== "on-for-admin" ){
-            return false; // exit early if setting is a weird value. Further code gets executed only if on-for-add is the setting's value
-        }
-
-        return true;
-    }
 }
