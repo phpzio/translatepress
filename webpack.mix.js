@@ -3,7 +3,7 @@ let mix = require('laravel-mix');
 mix.js( 'assets/src/js/trp-editor.js', 'assets/js' )
     .sass( 'assets/src/scss/trp-editor.scss', 'assets/css/' )
     .browserSync( {
-        proxy : 'localhost/tpdemo/',
+        proxy : 'localhost/local/',
         files : [
             '**/*.php',
             'assets/**/*.js',
@@ -16,4 +16,4 @@ mix.js( 'assets/src/js/trp-editor.js', 'assets/js' )
             "jquery" : "jQuery",
         }
     })
-    .sourceMaps(true, 'source-map')
+    .sourceMaps();
