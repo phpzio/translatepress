@@ -13,9 +13,7 @@ class TRP_Translation_Render{
 	/* @var TRP_Url_Converter */
     protected $url_converter;
     /* @var TRP_Translation_Manager */
-    protected $translation_manager;
-    /* @var TRP_Translation_Memory */
-    protected $translation_memory;
+	protected $translation_manager;
 
     /**
      * TRP_Translation_Render constructor.
@@ -1068,35 +1066,6 @@ class TRP_Translation_Render{
 
         $this->trp_query->insert_strings( $new_strings, $language_code, $block_type );
         $this->trp_query->update_strings( $update_strings, $language_code, array( 'id','original', 'translated', 'status' ) );
-
-        // translation memory
-        $trp = TRP_Translate_Press::get_trp_instance();
-        if ( ! $this->translation_memory ) {
-            $this->translation_memory = $trp->get_component( 'translation_memory' );
-        }
-
-        if( $this->translation_memory->allow_automatic_translation_memory() === false ){
-            return $translated_strings;
-        }
-
-        foreach( array_diff_key( $translateable_strings, $translated_strings ) as $key => $string ){
-            if(strlen($string) < $this->settings['advanced_settings']['translation_memory_min_chars'] ){
-                continue;
-            }
-
-            $possible_string = $this->translation_memory->get_similar_string_translation($string, $language_code, 1, $this->trp_query->get_table_name($language_code));
-            if( is_array($possible_string) && isset( $possible_string[0] ) ){
-                $similarity = similar_text($string, $possible_string[0]['original'], $percent);
-                if ( $percent > $this->settings['advanced_settings']['translation_memory_min_similarity'] ){
-                    $translated_strings[$key] = $possible_string[0]['translated'];
-                    if( current_user_can('manage_options') || current_user_can('translate_strings') ){
-                        // do not translate this title through gettext. It screws up with the gettext processing.
-                        $title = 'Suggested translation from string: '.  esc_attr($possible_string[0]['original']) .'. This notice is only visible by an admin or translator.';
-                        $translated_strings[$key] = '<trp-span style="background-color: #feffc2; color: #111" title="' . $title . ' ">' . $possible_string[0]['translated'] . '</trp-span>';
-                    }
-                }
-            }
-        }
 
         return $translated_strings;
     }

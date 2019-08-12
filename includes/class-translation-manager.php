@@ -14,7 +14,6 @@ class TRP_Translation_Manager{
     protected $machine_translator;
     protected $slug_manager;
     protected $url_converter;
-    protected $translation_memory;
 
     /**
      * TRP_Translation_Manager constructor.
@@ -169,7 +168,6 @@ class TRP_Translation_Manager{
             'splittbnonce'                  => wp_create_nonce('split_translation_block'),
             'mergetbnonce'                  => wp_create_nonce('merge_translation_block'),
             'logged_out'                    => wp_create_nonce('trp_view_aslogged_out' . get_current_user_id()),
-            'getsimilarstring'              => wp_create_nonce('getsimilarstring'),
 		);
 
 		return apply_filters( 'trp_editor_nonces', $nonces );
@@ -485,7 +483,6 @@ class TRP_Translation_Manager{
 	    // if we have nested gettexts strip previous ones, and consider only the outermost
     	$text = TRP_Translation_Manager::strip_gettext_tags( $text );
     	$translation = TRP_Translation_Manager::strip_gettext_tags( $translation );
-        $original_translation = $translation;
 
         //try here to exclude some strings that do not require translation
     	$excluded_gettext_strings = array( '', ' ', '&hellip;', '&nbsp;', '&raquo;' );
@@ -657,42 +654,6 @@ class TRP_Translation_Manager{
 	        }
         }
         $tp_last_gettext_processed = array( $text.'::'.$domain => $translation );
-
-        // translation memory
-        if ( $text == $original_translation ){
-            $trp = TRP_Translate_Press::get_trp_instance();
-            if ( ! $this->translation_memory ) {
-                $this->translation_memory = $trp->get_component( 'translation_memory' );
-            }
-
-            if( $this->translation_memory->allow_automatic_translation_memory() === false ){
-                return $translation;
-            }
-
-            if(strlen($text) < $this->settings['advanced_settings']['translation_memory_min_chars'] ){
-                return $translation;
-            }
-
-            $possible_string = $this->translation_memory->get_similar_string_translation($text, $TRP_LANGUAGE, 1, $this->trp_query->get_gettext_table_name($TRP_LANGUAGE));
-            if( is_array($possible_string) && isset( $possible_string[0] ) ){
-                $similarity = similar_text($text, $possible_string[0]['original'], $percent);
-                if ( $percent > $this->settings['advanced_settings']['translation_memory_min_similarity'] ){
-                    $original_translation = $possible_string[0]['translated'];
-
-                    if( current_user_can('manage_options') || current_user_can('translate_strings') ){
-
-                        $suggested_string = esc_attr($possible_string[0]['original']);
-                        $title = "Suggested translation from string: $suggested_string. This notice is only visible by an admin or translator.";
-
-                        $original_translation = '<trp-span style="background-color: #feffc2; color: #111" title="' . $title . ' ">' . $possible_string[0]['translated'] . '</trp-span>';
-                    }
-
-                    $translation = str_replace( $text, $original_translation, $translation);
-                } // endif percent
-            } // endif possible_string
-        }
-
-
         return $translation;
     }
 
