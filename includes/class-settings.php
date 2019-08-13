@@ -248,7 +248,7 @@ class TRP_Settings{
      */
     protected function set_options(){
         $settings_option = get_option( 'trp_settings', 'not_set' );
-        $settings_option['advanced_settings'] = get_option('trp_advanced_settings', array() );
+
         // initialize default settings
         $default = get_locale();
         if ( empty( $default ) ){
