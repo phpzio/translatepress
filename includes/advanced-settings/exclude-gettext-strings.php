@@ -27,6 +27,10 @@ function trpc_exclude_strings ($translation, $text, $domain ){
 			if ( $domain === $value && $text === $option['exclude_gettext_strings']['string'][$key] ){
 				return $text;
 			}
+
+            if ( $domain === '' && $text === $option['exclude_gettext_strings']['string'][$key] ){
+                return $text;
+            }
 		}
 	}
 	return $translation;
