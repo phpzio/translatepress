@@ -127,6 +127,7 @@
                         <label><input type="checkbox" id="trp-ls-floater" name="trp_settings[trp-ls-floater]"  value="yes"  <?php if ( isset($this->settings['trp-ls-floater']) && ( $this->settings['trp-ls-floater'] == 'yes' ) ){ echo 'checked'; }  ?>><b><?php esc_html_e( 'Floating language selection', 'translatepress-multilingual' ); ?></b></label>
                         <div>
                             <?php $this->output_language_switcher_select( 'floater-options', $this->settings['floater-options'] ); ?>
+                            <?php $this->output_language_switcher_floater_possition( $this->settings['floater-position'] ); ?>
                         </div>
                         <p class="description">
                             <?php esc_html_e( 'Add a floating dropdown that follows the user on every page.', 'translatepress-multilingual' ); ?>
