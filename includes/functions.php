@@ -837,8 +837,10 @@ add_filter( 'wc_stripe_payment_metadata', 'trp_strip_request_metadata_keys' );
 function trp_strip_request_metadata_keys( $metadata ){
 	foreach( $metadata as $key => $value ) {
 		$stripped_key = TRP_Translation_Manager::strip_gettext_tags( $key );
-		$metadata[$stripped_key] = $value;
-		unset( $metadata[$key] );
+		if ( $stripped_key != $key ) {
+			$metadata[ $stripped_key ] = $value;
+			unset( $metadata[ $key ] );
+		}
 	}
 	return $metadata;
 }
