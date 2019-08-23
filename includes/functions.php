@@ -813,3 +813,32 @@ function trp_force_include_scripts( $final_html, $TRP_LANGUAGE, $language_code, 
 	return $final_html;
 }
 
+/*
+ * Compatibility with plugins sending Gettext strings in requests such as Cartflows
+ *
+ * Strip gettext wrappings from the requests made from http->post()
+ */
+// Strip of gettext wrappings all the values of the body request array
+add_filter( 'http_request_args', 'trp_strip_trpst_from_requests', 10, 2 );
+function trp_strip_trpst_from_requests($args, $url){
+	if( is_array( $args['body'] ) ) {
+		array_walk_recursive( $args['body'], 'trp_array_walk_recursive_strip_gettext_tags' );
+	}else{
+		$args['body'] = TRP_Translation_Manager::strip_gettext_tags( $args['body'] );
+	}
+	return $args;
+}
+function trp_array_walk_recursive_strip_gettext_tags( &$value ){
+	$value = TRP_Translation_Manager::strip_gettext_tags( $value );
+}
+
+// Strip of gettext wrappings the customer_name and customer_email keys. Found in WC Stripe and Cartflows
+add_filter( 'wc_stripe_payment_metadata', 'trp_strip_request_metadata_keys' );
+function trp_strip_request_metadata_keys( $metadata ){
+	foreach( $metadata as $key => $value ) {
+		$stripped_key = TRP_Translation_Manager::strip_gettext_tags( $key );
+		$metadata[$stripped_key] = $value;
+		unset( $metadata[$key] );
+	}
+	return $metadata;
+}
