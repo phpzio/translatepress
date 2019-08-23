@@ -495,7 +495,14 @@ class TRP_Translation_Render{
 	                    }
                         foreach ($node_from_value->find('trp-gettext') as $nfv_row) {
                             $nfv_row->outertext = $nfv_row->innertext();
-                            $row->setAttribute($attr_name, esc_attr( $node_from_value->save() ) );
+	                        $saved_node_from_value = $node_from_value->save();
+
+	                        // attributes of these tags are not handled well by the parser so don't escape them [see iss6264]
+	                        if ( $row->tag != 'script' && $row->tag != 'style' ){
+		                        $saved_node_from_value = esc_attr($saved_node_from_value);
+	                        }
+
+	                        $row->setAttribute($attr_name, $saved_node_from_value );
                             $row->setAttribute($no_translate_attribute . '-' . $attr_name, '');
                             // we are in the editor
                             if (isset($_REQUEST['trp-edit-translation']) && $_REQUEST['trp-edit-translation'] == 'preview') {
