@@ -868,3 +868,36 @@ function trp_nextgen_compatibility(){
 		add_action( 'init', array( &$object_C_Photocrati_Resource_Manager, 'start_buffer', ), 1 );
 	}
 }
+
+/**
+ * Compatibility with WooCommerce added to cart message
+ *
+ * Makes sure title of product is translated.
+ *
+ * The title of product is added through sprintf %s of a Gettext.
+ *
+ */
+add_filter( 'the_title', 'trp_woo_translate_product_title_added_to_cart', 10, 2 );
+function trp_woo_translate_product_title_added_to_cart( $title, $id ){
+	if( class_exists( 'WooCommerce' ) ){
+		if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
+			$callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 15);//set a limit if it is supported to improve performance
+		}
+		else{
+			$callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		}
+
+		$list_of_functions = apply_filters( 'trp_woo_translate_title_before_translate_page', array( 'wc_add_to_cart_message' ) );
+		if( !empty( $callstack_functions ) ) {
+			foreach ( $callstack_functions as $callstack_function ) {
+				if ( in_array( $callstack_function['function'], $list_of_functions ) ) {
+					$trp = TRP_Translate_Press::get_trp_instance();
+					$translation_render = $trp->get_component( 'translation_render' );
+					$title = $translation_render->translate_page($title);
+					break;
+				}
+			}
+		}
+	}
+	return $title;
+}
