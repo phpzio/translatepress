@@ -218,6 +218,10 @@ class TRP_Language_Switcher{
             $floater_flags_class = 'trp-with-flags';
         }
 
+        if( $this->settings['floater-position'] ) {
+            $floater_class .= ' trp-' . esc_attr($this->settings['floater-position']);
+        }
+
         $current_language = array();
         $other_languages = array();
 

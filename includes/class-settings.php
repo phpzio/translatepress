@@ -51,6 +51,31 @@ class TRP_Settings{
     }
 
     /**
+     * Echo html for selecting language from all available language in settings.
+     *
+     * @param string $ls_type       shortcode_options | menu_options | floater_options
+     * @param string $ls_setting    The selected language switcher customization setting (get_language_switcher_options())
+     */
+    public function output_language_switcher_floater_possition( $ls_position ){
+        $ls_options = array(
+            'bottom-right'  => array( 'label' => __( 'Bottom Right', 'translatepress-multilingual' ) ),
+            'bottom-left'   => array( 'label' => __( 'Bottom Left', 'translatepress-multilingual' ) ),
+            'top-right'     => array( 'label' => __( 'Top Right', 'translatepress-multilingual' ) ),
+            'top-left'      => array( 'label' => __( 'Top Left', 'translatepress-multilingual' ) ),
+
+        );
+
+        $output = '<select id="floater-position" name="trp_settings[floater-position]" class="trp-select trp-ls-select-option">';
+        foreach( $ls_options as $key => $ls_option ){
+            $selected = ( $ls_position == $key ) ? 'selected' : '';
+            $output .= '<option value="' . esc_attr( $key ) . '" ' . esc_attr( $selected ) . ' >' . esc_html( $ls_option['label'] ). '</option>';
+        }
+        $output .= '</select>';
+
+        echo $output;
+    }
+
+    /**
      * Returns settings_option.
      *
      * @return array        Settings option.
@@ -178,15 +203,19 @@ class TRP_Settings{
             $settings['trp-ls-floater'] = 'no';
         }
 
-        $available_options = $this->get_language_switcher_options();
-        if ( ! isset( $available_options[ $settings['shortcode-options'] ] ) ){
+        $language_switcher_options = $this->get_language_switcher_options();
+        if ( ! isset( $language_switcher_options[ $settings['shortcode-options'] ] ) ){
             $settings['shortcode-options'] = 'flags-full-names';
         }
-        if ( ! isset( $available_options[ $settings['menu-options'] ] ) ){
+        if ( ! isset( $language_switcher_options[ $settings['menu-options'] ] ) ){
             $settings['menu-options'] = 'flags-full-names';
         }
-        if ( ! isset( $available_options[ $settings['floater-options'] ] ) ){
+        if ( ! isset( $language_switcher_options[ $settings['floater-options'] ] ) ){
             $settings['floater-options'] = 'flags-full-names';
+        }
+
+        if ( ! isset( $settings['floater-position'] ) ){
+            $settings['floater-position'] = 'bottom-right';
         }
 
         if ( ! isset( $settings['url-slugs'] ) ){
@@ -266,6 +295,7 @@ class TRP_Settings{
             'shortcode-options'                     => 'flags-full-names',
             'menu-options'                          => 'flags-full-names',
             'floater-options'                       => 'flags-full-names',
+            'floater-position'                      => 'bottom-right',
             'url-slugs'                             => array( 'en_US' => 'en', '' ),
             'advanced_settings'                     => array(get_option('trp_advanced_settings', array() )),
         );
