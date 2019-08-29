@@ -25,7 +25,7 @@
                                 <div class="trp-attribute-name"  v-show="dictionary[selectedIndex].attribute != 'content' || dictionary[selectedIndex].attribute != ''">{{ ( editorStrings[ dictionary[selectedIndex].attribute ] ) ? editorStrings[ dictionary[selectedIndex].attribute ] : editorStrings.text }}</div>
                                 <div v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" class="trp-discard-changes trp-discard-individual-changes" @click="discardChanges(selectedIndex,languageCode)" :class="{'trp-unsaved-changes': hasUnsavedChanges( selectedIndex, languageCode ) }" :title="editorStrings.discard_individual_changes_title_attribute">{{ editorStrings.discard }}</div>
                             </div>
-                            <div class="trp-translation-memory-wrap" v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="selectedIndex">
+                            <div class="trp-translation-memory-wrap" v-if="dictionary[selectedIndex] && dictionary[selectedIndex].translationsArray[languageCode]" :key="'trp_tmw_' + selectedIndex">
                                 <translation-memory :string="dictionary[selectedIndex]" :editorStrings="editorStrings" :ajax_url="ajax_url" :nonces="nonces" :languageCode="languageCode"></translation-memory>
                             </div>
                         </div>
