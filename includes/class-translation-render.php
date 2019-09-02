@@ -778,23 +778,27 @@ class TRP_Translation_Render{
      */
     public function translate_image_srcset_attributes( $node, $accessor, $translated_string){
 	    if( $accessor === 'src' ) {
-		    if ( $node->getAttribute( 'srcset' ) ) {
+			$srcset = $node->getAttribute( 'srcset' );
+			$datasrcset = $node->getAttribute( 'data-srcset' );
+		    if ( $srcset || $datasrcset ) {
 			    $attachment_id = attachment_url_to_postid( $translated_string );
 			    if ( $attachment_id ) {
-				    $translated_srcset = null;
+				    $translated_srcset = '';
 				    if ( function_exists( 'wp_get_attachment_image_srcset' ) ) {
 				    	// get width of the image in order, to set the largest possible size for srcset
 					    $meta_data = wp_get_attachment_metadata( $attachment_id );
 					    $width = ( $meta_data && isset( $meta_data['width'] ) ) ? $meta_data['width'] : 'large';
 					    $translated_srcset = wp_get_attachment_image_srcset( $attachment_id, $width );
 				    }
-				    if ( $translated_srcset ) {
+				    if ( $srcset ){
 					    $node->setAttribute( 'srcset', $translated_srcset );
-				    } else {
-					    $node->setAttribute( 'srcset', '' );
+				    }
+				    if ( $datasrcset ){
+					    $node->setAttribute( 'data-srcset', $translated_srcset );
 				    }
 			    } else {
 				    $node->setAttribute( 'srcset', '' );
+				    $node->setAttribute( 'data-srcset', '' );
 			    }
 		    }
 		    if ( $node->getAttribute( 'data-src' ) ) {
