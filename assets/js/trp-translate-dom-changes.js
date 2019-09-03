@@ -19,6 +19,7 @@ function TRP_Translator(){
     var except_characters = " \t\n\r  �.,/`~!@#$€£%^&*():;-_=+[]{}\\|?/<>1234567890'";
     var trim_characters = " \t\n\r  �\x0A\x0B" + "\302" + "\240";
     var already_detected = [];
+    var duplicate_detections_allowed = parseInt( trp_data.duplicate_detections_allowed )
 
     /**
      * Ajax request to get translations for strings
@@ -123,6 +124,7 @@ function TRP_Translator(){
                     }
                 }
 
+                already_detected[ initial_value ] = (initial_value in already_detected ) ? already_detected[ initial_value ] + 1 : 0
                 if ( ! translation_found ){
                     if ( nodeInfo.attribute ){
                         if ( nodeInfo.attribute != 'src' ) {
@@ -140,13 +142,6 @@ function TRP_Translator(){
                 window.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
             }
 
-            for( var i in response ) {
-                var original_response = response[i].original.trim()
-                var translated_response = response[i].translationsArray[language_to_query].translated.trim()
-                if ( translated_response === '' || translated_response === original_response ) {
-                    already_detected.push( original_response )
-                }
-            }
         }else{
             for (var j = 0 ; j < nodesInfo.length; j++){
                 if ( nodesInfo[j].attribute ){
@@ -156,7 +151,7 @@ function TRP_Translator(){
                 }else {
                     nodesInfo[j].node.textContent = nodesInfo[j].original;
                 }
-
+                already_detected[ nodesInfo[j].original ] = (nodesInfo[j].original in already_detected ) ? already_detected[ nodesInfo[j].original ] + 1 : 0
             }
         }
         _this.resume_observer();
@@ -240,7 +235,7 @@ function TRP_Translator(){
      * Skip string based on original string text
      */
     this.skip_string_original = function ( string ){
-        return ( _this.in_array( string, already_detected ) || _this.in_array( string, trp_data.skip_strings_from_dynamic_translation ) )
+        return ( ( already_detected[string] > duplicate_detections_allowed ) || _this.in_array( string, trp_data.skip_strings_from_dynamic_translation ) )
     }
 
     this.skip_string_attribute = function(node, attribute){

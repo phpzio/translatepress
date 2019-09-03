@@ -1231,7 +1231,8 @@ class TRP_Translation_Render{
 			'trp_attributes_accessors'              => $this->get_accessors_array(),
 			'gettranslationsnonceregular'           => $nonces['gettranslationsnonceregular'],
 			'showdynamiccontentbeforetranslation'   => apply_filters( 'trp_show_dynamic_content_before_translation', false ),
-			'skip_strings_from_dynamic_translation' => apply_filters( 'trp_skip_strings_from_dynamic_translation', array() )
+			'skip_strings_from_dynamic_translation' => apply_filters( 'trp_skip_strings_from_dynamic_translation', array() ),
+			'duplicate_detections_allowed'          => apply_filters( 'trp_duplicate_detections_allowed', 20 )
 		);
 	}
 
