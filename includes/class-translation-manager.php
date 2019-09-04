@@ -508,6 +508,9 @@ class TRP_Translation_Manager{
         if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
             return $translation;
 
+        if( apply_filters( 'trp_skip_gettext_processing', false, $translation, $text, $domain ) )
+            return $translation;
+
         //use a global for is_ajax_on_frontend() so we don't execute it multiple times
         global $tp_gettext_is_ajax_on_frontend;
         if( !isset($tp_gettext_is_ajax_on_frontend) )

@@ -20,31 +20,14 @@ function trp_register_exclude_gettext_strings( $settings_array ){
  */
 add_action( 'init', 'trp_load_exclude_strings' );
 function trp_load_exclude_strings(){
-	if( is_admin() )
-		return;
+	$option = get_option( 'trp_advanced_settings', true );
 
-	$is_ajax_on_frontend = TRP_Translation_Manager::is_ajax_on_frontend();
+	if( isset( $option['exclude_gettext_strings'] ) && count( $option['exclude_gettext_strings']['string'] ) > 0 )
+		add_filter('trp_skip_gettext_processing', 'trp_exclude_strings', 1000, 4 );
 
-	/* on ajax hooks from frontend that have the init hook ( we found WooCommerce has it ) apply it earlier */
-	if( $is_ajax_on_frontend ){
-		add_action( 'wp_loaded', 'trp_load_exclude_strings_gettext' );
-	}
-	else{//otherwise start from the wp_head hook
-		add_action( 'wp_head', 'trp_load_exclude_strings_gettext', 100 );
-	}
-
-	//if we have woocommerce installed and it is not an ajax request add a gettext hook starting from wp_loaded and remove it on wp_head
-	if( class_exists( 'WooCommerce' ) && !$is_ajax_on_frontend ){
-		// WooCommerce launches some ajax calls before wp_head, so we need to apply_gettext_filter earlier to catch them
-		add_action( 'wp_loaded', 'trp_load_exclude_strings_gettext', 19 );
-	}
 }
 
-function trp_load_exclude_strings_gettext() {
-	add_filter('gettext', 'trp_exclude_strings', 1000, 3 );
-}
-
-function trp_exclude_strings ($translation, $text, $domain ){
+function trp_exclude_strings ( $return, $translation, $text, $domain ){
 	$option = get_option( 'trp_advanced_settings', true );
 
 	if ( isset( $option['exclude_gettext_strings'] ) ) {
@@ -54,14 +37,14 @@ function trp_exclude_strings ($translation, $text, $domain ){
 			if( $text === $string ){
 
 				if( empty( $option['exclude_gettext_strings']['domain'][$key] ) )
-					return $text;
+					return true;
 				else if( $domain === $option['exclude_gettext_strings']['domain'][$key] )
-					return $text;
+					return true;
 
 			}
 
 		}
 	}
 
-	return $translation;
+	return $return;
 }
