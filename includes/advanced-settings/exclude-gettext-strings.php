@@ -20,6 +20,9 @@ function trp_register_exclude_gettext_strings( $settings_array ){
  */
 add_action( 'init', 'trp_load_exclude_strings' );
 function trp_load_exclude_strings(){
+	if( is_admin() )
+		return;
+
 	$is_ajax_on_frontend = TRP_Translation_Manager::is_ajax_on_frontend();
 
 	/* on ajax hooks from frontend that have the init hook ( we found WooCommerce has it ) apply it earlier */
@@ -43,13 +46,22 @@ function trp_load_exclude_strings_gettext() {
 
 function trp_exclude_strings ($translation, $text, $domain ){
 	$option = get_option( 'trp_advanced_settings', true );
+
 	if ( isset( $option['exclude_gettext_strings'] ) ) {
 
-		foreach( $option['exclude_gettext_strings']['domain'] as $key => $value ){
-			if ( $domain === $value && $text === $option['exclude_gettext_strings']['string'][$key] ){
-				return $text;
+		foreach( $option['exclude_gettext_strings']['string'] as $key => $string ){
+
+			if( $text === $string ){
+
+				if( empty( $option['exclude_gettext_strings']['domain'][$key] ) )
+					return $text;
+				else if( $domain === $option['exclude_gettext_strings']['domain'][$key] )
+					return $text;
+
 			}
+
 		}
 	}
+
 	return $translation;
 }
