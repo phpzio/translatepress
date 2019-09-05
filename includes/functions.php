@@ -901,3 +901,23 @@ function trp_woo_translate_product_title_added_to_cart( $title, $id ){
 	}
 	return $title;
 }
+
+/**
+ * Compatibility with WooTour plugin
+ *
+ * They replace spaces (" ") with \u0020, after we apply #trpst and because we don't strip them it breaks html
+ */
+add_action('init', 'trp_wootour_add_gettext_filter');
+function trp_wootour_add_gettext_filter(){
+	if ( class_exists( 'WooTour_Booking' ) ){
+		add_filter('gettext', 'trp_wootour_exclude_gettext_strings', 1000, 3 );
+	}
+}
+function trp_wootour_exclude_gettext_strings($translation, $text, $domain){
+	if ( $domain == 'woo-tour' ){
+		if ( in_array( $text, array( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ) ) ){
+			return TRP_Translation_Manager::strip_gettext_tags( $translation );
+		}
+	}
+	return $translation;
+}
