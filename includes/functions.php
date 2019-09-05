@@ -921,3 +921,25 @@ function trp_wootour_exclude_gettext_strings($translation, $text, $domain){
 	}
 	return $translation;
 }
+
+/**
+ * Compatibility with WooCommerce cart product name translation
+ * For products with the character - in the product name.
+ *
+ * There is a difference between the rendered – and –. Two different characters.
+ * Somehow in the cart is the minus one, in the shop listing is the longer separator.
+ * Make the cart contain the same type of character which is obtained using get_the_title.
+ */
+add_filter( 'woocommerce_cart_item_name', 'trp_woo_cart_item_name', 8, 3 );
+function trp_woo_cart_item_name( $product_name, $cart_item, $cart_item_key ){
+	if ( isset( $cart_item['product_id'] ) ){
+		$title = get_the_title( $cart_item['product_id'] );
+		if ( !empty( $title )){
+			if ( strpos( $product_name, '</a>' ) ) {
+				preg_match_all('~<a(.*?)href="([^"]+)"(.*?)>~', $product_name, $matches);
+				$product_name = sprintf( '<a href="%s">%s</a>', esc_url( $matches[2][0] ), $title );
+			}
+		}
+	}
+	return $product_name;
+}
