@@ -174,6 +174,43 @@ class TRP_Query{
         }
     }
 
+    /**
+     * Check if table for machine translation logs exists.
+     *
+     * If the table does not exists it is created.
+     *
+     * @param string $language_code
+     */
+    public function check_machine_translation_log_table(){
+        $table_name = $this->db->prefix . 'trp_machine_translation_log';
+        if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name )
+        {
+            // table not in database. Create new table
+            $charset_collate = $this->db->get_charset_collate();
+
+            $sql = "CREATE TABLE `{$table_name}`(
+                                    id bigint(20) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                                    url text,
+                                    date  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    strings longtext,
+                                    response longtext,
+                                    UNIQUE KEY id (id) )
+                                     {$charset_collate};";
+            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+            dbDelta( $sql );
+
+            if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name )
+            {
+                // something failed. Table still doesn't exist.
+                return false;
+            }
+            // table exists
+            return true;
+        }
+        //table exists
+        return true;
+    }
+
     public function copy_all_translation_blocks_into_table( $default_language, $language_code ){
     	$all_table_names = $this->get_all_table_names( $default_language, array( $language_code ) );
     	if ( count( $all_table_names ) > 0 ){
