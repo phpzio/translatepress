@@ -49,11 +49,11 @@ class TRP_Advanced_Tab {
 	 */
 	public function sanitize_settings( $submitted_settings ){
 		$registered_settings = $this->get_settings();
-		$settings = array();
+		$settings = get_option('trp_advanced_settings', array());
 		foreach ( $registered_settings as $registered_setting ){
 
 		    // checkboxes are not set so we're setting them up as false
-            if(!isset( $submitted_settings[$registered_setting['name']] )){
+            if( !isset( $submitted_settings[$registered_setting['name']] ) ){
                 $submitted_settings[$registered_setting['name']] = false;
             }
 
@@ -163,6 +163,12 @@ class TRP_Advanced_Tab {
 				case 'list':
 					echo $this->add_to_list_setting( $setting );
 					break;
+				case 'machine_translation_counter':
+					echo $this->machine_translation_counter( $setting );
+					break;
+                case 'machine_translation_counter_date':
+                    echo $this->machine_translation_counter_date( $setting );
+                    break;
 			}
 		}
 	}
@@ -238,13 +244,12 @@ class TRP_Advanced_Tab {
         $option = get_option( 'trp_advanced_settings', true );
         $default = ( isset( $setting['default'] )) ? $setting['default'] : '';
         $value = ( isset( $option[ $setting['name'] ] ) ) ? $option[ $setting['name'] ] : $default;
-        $step = ($type == 'number') ? $step = " step='100000' " : $step = '';
         $html = "
              <tr>
                 <th scope='row'>" . $setting['label'] . "</th>
                 <td>
 	                <label>
-	                    <input type='{$type}' id='{$setting['name']}' name='trp_advanced_settings[{$setting['name']}]' value='{$value}' lang=\"en\" {$step}>
+	                    <input type='{$type}' id='{$setting['name']}' name='trp_advanced_settings[{$setting['name']}]' value='{$value}'>
 			        </label>
                     <p class='description'>
                         {$setting['description']}
@@ -327,4 +332,52 @@ class TRP_Advanced_Tab {
 		return apply_filters( 'trp_advanced_setting_list', $html );
 	}
 
+    /**
+     * Return HTML of a machine_translation_counter type setting
+     *
+     * @param $setting
+     *
+     * @return 'string'
+     */
+    public function machine_translation_counter( $setting ){
+        $option = get_option( 'trp_advanced_settings', true );
+        if(isset($option['machine_translation_counter'])){
+            $counter = $option['machine_translation_counter'];
+        } else {
+            $counter = '0';
+        }
+
+        $html = "
+             <tr>
+                <th scope='row'>{$setting['label']}</th>
+                <td>{$counter}</td>
+            </tr>";
+
+        return apply_filters( 'trp_advanced_setting_machine_translation_counter', $html );
+    }
+
+    /**
+     * Return HTML of a machine_translation_counter_date type setting
+     *
+     * @param $setting
+     *
+     * @return 'string'
+     */
+    public function machine_translation_counter_date( $setting ){
+        $option = get_option( 'trp_advanced_settings', true );
+
+        if(isset($option['machine_translation_counter_date'])){
+            $date = $option['machine_translation_counter_date'];
+        } else {
+            $date = date('Y-m-d');
+        }
+
+        $html = "
+             <tr>
+                <th scope='row'>{$setting['label']}</th>
+                <td>{$date}</td>
+            </tr>";
+
+        return apply_filters( 'trp_advanced_setting_list', $html );
+    }
 }

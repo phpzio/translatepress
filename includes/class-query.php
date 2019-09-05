@@ -9,7 +9,7 @@
 class TRP_Query{
 
     protected $table_name;
-    protected $db;
+    public $db;
     protected $settings;
     protected $translation_render;
 
@@ -191,9 +191,12 @@ class TRP_Query{
             $sql = "CREATE TABLE `{$table_name}`(
                                     id bigint(20) AUTO_INCREMENT NOT NULL PRIMARY KEY,
                                     url text,
-                                    date  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    timestamp datetime DEFAULT '0000-00-00 00:00:00',
                                     strings longtext,
+                                    characters text,
                                     response longtext,
+                                    lang_source text,
+                                    lang_target text,
                                     UNIQUE KEY id (id) )
                                      {$charset_collate};";
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );

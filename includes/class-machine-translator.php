@@ -9,6 +9,7 @@ class TRP_Machine_Translator{
     protected $settings;
 	protected $referer;
 	protected $url_converter;
+	protected $machine_translator_logger;
     /**
      * TRP_Machine_Translator constructor.
      *
@@ -94,16 +95,32 @@ class TRP_Machine_Translator{
 
         $translated_strings = array();
 
-        if( !empty( $new_strings ) ){
+        if ( ! $this->machine_translator_logger ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
+        }
+
+        // if character quote expired we don't send strings for automatic translation.
+        if( !empty( $new_strings ) && !$this->machine_translator_logger->quota_exceeded() ){
             /* split our strings that need translation in chunks of maximum 128 strings because Google Translate has a limit of 128 strings */
             $new_strings_chunks = array_chunk( $new_strings, 128, true );
             /* if there are more than 128 strings we make multiple requests */
             foreach( $new_strings_chunks as $new_strings_chunk ){
+                $response = $this->send_request( $source_language, $language_code, $new_strings_chunk );
 
-            	$response = $this->send_request( $source_language, $language_code, $new_strings_chunk );
+                // this is run only if "Log machine translation queries." is set to Yes.
+                $this->machine_translator_logger->log(array(
+                    'strings'   => serialize( $new_strings_chunk),
+                    'response'  => serialize( $response ),
+                    'lang_source'  => $source_language,
+                    'lang_target'  => $language_code,
+                ));
 
                 /* analyze the response */
                 if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+
+                    $this->machine_translator_logger->count_towards_quota( $new_strings_chunk );
+
                     /* decode it */
                     $translation_response = json_decode( $response['body'] );
                     if( !empty( $translation_response->error ) ){

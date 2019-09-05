@@ -297,7 +297,7 @@ class TRP_Settings{
             'floater-options'                       => 'flags-full-names',
             'floater-position'                      => 'bottom-right',
             'url-slugs'                             => array( 'en_US' => 'en', '' ),
-            'advanced_settings'                     => array(get_option('trp_advanced_settings', array() )),
+            'advanced_settings'                     => get_option('trp_advanced_settings', array() ),
         );
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
