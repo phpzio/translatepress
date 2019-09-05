@@ -18,6 +18,8 @@ function TRP_Translator(){
     var language_to_query;
     var except_characters = " \t\n\r  �.,/`~!@#$€£%^&*():;-_=+[]{}\\|?/<>1234567890'";
     var trim_characters = " \t\n\r  �\x0A\x0B" + "\302" + "\240";
+    var already_detected = [];
+    var duplicate_detections_allowed = parseInt( trp_data.duplicate_detections_allowed )
 
     /**
      * Ajax request to get translations for strings
@@ -122,6 +124,7 @@ function TRP_Translator(){
                     }
                 }
 
+                already_detected[ initial_value ] = (initial_value in already_detected ) ? already_detected[ initial_value ] + 1 : 0
                 if ( ! translation_found ){
                     if ( nodeInfo.attribute ){
                         if ( nodeInfo.attribute != 'src' ) {
@@ -138,6 +141,7 @@ function TRP_Translator(){
                 window.parent.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
                 window.dispatchEvent( new Event( 'trp_iframe_page_updated' ) );
             }
+
         }else{
             for (var j = 0 ; j < nodesInfo.length; j++){
                 if ( nodesInfo[j].attribute ){
@@ -147,7 +151,7 @@ function TRP_Translator(){
                 }else {
                     nodesInfo[j].node.textContent = nodesInfo[j].original;
                 }
-
+                already_detected[ nodesInfo[j].original ] = (nodesInfo[j].original in already_detected ) ? already_detected[ nodesInfo[j].original ] + 1 : 0
             }
         }
         _this.resume_observer();
@@ -227,6 +231,13 @@ function TRP_Translator(){
         return false;
     };
 
+    /*
+     * Skip string based on original string text
+     */
+    this.skip_string_original = function ( string ){
+        return ( ( already_detected[string] > duplicate_detections_allowed ) || _this.in_array( string, trp_data.skip_strings_from_dynamic_translation ) )
+    }
+
     this.skip_string_attribute = function(node, attribute){
         // skip nodes containing these attributes
         var selectors = trp_data.trp_base_selectors;
@@ -241,7 +252,7 @@ function TRP_Translator(){
     this.in_array = function (needle, array ) {
         var i
         var length = array.length
-        for( i = 0; i < length; i++ ){
+        for( i = length - 1; i >= 0; i-- ){
             if ( array[i] === needle ){
                 return true
             }
@@ -259,12 +270,14 @@ function TRP_Translator(){
                 // a text without HTML was added
                 if ( _this.trim( direct_string.textContent, except_characters ) != '' ) {
                     var extracted_original = _this.trim(direct_string.textContent, trim_characters);
-                    nodesInfo.push({ node: node, original: extracted_original, attribute: '' });
-                    string_originals.push(extracted_original)
+                    if ( ! _this.skip_string_original( extracted_original )) {
+                        nodesInfo.push({node: node, original: extracted_original, attribute: ''});
+                        string_originals.push(extracted_original)
 
-                    direct_string.textContent = '';
-                    if ( _this.is_editor ) {
-                        jQuery(node).wrap('<translate-press></translate-press>');
+                        direct_string.textContent = '';
+                        if (_this.is_editor) {
+                            jQuery(node).wrap('<translate-press></translate-press>');
+                        }
                     }
                 }
             }else{
@@ -282,10 +295,12 @@ function TRP_Translator(){
                 var all_strings_length = all_strings.length;
                 for (var j = 0; j < all_strings_length; j++ ) {
                     if ( _this.trim( all_strings[j].textContent, except_characters ) != '' ) {
-                        nodesInfo.push({node: all_strings[j], original: all_strings[j].textContent, attribute: '' });
-                        string_originals.push( all_strings[j].textContent )
-                        if ( trp_data ['showdynamiccontentbeforetranslation'] == false ) {
-                            all_strings[j].textContent = '';
+                        if ( ! _this.skip_string_original( all_strings[j].textContent )) {
+                            nodesInfo.push({node: all_strings[j], original: all_strings[j].textContent, attribute: ''});
+                            string_originals.push(all_strings[j].textContent)
+                            if (trp_data ['showdynamiccontentbeforetranslation'] == false) {
+                                all_strings[j].textContent = '';
+                            }
                         }
                     }
                 }
@@ -312,6 +327,9 @@ function TRP_Translator(){
                         }
 
                         var attribute_content = all_nodes[j].getAttribute( attribute_selector_item.accessor )
+                        if ( _this.skip_string_original( attribute_content )){
+                            continue;
+                        }
                         if ( attribute_content && _this.trim( attribute_content.trim(), except_characters ) != '' ) {
                             nodesInfo.push({node: all_nodes[j], original: attribute_content, attribute: attribute_selector_item.accessor });
                             string_originals.push( attribute_content )

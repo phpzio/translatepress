@@ -1240,17 +1240,19 @@ class TRP_Translation_Render{
 		$language_to_query = ( count ( $this->settings['translation-languages'] ) < 2 ) ? '' : $language_to_query;
 
 		return array(
-			'trp_custom_ajax_url'                 => apply_filters('trp_custom_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
-			'trp_wp_ajax_url'                     => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
-			'trp_language_to_query'               => $language_to_query,
-			'trp_original_language'               => $this->settings['default-language'],
-			'trp_current_language'                => $TRP_LANGUAGE,
-			'trp_skip_selectors'                  => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trp-translate-id-innertext]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ), // data-trp-translate-id-innertext refers to translation block and it shouldn't be detected
-			'trp_base_selectors'                  => $this->get_base_attribute_selectors(),
-			'trp_attributes_selectors'            => $this->get_node_accessors(),
-			'trp_attributes_accessors'            => $this->get_accessors_array(),
-			'gettranslationsnonceregular'         => $nonces['gettranslationsnonceregular'],
-			'showdynamiccontentbeforetranslation' => apply_filters( 'trp_show_dynamic_content_before_translation', false )
+			'trp_custom_ajax_url'                   => apply_filters('trp_custom_ajax_url', TRP_PLUGIN_URL . 'includes/trp-ajax.php' ),
+			'trp_wp_ajax_url'                       => apply_filters('trp_wp_ajax_url', admin_url('admin-ajax.php')),
+			'trp_language_to_query'                 => $language_to_query,
+			'trp_original_language'                 => $this->settings['default-language'],
+			'trp_current_language'                  => $TRP_LANGUAGE,
+			'trp_skip_selectors'                    => apply_filters( 'trp_skip_selectors_from_dynamic_translation', array( '[data-no-translation]', '[data-no-dynamic-translation]', '[data-trp-translate-id-innertext]', 'script', 'style', 'head', 'trp-span', 'translate-press' ), $TRP_LANGUAGE, $this->settings ), // data-trp-translate-id-innertext refers to translation block and it shouldn't be detected
+			'trp_base_selectors'                    => $this->get_base_attribute_selectors(),
+			'trp_attributes_selectors'              => $this->get_node_accessors(),
+			'trp_attributes_accessors'              => $this->get_accessors_array(),
+			'gettranslationsnonceregular'           => $nonces['gettranslationsnonceregular'],
+			'showdynamiccontentbeforetranslation'   => apply_filters( 'trp_show_dynamic_content_before_translation', false ),
+			'skip_strings_from_dynamic_translation' => apply_filters( 'trp_skip_strings_from_dynamic_translation', array() ),
+			'duplicate_detections_allowed'          => apply_filters( 'trp_duplicate_detections_allowed', 20 )
 		);
 	}
 
