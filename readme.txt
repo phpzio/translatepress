@@ -3,9 +3,9 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.translatepress.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 5.2.2
+Tested up to: 5.2.3
 Requires PHP: 5.6.20
-Stable tag: 1.5.5
+Stable tag: 1.5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,6 +142,24 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
+= 1.5.6 =
+* Improved speed on Gettext exclusion
+* Make Gettext exclusion work without a domain in Advanced Settings
+* Allow po/mo localization files to translate excluded Gettext strings
+* Added Advanced setting to Exclude selectors from translation
+* Added option to change floating language switcher position
+* Added compatibility with CartFlows plugin
+* Added compatibility with NextGen plugin
+* Added compatibility with Ninja Popups plugin mails
+* Added compatibility with Woo Tours plugin
+* Fixed issue with trp-gettext wrappings in WooCommerce REST API
+* Fixed issue with translating images run through JetPack CDN
+* Fixed edge case where gettext inside script tag attributes was breaking html
+* Translated title of product in WooCommerce "Product has been added to cart" message
+* Better handling of string overdetection in dynamic string translation
+* Better handling of sql errors and machine translation
+* Fixed WooCommerce Product Translation on Cart Page for products with hyphen in their names
+
 = 1.5.5 =
 * Fixed warnings regarding settings that appeared on fresh installs
 

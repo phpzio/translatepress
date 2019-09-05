@@ -61,7 +61,7 @@ msgstr ""
 msgid "Select how the language should be detected for first time visitors.<br>The visitor's last displayed language will be remembered through cookies."
 msgstr ""
 
-#: ../tp-add-on-extra-languages/class-extra-languages.php:57, ../translatepress/includes/class-settings.php:308
+#: ../tp-add-on-extra-languages/class-extra-languages.php:57, ../translatepress/includes/class-settings.php:338
 msgid "Error! Duplicate URL slug values."
 msgstr ""
 
@@ -133,6 +133,18 @@ msgstr ""
 msgid "Generate automatic translations of slugs for posts, pages and Custom Post Types.<br/>Requires <a href=\"https://translatepress.com/docs/addons/seo-pack/\" title=\"TranslatePress Add-on SEO Pack documentation\" target=\"_blank\"> SEO Pack Add-on</a> to be installed and activated."
 msgstr ""
 
+#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:9, ../translatepress/includes/advanced-settings/exclude-selectors.php:9
+msgid "Selector"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:11
+msgid "Exclude from dynamic translation"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:12
+msgid "Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible."
+msgstr ""
+
 #: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:9
 msgid "Gettext String"
 msgstr ""
@@ -146,7 +158,15 @@ msgid "Exclude Gettext Strings"
 msgstr ""
 
 #: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:13
-msgid "Exclude these strings from being translated as Gettext strings. <br/>Can still be translated as regular strings."
+msgid "Exclude these strings from being translated as Gettext strings by TranslatePress. Leave the domain empty to take into account any Gettext string.<br/>Can still be translated through po/mo files."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-selectors.php:11
+msgid "Exclude selectors from translation"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-selectors.php:12
+msgid "Do not translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated."
 msgstr ""
 
 #: ../translatepress/includes/advanced-settings/fix-broken-html.php:8
@@ -166,23 +186,11 @@ msgid "Fixes attributes without spaces between them because they are not valid H
 msgstr ""
 
 #: ../translatepress/includes/advanced-settings/show-dynamic-content-before-translation.php:8
-msgid "Show dynamic content before translation"
+msgid "Fix missing dynamic content"
 msgstr ""
 
 #: ../translatepress/includes/advanced-settings/show-dynamic-content-before-translation.php:9
-msgid "Shows dynamically inserted content in original language for a moment before the translation request is finished. <br> May help fix missing content inserted using JavaScript."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/skip-dynamic-selectors.php:9
-msgid "Selector"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/skip-dynamic-selectors.php:11
-msgid "Exclude from dynamic translation"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/skip-dynamic-selectors.php:12
-msgid "Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible."
+msgid "May help fix missing content inserted using JavaScript. <br> It shows dynamically inserted content in original language for a moment before the translation request is finished."
 msgstr ""
 
 #: ../translatepress/includes/advanced-settings/strip-gettext-post-content.php:7
@@ -293,31 +301,47 @@ msgstr ""
 msgid "Only Flags"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:344
+#: ../translatepress/includes/class-settings.php:61
+msgid "Bottom Right"
+msgstr ""
+
+#: ../translatepress/includes/class-settings.php:62
+msgid "Bottom Left"
+msgstr ""
+
+#: ../translatepress/includes/class-settings.php:63
+msgid "Top Right"
+msgstr ""
+
+#: ../translatepress/includes/class-settings.php:64
+msgid "Top Left"
+msgstr ""
+
+#: ../translatepress/includes/class-settings.php:374
 msgid "Current Language"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:385
+#: ../translatepress/includes/class-settings.php:415
 msgid "General"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:390, ../translatepress/includes/class-translation-manager.php:242
+#: ../translatepress/includes/class-settings.php:420, ../translatepress/includes/class-translation-manager.php:242
 msgid "Translate Site"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:395
+#: ../translatepress/includes/class-settings.php:425
 msgid "Addons"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:403
+#: ../translatepress/includes/class-settings.php:433
 msgid "License"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:431, ../translatepress/includes/class-translation-manager.php:274
+#: ../translatepress/includes/class-settings.php:461, ../translatepress/includes/class-translation-manager.php:274
 msgid "Settings"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:435
+#: ../translatepress/includes/class-settings.php:465
 msgid "Pro Features"
 msgstr ""
 
@@ -565,11 +589,11 @@ msgstr ""
 msgid "Translate Page"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:950
+#: ../translatepress/includes/class-translation-manager.php:953
 msgid "Security check"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1024
+#: ../translatepress/includes/class-translation-manager.php:1027
 msgid "<strong>Warning:</strong> Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting."
 msgstr ""
 
@@ -873,7 +897,7 @@ msgstr ""
 msgid "Floating language selection"
 msgstr ""
 
-#: ../translatepress/partials/main-settings-page.php:132
+#: ../translatepress/partials/main-settings-page.php:133
 msgid "Add a floating dropdown that follows the user on every page."
 msgstr ""
 

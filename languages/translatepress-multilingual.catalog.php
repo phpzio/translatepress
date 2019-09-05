@@ -29,19 +29,21 @@
 <?php __("It disables detection of strings displayed dynamically using JavaScript. <br/>Strings loaded via a server side AJAX call will still be translated.", "translatepress-multilingual"); ?>
 <?php __("Automatically translate slugs", "translatepress-multilingual"); ?>
 <?php __("Generate automatic translations of slugs for posts, pages and Custom Post Types.<br/>Requires <a href=\"https://translatepress.com/docs/addons/seo-pack/\" title=\"TranslatePress Add-on SEO Pack documentation\" target=\"_blank\"> SEO Pack Add-on</a> to be installed and activated.", "translatepress-multilingual"); ?>
+<?php __("Selector", "translatepress-multilingual"); ?>
+<?php __("Exclude from dynamic translation", "translatepress-multilingual"); ?>
+<?php __("Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible.", "translatepress-multilingual"); ?>
 <?php __("Gettext String", "translatepress-multilingual"); ?>
 <?php __("Domain", "translatepress-multilingual"); ?>
 <?php __("Exclude Gettext Strings", "translatepress-multilingual"); ?>
-<?php __("Exclude these strings from being translated as Gettext strings. <br/>Can still be translated as regular strings.", "translatepress-multilingual"); ?>
+<?php __("Exclude these strings from being translated as Gettext strings by TranslatePress. Leave the domain empty to take into account any Gettext string.<br/>Can still be translated through po/mo files.", "translatepress-multilingual"); ?>
+<?php __("Exclude selectors from translation", "translatepress-multilingual"); ?>
+<?php __("Do not translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated.", "translatepress-multilingual"); ?>
 <?php __("Fix broken HTML", "translatepress-multilingual"); ?>
 <?php __("General attempt to fix broken or missing HTML on translated pages.<br/><strong>Only try this if the \"Fix spaces between html attribute\" did not solve the issue.</strong>", "translatepress-multilingual"); ?>
 <?php __("Fix spaces between HTML attributes", "translatepress-multilingual"); ?>
 <?php __("Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages.", "translatepress-multilingual"); ?>
-<?php __("Show dynamic content before translation", "translatepress-multilingual"); ?>
-<?php __("Shows dynamically inserted content in original language for a moment before the translation request is finished. <br> May help fix missing content inserted using JavaScript.", "translatepress-multilingual"); ?>
-<?php __("Selector", "translatepress-multilingual"); ?>
-<?php __("Exclude from dynamic translation", "translatepress-multilingual"); ?>
-<?php __("Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible.", "translatepress-multilingual"); ?>
+<?php __("Fix missing dynamic content", "translatepress-multilingual"); ?>
+<?php __("May help fix missing content inserted using JavaScript. <br> It shows dynamically inserted content in original language for a moment before the translation request is finished.", "translatepress-multilingual"); ?>
 <?php __("Filter Gettext wrapping from post content and title", "translatepress-multilingual"); ?>
 <?php __("Filters gettext wrapping such as #!trpst#trp-gettext from all updated post content and post title. Does not affect previous post content. <br/><strong>Database backup is recommended before switching on.</strong>", "translatepress-multilingual"); ?>
 <?php __("Filter Gettext wrapping from post meta", "translatepress-multilingual"); ?>
@@ -69,6 +71,10 @@
 <?php __("Flags with Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Flags with Short Language Names", "translatepress-multilingual"); ?>
 <?php __("Only Flags", "translatepress-multilingual"); ?>
+<?php __("Bottom Right", "translatepress-multilingual"); ?>
+<?php __("Bottom Left", "translatepress-multilingual"); ?>
+<?php __("Top Right", "translatepress-multilingual"); ?>
+<?php __("Top Left", "translatepress-multilingual"); ?>
 <?php __("Current Language", "translatepress-multilingual"); ?>
 <?php __("General", "translatepress-multilingual"); ?>
 <?php __("Translate Site", "translatepress-multilingual"); ?>
