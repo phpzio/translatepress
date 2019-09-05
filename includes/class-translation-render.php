@@ -264,11 +264,29 @@ class TRP_Translation_Render{
      * @return mixed
      */
     public function handle_rest_api_translations($response){
-        $response->data['title']['rendered'] = $this->translate_page( $response->data['title']['rendered'] );
-        $response->data['excerpt']['rendered'] = $this->translate_page( $response->data['excerpt']['rendered'] );
-        $response->data['content']['rendered'] = $this->translate_page( $response->data['content']['rendered'] );
+    	if ( isset( $response->data ) ) {
+		    if ( isset( $response->data['title'] ) && isset( $response->data['title']['rendered'] ) ) {
+			    $response->data['title']['rendered'] = $this->translate_page( $response->data['title']['rendered'] );
+		    }
+		    if ( isset( $response->data['excerpt'] ) && isset( $response->data['excerpt']['rendered'] ) ) {
+			    $response->data['excerpt']['rendered'] = $this->translate_page( $response->data['excerpt']['rendered'] );
+		    }
+		    if ( isset( $response->data['content'] ) && isset( $response->data['content']['rendered'] ) ) {
+			    $response->data['content']['rendered'] = $this->translate_page( $response->data['content']['rendered'] );
+		    }
+	    }
         return $response;
     }
+
+	/**
+	 * Apply translation filters for REST API response
+	 */
+	public function add_callbacks_for_translating_rest_api(){
+		$post_types = get_post_types();
+		foreach ( $post_types as $post_type ) {
+			add_filter( 'rest_prepare_'. $post_type, array( $this, 'handle_rest_api_translations' ) );
+		}
+	}
 
     /**
      * Finding translateable strings and replacing with translations.
@@ -302,7 +320,9 @@ class TRP_Translation_Render{
 
         /* make sure we only translate on the rest_prepare_$post_type filter in REST requests and not the whole json */
         if( strpos( $this->url_converter->cur_page_url(), get_rest_url() ) !== false && strpos( current_filter(), 'rest_prepare_' ) !== 0){
-            return $output;
+	        $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $output );
+	        $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
+	        return $trpremoved;
         }
 
         global $TRP_LANGUAGE;

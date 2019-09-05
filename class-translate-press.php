@@ -232,12 +232,7 @@ class TRP_Translate_Press{
         $this->loader->add_filter( "trp_before_translate_content", $this->translation_render, 'handle_cdata', 1000 );
         $this->loader->add_action( "trp_set_translation_for_attribute", $this->translation_render, 'translate_image_srcset_attributes', 10, 3 );
         $this->loader->add_action( "trp_allow_machine_translation_for_string", $this->translation_render, 'allow_machine_translation_for_string', 10, 4 );
-
-        /* apply translation filters for REST API response */
-        $post_types = get_post_types();
-        foreach ( $post_types as $post_type ) {
-            $this->loader->add_filter( 'rest_prepare_'.$post_type, $this->translation_render, 'handle_rest_api_translations' );
-        }
+        $this->loader->add_action( "init", $this->translation_render, 'add_callbacks_for_translating_rest_api', 10, 4 );
 
 
 
