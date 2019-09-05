@@ -67,6 +67,10 @@ class TRP_Advanced_Tab {
                         $settings[ $registered_setting['name'] ] = sanitize_text_field($submitted_settings[ $registered_setting['name'] ]);
                         break;
                     }
+                    case 'number': {
+                        $settings[ $registered_setting['name'] ] = sanitize_text_field(intval($submitted_settings[ $registered_setting['name'] ] ) );
+                        break;
+                    }
 					case 'list': {
 						$settings[ $registered_setting['name'] ] = array();
 						foreach ( $registered_setting['columns'] as $column => $column_name ) {
@@ -150,6 +154,9 @@ class TRP_Advanced_Tab {
                 case 'input':
                     echo $this->input_setting( $setting );
                     break;
+                case 'number':
+                    echo $this->input_setting( $setting, 'number' );
+                    break;
                 case 'separator':
                     echo $this->separator_setting( $setting );
                     break;
@@ -222,23 +229,25 @@ class TRP_Advanced_Tab {
     /**
      * Return HTML of a input type setting
      *
-     * @param $setting
+     * @param array $setting
+     * @param string $type
      *
      * @return 'string'
      */
-    public function input_setting( $setting ){
+    public function input_setting( $setting, $type = 'text'){
         $option = get_option( 'trp_advanced_settings', true );
         $default = ( isset( $setting['default'] )) ? $setting['default'] : '';
         $value = ( isset( $option[ $setting['name'] ] ) ) ? $option[ $setting['name'] ] : $default;
+        $step = ($type == 'number') ? $step = " step='100000' " : $step = '';
         $html = "
              <tr>
                 <th scope='row'>" . $setting['label'] . "</th>
                 <td>
 	                <label>
-	                    <input type='text' id='" . $setting['name'] . "' name='trp_advanced_settings[" . $setting['name'] . "]' value='". $value ."'>
+	                    <input type='{$type}' id='{$setting['name']}' name='trp_advanced_settings[{$setting['name']}]' value='{$value}' lang=\"en\" {$step}>
 			        </label>
                     <p class='description'>
-                        " . $setting['description'] . "
+                        {$setting['description']}
                     </p>
                 </td>
             </tr>";
