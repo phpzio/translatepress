@@ -105,12 +105,13 @@ class TRP_Translate_Press{
      * Instantiates components.
      */
     protected function initialize_components() {
-	    $this->advanced_tab               = new TRP_Advanced_Tab();
-	    $this->advanced_tab->include_custom_codes();
-
         $this->loader                     = new TRP_Hooks_Loader();
         $this->languages                  = new TRP_Languages();
         $this->settings                   = new TRP_Settings();
+
+        $this->advanced_tab               = new TRP_Advanced_Tab($this->settings->get_settings());
+        $this->advanced_tab->include_custom_codes();
+
         $this->translation_render         = new TRP_Translation_Render( $this->settings->get_settings() );
         $this->url_converter              = new TRP_Url_Converter( $this->settings->get_settings() );
         $this->language_switcher          = new TRP_Language_Switcher( $this->settings->get_settings(), $this );

@@ -93,12 +93,20 @@ class TRP_Machine_Translator_Logger
     public function quota_exceeded(){
         if ( $this->limit  >=  $this->counter )
         {
+            // quota NOT exceeded
+            // for some reason this condition is hard to comprehend by my brain
+            // thus the unneeded comment.
             return false;
         }
+
+        // we've exceeded our daily quota
+        $this->update_advanced_sub_option('machine_translation_trigger_quota_notification' , true );
         return true;
     }
 
-    private function maybe_reset_counter_date(){
+    public function maybe_reset_counter_date(){
+        $some = 'else';
+
         if ($this->counter_date === date ("Y-m-d" ))
         {
             // the day has not passed
@@ -108,6 +116,9 @@ class TRP_Machine_Translator_Logger
             $this->update_advanced_sub_option('machine_translation_counter_date' , date ("Y-m-d" ) );
             // clear the counter
             $this->update_advanced_sub_option('machine_translation_counter' , 0 );
+            // clear the notification
+            $this->update_advanced_sub_option('machine_translation_trigger_quota_notification' , false );
+
             return true;
         }
     }

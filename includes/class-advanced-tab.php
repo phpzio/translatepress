@@ -2,6 +2,13 @@
 
 class TRP_Advanced_Tab {
 
+    private $settings;
+
+    public function __construct($settings)
+    {
+        $this->settings = $settings;
+    }
+
 	/*
 	 * Add new tab to TP settings
 	 *
@@ -49,7 +56,9 @@ class TRP_Advanced_Tab {
 	 */
 	public function sanitize_settings( $submitted_settings ){
 		$registered_settings = $this->get_settings();
-		$settings = get_option('trp_advanced_settings', array());
+		$prev_settings = get_option('trp_advanced_settings', array());
+
+        $settings = array();
 		foreach ( $registered_settings as $registered_setting ){
 
 		    // checkboxes are not set so we're setting them up as false
@@ -103,8 +112,19 @@ class TRP_Advanced_Tab {
 						break;
 					}
 				}
-			}
-		}
+			} //endif
+
+            // not all settings are updated by the user. Some are modified by the program and used as storage.
+            // This is somewhat bad from a data model kind of way, but it's easy to pass the $settings variable around between classes.
+            if( isset($registered_setting['data_model'])
+                && $registered_setting['data_model'] == 'not_updatable_by_user'
+                && isset($prev_settings[$registered_setting['name']])
+            )
+            {
+                $settings[ $registered_setting['name'] ] = $prev_settings[$registered_setting['name']];
+            }
+
+		} //endforeach
 		add_settings_error( 'trp_advanced_settings', 'settings_updated', __( 'Settings saved.' ), 'updated' );
 
 		return apply_filters( 'trp_extra_sanitize_advanced_settings', $settings, $submitted_settings );
@@ -142,6 +162,14 @@ class TRP_Advanced_Tab {
 	 * Hooked to trp_settings_navigation_tabs
 	 */
 	public function output_advanced_options(){
+        if ( ! $this->machine_translator_logger ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
+        }
+
+        $this->machine_translator_logger->maybe_reset_counter_date();
+
+
 		$advanced_settings_array = $this->get_settings();
 		foreach( $advanced_settings_array as $setting ){
 			switch( $setting['type'] ){
@@ -168,6 +196,9 @@ class TRP_Advanced_Tab {
 					break;
                 case 'machine_translation_counter_date':
                     echo $this->machine_translation_counter_date( $setting );
+                    break;
+                case 'machine_translation_trigger_quota_notification':
+                    echo $this->storage( $setting );
                     break;
 			}
 		}
