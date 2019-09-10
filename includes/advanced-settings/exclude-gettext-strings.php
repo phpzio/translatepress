@@ -10,7 +10,7 @@ function trp_register_exclude_gettext_strings( $settings_array ){
 								'domain' => __('Domain', 'translatepress-multilingual')
 							),
 		'label'         => esc_html__( 'Exclude Gettext Strings', 'translatepress-multilingual' ),
-		'description'   => wp_kses( __( 'Exclude these strings from being translated as Gettext strings. Leave the domain empty to take into account any gettext string.<br/>Can still be translated as regular strings.', 'translatepress-multilingual' ), array( 'br' => array() ) ),
+		'description'   => wp_kses( __( 'Exclude these strings from being translated as Gettext strings by TranslatePress. Leave the domain empty to take into account any Gettext string.<br/>Can still be translated through po/mo files.', 'translatepress-multilingual' ), array( 'br' => array() ) ),
 	);
 	return $settings_array;
 }

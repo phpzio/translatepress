@@ -19,3 +19,12 @@ function trp_adst_disable_dynamic( $enable ){
 	}
 	return $enable;
 }
+
+add_filter( 'trp_editor_missing_scripts_and_styles', 'trp_adst_disable_dynamic2' );
+function trp_adst_disable_dynamic2( $scripts ){
+	$option = get_option( 'trp_advanced_settings', true );
+	if ( isset( $option['disable_dynamic_translation'] ) && $option['disable_dynamic_translation'] === 'yes' ){
+		unset($scripts['trp-translate-dom-changes.js']);
+	}
+	return $scripts;
+}

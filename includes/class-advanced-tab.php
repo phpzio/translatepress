@@ -141,14 +141,16 @@ class TRP_Advanced_Tab {
 	 * Require the custom codes from the specified folder
 	 */
 	public function include_custom_codes(){
-		$paths = apply_filters( 'trp_custom_code_path_folder', array( TRP_PLUGIN_DIR . 'includes/advanced-settings/*.php' ) );
-
-		foreach( $paths as $path ) {
-			$path = glob( $path );
-			foreach ( $path as $file ) {
-				require( $file );
-			}
-		}
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/disable-dynamic-translation.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/enable-auto-translate-slug.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/exclude-dynamic-selectors.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/exclude-gettext-strings.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/exclude-selectors.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/fix-broken-html.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/fix-invalid-space-between-html-attr.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/show-dynamic-content-before-translation.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/strip-gettext-post-content.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/strip-gettext-post-meta.php');
 	}
 
 	/*
