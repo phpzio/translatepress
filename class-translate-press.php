@@ -121,7 +121,7 @@ class TRP_Translate_Press{
         $this->translation_manager        = new TRP_Translation_Manager( $this->settings->get_settings() );
         $this->editor_api_regular_strings = new TRP_Editor_Api_Regular_Strings( $this->settings->get_settings() );
         $this->editor_api_gettext_strings = new TRP_Editor_Api_Gettext_Strings( $this->settings->get_settings() );
-        $this->notifications              = new TRP_Trigger_Plugin_Notifications();
+        $this->notifications              = new TRP_Trigger_Plugin_Notifications( $this->settings->get_settings() );
         $this->upgrade                    = new TRP_Upgrade( $this->settings->get_settings() );
         $this->plugin_updater             = new TRP_Plugin_Updater();
         $this->license_page               = new TRP_LICENSE_PAGE();

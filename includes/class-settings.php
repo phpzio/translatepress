@@ -76,15 +76,33 @@ class TRP_Settings{
     }
 
     /**
-     * Returns settings_option.
-     *
-     * @return array        Settings option.
-     */
+ * Returns settings_option.
+ *
+ * @return array        Settings option.
+ */
     public function get_settings(){
         if ( $this->settings == null ){
             $this->set_options();
         }
         return $this->settings;
+    }
+
+    /**
+     * Returns the value of an individual setting or the default provided.
+     *
+     * @param string $name
+     * @param default mixed
+     *
+     * @return mixed Setting Value
+     */
+    public function get_setting($name, $default = null){
+        $settings = $this->settings;
+        if( array_key_exists($name, $this->settings ) )
+        {
+            return maybe_unserialize($this->settings[$name]);
+        } else {
+            return $default;
+        }
     }
 
     /**
