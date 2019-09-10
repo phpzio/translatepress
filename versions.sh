@@ -1,6 +1,12 @@
 #!/bin/bash
 repositoryroot="$PWD"
 
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        home=~
+else
+    home="c:"
+fi
+
 #CREATE FREE HERE:
 echo "Do you want to update the free version ? (y/n)"
 read freeversion
@@ -54,17 +60,17 @@ if [ $freeversion == 'y' ]; then
     git push origin $version
 
 
-    if [ ! -d c:/Work/TRP/FreeSvn ]; then
-        mkdir -p c:/Work/TRP/FreeSvn
-        cd c:/Work/TRP/FreeSvn
+    if [ ! -d $home/Work/TRP/FreeSvn ]; then
+        mkdir -p $home/Work/TRP/FreeSvn
+        cd $home/Work/TRP/FreeSvn
         svn co http://plugins.svn.wordpress.org/translatepress-multilingual
-        cd c:/Work/TRP/FreeSvn/translatepress-multilingual
+        cd $home/Work/TRP/FreeSvn/translatepress-multilingual
     else
-        cd c:/Work/TRP/FreeSvn/translatepress-multilingual
+        cd $home/Work/TRP/FreeSvn/translatepress-multilingual
         svn up
     fi
 
-    trunk_dir="c:/Work/TRP/FreeSvn/translatepress-multilingual/trunk"
+    trunk_dir="$home/Work/TRP/FreeSvn/translatepress-multilingual/trunk"
 
     rm -rfv $trunk_dir/*
     #copy without git folder
