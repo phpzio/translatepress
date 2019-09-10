@@ -33,6 +33,10 @@
     background: #008ec2!important;
 }
 
+.trp-icon:before{
+    display:block !important;
+}
+
 .trp-icon svg {
     fill: #fff;
     min-width: 20px;
