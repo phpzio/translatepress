@@ -11,6 +11,7 @@ class TRP_Translate_Press{
     protected $settings;
     protected $translation_render;
     protected $machine_translator;
+    protected $machine_translator_logger;
     protected $query;
     protected $language_switcher;
     protected $translation_manager;
@@ -86,6 +87,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-render.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-language-switcher.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-machine-translator.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-machine-translator-logger.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-query.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-url-converter.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-uri.php';
@@ -103,21 +105,23 @@ class TRP_Translate_Press{
      * Instantiates components.
      */
     protected function initialize_components() {
-	    $this->advanced_tab               = new TRP_Advanced_Tab();
-	    $this->advanced_tab->include_custom_codes();
-
         $this->loader                     = new TRP_Hooks_Loader();
         $this->languages                  = new TRP_Languages();
         $this->settings                   = new TRP_Settings();
+
+        $this->advanced_tab               = new TRP_Advanced_Tab($this->settings->get_settings());
+        $this->advanced_tab->include_custom_codes();
+
         $this->translation_render         = new TRP_Translation_Render( $this->settings->get_settings() );
         $this->url_converter              = new TRP_Url_Converter( $this->settings->get_settings() );
         $this->language_switcher          = new TRP_Language_Switcher( $this->settings->get_settings(), $this );
         $this->query                      = new TRP_Query( $this->settings->get_settings() );
         $this->machine_translator         = new TRP_Machine_Translator( $this->settings->get_settings() );
+        $this->machine_translator_logger  = new TRP_Machine_Translator_Logger( $this->settings->get_settings() );
         $this->translation_manager        = new TRP_Translation_Manager( $this->settings->get_settings() );
         $this->editor_api_regular_strings = new TRP_Editor_Api_Regular_Strings( $this->settings->get_settings() );
         $this->editor_api_gettext_strings = new TRP_Editor_Api_Gettext_Strings( $this->settings->get_settings() );
-        $this->notifications              = new TRP_Trigger_Plugin_Notifications();
+        $this->notifications              = new TRP_Trigger_Plugin_Notifications( $this->settings->get_settings() );
         $this->upgrade                    = new TRP_Upgrade( $this->settings->get_settings() );
         $this->plugin_updater             = new TRP_Plugin_Updater();
         $this->license_page               = new TRP_LICENSE_PAGE();

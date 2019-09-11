@@ -76,15 +76,33 @@ class TRP_Settings{
     }
 
     /**
-     * Returns settings_option.
-     *
-     * @return array        Settings option.
-     */
+ * Returns settings_option.
+ *
+ * @return array        Settings option.
+ */
     public function get_settings(){
         if ( $this->settings == null ){
             $this->set_options();
         }
         return $this->settings;
+    }
+
+    /**
+     * Returns the value of an individual setting or the default provided.
+     *
+     * @param string $name
+     * @param default mixed
+     *
+     * @return mixed Setting Value
+     */
+    public function get_setting($name, $default = null){
+        $settings = $this->settings;
+        if( array_key_exists($name, $this->settings ) )
+        {
+            return maybe_unserialize($this->settings[$name]);
+        } else {
+            return $default;
+        }
     }
 
     /**
@@ -297,7 +315,7 @@ class TRP_Settings{
             'floater-options'                       => 'flags-full-names',
             'floater-position'                      => 'bottom-right',
             'url-slugs'                             => array( 'en_US' => 'en', '' ),
-            'advanced_settings'                     => array(get_option('trp_advanced_settings', array() )),
+            'advanced_settings'                     => get_option('trp_advanced_settings', array() ),
         );
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );

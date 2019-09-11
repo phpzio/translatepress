@@ -9,7 +9,7 @@
 class TRP_Query{
 
     protected $table_name;
-    protected $db;
+    public $db;
     protected $settings;
     protected $translation_render;
 
@@ -172,6 +172,46 @@ class TRP_Query{
         }else{
 	        $this->check_for_block_type_column( $language_code, $default_language );
         }
+    }
+
+    /**
+     * Check if table for machine translation logs exists.
+     *
+     * If the table does not exists it is created.
+     *
+     * @param string $language_code
+     */
+    public function check_machine_translation_log_table(){
+        $table_name = $this->db->prefix . 'trp_machine_translation_log';
+        if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name )
+        {
+            // table not in database. Create new table
+            $charset_collate = $this->db->get_charset_collate();
+
+            $sql = "CREATE TABLE `{$table_name}`(
+                                    id bigint(20) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                                    url text,
+                                    timestamp datetime DEFAULT '0000-00-00 00:00:00',
+                                    strings longtext,
+                                    characters text,
+                                    response longtext,
+                                    lang_source text,
+                                    lang_target text,
+                                    UNIQUE KEY id (id) )
+                                     {$charset_collate};";
+            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+            dbDelta( $sql );
+
+            if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name )
+            {
+                // something failed. Table still doesn't exist.
+                return false;
+            }
+            // table exists
+            return true;
+        }
+        //table exists
+        return true;
     }
 
     public function copy_all_translation_blocks_into_table( $default_language, $language_code ){

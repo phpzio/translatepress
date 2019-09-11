@@ -308,7 +308,13 @@ Class TRP_Plugin_Notifications {
 
 class TRP_Trigger_Plugin_Notifications{
 
-    function __construct() {
+    private $settings;
+    private $settings_obj;
+    private $machine_translator_logger;
+
+    function __construct($settings) {
+        $this->settings = $settings;
+
         add_action( 'admin_init', array( $this, 'add_plugin_notifications' ) );
     }
 
@@ -386,6 +392,34 @@ class TRP_Trigger_Plugin_Notifications{
 	    $message .= '<a href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
 
 	    $notifications->add_notification($notification_id, $message, 'trp-notice trp-narrow notice notice-info', true, array('translate-press'));
+
+        /*
+         *
+         *  Machine translation enabled and  quota is met.
+         *
+         */
+        $trp = TRP_Translate_Press::get_trp_instance();
+        if ( ! $this->settings_obj ){
+            $this->settings_obj = $trp->get_component( 'settings' );
+        }
+
+        if ( ! $this->machine_translator_logger ){
+            $this->machine_translator_logger = $trp->get_component( 'machine_translator_logger' );
+        }
+
+        $gtranslate = $this->settings_obj->get_setting('g-translate', 'no');
+
+        if( 'yes' === $gtranslate && $this->machine_translator_logger->quota_exceeded() ) {
+            /* this must be unique */
+            $notification_id = 'trp_machine_translation_quota_exceeded_'. date('Ymd');
+
+            $message = '<img style="float: left; margin: 10px 12px 10px 0; max-width: 80px;" src="' . TRP_PLUGIN_URL . 'assets/images/get_param_addon.jpg" />';
+            $message .= '<p style="margin-top: 16px;padding-right:30px;">' . esc_html__('The daily quota for machine translation characters exceeded. Please check the TranslatePress -> Settings -> Advanced Settings for more information.', 'translatepress-multilingual') . '</p>';
+            //make sure to use the trp_dismiss_admin_notification arg
+            $message .= '<a href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
+
+            $notifications->add_notification($notification_id, $message, 'trp-notice trp-narrow notice notice-info', true, array('translate-press'));
+        }
 
     }
 
