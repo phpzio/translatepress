@@ -369,8 +369,10 @@ class TRP_Translation_Render{
         if( apply_filters( 'trp_try_fixing_invalid_html', false ) ) {
             if( class_exists('DOMDocument') ) {
                 $dom = new DOMDocument();
+                $dom->encoding = 'utf-8';
+
                 libxml_use_internal_errors(true);//so no warnings will show up for invalid html
-                $dom->loadHTML($output, LIBXML_NOWARNING);
+                $dom->loadHTML(utf8_decode($output), LIBXML_NOWARNING | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
                 $output = $dom->saveHTML();
             }
         }
