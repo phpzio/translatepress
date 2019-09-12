@@ -42,6 +42,12 @@
 <?php __("General attempt to fix broken or missing HTML on translated pages.<br/><strong>Only try this if the \"Fix spaces between html attribute\" did not solve the issue.</strong>", "translatepress-multilingual"); ?>
 <?php __("Fix spaces between HTML attributes", "translatepress-multilingual"); ?>
 <?php __("Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages.", "translatepress-multilingual"); ?>
+<?php __("Limit machine translation / characters per day", "translatepress-multilingual"); ?>
+<?php __("Add a limit to the number of automatically translated characters so you can better budget your project.</a>. ", "translatepress-multilingual"); ?>
+<?php __("Today's character count:", "translatepress-multilingual"); ?>
+<?php __("Today: ", "translatepress-multilingual"); ?>
+<?php __("Log machine translation queries.", "translatepress-multilingual"); ?>
+<?php __("Only enable for testing purposes. Can impact performance<br>All records are stored in the wp_trp_machine_translation_log database table. Use a plugin like <a href=\"https://wordpress.org/plugins/wp-data-access/\">WP Data Access</a> to browse the logs or directly from your database manager (PHPMyAdmin, etc.)", "translatepress-multilingual"); ?>
 <?php __("Fix missing dynamic content", "translatepress-multilingual"); ?>
 <?php __("May help fix missing content inserted using JavaScript. <br> It shows dynamically inserted content in original language for a moment before the translation request is finished.", "translatepress-multilingual"); ?>
 <?php __("Filter Gettext wrapping from post content and title", "translatepress-multilingual"); ?>
@@ -66,6 +72,7 @@
 <?php __("Your <strong>TranslatePress</strong> license has expired. <br/>Please %1$sRenew Your Licence%2$s to continue receiving access to product downloads, automatic updates and support. %3$sRenew now %4$s", "translatepress-multilingual"); ?>
 <?php __("Your <strong>TranslatePress</strong> license will expire on %1$s. Please %2$sRenew Your Licence%3$s to continue receiving access to product downloads, automatic updates and support.", "translatepress-multilingual"); ?>
 <?php __("NEW: Display different images based on language. Find out <a href=\"https://translatepress.com/docs/image-translation/\" >how to translate images, sliders and more</a> from the TranslatePress editor.", "translatepress-multilingual"); ?>
+<?php __("The daily quota for machine translation characters exceeded. Please check the TranslatePress -> Settings -> Advanced Settings for more information.", "translatepress-multilingual"); ?>
 <?php __("Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Short Language Names", "translatepress-multilingual"); ?>
 <?php __("Flags with Full Language Names", "translatepress-multilingual"); ?>

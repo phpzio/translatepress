@@ -61,7 +61,7 @@ msgstr ""
 msgid "Select how the language should be detected for first time visitors.<br>The visitor's last displayed language will be remembered through cookies."
 msgstr ""
 
-#: ../tp-add-on-extra-languages/class-extra-languages.php:57, ../translatepress/includes/class-settings.php:338
+#: ../tp-add-on-extra-languages/class-extra-languages.php:57, ../translatepress/includes/class-settings.php:356
 msgid "Error! Duplicate URL slug values."
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Are you sure you want to remove this language?"
 msgstr ""
 
-#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:43, ../translatepress/includes/class-advanced-tab.php:300, ../translatepress/includes/class-advanced-tab.php:310, ../translatepress/partials/main-settings-language-selector.php:40
+#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:43, ../translatepress/includes/class-advanced-tab.php:348, ../translatepress/includes/class-advanced-tab.php:358, ../translatepress/partials/main-settings-language-selector.php:40
 msgid "Remove"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Choose..."
 msgstr ""
 
-#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:58, ../translatepress/includes/class-advanced-tab.php:310, ../translatepress/partials/main-settings-language-selector.php:55
+#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:58, ../translatepress/includes/class-advanced-tab.php:358, ../translatepress/partials/main-settings-language-selector.php:55
 msgid "Add"
 msgstr ""
 
@@ -109,7 +109,7 @@ msgstr ""
 msgid "Limit this menu item to the following languages"
 msgstr ""
 
-#: ../tp-add-on-seo-pack/class-seo-pack.php:145
+#: ../tp-add-on-seo-pack/class-seo-pack.php:146
 msgid "The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when submitting the sitemap to Google."
 msgstr ""
 
@@ -185,6 +185,30 @@ msgstr ""
 msgid "Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages."
 msgstr ""
 
+#: ../translatepress/includes/advanced-settings/machine-translation-limits.php:9
+msgid "Limit machine translation / characters per day"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/machine-translation-limits.php:10
+msgid "Add a limit to the number of automatically translated characters so you can better budget your project.</a>. "
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/machine-translation-limits.php:21
+msgid "Today's character count:"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/machine-translation-limits.php:32
+msgid "Today: "
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/machine-translation-limits.php:42
+msgid "Log machine translation queries."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/machine-translation-limits.php:43
+msgid "Only enable for testing purposes. Can impact performance<br>All records are stored in the wp_trp_machine_translation_log database table. Use a plugin like <a href=\"https://wordpress.org/plugins/wp-data-access/\">WP Data Access</a> to browse the logs or directly from your database manager (PHPMyAdmin, etc.)"
+msgstr ""
+
 #: ../translatepress/includes/advanced-settings/show-dynamic-content-before-translation.php:8
 msgid "Fix missing dynamic content"
 msgstr ""
@@ -209,15 +233,15 @@ msgstr ""
 msgid "Filters gettext wrapping such as #!trpst#trp-gettext from all updated post meta. Does not affect previous post meta. <br/><strong>Database backup is recommended before switching on.</strong>"
 msgstr ""
 
-#: ../translatepress/includes/class-advanced-tab.php:12
+#: ../translatepress/includes/class-advanced-tab.php:19
 msgid "Advanced"
 msgstr ""
 
-#: ../translatepress/includes/class-advanced-tab.php:179, ../translatepress/partials/main-settings-page.php:41, ../translatepress/partials/main-settings-page.php:54, ../translatepress/partials/main-settings-page.php:67, ../translatepress/partials/main-settings-page.php:80
+#: ../translatepress/includes/class-advanced-tab.php:226, ../translatepress/partials/main-settings-page.php:41, ../translatepress/partials/main-settings-page.php:54, ../translatepress/partials/main-settings-page.php:67, ../translatepress/partials/main-settings-page.php:80
 msgid "Yes"
 msgstr ""
 
-#: ../translatepress/includes/class-advanced-tab.php:300, ../translatepress/includes/class-advanced-tab.php:310
+#: ../translatepress/includes/class-advanced-tab.php:348, ../translatepress/includes/class-advanced-tab.php:358
 msgid "Are you sure you want to remove this item?"
 msgstr ""
 
@@ -257,28 +281,32 @@ msgstr ""
 msgid "Others"
 msgstr ""
 
-#: ../translatepress/includes/class-plugin-notices.php:325
+#: ../translatepress/includes/class-plugin-notices.php:331
 msgid "You are not using a permalink structure! Please <a href=\"%s\">enable</a> one or install our <a href=\"%s\">\"Language by GET parameter\"</a> addon, so that TranslatePress can function properly."
 msgstr ""
 
-#: ../translatepress/includes/class-plugin-notices.php:327, ../translatepress/includes/class-plugin-notices.php:353, ../translatepress/includes/class-plugin-notices.php:372, ../translatepress/includes/class-plugin-notices.php:386
+#: ../translatepress/includes/class-plugin-notices.php:333, ../translatepress/includes/class-plugin-notices.php:359, ../translatepress/includes/class-plugin-notices.php:378, ../translatepress/includes/class-plugin-notices.php:392, ../translatepress/includes/class-plugin-notices.php:419
 msgid "Dismiss this notice."
 msgstr ""
 
-#: ../translatepress/includes/class-plugin-notices.php:346
+#: ../translatepress/includes/class-plugin-notices.php:352
 msgid "Your <strong>TranslatePress</strong> serial number is invalid or missing. <br/>Please %1$sregister your copy%2$s to receive access to automatic updates and support. Need a license key? %3$sPurchase one now%4$s"
 msgstr ""
 
-#: ../translatepress/includes/class-plugin-notices.php:348
+#: ../translatepress/includes/class-plugin-notices.php:354
 msgid "Your <strong>TranslatePress</strong> license has expired. <br/>Please %1$sRenew Your Licence%2$s to continue receiving access to product downloads, automatic updates and support. %3$sRenew now %4$s"
 msgstr ""
 
-#: ../translatepress/includes/class-plugin-notices.php:368
+#: ../translatepress/includes/class-plugin-notices.php:374
 msgid "Your <strong>TranslatePress</strong> license will expire on %1$s. Please %2$sRenew Your Licence%3$s to continue receiving access to product downloads, automatic updates and support."
 msgstr ""
 
-#: ../translatepress/includes/class-plugin-notices.php:384
+#: ../translatepress/includes/class-plugin-notices.php:390
 msgid "NEW: Display different images based on language. Find out <a href=\"https://translatepress.com/docs/image-translation/\" >how to translate images, sliders and more</a> from the TranslatePress editor."
+msgstr ""
+
+#: ../translatepress/includes/class-plugin-notices.php:417
+msgid "The daily quota for machine translation characters exceeded. Please check the TranslatePress -> Settings -> Advanced Settings for more information."
 msgstr ""
 
 #: ../translatepress/includes/class-settings.php:26
@@ -317,31 +345,31 @@ msgstr ""
 msgid "Top Left"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:374
+#: ../translatepress/includes/class-settings.php:392
 msgid "Current Language"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:415
+#: ../translatepress/includes/class-settings.php:433
 msgid "General"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:420, ../translatepress/includes/class-translation-manager.php:242
+#: ../translatepress/includes/class-settings.php:438, ../translatepress/includes/class-translation-manager.php:242
 msgid "Translate Site"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:425
+#: ../translatepress/includes/class-settings.php:443
 msgid "Addons"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:433
+#: ../translatepress/includes/class-settings.php:451
 msgid "License"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:461, ../translatepress/includes/class-translation-manager.php:274
+#: ../translatepress/includes/class-settings.php:479, ../translatepress/includes/class-translation-manager.php:274
 msgid "Settings"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:465
+#: ../translatepress/includes/class-settings.php:483
 msgid "Pro Features"
 msgstr ""
 

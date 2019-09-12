@@ -5,7 +5,7 @@ Tags: translate, translation, multilingual, automatic translation, bilingual, fr
 Requires at least: 3.1.0
 Tested up to: 5.2.3
 Requires PHP: 5.6.20
-Stable tag: 1.5.7
+Stable tag: 1.5.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,6 +142,13 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
+= 1.5.8 =
+* Added machine translation limit
+* Added setting for translation memory limit
+* Fixed encoding for the "Fix broken html feature"
+* Fixed CSS for translate button in TP Editor
+* Fixed disabling dynamic translation in translation editor when it is disabled from Advanced option
+
 = 1.5.7 =
 * Modified an autoloader to prevent errors when manually updating the plugin
 
