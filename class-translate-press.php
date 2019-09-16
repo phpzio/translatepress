@@ -175,7 +175,7 @@ class TRP_Translate_Press{
 	    $this->loader->add_action( 'admin_notices', $this->advanced_tab, 'admin_notices' );
 
 
-	    $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations', $this->editor_api_regular_strings, 'get_translations' );
+	    $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
 
 	    $this->loader->add_action( 'wp_ajax_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations_regular', $this->editor_api_regular_strings, 'save_translations' );
