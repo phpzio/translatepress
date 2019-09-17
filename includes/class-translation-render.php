@@ -305,7 +305,9 @@ class TRP_Translation_Render{
 
         /* replace our special tags so we have valid html */
         $output = str_replace('#!trpst#', '<', $output);
+        $output = str_replace('#!TRPST#', '<', $output);
         $output = str_replace('#!trpen#', '>', $output);
+        $output = str_replace('#!TRPEN#', '>', $output);
 
         $output = apply_filters('trp_before_translate_content', $output);
 
