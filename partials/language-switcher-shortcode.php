@@ -3,18 +3,6 @@ $current_language_preference = $this->add_shortcode_preferences($shortcode_setti
 
 ?>
 <div class="trp-language-switcher trp-language-switcher-container" data-no-translation <?php echo ( isset( $_GET['trp-edit-translation'] ) && $_GET['trp-edit-translation'] == 'preview' ) ? 'data-trp-unpreviewable="trp-unpreviewable"' : '' ?>>
-    <script type="application/javascript">
-        jQuery( document ).ready(function(){
-            // need to have the same with set from JS on both divs. Otherwise it can push stuff around in HTML
-            jQuery('.trp-language-switcher').each(function(index, el){
-                var trp_ls_shortcode_width = jQuery(el).find('.trp-ls-shortcode-language').width() + 5;
-                jQuery(el).find('.trp-ls-shortcode-language').width(trp_ls_shortcode_width);
-                jQuery(el).find('.trp-ls-shortcode-current-language').width(trp_ls_shortcode_width);
-                // We're putting this on display: none after we have it's width.
-                jQuery(el).find('.trp-ls-shortcode-language').hide();
-            })
-        })
-    </script>
     <div class="trp-ls-shortcode-current-language">
         <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language trp-ls-disabled-language" title="<?php echo esc_attr( $current_language['name'] ); ?>">
 			<?php echo $current_language_preference; // WPCS: ok. ?>
@@ -34,4 +22,21 @@ $current_language_preference = $this->add_shortcode_preferences($shortcode_setti
 
     <?php } ?>
     </div>
+    <script type="application/javascript">
+        // need to have the same with set from JS on both divs. Otherwise it can push stuff around in HTML
+        var trp_ls_shortcodes = document.querySelectorAll('.trp-language-switcher');
+        if ( trp_ls_shortcodes.length > 0) {
+            // get the last language switcher added
+            var trp_el = trp_ls_shortcodes[trp_ls_shortcodes.length - 1];
+            var trp_shortcode_language_item = trp_el.querySelector('.trp-ls-shortcode-language')
+
+            // set width
+            var trp_ls_shortcode_width = trp_shortcode_language_item.offsetWidth + 5;
+            trp_shortcode_language_item.style.width = trp_ls_shortcode_width + 'px';
+            trp_el.querySelector('.trp-ls-shortcode-current-language').style.width = trp_ls_shortcode_width + 'px';
+
+            // We're putting this on display: none after we have its width.
+            trp_shortcode_language_item.style.display = 'none';
+        }
+    </script>
 </div>
