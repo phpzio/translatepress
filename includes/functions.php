@@ -943,3 +943,23 @@ function trp_woo_cart_item_name( $product_name, $cart_item, $cart_item_key ){
 	}
 	return $product_name;
 }
+
+/**
+ * Compatibility with WooCommerce PDF Invoices & Packing Slips
+ *
+ * Translate product name and variation (meta) in pdf invoices.
+ */
+add_filter( 'wpo_wcpdf_order_item_data', 'trpc_woo_wcpdf_translate_product_name', 10, 3 );
+function trpc_woo_wcpdf_translate_product_name( $data, $order, $type ){
+    if ( isset( $data['name'] ) ) {
+        $trp = TRP_Translate_Press::get_trp_instance();
+        $translation_render = $trp->get_component('translation_render');
+        remove_filter( 'trp_stop_translating_page', 'trp_woo_pdf_invoices_and_packing_slips_compatibility_dont_translate_pdf', 10 );
+        $data['name'] = $translation_render->translate_page($data['name']);
+        if ( isset( $data['meta'] ) ) {
+            $data['meta'] = $translation_render->translate_page($data['meta']);
+        }
+        add_filter( 'trp_stop_translating_page', 'trp_woo_pdf_invoices_and_packing_slips_compatibility_dont_translate_pdf', 10, 2 );
+    }
+    return $data;
+}
