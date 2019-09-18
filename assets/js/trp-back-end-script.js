@@ -154,9 +154,7 @@ jQuery( function() {
      * Show Google Translate API Key only when Google Translate is active
      */
     function TRP_Field_Toggler (){
-        var _$setting_toggled;
-        var _$trigger_field;
-        var _trigger_field_value_for_show;
+        var _$setting_toggled, _$trigger_field, _trigger_field_value_for_show
 
         function show_hide_based_on_value( value ) {
             if ( value === _trigger_field_value_for_show ) {
@@ -173,11 +171,13 @@ jQuery( function() {
         }
 
         function init( trigger_select_id, setting_id, value_for_show ){
-            _trigger_field_value_for_show = value_for_show;
-            _$trigger_field = jQuery( trigger_select_id );
-            _$setting_toggled = jQuery( setting_id ).parents('tr');
-            show_hide_based_on_value( _$trigger_field.val() );
-            add_event_on_change();
+            _trigger_field_value_for_show = value_for_show
+            _$trigger_field               = jQuery( trigger_select_id )
+            _$setting_toggled             = jQuery( setting_id ).parents('tr')
+
+            show_hide_based_on_value( _$trigger_field.val() )
+
+            add_event_on_change()
         }
 
         return {
@@ -245,8 +245,27 @@ jQuery( function() {
         jQuery("#trp-options .warning").show('fast');
     });
 
-    var trpGoogleTranslate = TRP_Field_Toggler();
-    trpGoogleTranslate.init('#trp-g-translate', '#trp-g-translate-key', 'yes' );
+    var trpGoogleTranslateKey = TRP_Field_Toggler();
+        trpGoogleTranslateKey.init('#trp-machine-translation-engine', '#trp-g-translate-key', 'google_translate_v2' );
+
+    var trpGoogleTranslateKey = TRP_Field_Toggler();
+        trpGoogleTranslateKey.init('#trp-machine-translation-engine', '#trp-g-translate-keyv3', 'google_translate_v3' );
+
+    // Used for the main machine translation toggle to show/hide all options below it
+    function TRP_show_hide_machine_translation_options(){
+        if( jQuery( '#trp-machine-translation-enabled' ).val() != 'yes' )
+            jQuery( '.trp-machine-translation-options tbody tr:not(:first-child)').hide()
+        else
+            jQuery( '.trp-machine-translation-options tbody tr:not(:first-child)').show()
+
+        if( jQuery( '#trp-machine-translation-enabled' ).val() == 'yes' )
+            jQuery('#trp-machine-translation-engine').trigger('change')
+    }
+
+    TRP_show_hide_machine_translation_options()
+    jQuery('#trp-machine-translation-enabled').on( 'change', function(){
+        TRP_show_hide_machine_translation_options()
+    })
 
     // Options of type List adding, from Advanced Settings page
     var trpListOptions = document.querySelectorAll( '.trp-adst-list-option' );
@@ -256,4 +275,3 @@ jQuery( function() {
 
 
 });
-

@@ -3,6 +3,7 @@
 class TRP_Advanced_Tab {
 
     private $settings;
+    private $machine_translator_logger;
 
     public function __construct($settings)
     {
@@ -166,7 +167,7 @@ class TRP_Advanced_Tab {
 	 */
 	public function output_advanced_options(){
         if ( ! $this->machine_translator_logger ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
+            $trp                             = TRP_Translate_Press::get_trp_instance();
             $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
         }
 

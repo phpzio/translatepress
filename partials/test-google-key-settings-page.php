@@ -1,10 +1,10 @@
 <?php
 
-$trp = TRP_Translate_Press::get_trp_instance();
+$trp                = TRP_Translate_Press::get_trp_instance();
 $machine_translator = $trp->get_component( 'machine_translator' );
-$response = $machine_translator->send_request( 'en', 'es', array( 'about' ) );
-
+$response           = $machine_translator->send_request( 'en', 'es', array( 'about' ) );
 ?>
+
 <div id="trp-addons-page" class="wrap">
 
     <h1> <?php esc_html_e( 'TranslatePress Settings', 'translatepress-multilingual' );?></h1>
@@ -28,7 +28,7 @@ $response = $machine_translator->send_request( 'en', 'es', array( 'about' ) );
 
             <h3><?php esc_html_e('Entire Response From wp_remote_get():', 'translatepress-multilingual');?></h3>
             <pre>
-                <?php print_r( esc_html( $response ) ); ?>
+                <?php print_r( $response ); ?>
             </pre>
         </div>
     </div>
