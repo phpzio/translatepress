@@ -7,7 +7,7 @@ function trp_register_machine_translation_limit( $settings_array ){
         'type'          => 'number',
         'default'       => '1000000',
         'label'         => esc_html__( 'Limit machine translation / characters per day', 'translatepress-multilingual' ),
-        'description'   => wp_kses( __( 'Add a limit to the number of automatically translated characters so you can better budget your project.</a>. ', 'translatepress-multilingual' ), array( 'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target' => array() ) ) ),
+        'description'   => wp_kses( __( 'Add a limit to the number of automatically translated characters so you can better budget your project.', 'translatepress-multilingual' ), array( 'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target' => array() ) ) ),
     );
     return $settings_array;
 }
@@ -40,7 +40,7 @@ function trp_register_machine_translation_log( $settings_array ){
         'name'          => 'machine_translation_log',
         'type'          => 'checkbox',
         'label'         => esc_html__( 'Log machine translation queries.', 'translatepress-multilingual' ),
-        'description'   => wp_kses( __( 'Only enable for testing purposes. Can impact performance<br>All records are stored in the wp_trp_machine_translation_log database table. Use a plugin like <a href="https://wordpress.org/plugins/wp-data-access/">WP Data Access</a> to browse the logs or directly from your database manager (PHPMyAdmin, etc.)', 'translatepress-multilingual' ), array( 'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target' => array() ) ) ),
+        'description'   => wp_kses( __( 'Only enable for testing purposes. Can impact performance.<br>All records are stored in the wp_trp_machine_translation_log database table. Use a plugin like <a href="https://wordpress.org/plugins/wp-data-access/">WP Data Access</a> to browse the logs or directly from your database manager (PHPMyAdmin, etc.)', 'translatepress-multilingual' ), array( 'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target' => array() ) ) ),
     );
     return $settings_array;
 }
