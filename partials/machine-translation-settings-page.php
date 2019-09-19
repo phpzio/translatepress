@@ -38,6 +38,59 @@
 
             <?php do_action ( 'trp_machine_translation_extra_settings_middle', $this->settings ); ?>
 
+            <tr>
+                <th scope="row"></th>
+                <td>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=trp_test_google_key_page' ) ); ?>" class="button-secondary"><?php _e( 'Test API credentials', 'translatepress-multilingual' ); ?></a>
+                    <p class="description">
+                        <?php _e( 'Click here to check if the selected translation engine is configured correctly.', 'translatepress-multilingual' ) ?>
+                    </p>
+                </td>
+            </tr>
+
+            <tr style="border-bottom: 1px solid #ccc;">
+                <th scope="row"></th>
+                <td></td>
+            </tr>
+
+            <tr>
+               <th scope="row"><?php esc_html_e( 'Limit machine translation / characters per day', 'translatepress-multilingual' ); ?></th>
+               <td>
+                   <label>
+                       <input type="number" name="trp_machine_translation_settings[machine_translation_limit]" value="<?php echo isset( $this->settings['machine_translation_limit'] ) ? $this->settings['machine_translation_limit'] : 1000000; ?>">
+                   </label>
+                   <p class="description">
+                       <?php esc_html_e( 'Add a limit to the number of automatically translated characters so you can better budget your project.', 'translatepress-multilingual' ); ?>
+                   </p>
+               </td>
+           </tr>
+
+            <tr>
+                <th scope="row"><?php esc_html_e( 'Today\'s character count:', 'translatepress-multilingual' ); ?></th>
+                <td>
+                    <?php echo isset( $this->settings['machine_translation_counter'] ) ? $this->settings['machine_translation_counter'] : 0; ?>
+                </td>
+            </tr>
+
+            <tr>
+                <th scope="row"><?php esc_html_e( 'Today: ', 'translatepress-multilingual' ); ?></th>
+                <td>
+                    <?php echo isset( $this->settings['machine_translation_counter_date'] ) ? $this->settings['machine_translation_counter_date'] : date('Y-m-d'); ?>
+                </td>
+            </tr>
+
+            <tr>
+               <th scope=row><?php esc_html_e( 'Log machine translation queries.', 'translatepress-multilingual' ); ?></th>
+               <td>
+                   <label>
+                       <input type=checkbox name="trp_machine_translation_settings[machine_translation_log]" value="yes" <?php isset( $this->settings['machine_translation_log'] ) ? checked( $this->settings['machine_translation_log'], 'yes' ) : checked( '', 'yes' ); ?>>
+                       <?php _e( 'Yes' , 'translatepress-multilingual' ); ?>
+                   </label>
+                   <p class="description">
+                       <?php echo wp_kses( __( 'Only enable for testing purposes. Can impact performance.<br>All records are stored in the wp_trp_machine_translation_log database table. Use a plugin like <a href="https://wordpress.org/plugins/wp-data-access/">WP Data Access</a> to browse the logs or directly from your database manager (PHPMyAdmin, etc.)', 'translatepress-multilingual' ), array( 'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target' => array() ) ) ); ?>
+                   </p>
+               </td>
+           </tr>
 
             <?php do_action ( 'trp_machine_translation_extra_settings_bottom', $this->settings ); ?>
         </table>

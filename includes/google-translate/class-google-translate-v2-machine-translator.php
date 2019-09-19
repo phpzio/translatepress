@@ -15,7 +15,7 @@ class TRP_Google_Translate_v2_Machine_Translator extends TRP_Machine_Translator 
      */
     public function send_request( $source_language, $language_code, $strings_array ){
         /* build our translation request */
-        $translation_request = 'key='.$this->settings['g-translate-key'];
+        $translation_request = 'key='.$this->settings['google-translate-key'];
         $translation_request .= '&source='.$source_language;
         $translation_request .= '&target='.$language_code;
         foreach( $strings_array as $new_string ){
@@ -46,7 +46,7 @@ class TRP_Google_Translate_v2_Machine_Translator extends TRP_Machine_Translator 
         /* we need these settings to go on */
         $language_code = $this->settings['google-translate-codes'][$trp_language_code];
         $source_language = $this->settings['google-translate-codes'][$this->settings['default-language']];
-        if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['google-translate-codes'][$this->settings['default-language']] ) || empty( $language_code ) || ( $language_code == $source_language ) ) {
+        if( empty( $this->settings['google-translate-key'] ) || empty( $this->settings['google-translate-codes'][$this->settings['default-language']] ) || empty( $language_code ) || ( $language_code == $source_language ) ) {
             return array();
         }
 

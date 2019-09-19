@@ -42,7 +42,7 @@ class TRP_Add_General_Notices{
         if ( current_user_can( 'manage_options' ) ){
             // Check that the user hasn't already clicked to ignore the message
             if ( ! get_user_meta($user_id, $this->notificationId.'_dismiss_notification' ) || $this->force_show  ) {//ignore the dismissal if we have force_show
-                echo $finalMessage = wp_kses( apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage), [ 'div' => [ 'class' => [] ], 'p' => ['style' => [], 'class' => []], 'a' => ['href' => [], 'type'=> [], 'class'=> []], 'span' => ['class'=> []] ] );
+                echo $finalMessage = wp_kses( apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage), [ 'div' => [ 'class' => [] ], 'p' => ['style' => [], 'class' => []], 'a' => ['href' => [], 'type'=> [], 'class'=> []], 'span' => ['class'=> []], 'strong' => [] ] );
             }
             do_action( $this->notificationId.'_notification_displayed', $current_user, $pagenow );
         }
@@ -70,7 +70,7 @@ Class TRP_Plugin_Notifications {
     private static $_instance = null;
     private $prefix = 'trp';
     private $menu_slug = 'options-general.php';
-    public $pluginPages = array( 'translate-press', 'trp_addons_page', 'trp_license_key', 'trp_advanced_page' );
+    public $pluginPages = array( 'translate-press', 'trp_addons_page', 'trp_license_key', 'trp_advanced_page', 'trp_machine_translation' );
 
     protected function __construct() {
         add_action( 'admin_init', array( $this, 'dismiss_admin_notifications' ), 200 );
@@ -167,7 +167,6 @@ Class TRP_Plugin_Notifications {
             return;
 
         global $current_user;
-
 
         /**
          * added a $show_in_all_backend argument in version 1.4.6  that allows some notifications to be displayed on all the pages not just the plugin pages
@@ -399,22 +398,22 @@ class TRP_Trigger_Plugin_Notifications{
          *
          */
         $trp = TRP_Translate_Press::get_trp_instance();
-        if ( ! $this->settings_obj ){
+        if ( ! $this->settings_obj )
             $this->settings_obj = $trp->get_component( 'settings' );
-        }
 
-        if ( ! $this->machine_translator_logger ){
+        if ( ! $this->machine_translator_logger )
             $this->machine_translator_logger = $trp->get_component( 'machine_translator_logger' );
-        }
 
-        $gtranslate = $this->settings_obj->get_setting('g-translate', 'no');
+        $machine_translation_enabled = $this->settings_obj->get_setting('machine-translation', 'no');
 
-        if( 'yes' === $gtranslate && $this->machine_translator_logger->quota_exceeded() ) {
+        if( 'yes' === $machine_translation_enabled && $this->machine_translator_logger->quota_exceeded() ) {
             /* this must be unique */
             $notification_id = 'trp_machine_translation_quota_exceeded_'. date('Ymd');
 
             $message = '<img style="float: left; margin: 10px 12px 10px 0; max-width: 80px;" src="' . TRP_PLUGIN_URL . 'assets/images/get_param_addon.jpg" />';
-            $message .= '<p style="margin-top: 16px;padding-right:30px;">' . esc_html__('The daily quota for machine translation characters exceeded. Please check the TranslatePress -> Settings -> Advanced Settings for more information.', 'translatepress-multilingual') . '</p>';
+            $message .= '<p style="margin-top: 16px;padding-right:30px;">';
+                $message .= sprintf( __( 'The daily quota for machine translation characters exceeded. Please check the <strong>TranslatePress -> Settings -> <a href="%s">Machine Translation</a></strong> page for more information.', 'translatepress-multilingual' ), admin_url( 'admin.php?page=trp_machine_translation' ) );
+            $message .= '</p>';
             //make sure to use the trp_dismiss_admin_notification arg
             $message .= '<a href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
 

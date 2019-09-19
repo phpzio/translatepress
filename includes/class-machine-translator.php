@@ -16,12 +16,7 @@ class TRP_Machine_Translator {
      * @param array $settings         Settings option.
      */
     public function __construct( $settings ){
-        $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
-
-        if( !empty( $machine_translation_settings ) )
-            $this->settings = array_merge( $settings, $machine_translation_settings );
-        else
-            $this->settings = $settings;
+        $this->settings = $settings;
     }
 
     /**

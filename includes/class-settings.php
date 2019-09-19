@@ -294,6 +294,16 @@ class TRP_Settings{
             'url-slugs'                            => array( 'en_US' => 'en', '' ),
             'advanced_settings'                    => get_option('trp_advanced_settings', array() ),
         );
+
+        $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
+
+        if( !empty( $machine_translation_settings ) )
+            $default_settings = array_merge( $default_settings, $machine_translation_settings );
+
+        // move the old API key option
+        if( !empty( $settings_option['g-translate-key'] ) && empty( $machine_translation_settings['google-translate-key'] ) )
+            $machine_translation_settings['google-translate-key'] = $settings_option['g-translate-key'];
+
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
             $settings_option = $default_settings;
@@ -304,6 +314,7 @@ class TRP_Settings{
                 }
             }
         }
+
         $this->settings = $settings_option;
     }
 

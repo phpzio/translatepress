@@ -16,8 +16,8 @@ function trp_gt_add_settings( $settings ){
     <tr>
         <th scope="row"><?php esc_html_e( 'Google Translate API Key', 'translatepress-multilingual' ); ?> </th>
         <td>
-            <input type="text" id="trp-g-translate-key" class="trp-text-input" name="trp_machine_translation_settings[g-translate-key]" value="<?php if( !empty( $settings['g-translate-key'] ) ) echo esc_attr( $settings['g-translate-key']);?>"/>
-            <?php if( !empty( $settings['g-translate-key'] ) ) echo '<a href="'.esc_url( admin_url( 'admin.php?page=trp_test_google_key_page' ) ).'">'.esc_html__( "Test API key", 'translatepress-multilingual' ).'</a>'; ?>
+            <input type="text" id="trp-g-translate-key" class="trp-text-input" name="trp_machine_translation_settings[google-translate-key]" value="<?php if( !empty( $settings['google-translate-key'] ) ) echo esc_attr( $settings['google-translate-key']);?>"/>
+            <?php if( !empty( $settings['google-translate-key'] ) ) echo '<a href="'.esc_url( admin_url( 'admin.php?page=trp_test_google_key_page' ) ).'">'.esc_html__( "Test API key", 'translatepress-multilingual' ).'</a>'; ?>
             <p class="description">
                 <?php echo wp_kses( __( 'Visit <a href="https://cloud.google.com/docs/authentication/api-keys" target="_blank">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions.', 'translatepress-multilingual' ), [ 'a' => [ 'href' => [], 'title' => [], 'target' => [] ], 'strong' => [] ] ); ?>
                 <br><?php echo sprintf( esc_html__( 'Your HTTP referrer is: %s', 'translatepress-multilingual' ), $machine_translator->get_referer() ); ?>
@@ -31,8 +31,8 @@ function trp_gt_add_settings( $settings ){
 
 add_filter( 'trp_machine_translation_sanitize_settings', 'trp_gt_sanitize_settings' );
 function trp_gt_sanitize_settings( $settings ){
-    if( !empty( $settings['g-translate-key'] ) )
-        $settings['g-translate-key'] = sanitize_text_field( $settings['g-translate-key']  );
+    if( !empty( $settings['google-translate-key'] ) )
+        $settings['google-translate-key'] = sanitize_text_field( $settings['google-translate-key']  );
 
     $trp           = TRP_Translate_Press::get_trp_instance();
     $trp_languages = $trp->get_component( 'languages' );
