@@ -3,6 +3,7 @@
 class TRP_Advanced_Tab {
 
     private $settings;
+    protected $machine_translator_logger;
 
     public function __construct($settings)
     {
@@ -51,7 +52,7 @@ class TRP_Advanced_Tab {
 		settings_errors( 'trp_advanced_settings' );
 	}
 
-	/*
+	/**
 	 * Sanitize settings
 	 */
 	public function sanitize_settings( $submitted_settings ){
@@ -85,9 +86,11 @@ class TRP_Advanced_Tab {
 						foreach ( $registered_setting['columns'] as $column => $column_name ) {
 							$one_column = $column;
 							$settings[ $registered_setting['name'] ][ $column ] = array();
-							foreach ( $submitted_settings[ $registered_setting['name'] ][ $column ] as $key => $value ) {
-								$settings[ $registered_setting['name'] ][ $column ][] = sanitize_text_field( $value );
-							}
+							if ( isset($submitted_settings[ $registered_setting['name'] ][ $column ] ) ) {
+                                foreach ($submitted_settings[$registered_setting['name']][$column] as $key => $value) {
+                                    $settings[$registered_setting['name']][$column][] = sanitize_text_field($value);
+                                }
+                            }
 						}
 
 						// remove empty rows
