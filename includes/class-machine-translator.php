@@ -50,4 +50,10 @@ class TRP_Machine_Translator {
 	}
 
     public function translate_array( $strings, $language_code ){}
+
+    public function test_request(){}
+
+    public function get_api_key(){
+        return false;
+    }
 }

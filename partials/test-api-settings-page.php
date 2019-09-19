@@ -2,7 +2,8 @@
 
 $trp                = TRP_Translate_Press::get_trp_instance();
 $machine_translator = $trp->get_component( 'machine_translator' );
-$response           = $machine_translator->send_request( 'en', 'es', array( 'about' ) );
+$response           = $machine_translator->test_request();
+$api_key             = $machine_translator->get_api_key();
 ?>
 
 <div id="trp-addons-page" class="wrap">
@@ -12,10 +13,12 @@ $response           = $machine_translator->send_request( 'en', 'es', array( 'abo
 
     <div class="grid feat-header">
         <div class="grid-cell">
-            <h2><?php esc_html_e('Google API Key from settings page:', 'translatepress-multilingual');?> <span style="font-family:monospace"><?php echo esc_html( $this->settings['google-translate-key'] ); ?></span></h2>
+            <?php if( $api_key != false ) : ?>
+                <h2><?php esc_html_e('API Key from settings page:', 'translatepress-multilingual');?> <span style="font-family:monospace"><?php echo $api_key; ?></span></h2>
+            <?php endif; ?>
 
             <h2><?php esc_html_e('HTTP Referrer:', 'translatepress-multilingual');?> <span style="font-family:monospace"><?php echo esc_url( $machine_translator->get_referer() ); ?></span></h2>
-            <p><?php esc_html_e('Use this HTTP Referrer if you want to restrict usage of the API from Google Dashboard.', 'translatepress-multilingual'); ?></p>
+            <p><?php esc_html_e('Use this HTTP Referrer if the API lets you restrict key usage from its Dashboard.', 'translatepress-multilingual'); ?></p>
 
             <h3><?php esc_html_e('Response:', 'translatepress-multilingual');?></h3>
             <pre>

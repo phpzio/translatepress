@@ -248,9 +248,6 @@ jQuery( function() {
     var trpGoogleTranslateKey = TRP_Field_Toggler();
         trpGoogleTranslateKey.init('#trp-machine-translation-engine', '#trp-g-translate-key', 'google_translate_v2' );
 
-    var trpGoogleTranslateKey = TRP_Field_Toggler();
-        trpGoogleTranslateKey.init('#trp-machine-translation-engine', '#trp-g-translate-keyv3', 'google_translate_v3' );
-
     // Used for the main machine translation toggle to show/hide all options below it
     function TRP_show_hide_machine_translation_options(){
         if( jQuery( '#trp-machine-translation-enabled' ).val() != 'yes' )

@@ -38,8 +38,8 @@ class TRP_Machine_Translation_Tab {
     * Hooked to admin_menu
     */
     public function add_submenu_page() {
-        add_submenu_page( 'TRPHidden', 'TranslatePress Machine Translation', 'TRPHidden', 'manage_options', 'trp_machine_translation', array( $this, 'trp_machine_translation_page_content' ) );
-        add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array( $this, 'trp_test_google_key_page_content' ) );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Machine Translation', 'TRPHidden', 'manage_options', 'trp_machine_translation', array( $this, 'machine_translation_page_content' ) );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array( $this, 'test_api_page_content' ) );
     }
 
     /**
@@ -73,15 +73,15 @@ class TRP_Machine_Translation_Tab {
     /*
     * Advanced page content
     */
-    public function trp_machine_translation_page_content(){
+    public function machine_translation_page_content(){
         require_once TRP_PLUGIN_DIR . 'partials/machine-translation-settings-page.php';
     }
 
     /**
-    * Test Google Key page content.
+    * Test selected API functionality
     */
-    public function trp_test_google_key_page_content(){
-        require_once TRP_PLUGIN_DIR . 'partials/test-google-key-settings-page.php';
+    public function test_api_page_content(){
+        require_once TRP_PLUGIN_DIR . 'partials/test-api-settings-page.php';
     }
 
     public function load_engines(){

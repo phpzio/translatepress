@@ -102,4 +102,15 @@ class TRP_Google_Translate_v2_Machine_Translator extends TRP_Machine_Translator 
         // will have the same indexes as $new_string or it will be an empty array if something went wrong
         return $translated_strings;
     }
+
+    /**
+     * Send a test request to verify if the functionality is working
+     */
+    public function test_request(){
+        return $this->send_request( 'en', 'es', array( 'about' ) );
+    }
+
+    public function get_api_key(){
+        return isset( $this->settings['google-translate-key'] ) ? $this->settings['google-translate-key'] : false;
+    }
 }
