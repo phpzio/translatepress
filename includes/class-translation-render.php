@@ -577,7 +577,7 @@ class TRP_Translation_Render{
             }
         }
 
-        foreach ( $html->find('text') as $row ){
+        foreach ( $html->find('trptext') as $row ){
             $outertext = $row->outertext;
             $parent = $row->parent();
             $trimmed_string = trp_full_trim($outertext);
