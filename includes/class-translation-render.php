@@ -322,8 +322,7 @@ class TRP_Translation_Render{
 
         /* make sure we only translate on the rest_prepare_$post_type filter in REST requests and not the whole json */
         if( strpos( $this->url_converter->cur_page_url(), get_rest_url() ) !== false && strpos( current_filter(), 'rest_prepare_' ) !== 0){
-	        $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $output );
-	        $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
+            $trpremoved = $this->remove_trp_html_tags( $output );
 	        return $trpremoved;
         }
 
@@ -395,8 +394,7 @@ class TRP_Translation_Render{
 
 	    $html = TranslatePress\str_get_html($output, true, true, TRP_DEFAULT_TARGET_CHARSET, false, TRP_DEFAULT_BR_TEXT, TRP_DEFAULT_SPAN_TEXT);
 	    if ( $html === false ){
-		    $trpremoved = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $output );
-		    $trpremoved = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $trpremoved );
+            $trpremoved = $this->remove_trp_html_tags( $output );
 		    return $trpremoved;
 	    }
 
@@ -854,6 +852,8 @@ class TRP_Translation_Render{
     function remove_trp_html_tags( $string ){
         $string = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $string );
         $string = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $string );
+        $string = preg_replace( '/(<|&lt;)trp-wrap (.*?)(>|&gt;)/', '', $string );
+        $string = preg_replace( '/(<|&lt;)(\\\\)*\/trp-wrap(>|&gt;)/', '', $string );
         return $string;
     }
 
