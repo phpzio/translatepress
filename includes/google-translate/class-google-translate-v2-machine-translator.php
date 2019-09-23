@@ -3,7 +3,7 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class TRP_Google_Translate_v2_Machine_Translator extends TRP_Machine_Translator {
+class TRP_Google_Translate_V2_Machine_Translator extends TRP_Machine_Translator {
     /**
      * Send request to Google Translation API
      *
@@ -43,60 +43,52 @@ class TRP_Google_Translate_v2_Machine_Translator extends TRP_Machine_Translator 
      * @return array                        array with the translation strings and the preserved keys or an empty array if something went wrong
      */
     public function translate_array( $new_strings, $trp_language_code ){
-        /* we need these settings to go on */
-        $language_code = $this->settings['google-translate-codes'][$trp_language_code];
-        $source_language = $this->settings['google-translate-codes'][$this->settings['default-language']];
-        if( empty( $this->settings['google-translate-key'] ) || empty( $this->settings['google-translate-codes'][$this->settings['default-language']] ) || empty( $language_code ) || ( $language_code == $source_language ) ) {
+
+        if( empty( $new_strings ) || !$this->verify_request( $trp_language_code ) )
             return array();
-        }
 
         $translated_strings = array();
 
-        if ( ! $this->machine_translator_logger ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
-            $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
-        }
+        $language_code   = $this->settings['machine-translate-codes'][$trp_language_code];
+        $source_language = $this->settings['machine-translate-codes'][$this->settings['default-language']];
 
-        // if character quote expired we don't send strings for automatic translation.
-        if( !empty( $new_strings ) && !$this->machine_translator_logger->quota_exceeded() ){
-            /* split our strings that need translation in chunks of maximum 128 strings because Google Translate has a limit of 128 strings */
-            $new_strings_chunks = array_chunk( $new_strings, 128, true );
-            /* if there are more than 128 strings we make multiple requests */
-            foreach( $new_strings_chunks as $new_strings_chunk ){
-                $response = $this->send_request( $source_language, $language_code, $new_strings_chunk );
+        /* split our strings that need translation in chunks of maximum 128 strings because Google Translate has a limit of 128 strings */
+        $new_strings_chunks = array_chunk( $new_strings, 128, true );
+        /* if there are more than 128 strings we make multiple requests */
+        foreach( $new_strings_chunks as $new_strings_chunk ){
+            $response = $this->send_request( $source_language, $language_code, $new_strings_chunk );
 
-                // this is run only if "Log machine translation queries." is set to Yes.
-                $this->machine_translator_logger->log(array(
-                    'strings'   => serialize( $new_strings_chunk),
-                    'response'  => serialize( $response ),
-                    'lang_source'  => $source_language,
-                    'lang_target'  => $language_code,
-                ));
+            // this is run only if "Log machine translation queries." is set to Yes.
+            $this->machine_translator_logger->log(array(
+                'strings'   => serialize( $new_strings_chunk),
+                'response'  => serialize( $response ),
+                'lang_source'  => $source_language,
+                'lang_target'  => $language_code,
+            ));
 
-                /* analyze the response */
-                if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+            /* analyze the response */
+            if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 
-                    $this->machine_translator_logger->count_towards_quota( $new_strings_chunk );
+                $this->machine_translator_logger->count_towards_quota( $new_strings_chunk );
 
-                    /* decode it */
-                    $translation_response = json_decode( $response['body'] );
-                    if( !empty( $translation_response->error ) ){
-                        return array(); // return an empty array if we encountered an error. This means we don't store any translation in the DB
-                    }
-                    else{
-                        /* if we have strings build the translation strings array and make sure we keep the original keys from $new_string */
-                        $translations = $translation_response->data->translations;
-                        $i = 0;
-                        foreach( $new_strings_chunk as $key => $old_string ){
-                            if( !empty( $translations[$i]->translatedText ) ) {
-                                $translated_strings[$key] = $translations[$i]->translatedText;
-                            }
-                            $i++;
+                /* decode it */
+                $translation_response = json_decode( $response['body'] );
+                if( !empty( $translation_response->error ) ){
+                    return array(); // return an empty array if we encountered an error. This means we don't store any translation in the DB
+                }
+                else{
+                    /* if we have strings build the translation strings array and make sure we keep the original keys from $new_string */
+                    $translations = $translation_response->data->translations;
+                    $i = 0;
+                    foreach( $new_strings_chunk as $key => $old_string ){
+                        if( !empty( $translations[$i]->translatedText ) ) {
+                            $translated_strings[$key] = $translations[$i]->translatedText;
                         }
+                        $i++;
                     }
                 }
-
             }
+
         }
 
         // will have the same indexes as $new_string or it will be an empty array if something went wrong

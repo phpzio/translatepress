@@ -120,7 +120,6 @@ class TRP_Translate_Press{
         $this->url_converter              = new TRP_Url_Converter( $this->settings->get_settings() );
         $this->language_switcher          = new TRP_Language_Switcher( $this->settings->get_settings(), $this );
         $this->query                      = new TRP_Query( $this->settings->get_settings() );
-        $this->machine_translator         = new TRP_Google_Translate_v2_Machine_Translator( $this->settings->get_settings() );
         $this->machine_translator_logger  = new TRP_Machine_Translator_Logger( $this->settings->get_settings() );
         $this->translation_manager        = new TRP_Translation_Manager( $this->settings->get_settings() );
         $this->editor_api_regular_strings = new TRP_Editor_Api_Regular_Strings( $this->settings->get_settings() );
@@ -324,6 +323,9 @@ class TRP_Translate_Press{
 
         /* load textdomain */
         $this->loader->add_action( "init", $this, 'init_translation', 8 );
+
+        // machine translation
+        $this->loader->add_action( 'plugins_loaded', $this, 'init_machine_translation', 10 );
     }
 
     /**
@@ -346,4 +348,7 @@ class TRP_Translate_Press{
         load_plugin_textdomain( 'translatepress-multilingual', false, basename(dirname(__FILE__)) . '/languages/' );
     }
 
+    public function init_machine_translation(){
+        $this->machine_translator = $this->machine_translation_tab->get_active_engine( $this->settings->get_settings() );
+    }
 }

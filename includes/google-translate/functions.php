@@ -33,11 +33,5 @@ function trp_gt_sanitize_settings( $settings ){
     if( !empty( $settings['google-translate-key'] ) )
         $settings['google-translate-key'] = sanitize_text_field( $settings['google-translate-key']  );
 
-    $trp           = TRP_Translate_Press::get_trp_instance();
-    $trp_languages = $trp->get_component( 'languages' );
-    $trp_settings  = $trp->get_component( 'settings' );
-
-    $settings['google-translate-codes'] = $trp_languages->get_iso_codes( $trp_settings->get_setting( 'translation-languages' ) );
-
     return $settings;
 }

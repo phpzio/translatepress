@@ -17,6 +17,11 @@ class TRP_Machine_Translator {
      */
     public function __construct( $settings ){
         $this->settings = $settings;
+
+        if ( ! $this->machine_translator_logger ) {
+            $trp                             = TRP_Translate_Press::get_trp_instance();
+            $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
+        }
     }
 
     /**
@@ -49,11 +54,37 @@ class TRP_Machine_Translator {
 		return $this->referer;
 	}
 
-    public function translate_array( $strings, $language_code ){}
+    public function verify_request( $to_language ){
+
+        if( empty( $this->get_api_key() ) ||
+            empty( $to_language ) || $to_language == $this->settings['default-language'] ||
+            empty( $this->settings['machine-translate-codes'][$this->settings['default-language']] )
+          )
+            return false;
+
+        // Method that can be extended in the child class to add extra validation
+        if( !$this->extra_request_validations( $to_language ) )
+            return false;
+
+        // Check if daily quota is met
+        if( $this->machine_translator_logger->quota_exceeded() )
+            return false;
+
+        return true;
+
+    }
+
+    public function translate_array( $strings, $language_code ){
+        return [];
+    }
 
     public function test_request(){}
 
     public function get_api_key(){
         return false;
+    }
+
+    public function extra_request_validations( $to_language ){
+        return true;
     }
 }

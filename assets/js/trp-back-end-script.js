@@ -151,41 +151,6 @@ jQuery( function() {
     }
 
     /*
-     * Show Google Translate API Key only when Google Translate is active
-     */
-    function TRP_Field_Toggler (){
-        var _$setting_toggled, _$trigger_field, _trigger_field_value_for_show
-
-        function show_hide_based_on_value( value ) {
-            if ( value === _trigger_field_value_for_show ) {
-                _$setting_toggled.show();
-            } else {
-                _$setting_toggled.hide();
-            }
-        }
-
-        function add_event_on_change() {
-            _$trigger_field.on('change', function () {
-                show_hide_based_on_value( this.value );
-            });
-        }
-
-        function init( trigger_select_id, setting_id, value_for_show ){
-            _trigger_field_value_for_show = value_for_show
-            _$trigger_field               = jQuery( trigger_select_id )
-            _$setting_toggled             = jQuery( setting_id ).parents('tr')
-
-            show_hide_based_on_value( _$trigger_field.val() )
-
-            add_event_on_change()
-        }
-
-        return {
-            init: init
-        };
-    };
-
-    /*
      * Manage adding and removing items from an option of tpe list from Advanced Settings page
      */
     function TRP_Advanced_Settings_List( table ){
@@ -270,5 +235,34 @@ jQuery( function() {
         new TRP_Advanced_Settings_List( trpListOptions[i] );
     }
 
-
 });
+
+function TRP_Field_Toggler (){
+    var _$setting_toggled, _$trigger_field, _trigger_field_value_for_show
+
+    function show_hide_based_on_value( value ) {
+        if ( value === _trigger_field_value_for_show )
+            _$setting_toggled.show()
+        else
+            _$setting_toggled.hide()
+    }
+
+    function add_event_on_change() {
+        _$trigger_field.on('change', function () {
+            show_hide_based_on_value( this.value )
+        })
+    }
+
+    function init( trigger_select_id, setting_id, value_for_show ){
+        _trigger_field_value_for_show = value_for_show
+        _$trigger_field               = jQuery( trigger_select_id )
+        _$setting_toggled             = jQuery( setting_id ).parents('tr')
+
+        show_hide_based_on_value( _$trigger_field.val() )
+        add_event_on_change()
+    }
+
+    return {
+        init: init
+    }
+}

@@ -3,7 +3,7 @@
 $trp                = TRP_Translate_Press::get_trp_instance();
 $machine_translator = $trp->get_component( 'machine_translator' );
 $response           = $machine_translator->test_request();
-$api_key             = $machine_translator->get_api_key();
+$api_key            = $machine_translator->get_api_key();
 ?>
 
 <div id="trp-addons-page" class="wrap">

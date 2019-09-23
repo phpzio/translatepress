@@ -67,6 +67,12 @@ class TRP_Machine_Translation_Tab {
         else
             $settings['machine-translation'] = 'no';
 
+        $trp           = TRP_Translate_Press::get_trp_instance();
+        $trp_languages = $trp->get_component( 'languages' );
+        $trp_settings  = $trp->get_component( 'settings' );
+
+        $settings['machine-translate-codes'] = $trp_languages->get_iso_codes( $trp_settings->get_setting( 'translation-languages' ) );
+
         return apply_filters( 'trp_machine_translation_sanitize_settings', $settings );
     }
 
@@ -87,5 +93,16 @@ class TRP_Machine_Translation_Tab {
     public function load_engines(){
         include_once TRP_PLUGIN_DIR . 'includes/google-translate/functions.php';
         include_once TRP_PLUGIN_DIR . 'includes/google-translate/class-google-translate-v2-machine-translator.php';
+    }
+
+    public function get_active_engine( $settings ){
+        $default = 'TRP_Google_Translate_V2_Machine_Translator';
+
+        if( empty( $settings['translation-engine'] ) )
+            $value = $default;
+        else
+            $value = 'TRP_' . ucwords( $settings['translation-engine'] ) . '_Machine_Translator'; // class name needs to follow this pattern
+
+        return new $value( $settings );
     }
 }
