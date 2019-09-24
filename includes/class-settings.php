@@ -297,12 +297,22 @@ class TRP_Settings{
 
         $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
 
+        // move the old API key option
+        if( !empty( $settings_option['g-translate-key'] ) && empty( $machine_translation_settings['google-translate-key'] ) ){
+            $machine_translation_settings['google-translate-key'] = $settings_option['g-translate-key'];
+
+            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
+        }
+
+        // enable machine translation if it was activated before
+        if( !empty( $settings_option['g-translate'] ) && $settings_option['g-translate'] == 'yes' && ( isset( $machine_translation_settings['machine-translation'] ) && $machine_translation_settings['machine-translation'] != 'yes' ) ){
+            $machine_translation_settings['machine-translation'] = 'yes';
+
+            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
+        }
+
         if( !empty( $machine_translation_settings ) )
             $default_settings = array_merge( $default_settings, $machine_translation_settings );
-
-        // move the old API key option
-        if( !empty( $settings_option['g-translate-key'] ) && empty( $machine_translation_settings['google-translate-key'] ) )
-            $machine_translation_settings['google-translate-key'] = $settings_option['g-translate-key'];
 
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
