@@ -66,12 +66,23 @@ class TRP_Machine_Translator {
         if( !$this->extra_request_validations( $to_language ) )
             return false;
 
+        // Check if crawlers are blocked
+        if( !empty( $this->settings['block-crawlers'] ) && $this->settings['block-crawlers'] == 'yes' && $this->is_crawler() )
+            return false;
+
         // Check if daily quota is met
         if( $this->machine_translator_logger->quota_exceeded() )
             return false;
 
         return true;
 
+    }
+
+    private function is_crawler(){
+        if( isset( $_SERVER['HTTP_USER_AGENT'] ) )
+            return preg_match( '/rambler|abacho|acoi|accona|aspseek|altavista|estyle|scrubby|lycos|geona|ia_archiver|alexa|sogou|skype|facebook|twitter|pinterest|linkedin|naver|bing|google|yahoo|duckduckgo|yandex|baidu|teoma|xing|java\/1.7.0_45|bot|crawl|slurp|spider|mediapartners|\sask\s|\saol\s/i', $_SERVER['HTTP_USER_AGENT'] );
+
+        return false;
     }
 
     public function translate_array( $strings, $language_code ){

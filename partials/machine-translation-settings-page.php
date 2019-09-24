@@ -48,6 +48,19 @@
                 </td>
             </tr>
 
+            <tr>
+                <th scope=row><?php esc_html_e( 'Block Crawlers', 'translatepress-multilingual' ); ?></th>
+                <td>
+                    <label>
+                        <input type=checkbox name="trp_machine_translation_settings[block-crawlers]" value="yes" <?php isset( $this->settings['block-crawlers'] ) ? checked( $this->settings['block-crawlers'], 'yes' ) : checked( '', 'yes' ); ?>>
+                        <?php _e( 'Yes' , 'translatepress-multilingual' ); ?>
+                    </label>
+                    <p class="description">
+                        <?php esc_html_e( 'Block crawlers from triggering automatic translations on your website.', 'translatepress-multilingual' ); ?>
+                    </p>
+                </td>
+            </tr>
+
             <tr style="border-bottom: 1px solid #ccc;">
                 <th scope="row"></th>
                 <td></td>
