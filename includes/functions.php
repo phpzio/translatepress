@@ -950,7 +950,7 @@ function trp_woo_cart_item_name( $product_name, $cart_item, $cart_item_key ){
  * Translate product name and variation (meta) in pdf invoices.
  */
 add_filter( 'wpo_wcpdf_order_item_data', 'trp_woo_wcpdf_translate_product_name', 10, 3 );
-function trpc_woo_wcpdf_translate_product_name( $data, $order, $type ){
+function trp_woo_wcpdf_translate_product_name( $data, $order, $type ){
     if ( isset( $data['name'] ) ) {
         $trp = TRP_Translate_Press::get_trp_instance();
         $translation_render = $trp->get_component('translation_render');
