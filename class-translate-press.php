@@ -99,6 +99,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
         require_once TRP_PLUGIN_DIR . 'includes/shortcodes.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-machine-translation-tab.php';
     }
 
     /**
@@ -112,11 +113,13 @@ class TRP_Translate_Press{
         $this->advanced_tab               = new TRP_Advanced_Tab($this->settings->get_settings());
         $this->advanced_tab->include_custom_codes();
 
+        $this->machine_translation_tab    = new TRP_Machine_Translation_Tab();
+        $this->machine_translation_tab->load_engines();
+
         $this->translation_render         = new TRP_Translation_Render( $this->settings->get_settings() );
         $this->url_converter              = new TRP_Url_Converter( $this->settings->get_settings() );
         $this->language_switcher          = new TRP_Language_Switcher( $this->settings->get_settings(), $this );
         $this->query                      = new TRP_Query( $this->settings->get_settings() );
-        $this->machine_translator         = new TRP_Machine_Translator( $this->settings->get_settings() );
         $this->machine_translator_logger  = new TRP_Machine_Translator_Logger( $this->settings->get_settings() );
         $this->translation_manager        = new TRP_Translation_Manager( $this->settings->get_settings() );
         $this->editor_api_regular_strings = new TRP_Editor_Api_Regular_Strings( $this->settings->get_settings() );
@@ -140,16 +143,16 @@ class TRP_Translate_Press{
         // the names of your product should match the download names in EDD exactly
         $trp_all_pro_addons = array(
             "tp-add-on-automatic-language-detection" => "Automatic User Language Detection",
-            "tp-add-on-browse-as-other-roles" => "Browse as other Role",
-            "tp-add-on-extra-languages" => "Multiple Languages",
+            "tp-add-on-browse-as-other-roles"        => "Browse as other Role",
+            "tp-add-on-extra-languages"              => "Multiple Languages",
             "tp-add-on-navigation-based-on-language" => "Navigation Based on Language",
-            "tp-add-on-seo-pack" => "SEO Pack",
-            "tp-add-on-translator-accounts" => "Translator Accounts",
+            "tp-add-on-seo-pack"                     => "SEO Pack",
+            "tp-add-on-translator-accounts"          => "Translator Accounts",
         );
         $active_plugins = get_option('active_plugins');
         foreach ( $trp_all_pro_addons as $trp_pro_addon_folder => $trp_pro_addon_name ){
             foreach( $active_plugins as $active_plugin ){
-                if( strpos( $active_plugin, $trp_pro_addon_folder.'/' ) === 0  ){
+                if( strpos( $active_plugin, $trp_pro_addon_folder.'/' ) === 0 ){
                     $this->active_pro_addons[$trp_pro_addon_folder] = $trp_pro_addon_name;
                 }
             }
@@ -174,8 +177,16 @@ class TRP_Translate_Press{
 	    $this->loader->add_action( 'admin_init', $this->advanced_tab, 'register_setting' );
 	    $this->loader->add_action( 'admin_notices', $this->advanced_tab, 'admin_notices' );
 
+        //Machine Translation tab
+        $this->loader->add_action( 'trp_settings_tabs', $this->machine_translation_tab, 'add_tab_to_navigation', 10, 1 );
+        $this->loader->add_action( 'admin_menu',        $this->machine_translation_tab, 'add_submenu_page' );
+        $this->loader->add_action( 'admin_init',        $this->machine_translation_tab, 'register_setting' );
+        $this->loader->add_action( 'admin_notices',     $this->machine_translation_tab, 'admin_notices' );
 
-	    $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
+        //Machine Translation Logger defaults
+        $this->loader->add_action( 'trp_machine_translation_sanitize_settings', $this->machine_translator_logger, 'sanitize_settings', 10, 1 );
+
+        $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
 
 	    $this->loader->add_action( 'wp_ajax_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
         $this->loader->add_action( 'wp_ajax_trp_save_translations_regular', $this->editor_api_regular_strings, 'save_translations' );
@@ -312,6 +323,9 @@ class TRP_Translate_Press{
 
         /* load textdomain */
         $this->loader->add_action( "init", $this, 'init_translation', 8 );
+
+        // machine translation
+        $this->loader->add_action( 'plugins_loaded', $this, 'init_machine_translation', 10 );
     }
 
     /**
@@ -334,4 +348,7 @@ class TRP_Translate_Press{
         load_plugin_textdomain( 'translatepress-multilingual', false, basename(dirname(__FILE__)) . '/languages/' );
     }
 
+    public function init_machine_translation(){
+        $this->machine_translator = $this->machine_translation_tab->get_active_engine( $this->settings->get_settings() );
+    }
 }

@@ -35,6 +35,14 @@
 
     <div class="grid">
         <div class="grid-cell" style="overflow:hidden;">
+            <a href="https://translatepress.com/pricing/" target="_blank"><img src="<?php echo esc_url( plugins_url('../assets/images/deepl-add-on.png', __FILE__) ) ?>" alt="DeepL Automatic Translation" style="float: left; margin: 0 1.5rem 1.5rem 0;"></a>
+            <h3><a href=" <?php echo trp_add_affiliate_id_to_link('https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=addons_tab&utm_campaign=tpfree') ?> " target="_blank">DeepL Automatic Translation</a></h3>
+            <p><?php _e( 'Automatically translate your website through the DeepL API.', 'translatepress-multilingual' );?></p>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="grid-cell" style="overflow:hidden;">
             <a href="https://translatepress.com/pricing/" target="_blank"><img src="<?php echo esc_url( plugins_url('../assets/images/auto-detect-language-add-on.png', __FILE__) ) ?>" alt="Automatic User Language Detection" style="float: left; margin: 0 1.5rem 1.5rem 0;"></a>
             <h3><a href=" <?php echo trp_add_affiliate_id_to_link('https://translatepress.com/pricing/?utm_source=wpbackend&utm_medium=clientsite&utm_content=addons_tab&utm_campaign=tpfree') ?> " target="_blank"> Automatic User Language Detection</a></h3>
             <p><?php _e( 'Automatically redirects new visitors to their preferred language based on browser settings or IP address</br> and remembers the last visited language.', 'translatepress-multilingual' );?></p>

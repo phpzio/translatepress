@@ -154,7 +154,6 @@ class TRP_Advanced_Tab {
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/show-dynamic-content-before-translation.php');
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/strip-gettext-post-content.php');
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/strip-gettext-post-meta.php');
-        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/machine-translation-limits.php');
 	}
 
 	/*
@@ -169,7 +168,7 @@ class TRP_Advanced_Tab {
 	 */
 	public function output_advanced_options(){
         if ( ! $this->machine_translator_logger ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
+            $trp                             = TRP_Translate_Press::get_trp_instance();
             $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
         }
 
@@ -197,15 +196,6 @@ class TRP_Advanced_Tab {
 				case 'list':
 					echo $this->add_to_list_setting( $setting );
 					break;
-				case 'machine_translation_counter':
-					echo $this->machine_translation_counter( $setting );
-					break;
-                case 'machine_translation_counter_date':
-                    echo $this->machine_translation_counter_date( $setting );
-                    break;
-                case 'machine_translation_trigger_quota_notification':
-                    echo $this->storage( $setting );
-                    break;
 			}
 		}
 	}
@@ -368,53 +358,4 @@ class TRP_Advanced_Tab {
             </tr>";
 		return apply_filters( 'trp_advanced_setting_list', $html );
 	}
-
-    /**
-     * Return HTML of a machine_translation_counter type setting
-     *
-     * @param $setting
-     *
-     * @return 'string'
-     */
-    public function machine_translation_counter( $setting ){
-        $option = get_option( 'trp_advanced_settings', true );
-        if(isset($option['machine_translation_counter'])){
-            $counter = $option['machine_translation_counter'];
-        } else {
-            $counter = '0';
-        }
-
-        $html = "
-             <tr>
-                <th scope='row'>{$setting['label']}</th>
-                <td>{$counter}</td>
-            </tr>";
-
-        return apply_filters( 'trp_advanced_setting_machine_translation_counter', $html );
-    }
-
-    /**
-     * Return HTML of a machine_translation_counter_date type setting
-     *
-     * @param $setting
-     *
-     * @return 'string'
-     */
-    public function machine_translation_counter_date( $setting ){
-        $option = get_option( 'trp_advanced_settings', true );
-
-        if(isset($option['machine_translation_counter_date'])){
-            $date = $option['machine_translation_counter_date'];
-        } else {
-            $date = date('Y-m-d');
-        }
-
-        $html = "
-             <tr>
-                <th scope='row'>{$setting['label']}</th>
-                <td>{$date}</td>
-            </tr>";
-
-        return apply_filters( 'trp_advanced_setting_list', $html );
-    }
 }

@@ -5,7 +5,7 @@
  *
  * Facilitates Machine Translation calls
  */
-class TRP_Machine_Translator{
+class TRP_Machine_Translator {
     protected $settings;
 	protected $referer;
 	protected $url_converter;
@@ -17,22 +17,27 @@ class TRP_Machine_Translator{
      */
     public function __construct( $settings ){
         $this->settings = $settings;
+
+        if ( ! $this->machine_translator_logger ) {
+            $trp                             = TRP_Translate_Press::get_trp_instance();
+            $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
+        }
     }
 
     /**
      * Whether automatic translation is available.
      *
-     * @return bool                         function that determines if the automatic translation is enabled
+     * @return bool
      */
     public function is_available(){
-        if( !empty( $this->settings['g-translate'] ) && $this->settings['g-translate'] == 'yes' )
+        if( !empty( $this->settings['machine-translation'] ) && $this->settings['machine-translation'] == 'yes' )
             return true;
         else
             return false;
     }
 
 	/**
-	 * Return referer to be sent in Google Translation request header
+	 * Return site referer
 	 *
 	 * @return string
 	 */
@@ -42,107 +47,55 @@ class TRP_Machine_Translator{
 				$trp = TRP_Translate_Press::get_trp_instance();
 				$this->url_converter = $trp->get_component( 'url_converter' );
 			}
+
 			$this->referer = $this->url_converter->get_abs_home();
 		}
+
 		return $this->referer;
 	}
 
-	/**
-	 * Send request to Google Translation API
-	 *
-	 * @param string $source_language       Translate from language
-	 * @param string $language_code         Translate to language
-	 * @param array $strings_array          Array of string to translate
-	 *
-	 * @return array|WP_Error               Response
-	 */
-	public function send_request( $source_language, $language_code, $strings_array ){
-		/* build our translation request */
-		$translation_request = 'key='.$this->settings['g-translate-key'];
-		$translation_request .= '&source='.$source_language;
-		$translation_request .= '&target='.$language_code;
-		foreach( $strings_array as $new_string ){
-			$translation_request .= '&q='.rawurlencode(html_entity_decode( $new_string, ENT_QUOTES ));
-		}
-		$referer = $this->get_referer();
+    public function verify_request( $to_language ){
 
-		/* Due to url length restrictions we need so send a POST request faked as a GET request and send the strings in the body of the request and not in the URL */
-		$response = wp_remote_post( "https://www.googleapis.com/language/translate/v2", array(
-				'headers' => array(
-					'X-HTTP-Method-Override' => 'GET', //this fakes a GET request
-					'Referer' => $referer
-				),
-				'body' => $translation_request,
-			)
-		);
-		return $response;
-	}
+        if( empty( $this->get_api_key() ) ||
+            empty( $to_language ) || $to_language == $this->settings['default-language'] ||
+            empty( $this->settings['machine-translate-codes'][$this->settings['default-language']] )
+          )
+            return false;
 
-    /**
-     * Returns an array with the API provided translations of the $new_strings array.
-     *
-     * @param array $new_strings            array with the strings that need translation. The keys are the node number in the DOM so we need to preserve the m
-     * @param string $trp_language_code     string wp language code of the language that we will be translating to. Not equal to the google language code
-     * @return array                        array with the translation strings and the preserved keys or an empty array if something went wrong
-     */
-    public function translate_array( $new_strings, $trp_language_code ){
-        /* we need these settings to go on */
-        $language_code = $this->settings['google-translate-codes'][$trp_language_code];
-	    $source_language = $this->settings['google-translate-codes'][$this->settings['default-language']];
-        if( empty( $this->settings['g-translate-key'] ) || empty( $this->settings['google-translate-codes'][$this->settings['default-language']] ) || empty( $language_code ) || ( $language_code == $source_language ) ) {
-	        return array();
-        }
+        // Method that can be extended in the child class to add extra validation
+        if( !$this->extra_request_validations( $to_language ) )
+            return false;
 
-        $translated_strings = array();
+        // Check if crawlers are blocked
+        if( !empty( $this->settings['block-crawlers'] ) && $this->settings['block-crawlers'] == 'yes' && $this->is_crawler() )
+            return false;
 
-        if ( ! $this->machine_translator_logger ) {
-            $trp = TRP_Translate_Press::get_trp_instance();
-            $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
-        }
+        // Check if daily quota is met
+        if( $this->machine_translator_logger->quota_exceeded() )
+            return false;
 
-        // if character quote expired we don't send strings for automatic translation.
-        if( !empty( $new_strings ) && !$this->machine_translator_logger->quota_exceeded() ){
-            /* split our strings that need translation in chunks of maximum 128 strings because Google Translate has a limit of 128 strings */
-            $new_strings_chunks = array_chunk( $new_strings, 128, true );
-            /* if there are more than 128 strings we make multiple requests */
-            foreach( $new_strings_chunks as $new_strings_chunk ){
-                $response = $this->send_request( $source_language, $language_code, $new_strings_chunk );
+        return true;
 
-                // this is run only if "Log machine translation queries." is set to Yes.
-                $this->machine_translator_logger->log(array(
-                    'strings'   => serialize( $new_strings_chunk),
-                    'response'  => serialize( $response ),
-                    'lang_source'  => $source_language,
-                    'lang_target'  => $language_code,
-                ));
+    }
 
-                /* analyze the response */
-                if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+    private function is_crawler(){
+        if( isset( $_SERVER['HTTP_USER_AGENT'] ) )
+            return preg_match( '/rambler|abacho|acoi|accona|aspseek|altavista|estyle|scrubby|lycos|geona|ia_archiver|alexa|sogou|skype|facebook|twitter|pinterest|linkedin|naver|bing|google|yahoo|duckduckgo|yandex|baidu|teoma|xing|java\/1.7.0_45|bot|crawl|slurp|spider|mediapartners|\sask\s|\saol\s/i', $_SERVER['HTTP_USER_AGENT'] );
 
-                    $this->machine_translator_logger->count_towards_quota( $new_strings_chunk );
+        return false;
+    }
 
-                    /* decode it */
-                    $translation_response = json_decode( $response['body'] );
-                    if( !empty( $translation_response->error ) ){
-                        return array(); // return an empty array if we encountered an error. This means we don't store any translation in the DB
-                    }
-                    else{
-                        /* if we have strings build the translation strings array and make sure we keep the original keys from $new_string */
-                        $translations = $translation_response->data->translations;
-                        $i = 0;
-                        foreach( $new_strings_chunk as $key => $old_string ){
-                            if( !empty( $translations[$i]->translatedText ) ) {
-                                $translated_strings[$key] = $translations[$i]->translatedText;
-                            }
-                            $i++;
-                        }
-                    }
-                }
+    public function translate_array( $strings, $language_code ){
+        return [];
+    }
 
-            }
-        }
+    public function test_request(){}
 
-        // will have the same indexes as $new_string or it will be an empty array if something went wrong
-        return $translated_strings;
+    public function get_api_key(){
+        return false;
+    }
+
+    public function extra_request_validations( $to_language ){
+        return true;
     }
 }
