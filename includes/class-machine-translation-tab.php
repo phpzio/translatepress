@@ -13,6 +13,9 @@ class TRP_Machine_Translation_Tab {
         else
             $this->settings = array( 'machine-translation' => 'no' );
 
+        if( !class_exists( 'TRP_DeepL' ) )
+            add_filter( 'trp_machine_translation_engines', [ $this, 'translation_engines_upsell' ], 20 );
+
     }
 
     /*
@@ -22,7 +25,7 @@ class TRP_Machine_Translation_Tab {
     */
     public function add_tab_to_navigation( $tabs ){
         $tab = array(
-            'name'  => __( 'Machine Translation', 'translatepress-multilingual' ),
+            'name'  => __( 'Automatic Translation', 'translatepress-multilingual' ),
             'url'   => admin_url( 'admin.php?page=trp_machine_translation' ),
             'page'  => 'trp_machine_translation'
         );
@@ -38,8 +41,8 @@ class TRP_Machine_Translation_Tab {
     * Hooked to admin_menu
     */
     public function add_submenu_page() {
-        add_submenu_page( 'TRPHidden', 'TranslatePress Machine Translation', 'TRPHidden', 'manage_options', 'trp_machine_translation', array( $this, 'machine_translation_page_content' ) );
-        add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array( $this, 'test_api_page_content' ) );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Automatic Translation', 'TRPHidden', 'manage_options', 'trp_machine_translation', array( $this, 'machine_translation_page_content' ) );
+        add_submenu_page( 'TRPHidden', 'TranslatePress Test Automatic Translation API', 'TRPHidden', 'manage_options', 'trp_test_machine_api', array( $this, 'test_api_page_content' ) );
     }
 
     /**
@@ -108,5 +111,11 @@ class TRP_Machine_Translation_Tab {
         }
 
         return new $value( $settings );
+    }
+
+    public function translation_engines_upsell( $engines ){
+        $engines[] = array( 'value' => 'deepl_upsell', 'label' => __( 'DeepL', 'translatepress-multilingual' ) );
+
+        return $engines;
     }
 }

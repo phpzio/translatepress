@@ -259,9 +259,9 @@ class TRP_Settings{
         // regenerate machine translation codes
         $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
 
-        $machine_translation_settings['machine-translate-codes'] = $trp_languages->get_iso_codes( $settings['translation-languages'] );
+        $machine_translation_settings['machine-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['translation-languages'] );
 
-        update_option( 'trp_machine_translation_settings' );
+        update_option( 'trp_machine_translation_settings', $machine_translation_settings );
 
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
@@ -302,6 +302,7 @@ class TRP_Settings{
             'advanced_settings'                    => get_option('trp_advanced_settings', array() ),
             'machine-translation'                  => 'no',
             'translation-engine'                   => 'google_translate_v2',
+            'block-crawlers'                       => 'yes',
         );
 
         $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );

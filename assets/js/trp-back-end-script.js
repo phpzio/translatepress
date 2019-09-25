@@ -211,7 +211,10 @@ jQuery( function() {
     });
 
     var trpGoogleTranslateKey = TRP_Field_Toggler();
-        trpGoogleTranslateKey.init('#trp-machine-translation-engine', '#trp-g-translate-key', 'google_translate_v2' );
+        trpGoogleTranslateKey.init('.trp-translation-engine', '#trp-g-translate-key', 'google_translate_v2' );
+
+    var deeplUpsell = TRP_Field_Toggler();
+        deeplUpsell.init('.trp-translation-engine', '#trp-upsell-deepl', 'deepl_upsell' );
 
     // Used for the main machine translation toggle to show/hide all options below it
     function TRP_show_hide_machine_translation_options(){
@@ -221,12 +224,25 @@ jQuery( function() {
             jQuery( '.trp-machine-translation-options tbody tr:not(:first-child)').show()
 
         if( jQuery( '#trp-machine-translation-enabled' ).val() == 'yes' )
-            jQuery('#trp-machine-translation-engine').trigger('change')
+            jQuery('.trp-translation-engine:checked').trigger('change')
+    }
+
+    // Hide this row when DeepL upsell is showing
+    function TRP_hide_test_api_key(){
+        if( jQuery( '.trp-translation-engine:checked' ).val() == 'deepl_upsell' )
+            jQuery( '#trp-test-api-key' ).hide()
+        else
+            jQuery( '#trp-test-api-key' ).show()
     }
 
     TRP_show_hide_machine_translation_options()
     jQuery('#trp-machine-translation-enabled').on( 'change', function(){
         TRP_show_hide_machine_translation_options()
+    })
+
+    TRP_hide_test_api_key()
+    jQuery('.trp-translation-engine').on( 'change', function(){
+        TRP_hide_test_api_key()
     })
 
     // Options of type List adding, from Advanced Settings page
@@ -238,7 +254,7 @@ jQuery( function() {
 });
 
 function TRP_Field_Toggler (){
-    var _$setting_toggled, _$trigger_field, _trigger_field_value_for_show
+    var _$setting_toggled, _$trigger_field, _trigger_field_value_for_show, _trigger_field_value
 
     function show_hide_based_on_value( value ) {
         if ( value === _trigger_field_value_for_show )
@@ -248,9 +264,11 @@ function TRP_Field_Toggler (){
     }
 
     function add_event_on_change() {
+
         _$trigger_field.on('change', function () {
             show_hide_based_on_value( this.value )
         })
+
     }
 
     function init( trigger_select_id, setting_id, value_for_show ){
@@ -258,7 +276,12 @@ function TRP_Field_Toggler (){
         _$trigger_field               = jQuery( trigger_select_id )
         _$setting_toggled             = jQuery( setting_id ).parents('tr')
 
-        show_hide_based_on_value( _$trigger_field.val() )
+        if( _$trigger_field.hasClass( 'trp-radio') )
+            _trigger_field_value = jQuery( trigger_select_id + ':checked' ).val()
+        else
+            _trigger_field_value = _$trigger_field.val()
+
+        show_hide_based_on_value( _trigger_field_value )
         add_event_on_change()
     }
 

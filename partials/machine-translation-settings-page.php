@@ -1,17 +1,18 @@
 <div id="trp-main-settings" class="wrap">
     <form method="post" action="options.php">
         <?php settings_fields( 'trp_machine_translation_settings' ); ?>
-        <h1> <?php esc_html_e( 'TranslatePress Machine Translation', 'translatepress-multilingual' );?></h1>
+        <h1> <?php esc_html_e( 'TranslatePress Automatic Translation', 'translatepress-multilingual' );?></h1>
         <?php do_action ( 'trp_settings_navigation_tabs' ); ?>
 
         <table id="trp-options" class="form-table trp-machine-translation-options">
             <tr>
-                <th scope="row"><?php esc_html_e( 'Enable Machine Translation', 'translatepress-multilingual' ); ?> </th>
+                <th scope="row"><?php esc_html_e( 'Enable Automatic Translation', 'translatepress-multilingual' ); ?> </th>
                 <td>
                     <select id="trp-machine-translation-enabled" name="trp_machine_translation_settings[machine-translation]" class="trp-select">
                         <option value="no" <?php selected( $this->settings['machine-translation'], 'no' ); ?>><?php esc_html_e( 'No', 'translatepress-multilingual') ?></option>
                         <option value="yes" <?php selected( $this->settings['machine-translation'], 'yes' ); ?>><?php esc_html_e( 'Yes', 'translatepress-multilingual') ?></option>
                     </select>
+
                     <p class="description">
                         <?php _e( 'Enable or disable the automatic translation of the site. Only untranslated strings will receive a translation.', 'translatepress-multilingual' ) ?>
                     </p>
@@ -23,30 +24,48 @@
                 <td>
                     <?php $translation_engines = apply_filters( 'trp_machine_translation_engines', array() ); ?>
 
-                    <select id="trp-machine-translation-engine" name="trp_machine_translation_settings[translation-engine]" class="trp-select">
+                    <?php foreach( $translation_engines as $engine ) : ?>
+                        <label for="trp-translation-engine-<?= esc_attr( $engine['value'] ) ?>" style="margin-right:10px;">
+                             <input type="radio" class="trp-translation-engine trp-radio" id="trp-translation-engine-<?= esc_attr( $engine['value'] ) ?>" name="trp_machine_translation_settings[translation-engine]" value="<?= esc_attr( $engine['value'] ) ?>" <?php checked( $this->settings['translation-engine'], $engine['value'] ); ?>>
+                             <?= $engine['label'] ?>
+                        </label>
+                    <?php endforeach; ?>
 
-                        <?php foreach( $translation_engines as $engine ) : ?>
-                            <option value="<?php echo $engine['value']; ?>" <?php selected( $this->settings['translation-engine'], $engine['value'] ); ?>><?php echo $engine['label'] ?></option>
-                        <?php endforeach; ?>
-
-                    </select>
                     <p class="description">
                         <?php _e( 'Choose which engine you want to use in order to automatically translate your website.', 'translatepress-multilingual' ) ?>
                     </p>
                 </td>
             </tr>
 
+            <?php if( !class_exists( 'TRP_DeepL' ) ) : ?>
+                <tr style="display:none;">
+                    <th scope="row"></th>
+                    <td>
+                        <p class="trp-upsell-multiple-languages" id="trp-upsell-deepl">
+                            <?php
+                                $url = trp_add_affiliate_id_to_link('https://translatepress.com/?utm_source=wpbackend&utm_medium=clientsite&utm_content=deepl_upsell&utm_campaign=tpfree');
+                                $lnk = sprintf( wp_kses( __( '<strong>DeepL</strong> automatic translation is available as a premium add-on in <a href="%s" class="button button-primary" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>', 'translatepress-multilingual' ), array( 'strong' => array(), 'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target'=> array(), 'class' => array() ) ) ), esc_url( $url ) );
+                                $lnk .= '<br/>' . __( 'By upgrading you\'ll get access to all paid add-ons, premium support as well as help fund the future development of TranslatePress.', 'translatepress-multilingual' );
+                                echo $lnk;
+                            ?>
+                        </p>
+                    </td>
+                </tr>
+            <?php endif; ?>
+
             <?php do_action ( 'trp_machine_translation_extra_settings_middle', $this->settings ); ?>
 
-            <tr>
+            <tr id="trp-test-api-key">
                 <th scope="row"></th>
                 <td>
-                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=trp_test_google_key_page' ) ); ?>" class="button-secondary"><?php _e( 'Test API credentials', 'translatepress-multilingual' ); ?></a>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=trp_test_machine_api' ) ); ?>" class="button-secondary"><?php _e( 'Test API credentials', 'translatepress-multilingual' ); ?></a>
                     <p class="description">
                         <?php _e( 'Click here to check if the selected translation engine is configured correctly.', 'translatepress-multilingual' ) ?>
                     </p>
                 </td>
             </tr>
+
+            <tr style="border-bottom: 1px solid #ccc;"></tr>
 
             <tr>
                 <th scope=row><?php esc_html_e( 'Block Crawlers', 'translatepress-multilingual' ); ?></th>
@@ -59,11 +78,6 @@
                         <?php esc_html_e( 'Block crawlers from triggering automatic translations on your website.', 'translatepress-multilingual' ); ?>
                     </p>
                 </td>
-            </tr>
-
-            <tr style="border-bottom: 1px solid #ccc;">
-                <th scope="row"></th>
-                <td></td>
             </tr>
 
             <tr>
@@ -81,14 +95,8 @@
             <tr>
                 <th scope="row"><?php esc_html_e( 'Today\'s character count:', 'translatepress-multilingual' ); ?></th>
                 <td>
-                    <?php echo isset( $this->settings['machine_translation_counter'] ) ? $this->settings['machine_translation_counter'] : 0; ?>
-                </td>
-            </tr>
-
-            <tr>
-                <th scope="row"><?php esc_html_e( 'Today: ', 'translatepress-multilingual' ); ?></th>
-                <td>
-                    <?php echo isset( $this->settings['machine_translation_counter_date'] ) ? $this->settings['machine_translation_counter_date'] : date('Y-m-d'); ?>
+                    <strong><?php echo isset( $this->settings['machine_translation_counter'] ) ? $this->settings['machine_translation_counter'] : 0; ?></strong>
+                    (<?php echo isset( $this->settings['machine_translation_counter_date'] ) ? $this->settings['machine_translation_counter_date'] : date('Y-m-d'); ?>)
                 </td>
             </tr>
 
