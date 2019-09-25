@@ -100,8 +100,12 @@ class TRP_Machine_Translation_Tab {
 
         if( empty( $settings['translation-engine'] ) )
             $value = $default;
-        else
+        else {
             $value = 'TRP_' . ucwords( $settings['translation-engine'] ) . '_Machine_Translator'; // class name needs to follow this pattern
+
+            if( !class_exists( $value ) )
+                $value = $default;
+        }
 
         return new $value( $settings );
     }

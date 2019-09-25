@@ -256,6 +256,13 @@ class TRP_Settings{
         // regenerate permalinks in case something changed
         flush_rewrite_rules();
 
+        // regenerate machine translation codes
+        $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
+
+        $machine_translation_settings['machine-translate-codes'] = $trp_languages->get_iso_codes( $settings['translation-languages'] );
+
+        update_option( 'trp_machine_translation_settings' );
+
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -293,6 +300,8 @@ class TRP_Settings{
             'floater-position'                     => 'bottom-right',
             'url-slugs'                            => array( 'en_US' => 'en', '' ),
             'advanced_settings'                    => get_option('trp_advanced_settings', array() ),
+            'machine-translation'                  => 'no',
+            'translation-engine'                   => 'google_translate_v2',
         );
 
         $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
