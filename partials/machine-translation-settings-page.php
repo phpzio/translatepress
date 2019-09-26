@@ -45,7 +45,7 @@
                             <?php
                                 $url = trp_add_affiliate_id_to_link('https://translatepress.com/?utm_source=wpbackend&utm_medium=clientsite&utm_content=deepl_upsell&utm_campaign=tpfree');
                                 $lnk = sprintf( wp_kses( __( '<strong>DeepL</strong> automatic translation is available as a premium add-on in <a href="%s" class="button button-primary" target="_blank" title="TranslatePress Pro">TranslatePress PRO</a>', 'translatepress-multilingual' ), array( 'strong' => array(), 'br' => array(), 'a' => array( 'href' => array(), 'title' => array(), 'target'=> array(), 'class' => array() ) ) ), esc_url( $url ) );
-                                $lnk .= '<br/>' . __( 'By upgrading you\'ll get access to all paid add-ons, premium support as well as help fund the future development of TranslatePress.', 'translatepress-multilingual' );
+                                $lnk .= '<br/>' . __( 'By upgrading you\'ll get access to all paid add-ons, premium support and help fund the future development of TranslatePress.', 'translatepress-multilingual' );
                                 echo $lnk;
                             ?>
                         </p>

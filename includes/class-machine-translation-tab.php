@@ -58,7 +58,8 @@ class TRP_Machine_Translation_Tab {
     * Output admin notices after saving settings.
     */
     public function admin_notices(){
-        settings_errors( 'trp_machine_translation_settings' );
+        if( isset( $_GET['page'] ) && $_GET['page'] == 'trp_machine_translation' )
+            settings_errors();
     }
 
     /*
