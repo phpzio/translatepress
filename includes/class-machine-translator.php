@@ -54,6 +54,12 @@ class TRP_Machine_Translator {
 		return $this->referer;
 	}
 
+    /**
+     * Verifies that the machine translation request is valid
+     *
+     * @param  string $to_language language we're looking to translate to
+     * @return bool
+     */
     public function verify_request( $to_language ){
 
         if( empty( $this->get_api_key() ) ||
@@ -78,6 +84,11 @@ class TRP_Machine_Translator {
 
     }
 
+    /**
+     * Verifies user agent to check if the request is being made by a crawler
+     *
+     * @return boolean
+     */
     private function is_crawler(){
         if( isset( $_SERVER['HTTP_USER_AGENT'] ) )
             return preg_match( '/rambler|abacho|acoi|accona|aspseek|altavista|estyle|scrubby|lycos|geona|ia_archiver|alexa|sogou|skype|facebook|twitter|pinterest|linkedin|naver|bing|google|yahoo|duckduckgo|yandex|baidu|teoma|xing|java\/1.7.0_45|bot|crawl|slurp|spider|mediapartners|\sask\s|\saol\s/i', $_SERVER['HTTP_USER_AGENT'] );
