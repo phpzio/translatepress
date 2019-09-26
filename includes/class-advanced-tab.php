@@ -165,14 +165,6 @@ class TRP_Advanced_Tab {
 	 * Hooked to trp_settings_navigation_tabs
 	 */
 	public function output_advanced_options(){
-        if ( ! $this->machine_translator_logger ) {
-            $trp                             = TRP_Translate_Press::get_trp_instance();
-            $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
-        }
-
-        $this->machine_translator_logger->maybe_reset_counter_date();
-
-
 		$advanced_settings_array = $this->get_settings();
 		foreach( $advanced_settings_array as $setting ){
 			switch( $setting['type'] ){
