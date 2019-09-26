@@ -9,9 +9,11 @@ $current_language_preference = $this->add_shortcode_preferences($shortcode_setti
 		</a>
     </div>
     <div class="trp-ls-shortcode-language">
+        <?php if ( apply_filters('trp_ls_shortcode_show_disabled_language', true, $current_language, $current_language_preference, $this->settings ) ){ ?>
         <a href="javascript:void(0)" class="trp-ls-shortcode-disabled-language trp-ls-disabled-language"  title="<?php echo esc_attr( $current_language['name'] ); ?>">
 			<?php echo $current_language_preference; // WPCS: ok. ?>
 		</a>
+        <?php } ?>
     <?php foreach ( $other_languages as $code => $name ){
 
         $language_preference = $this->add_shortcode_preferences($shortcode_settings, $code, $name);

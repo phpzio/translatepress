@@ -134,6 +134,8 @@ class TRP_Language_Switcher{
 				$other_languages[$code] = $name;
 			}
 		}
+		$current_language = apply_filters('trp_ls_shortcode_current_language', $current_language, $published_languages, $TRP_LANGUAGE, $this->settings);
+		$other_languages = apply_filters('trp_ls_shortcode_other_languages', $other_languages, $published_languages, $TRP_LANGUAGE, $this->settings);
 
 		if( ! $this->trp_settings_object ) {
 			$trp = TRP_Translate_Press::get_trp_instance();
