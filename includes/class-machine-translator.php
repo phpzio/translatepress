@@ -90,10 +90,12 @@ class TRP_Machine_Translator {
      * @return boolean
      */
     private function is_crawler(){
-        if( isset( $_SERVER['HTTP_USER_AGENT'] ) )
-            return preg_match( '/rambler|abacho|acoi|accona|aspseek|altavista|estyle|scrubby|lycos|geona|ia_archiver|alexa|sogou|skype|facebook|twitter|pinterest|linkedin|naver|bing|google|yahoo|duckduckgo|yandex|baidu|teoma|xing|java\/1.7.0_45|bot|crawl|slurp|spider|mediapartners|\sask\s|\saol\s/i', $_SERVER['HTTP_USER_AGENT'] );
+        if( !isset( $_SERVER['HTTP_USER_AGENT'] ) )
+            return false;
 
-        return false;
+        $crawlers = apply_filters( 'trp_machine_translator_crawlers', 'rambler|abacho|acoi|accona|aspseek|altavista|estyle|scrubby|lycos|geona|ia_archiver|alexa|sogou|skype|facebook|twitter|pinterest|linkedin|naver|bing|google|yahoo|duckduckgo|yandex|baidu|teoma|xing|java\/1.7.0_45|bot|crawl|slurp|spider|mediapartners|\sask\s|\saol\s' );
+
+        return preg_match( '/'. $crawlers .'/i', $_SERVER['HTTP_USER_AGENT'] );
     }
 
     public function translate_array( $strings, $language_code ){
