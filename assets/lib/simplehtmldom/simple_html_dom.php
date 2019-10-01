@@ -49,8 +49,15 @@ namespace TranslatePress;
  * TranslatePress modifications
  *
  * "TRP_" prefix was appended to all the define constants.
+ *
  * namespace TranslatePress was added.
+ *
  * MAX_FILE_SIZE has been modified from value 600000 to new value: define( 'TRP_MAX_FILE_SIZE', 100000000 );
+ *
+ * In class simple_html_dom_node, propery $tag has been renamed from 'text' to 'trptext'.
+ * Also, all other 3 occurrences of 'text' where changed to 'trptext'.
+ * (Reason for this change: tag <text> exists in HTML docs so we need a different reserved tag.)
+ * (In class-translation-render.php we use find('trptext') because of this. ).
  *
  */
 
@@ -148,7 +155,7 @@ class simple_html_dom_node
 	 *
 	 * @var string
 	 */
-	public $tag = 'text';
+	public $tag = 'trptext';
 
 	/**
 	 * List of attributes
@@ -495,7 +502,7 @@ class simple_html_dom_node
 		if (is_object($debug_object))
 		{
 			$text = '';
-			if ($this->tag == 'text')
+			if ($this->tag == 'trptext')
 			{
 				if (!empty($this->text))
 				{
@@ -1838,7 +1845,7 @@ class simple_html_dom
 				$node->nodetype = TRP_HDOM_TYPE_TEXT;
 				$node->_[TRP_HDOM_INFO_END] = 0;
 				$node->_[TRP_HDOM_INFO_TEXT] = '<'.$tag . $space[0] . $name;
-				$node->tag = 'text';
+				$node->tag = 'trptext';
 				$this->link_nodes($node, false);
 				return true;
 			}
@@ -1846,7 +1853,7 @@ class simple_html_dom
 			// handle mismatch '<'
 			if ($this->doc[$this->pos-1]=='<') { // Attributes cannot start after opening tag
 				$node->nodetype = TRP_HDOM_TYPE_TEXT;
-				$node->tag = 'text';
+				$node->tag = 'trptext';
 				$node->attr = array();
 				$node->_[TRP_HDOM_INFO_END] = 0;
 				$node->_[TRP_HDOM_INFO_TEXT] = substr($this->doc, $begin_tag_pos, $this->pos-$begin_tag_pos-1);

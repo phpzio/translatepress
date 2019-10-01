@@ -949,8 +949,8 @@ function trp_woo_cart_item_name( $product_name, $cart_item, $cart_item_key ){
  *
  * Translate product name and variation (meta) in pdf invoices.
  */
-add_filter( 'wpo_wcpdf_order_item_data', 'trpc_woo_wcpdf_translate_product_name', 10, 3 );
-function trpc_woo_wcpdf_translate_product_name( $data, $order, $type ){
+add_filter( 'wpo_wcpdf_order_item_data', 'trp_woo_wcpdf_translate_product_name', 10, 3 );
+function trp_woo_wcpdf_translate_product_name( $data, $order, $type ){
     if ( isset( $data['name'] ) ) {
         $trp = TRP_Translate_Press::get_trp_instance();
         $translation_render = $trp->get_component('translation_render');
@@ -962,4 +962,30 @@ function trpc_woo_wcpdf_translate_product_name( $data, $order, $type ){
         add_filter( 'trp_stop_translating_page', 'trp_woo_pdf_invoices_and_packing_slips_compatibility_dont_translate_pdf', 10, 2 );
     }
     return $data;
+}
+
+/**
+ * Compatibility with WooCommerce Checkout Add-Ons plugin
+ *
+ * Exclude name of "paid add-on" item from being run through gettext.
+ *
+ * No other filters were found. Advanced settings strip meta did not work.
+ * It's being added through WC->add_fee and inserted directly in db in custom table.
+ */
+add_action( 'woocommerce_cart_calculate_fees', 'trp_woo_checkout_add_ons_filter_trpstr', 10, 2);
+function trp_woo_checkout_add_ons_filter_trpstr(){
+    if ( class_exists('WC_Checkout_Add_Ons_Frontend') ) {
+        add_filter('trp_skip_gettext_processing', 'trp_woo_checkout_exclude_strings', 1000, 4);
+    }
+}
+
+function trp_woo_checkout_exclude_strings( $return, $translation, $text, $domain) {
+    if ( $domain === 'woocommerce-checkout-add-ons' ) {
+        $add_ons = wc_checkout_add_ons()->get_add_ons();
+        foreach ($add_ons as $add_on) {
+            if ( $add_on->name === $text)
+                return true;
+        }
+    }
+    return $return;
 }

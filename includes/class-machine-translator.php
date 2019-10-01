@@ -5,7 +5,7 @@
  *
  * Facilitates Machine Translation calls
  */
-class TRP_Machine_Translator {
+abstract class TRP_Machine_Translator {
     protected $settings;
 	protected $referer;
 	protected $url_converter;
@@ -98,9 +98,56 @@ class TRP_Machine_Translator {
         return preg_match( '/'. $crawlers .'/i', $_SERVER['HTTP_USER_AGENT'] );
     }
 
-    public function translate_array( $strings, $language_code ){
-        return [];
+    private function get_placeholders( $count ){
+	    $placeholders = array();
+	    for( $i = 1 ; $i <= $count; $i++ ){
+            $placeholders[] = '1TP' . $i;
+        }
+	    return $placeholders;
     }
+
+    /**
+     * Function to be used externally
+     *
+     * @param $strings
+     * @param $language_code
+     * @return array
+     */
+    public function translate($strings, $language_code){
+        if ( !empty($strings) && is_array($strings) ) {
+
+            /* google has a problem translating this characters ( '%', '$', '#' )...for some reasons it puts spaces after them so we need to 'encode' them and decode them back. hopefully it won't break anything important */
+            $trp_exclude_words_from_automatic_translation = apply_filters('trp_exclude_words_from_automatic_translation', array('%', '$', '#'));
+            $placeholders = $this->get_placeholders(count($trp_exclude_words_from_automatic_translation));
+
+            foreach ($strings as $key => $string) {
+                $strings[$key] = str_replace($trp_exclude_words_from_automatic_translation, $placeholders, $string);
+            }
+
+            $machine_strings = $this->translate_array($strings, $language_code);
+
+            if (!empty($machine_strings)) {
+                foreach ($machine_strings as $key => $machine_string) {
+                    $machine_strings[$key] = str_ireplace( $placeholders, $trp_exclude_words_from_automatic_translation, $machine_string );
+                }
+            }
+            return $machine_strings;
+        }else {
+            return array();
+        }
+    }
+
+    /**
+     * Function to implement in specific machine translators APIs
+     *
+     * This is not meant for calling externally except for when short-circuiting translate()
+     *
+     *
+     * @param $strings
+     * @param $language_code
+     * @return array
+     */
+    abstract public function translate_array( $strings, $language_code );
 
     public function test_request(){}
 
