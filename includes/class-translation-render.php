@@ -355,9 +355,11 @@ class TRP_Translation_Render{
 
 	        //check if we have a json response
 	        if ( ! empty( $json_array ) ) {
-	            if( !is_array( $json_array ) )//make sure we send an array as json_decode even with true parameter might not return one
-                    $json_array = array( $json_array );
-                array_walk_recursive( $json_array, array( $this, 'translate_json' ) );
+	            if( is_array( $json_array ) ) {
+                    array_walk_recursive($json_array, array($this, 'translate_json'));
+                }else {
+                    $json_array = $this->translate_page($json_array);
+                }
 	        }
 
 	        return trp_safe_json_encode( $json_array );
