@@ -854,8 +854,10 @@ class TRP_Translation_Render{
     function remove_trp_html_tags( $string ){
         $string = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $string );
         $string = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $string );
-        $string = preg_replace( '/(<|&lt;)trp-wrap (.*?)(>|&gt;)/', '', $string );
-        $string = preg_replace( '/(<|&lt;)(\\\\)*\/trp-wrap(>|&gt;)/', '', $string );
+        if (!isset($_REQUEST['trp-edit-translation']) || $_REQUEST['trp-edit-translation'] != 'preview') {
+            $string = preg_replace('/(<|&lt;)trp-wrap (.*?)(>|&gt;)/', '', $string);
+            $string = preg_replace('/(<|&lt;)(\\\\)*\/trp-wrap(>|&gt;)/', '', $string);
+        }
         return $string;
     }
 
