@@ -3,7 +3,6 @@
 class TRP_Advanced_Tab {
 
     private $settings;
-    protected $machine_translator_logger;
 
     public function __construct($settings)
     {
