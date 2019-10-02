@@ -76,10 +76,10 @@ class TRP_Settings{
     }
 
     /**
- * Returns settings_option.
- *
- * @return array        Settings option.
- */
+     * Returns settings_option.
+     *
+     * @return array        Settings option.
+     */
     public function get_settings(){
         if ( $this->settings == null ){
             $this->set_options();
@@ -110,23 +110,21 @@ class TRP_Settings{
      */
     public function register_menu_page(){
         add_options_page( 'TranslatePress', 'TranslatePress', apply_filters( 'trp_settings_capability', 'manage_options' ), 'translate-press', array( $this, 'settings_page_content' ) );
+
         add_submenu_page( 'TRPHidden', 'TranslatePress Addons', 'TRPHidden', 'manage_options', 'trp_addons_page', array($this, 'addons_page_content') );
-        add_submenu_page( 'TRPHidden', 'TranslatePress Test Google API Key', 'TRPHidden', 'manage_options', 'trp_test_google_key_page', array($this, 'test_google_key_page_content') );
     }
 
     /**
      * Settings page content.
      */
     public function settings_page_content(){
-	    $trp = TRP_Translate_Press::get_trp_instance();
 	    if ( ! $this->trp_languages ){
+            $trp                 = TRP_Translate_Press::get_trp_instance();
             $this->trp_languages = $trp->get_component( 'languages' );
         }
-	    if ( ! $this->machine_translator ){
-		    $this->machine_translator = $trp->get_component( 'machine_translator' );
-	    }
+
         $languages = $this->trp_languages->get_languages( 'english_name' );
-	    $gtranslate_referer = $this->machine_translator->get_referer();
+
         require_once TRP_PLUGIN_DIR . 'partials/main-settings-page.php';
     }
 
@@ -135,13 +133,6 @@ class TRP_Settings{
      */
     public function addons_page_content(){
         require_once TRP_PLUGIN_DIR . 'partials/addons-settings-page.php';
-    }
-
-    /**
-     * Test Google Key page content.
-     */
-    public function test_google_key_page_content(){
-        require_once TRP_PLUGIN_DIR . 'partials/test-google-key-settings-page.php';
     }
 
     /**
@@ -187,17 +178,6 @@ class TRP_Settings{
         if ( ! in_array( $settings['default-language'], $settings['publish-languages'] ) ){
             array_unshift( $settings['publish-languages'], $settings['default-language'] );
         }
-
-
-        if( !empty( $settings['g-translate'] ) )
-            $settings['g-translate'] = sanitize_text_field( $settings['g-translate']  );
-        else
-            $settings['g-translate'] = 'no';
-
-
-
-        if( !empty( $settings['g-translate-key'] ) )
-            $settings['g-translate-key'] = sanitize_text_field( $settings['g-translate-key']  );
 
         if( !empty( $settings['native_or_english_name'] ) )
             $settings['native_or_english_name'] = sanitize_text_field( $settings['native_or_english_name']  );
@@ -273,10 +253,15 @@ class TRP_Settings{
             $this->trp_query->check_gettext_table( $language_code );
         }
 
-        $settings['google-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['translation-languages'] );
-
         // regenerate permalinks in case something changed
         flush_rewrite_rules();
+
+        // regenerate machine translation codes
+        $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
+
+        $machine_translation_settings['machine-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['translation-languages'] );
+
+        update_option( 'trp_machine_translation_settings', $machine_translation_settings );
 
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
@@ -302,21 +287,43 @@ class TRP_Settings{
             $default = 'en_US';
         }
         $default_settings = array(
-            'default-language'                      => $default,
-            'translation-languages'                 => array( $default ),
-            'publish-languages'                     => array( $default ),
-            'native_or_english_name'                => 'english_name',
-            'add-subdirectory-to-default-language'  => 'no',
-            'force-language-to-custom-links'        => 'yes',
-            'g-translate'                           => 'no',
-            'trp-ls-floater'                        => 'yes',
-            'shortcode-options'                     => 'flags-full-names',
-            'menu-options'                          => 'flags-full-names',
-            'floater-options'                       => 'flags-full-names',
-            'floater-position'                      => 'bottom-right',
-            'url-slugs'                             => array( 'en_US' => 'en', '' ),
-            'advanced_settings'                     => get_option('trp_advanced_settings', array() ),
+            'default-language'                     => $default,
+            'translation-languages'                => array( $default ),
+            'publish-languages'                    => array( $default ),
+            'native_or_english_name'               => 'english_name',
+            'add-subdirectory-to-default-language' => 'no',
+            'force-language-to-custom-links'       => 'yes',
+            'trp-ls-floater'                       => 'yes',
+            'shortcode-options'                    => 'flags-full-names',
+            'menu-options'                         => 'flags-full-names',
+            'floater-options'                      => 'flags-full-names',
+            'floater-position'                     => 'bottom-right',
+            'url-slugs'                            => array( 'en_US' => 'en', '' ),
+            'advanced_settings'                    => get_option('trp_advanced_settings', array() ),
+            'machine-translation'                  => 'no',
+            'translation-engine'                   => 'google_translate_v2',
+            'block-crawlers'                       => 'yes',
         );
+
+        $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
+
+        // move the old API key option
+        if( !empty( $settings_option['g-translate-key'] ) && empty( $machine_translation_settings['google-translate-key'] ) ){
+            $machine_translation_settings['google-translate-key'] = $settings_option['g-translate-key'];
+
+            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
+        }
+
+        // enable machine translation if it was activated before
+        if( !empty( $settings_option['g-translate'] ) && $settings_option['g-translate'] == 'yes' && ( isset( $machine_translation_settings['machine-translation'] ) && $machine_translation_settings['machine-translation'] != 'yes' ) ){
+            $machine_translation_settings['machine-translation'] = 'yes';
+
+            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
+        }
+
+        if( !empty( $machine_translation_settings ) )
+            $default_settings = array_merge( $default_settings, $machine_translation_settings );
+
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
             $settings_option = $default_settings;
@@ -327,6 +334,7 @@ class TRP_Settings{
                 }
             }
         }
+
         $this->settings = $settings_option;
     }
 
@@ -336,7 +344,7 @@ class TRP_Settings{
      * @param string $hook          Admin page.
      */
     public function enqueue_scripts_and_styles( $hook ) {
-        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_license_key' || $hook == 'admin_page_trp_addons_page' || $hook == 'admin_page_trp_advanced_page' ) {
+        if( in_array( $hook, [ 'settings_page_translate-press', 'admin_page_trp_license_key', 'admin_page_trp_addons_page', 'admin_page_trp_advanced_page', 'admin_page_trp_machine_translation', 'admin_page_trp_test_machine_api' ] ) ){
             wp_enqueue_style(
                 'trp-settings-style',
                 TRP_PLUGIN_URL . 'assets/css/trp-back-end-style.css',
@@ -345,14 +353,17 @@ class TRP_Settings{
             );
         }
 
-        if ( $hook == 'settings_page_translate-press' || $hook == 'admin_page_trp_advanced_page' ) {
+        if( in_array( $hook, array( 'settings_page_translate-press', 'admin_page_trp_advanced_page', 'admin_page_trp_machine_translation' ) ) ) {
             wp_enqueue_script( 'trp-settings-script', TRP_PLUGIN_URL . 'assets/js/trp-back-end-script.js', array( 'jquery', 'jquery-ui-sortable' ), TRP_PLUGIN_VERSION );
+
             if ( ! $this->trp_languages ){
-                $trp = TRP_Translate_Press::get_trp_instance();
+                $trp                 = TRP_Translate_Press::get_trp_instance();
                 $this->trp_languages = $trp->get_component( 'languages' );
             }
+
             $all_language_codes = $this->trp_languages->get_all_language_codes();
-            $iso_codes = $this->trp_languages->get_iso_codes( $all_language_codes, false );
+            $iso_codes          = $this->trp_languages->get_iso_codes( $all_language_codes, false );
+
             wp_localize_script( 'trp-settings-script', 'trp_url_slugs_info', array( 'iso_codes' => $iso_codes, 'error_message_duplicate_slugs' => __( 'Error! Duplicate URL slug values.', 'translatepress-multilingual' ) ) );
 
             wp_enqueue_script( 'trp-select2-lib-js', TRP_PLUGIN_URL . 'assets/lib/select2-lib/dist/js/select2.min.js', array( 'jquery' ), TRP_PLUGIN_VERSION );
@@ -443,10 +454,10 @@ class TRP_Settings{
 		        'name'  => __( 'Addons', 'translatepress-multilingual' ),
 		        'url'   => admin_url( 'admin.php?page=trp_addons_page' ),
 		        'page'  => 'trp_addons_page'
-	        )
+	        ),
         );
 
-        if( class_exists('TRP_LICENSE_PAGE') ) {
+        if( class_exists( 'TRP_LICENSE_PAGE' ) ) {
             $tabs[] = array(
                 'name'  => __( 'License', 'translatepress-multilingual' ),
                 'url'   => admin_url( 'admin.php?page=trp_license_key' ),
@@ -461,7 +472,7 @@ class TRP_Settings{
             $active_tab = esc_attr( wp_unslash( $_GET['page'] ) );
         }
 
-        require ( TRP_PLUGIN_DIR . 'partials/settings-navigation-tabs.php');
+        require TRP_PLUGIN_DIR . 'partials/settings-navigation-tabs.php';
     }
 
     /**
@@ -486,4 +497,3 @@ class TRP_Settings{
     }
 
 }
-
