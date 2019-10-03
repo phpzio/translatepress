@@ -5,7 +5,7 @@ Tags: translate, translation, multilingual, automatic translation, bilingual, fr
 Requires at least: 3.1.0
 Tested up to: 5.2.3
 Requires PHP: 5.6.20
-Stable tag: 1.5.8
+Stable tag: 1.5.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -143,6 +143,22 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
+= 1.5.9 =
+* Add an option to block crawlers from triggering automatic translations
+* Added support for excluding words from automatic translation
+* Compatibility with WooCommerce Checkout Add-Ons plugin
+* Improved integration with WooCommerce PDF Invoices & Packing Slips by translating product name and options in invoices
+* Removed possible trp-wrap tags ending up in front-end content
+* Improved display of license error messages
+* Corrected and added missing flags for 7 languages
+* Eliminate need for jQuery in language switcher shortcode
+* Fixed issue with translating admin ajax JSON strings
+* Fixed issue with <text> html tags breaking HTML
+* Fixed warning in when saving advanced settings
+* Fixed trpst characters in WooCommerce shipping calculator
+* Fixed getting translations on fallback admin-ajax
+* New integration with Deepl API Automatic translation in PRO versions
+
 = 1.5.8 =
 * Added machine translation limit
 * Added setting for translation memory limit
