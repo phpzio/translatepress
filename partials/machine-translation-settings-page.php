@@ -56,7 +56,7 @@
             <?php do_action ( 'trp_machine_translation_extra_settings_middle', $this->settings ); ?>
 
             <?php if( !empty( $machine_translator->get_api_key() ) ) : ?>
-                <tr id="trp-test-api-key" style="<?php //echo ( $this->settings['machine-translation'] == 'no' ) ? 'wewewe' : ''; ?>">
+                <tr id="trp-test-api-key">
                     <th scope="row"></th>
                     <td>
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=trp_test_machine_api' ) ); ?>" class="button-secondary"><?php _e( 'Test API credentials', 'translatepress-multilingual' ); ?></a>
