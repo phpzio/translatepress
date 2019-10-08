@@ -84,12 +84,12 @@ class TRP_Machine_Translation_Tab {
     * Automatic Translation
     */
     public function machine_translation_page_content(){
-        if ( ! $this->machine_translator_logger ) {
-            $trp                       = TRP_Translate_Press::get_trp_instance();
-            $machine_translator_logger = $trp->get_component( 'machine_translator_logger' );
-        }
+        $trp                       = TRP_Translate_Press::get_trp_instance();
 
+        $machine_translator_logger = $trp->get_component( 'machine_translator_logger' );
         $machine_translator_logger->maybe_reset_counter_date();
+
+        $machine_translator        = $trp->get_component( 'machine_translator' );
 
         require_once TRP_PLUGIN_DIR . 'partials/machine-translation-settings-page.php';
     }
