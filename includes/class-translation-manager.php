@@ -591,7 +591,9 @@ class TRP_Translation_Manager{
 			        $trp                      = TRP_Translate_Press::get_trp_instance();
 			        $this->machine_translator = $trp->get_component( 'machine_translator' );
 		        }
-		        if ( $this->machine_translator->is_available() ) {
+
+		        /* We assume Gettext strings are in English so don't automatically translate into English */
+		        if ( $this->settings['machine-translate-codes'][$TRP_LANGUAGE] != 'en' && $this->machine_translator->is_available() ) {
 			        global $trp_gettext_strings_for_machine_translation;
 			        if ( $text == $translation ) {
 				        foreach ( $trp_translated_gettext_texts as $trp_translated_gettext_text ) {
@@ -781,7 +783,8 @@ class TRP_Translation_Manager{
                     $new_strings[] = $trp_gettext_string_for_machine_translation['original'];
                 }
 
-                $machine_strings = $this->machine_translator->translate( $new_strings, $TRP_LANGUAGE );
+                // Gettext strings are always in the English language
+                $machine_strings = $this->machine_translator->translate( $new_strings, $TRP_LANGUAGE, 'en_US' );
 
                 if( !empty( $machine_strings ) ){
                     foreach( $machine_strings as $key => $machine_string ){

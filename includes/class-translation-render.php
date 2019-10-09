@@ -1062,7 +1062,7 @@ class TRP_Translation_Render{
 
         // machine translate new strings
         if ( $machine_translation_available ) {
-            $machine_strings = $this->machine_translator->translate( $machine_translatable_strings, $language_code );
+            $machine_strings = $this->machine_translator->translate( $machine_translatable_strings, $language_code, $this->settings['default-language'] );
         }else{
             $machine_strings = false;
         }

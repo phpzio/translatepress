@@ -84,6 +84,30 @@ abstract class TRP_Machine_Translator {
 
     }
 
+    public function verify_request_parameters($target_language_code, $source_language_code){
+        if( empty( $this->get_api_key() ) ||
+            empty( $target_language_code ) || empty( $source_language_code ) ||
+            empty( $this->settings['machine-translate-codes'][$target_language_code] ) ||
+            empty( $this->settings['machine-translate-codes'][$source_language_code] ) ||
+            $this->settings['machine-translate-codes'][$target_language_code] == $this->settings['machine-translate-codes'][$source_language_code]
+        )
+            return false;
+
+        // Method that can be extended in the child class to add extra validation
+        if( !$this->extra_request_validations( $target_language_code ) )
+            return false;
+
+        // Check if crawlers are blocked
+        if( !empty( $this->settings['block-crawlers'] ) && $this->settings['block-crawlers'] == 'yes' && $this->is_crawler() )
+            return false;
+
+        // Check if daily quota is met
+        if( $this->machine_translator_logger->quota_exceeded() )
+            return false;
+
+        return true;
+    }
+
     /**
      * Verifies user agent to check if the request is being made by a crawler
      *
@@ -110,10 +134,11 @@ abstract class TRP_Machine_Translator {
      * Function to be used externally
      *
      * @param $strings
-     * @param $language_code
+     * @param $target_language_code
+     * @param $source_language_code
      * @return array
      */
-    public function translate($strings, $language_code){
+    public function translate($strings, $target_language_code, $source_language_code = null ){
         if ( !empty($strings) && is_array($strings) ) {
 
             /* google has a problem translating this characters ( '%', '$', '#' )...for some reasons it puts spaces after them so we need to 'encode' them and decode them back. hopefully it won't break anything important */
@@ -124,7 +149,14 @@ abstract class TRP_Machine_Translator {
                 $strings[$key] = str_replace($trp_exclude_words_from_automatic_translation, $placeholders, $string);
             }
 
-            $machine_strings = $this->translate_array($strings, $language_code);
+            $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
+            if ( $machine_translation_settings !== false && $machine_translation_settings['translation-engine'] === 'deepl' && defined( 'TRP_DL_PLUGIN_VERSION' ) && TRP_DL_PLUGIN_VERSION === '1.0.0' ) {
+                // backwards compatibility with deepl version 1.0.0 which doesn't have the third function parameter $source_language_code
+                $machine_strings = $this->translate_array($strings, $target_language_code);
+            }else {
+                $machine_strings = $this->translate_array($strings, $target_language_code, $source_language_code);
+            }
+
 
             if (!empty($machine_strings)) {
                 foreach ($machine_strings as $key => $machine_string) {
@@ -147,7 +179,7 @@ abstract class TRP_Machine_Translator {
      * @param $language_code
      * @return array
      */
-    abstract public function translate_array( $strings, $language_code );
+    abstract public function translate_array( $strings, $destination_language_code, $source_language_code );
 
     public function test_request(){}
 
