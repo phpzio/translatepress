@@ -301,7 +301,6 @@ class TRP_Settings{
             'url-slugs'                            => array( 'en_US' => 'en', '' ),
             'advanced_settings'                    => get_option('trp_advanced_settings', array() ),
             'machine-translation'                  => 'no',
-            'translation-engine'                   => 'google_translate_v2',
             'block-crawlers'                       => 'yes',
         );
 
