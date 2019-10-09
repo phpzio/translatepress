@@ -11,7 +11,8 @@ class TRP_Machine_Translation_Tab {
         if( !empty( $settings ) )
             $this->settings = $settings;
         else
-            $this->settings = array( 'machine-translation' => 'no' );
+            $this->settings = [ 'machine-translation' => 'no', 'translation-engine' => 'google_translate_v2' ];
+
 
         if( !class_exists( 'TRP_DeepL' ) )
             add_filter( 'trp_machine_translation_engines', [ $this, 'translation_engines_upsell' ], 20 );
