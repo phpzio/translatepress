@@ -596,8 +596,8 @@ class TRP_Translation_Manager{
 			        if ( $text == $translation ) {
 				        foreach ( $trp_translated_gettext_texts as $trp_translated_gettext_text ) {
 					        if ( $trp_translated_gettext_text['id'] == $db_id ) {
-						        if ( $trp_translated_gettext_text['translated'] == '' ) {
-							        $trp_gettext_strings_for_machine_translation[] = array(
+						        if ( $trp_translated_gettext_text['translated'] == '' && ! isset( $trp_gettext_strings_for_machine_translation[$db_id] ) ) {
+							        $trp_gettext_strings_for_machine_translation[$db_id] = array(
 								        'id'         => $db_id,
 								        'original'   => $text,
 								        'translated' => '',
@@ -770,6 +770,12 @@ class TRP_Translation_Manager{
 
             // machine translate new strings
             if ( $this->machine_translator->is_available() ) {
+
+                /* Transform associative array into ordered numeric array. We need to keep keys numeric and ordered because $new_strings and $machine_strings depend on it.
+                 * Array was constructed as associative with db ids as keys to avoid duplication.
+                 */
+                $trp_gettext_strings_for_machine_translation = array_values( $trp_gettext_strings_for_machine_translation );
+
                 $new_strings = array();
                 foreach( $trp_gettext_strings_for_machine_translation as $trp_gettext_string_for_machine_translation ){
                     $new_strings[] = $trp_gettext_string_for_machine_translation['original'];
