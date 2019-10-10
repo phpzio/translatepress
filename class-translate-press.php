@@ -25,6 +25,7 @@ class TRP_Translate_Press{
     protected $license_page;
     protected $advanced_tab;
     protected $translation_memory;
+    protected $machine_translation_tab;
 
     public $active_pro_addons = array();
     public static $translate_press = null;

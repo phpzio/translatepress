@@ -38,32 +38,35 @@ class TRP_Google_Translate_V2_Machine_Translator extends TRP_Machine_Translator 
     /**
      * Returns an array with the API provided translations of the $new_strings array.
      *
-     * @param array $new_strings            array with the strings that need translation. The keys are the node number in the DOM so we need to preserve the m
-     * @param string $trp_language_code     string wp language code of the language that we will be translating to. Not equal to the google language code
-     * @return array                        array with the translation strings and the preserved keys or an empty array if something went wrong
+     * @param array $new_strings                    array with the strings that need translation. The keys are the node number in the DOM so we need to preserve the m
+     * @param string $target_language_code          language code of the language that we will be translating to. Not equal to the google language code
+     * @param string $source_language_code          language code of the language that we will be translating from. Not equal to the google language code
+     * @return array                                array with the translation strings and the preserved keys or an empty array if something went wrong
      */
-    public function translate_array( $new_strings, $trp_language_code ){
-
-        if( empty( $new_strings ) || !$this->verify_request( $trp_language_code ) )
+    public function translate_array($new_strings, $target_language_code, $source_language_code = null ){
+        if ( $source_language_code == null ){
+            $source_language_code = $this->settings['default-language'];
+        }
+        if( empty( $new_strings ) || !$this->verify_request_parameters( $target_language_code, $source_language_code ) )
             return array();
 
-        $translated_strings = array();
+        $source_language = $this->settings['machine-translate-codes'][$source_language_code];
+        $target_language = $this->settings['machine-translate-codes'][$target_language_code];
 
-        $language_code   = $this->settings['machine-translate-codes'][$trp_language_code];
-        $source_language = $this->settings['machine-translate-codes'][$this->settings['default-language']];
+        $translated_strings = array();
 
         /* split our strings that need translation in chunks of maximum 128 strings because Google Translate has a limit of 128 strings */
         $new_strings_chunks = array_chunk( $new_strings, 128, true );
         /* if there are more than 128 strings we make multiple requests */
         foreach( $new_strings_chunks as $new_strings_chunk ){
-            $response = $this->send_request( $source_language, $language_code, $new_strings_chunk );
+            $response = $this->send_request( $source_language, $target_language, $new_strings_chunk );
 
             // this is run only if "Log machine translation queries." is set to Yes.
             $this->machine_translator_logger->log(array(
                 'strings'   => serialize( $new_strings_chunk),
                 'response'  => serialize( $response ),
                 'lang_source'  => $source_language,
-                'lang_target'  => $language_code,
+                'lang_target'  => $target_language,
             ));
 
             /* analyze the response */
