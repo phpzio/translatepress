@@ -10,6 +10,8 @@ class TRP_Machine_Translator {
 	protected $referer;
 	protected $url_converter;
 	protected $machine_translator_logger;
+	protected $machine_translation_codes;
+	protected $trp_languages;
     /**
      * TRP_Machine_Translator constructor.
      *
@@ -18,10 +20,14 @@ class TRP_Machine_Translator {
     public function __construct( $settings ){
         $this->settings = $settings;
 
+        $trp                             = TRP_Translate_Press::get_trp_instance();
         if ( ! $this->machine_translator_logger ) {
-            $trp                             = TRP_Translate_Press::get_trp_instance();
             $this->machine_translator_logger = $trp->get_component('machine_translator_logger');
         }
+        if ( ! $this->trp_languages ) {
+            $this->trp_languages = $trp->get_component('languages');
+        }
+        $this->machine_translation_codes = $this->trp_languages->get_iso_codes($this->settings['translation-languages']);
     }
 
     /**
@@ -65,7 +71,7 @@ class TRP_Machine_Translator {
 
         if( empty( $this->get_api_key() ) ||
             empty( $to_language ) || $to_language == $this->settings['default-language'] ||
-            empty( $this->settings['machine-translate-codes'][$this->settings['default-language']] )
+            empty( $this->machine_translation_codes[$this->settings['default-language']] )
           )
             return false;
 
@@ -85,12 +91,19 @@ class TRP_Machine_Translator {
 
     }
 
+    /**
+     * Verifies that the machine translation request is valid
+     *
+     * @param  string $target_language_code language we're looking to translate to
+     * @param  string $source_language_code language we're looking to translate from
+     * @return bool
+     */
     public function verify_request_parameters($target_language_code, $source_language_code){
         if( empty( $this->get_api_key() ) ||
             empty( $target_language_code ) || empty( $source_language_code ) ||
-            empty( $this->settings['machine-translate-codes'][$target_language_code] ) ||
-            empty( $this->settings['machine-translate-codes'][$source_language_code] ) ||
-            $this->settings['machine-translate-codes'][$target_language_code] == $this->settings['machine-translate-codes'][$source_language_code]
+            empty( $this->machine_translation_codes[$target_language_code] ) ||
+            empty( $this->machine_translation_codes[$source_language_code] ) ||
+            $this->machine_translation_codes[$target_language_code] == $this->machine_translation_codes[$source_language_code]
         )
             return false;
 

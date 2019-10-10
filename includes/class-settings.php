@@ -259,6 +259,7 @@ class TRP_Settings{
         // regenerate machine translation codes
         $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
 
+        /* @deprecated Setting only used for compatibility with Deepl 1.0.0 */
         $machine_translation_settings['machine-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['translation-languages'] );
 
         update_option( 'trp_machine_translation_settings', $machine_translation_settings );

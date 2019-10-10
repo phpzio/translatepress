@@ -14,6 +14,7 @@ class TRP_Translation_Manager{
     protected $machine_translator;
     protected $slug_manager;
     protected $url_converter;
+    protected $trp_languages;
 
     /**
      * TRP_Translation_Manager constructor.
@@ -587,13 +588,16 @@ class TRP_Translation_Manager{
 			        }
 		        }
 
-		        if ( ! $this->machine_translator ) {
-			        $trp                      = TRP_Translate_Press::get_trp_instance();
+                $trp                      = TRP_Translate_Press::get_trp_instance();
+                if ( ! $this->machine_translator ) {
 			        $this->machine_translator = $trp->get_component( 'machine_translator' );
 		        }
-
+                if ( !$this->trp_languages) {
+                    $this->trp_languages = $trp->get_component( 'languages' );
+                }
+                $machine_translation_codes = $this->trp_languages->get_iso_codes($this->settings['translation-languages']);
 		        /* We assume Gettext strings are in English so don't automatically translate into English */
-		        if ( $this->settings['machine-translate-codes'][$TRP_LANGUAGE] != 'en' && $this->machine_translator->is_available() ) {
+		        if ( $machine_translation_codes[$TRP_LANGUAGE] != 'en' && $this->machine_translator->is_available() ) {
 			        global $trp_gettext_strings_for_machine_translation;
 			        if ( $text == $translation ) {
 				        foreach ( $trp_translated_gettext_texts as $trp_translated_gettext_text ) {

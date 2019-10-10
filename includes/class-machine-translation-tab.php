@@ -76,6 +76,7 @@ class TRP_Machine_Translation_Tab {
         $trp_languages = $trp->get_component( 'languages' );
         $trp_settings  = $trp->get_component( 'settings' );
 
+        /* @deprecated Setting only used for compatibility with Deepl Add-on 1.0.0 */
         $settings['machine-translate-codes'] = $trp_languages->get_iso_codes( $trp_settings->get_setting( 'translation-languages' ) );
 
         return apply_filters( 'trp_machine_translation_sanitize_settings', $settings );
