@@ -231,8 +231,10 @@ jQuery( function() {
     function TRP_hide_test_api_key(){
         if( jQuery( '.trp-translation-engine:checked' ).val() == 'deepl_upsell' )
             jQuery( '#trp-test-api-key' ).hide()
-        else
-            jQuery( '#trp-test-api-key' ).show()
+        else {
+            if( jQuery('#trp-machine-translation-enabled').val() != 'no' )
+                jQuery( '#trp-test-api-key' ).show()
+        }
     }
 
     TRP_show_hide_machine_translation_options()

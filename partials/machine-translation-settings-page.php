@@ -55,15 +55,17 @@
 
             <?php do_action ( 'trp_machine_translation_extra_settings_middle', $this->settings ); ?>
 
-            <tr id="trp-test-api-key">
-                <th scope="row"></th>
-                <td>
-                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=trp_test_machine_api' ) ); ?>" class="button-secondary"><?php _e( 'Test API credentials', 'translatepress-multilingual' ); ?></a>
-                    <p class="description">
-                        <?php _e( 'Click here to check if the selected translation engine is configured correctly.', 'translatepress-multilingual' ) ?>
-                    </p>
-                </td>
-            </tr>
+            <?php if( !empty( $machine_translator->get_api_key() ) ) : ?>
+                <tr id="trp-test-api-key">
+                    <th scope="row"></th>
+                    <td>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=trp_test_machine_api' ) ); ?>" class="button-secondary"><?php _e( 'Test API credentials', 'translatepress-multilingual' ); ?></a>
+                        <p class="description">
+                            <?php _e( 'Click here to check if the selected translation engine is configured correctly.', 'translatepress-multilingual' ) ?>
+                        </p>
+                    </td>
+                </tr>
+            <?php endif; ?>
 
             <tr style="border-bottom: 1px solid #ccc;"></tr>
 
