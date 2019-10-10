@@ -50,8 +50,8 @@ class TRP_Google_Translate_V2_Machine_Translator extends TRP_Machine_Translator 
         if( empty( $new_strings ) || !$this->verify_request_parameters( $target_language_code, $source_language_code ) )
             return array();
 
-        $source_language = $this->settings['machine-translate-codes'][$source_language_code];
-        $target_language = $this->settings['machine-translate-codes'][$target_language_code];
+        $source_language = $this->machine_translation_codes[$source_language_code];
+        $target_language = $this->machine_translation_codes[$target_language_code];
 
         $translated_strings = array();
 
