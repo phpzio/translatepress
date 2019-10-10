@@ -5,7 +5,7 @@
  *
  * Facilitates Machine Translation calls
  */
-abstract class TRP_Machine_Translator {
+class TRP_Machine_Translator {
     protected $settings;
 	protected $referer;
 	protected $url_converter;
@@ -56,6 +56,7 @@ abstract class TRP_Machine_Translator {
 
     /**
      * Verifies that the machine translation request is valid
+     * @deprecated  since TP 1.6.0 (only here to support Deepl Add-on version 1.0.0)
      *
      * @param  string $to_language language we're looking to translate to
      * @return bool
@@ -139,7 +140,7 @@ abstract class TRP_Machine_Translator {
      * @return array
      */
     public function translate($strings, $target_language_code, $source_language_code = null ){
-        if ( !empty($strings) && is_array($strings) ) {
+        if ( !empty($strings) && is_array($strings) && method_exists( $this, 'translate_array' ) ) {
 
             /* google has a problem translating this characters ( '%', '$', '#' )...for some reasons it puts spaces after them so we need to 'encode' them and decode them back. hopefully it won't break anything important */
             $trp_exclude_words_from_automatic_translation = apply_filters('trp_exclude_words_from_automatic_translation', array('%', '$', '#'));
@@ -169,17 +170,6 @@ abstract class TRP_Machine_Translator {
         }
     }
 
-    /**
-     * Function to implement in specific machine translators APIs
-     *
-     * This is not meant for calling externally except for when short-circuiting translate()
-     *
-     *
-     * @param $strings
-     * @param $language_code
-     * @return array
-     */
-    abstract public function translate_array( $strings, $destination_language_code, $source_language_code );
 
     public function test_request(){}
 
