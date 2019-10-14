@@ -216,6 +216,8 @@ jQuery( function() {
     var deeplUpsell = TRP_Field_Toggler();
         deeplUpsell.init('.trp-translation-engine', '#trp-upsell-deepl', 'deepl_upsell' );
 
+    jQuery(document).trigger( 'trpInitFieldToggler' );
+
     // Used for the main machine translation toggle to show/hide all options below it
     function TRP_show_hide_machine_translation_options(){
         if( jQuery( '#trp-machine-translation-enabled' ).val() != 'yes' )
