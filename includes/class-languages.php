@@ -84,6 +84,9 @@ class TRP_Languages{
      * @return array                        String array of iso codes.
      */
 	public function get_iso_codes( $language_codes, $map_google_codes = true ){
+        if ( !in_array( 'en_US', $language_codes ) ){
+            $language_codes[] = 'en_US';
+        }
 		$iso_codes = array();
 		$wp_languages = $this->get_wp_languages();
 		$map_wp_codes_to_google = apply_filters( 'trp_map_wp_codes_to_google', array(

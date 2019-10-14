@@ -794,14 +794,14 @@ class TRP_Translation_Manager{
                     foreach( $machine_strings as $key => $machine_string ){
                         $trp_gettext_strings_for_machine_translation[$key]['translated'] = $machine_string;
                     }
-                }
 
-                if (!$this->trp_query) {
-                    $trp = TRP_Translate_Press::get_trp_instance();
-                    $this->trp_query = $trp->get_component('query');
-                }
+                    if (!$this->trp_query) {
+                        $trp = TRP_Translate_Press::get_trp_instance();
+                        $this->trp_query = $trp->get_component('query');
+                    }
 
-                $this->trp_query->update_gettext_strings( $trp_gettext_strings_for_machine_translation, $TRP_LANGUAGE );
+                    $this->trp_query->update_gettext_strings( $trp_gettext_strings_for_machine_translation, $TRP_LANGUAGE );
+                }
             }
         }
     }
