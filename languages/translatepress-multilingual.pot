@@ -13,26 +13,6 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../tp-add-on-extra-languages/class-extra-languages.php:57, ../translatepress/includes/class-settings.php:367
-msgid "Error! Duplicate URL slug values."
-msgstr ""
-
-#: ../tp-add-on-navigation-based-on-language/class-navigation-based-on-language.php:71
-msgid "Limit this menu item to the following languages"
-msgstr ""
-
-#: ../tp-add-on-navigation-based-on-language/class-navigation-based-on-language.php:77, ../tp-add-on-extra-languages/partials/language-selector-pro.php:2, ../translatepress/partials/main-settings-language-selector.php:2
-msgid "All Languages"
-msgstr ""
-
-#: ../tp-add-on-seo-pack/class-seo-pack.php:145
-msgid "The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when submitting the sitemap to Google."
-msgstr ""
-
-#: ../translatepress/index.php:62
-msgid "<strong>TranslatePress</strong> requires at least PHP version 5.6.20+ to run. It is the <a href=\"%s\">minimum requirement of the latest WordPress version</a>. Please contact your server administrator to update your PHP version."
-msgstr ""
-
 #: includes/class-ald-settings.php:37
 msgid "First by browser language, then IP address (recommended)"
 msgstr ""
@@ -81,6 +61,14 @@ msgstr ""
 msgid "Select how the language should be detected for first time visitors.<br>The visitor's last displayed language will be remembered through cookies."
 msgstr ""
 
+#: ../tp-add-on-extra-languages/class-extra-languages.php:57, ../translatepress/includes/class-settings.php:367
+msgid "Error! Duplicate URL slug values."
+msgstr ""
+
+#: ../tp-add-on-extra-languages/partials/language-selector-pro.php:2, ../tp-add-on-navigation-based-on-language/class-navigation-based-on-language.php:77, ../translatepress/partials/main-settings-language-selector.php:2
+msgid "All Languages"
+msgstr ""
+
 #: ../tp-add-on-extra-languages/partials/language-selector-pro.php:7, ../translatepress/partials/main-settings-language-selector.php:7
 msgid "Language"
 msgstr ""
@@ -117,15 +105,127 @@ msgstr ""
 msgid "Select the languages you wish to make your website available in."
 msgstr ""
 
+#: ../tp-add-on-navigation-based-on-language/class-navigation-based-on-language.php:71
+msgid "Limit this menu item to the following languages"
+msgstr ""
+
+#: ../tp-add-on-seo-pack/class-seo-pack.php:146
+msgid "The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when submitting the sitemap to Google."
+msgstr ""
+
 #: ../tp-add-on-seo-pack/includes/class-slug-manager.php:32
 msgid "Post Slug"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/disable-dynamic-translation.php:8
+msgid "Disable dynamic translation"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/disable-dynamic-translation.php:9
+msgid "It disables detection of strings displayed dynamically using JavaScript. <br/>Strings loaded via a server side AJAX call will still be translated."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/enable-auto-translate-slug.php:8
+msgid "Automatically translate slugs"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/enable-auto-translate-slug.php:9
+msgid "Generate automatic translations of slugs for posts, pages and Custom Post Types.<br/>Requires <a href=\"https://translatepress.com/docs/addons/seo-pack/\" title=\"TranslatePress Add-on SEO Pack documentation\" target=\"_blank\"> SEO Pack Add-on</a> to be installed and activated."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:9, ../translatepress/includes/advanced-settings/exclude-selectors.php:9
+msgid "Selector"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:11
+msgid "Exclude from dynamic translation"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:12
+msgid "Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:9
+msgid "Gettext String"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:10
+msgid "Domain"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:12
+msgid "Exclude Gettext Strings"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:13
+msgid "Exclude these strings from being translated as Gettext strings by TranslatePress. Leave the domain empty to take into account any Gettext string.<br/>Can still be translated through po/mo files."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-selectors.php:11
+msgid "Exclude selectors from translation"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-selectors.php:12
+msgid "Do not translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-words-from-auto-translate.php:9
+msgid "String"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-words-from-auto-translate.php:11
+msgid "Exclude strings from automatic translation"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/exclude-words-from-auto-translate.php:12
+msgid "Do not automatically translate these strings (ex. names, technical words...)<br>Paragraphs containing these strings will still be translated except for the specified part."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/fix-broken-html.php:8
+msgid "Fix broken HTML"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/fix-broken-html.php:9
+msgid "General attempt to fix broken or missing HTML on translated pages.<br/><strong>Only try this if the \"Fix spaces between html attribute\" did not solve the issue.</strong>"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/fix-invalid-space-between-html-attr.php:8
+msgid "Fix spaces between HTML attributes"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/fix-invalid-space-between-html-attr.php:9
+msgid "Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/show-dynamic-content-before-translation.php:8
+msgid "Fix missing dynamic content"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/show-dynamic-content-before-translation.php:9
+msgid "May help fix missing content inserted using JavaScript. <br> It shows dynamically inserted content in original language for a moment before the translation request is finished."
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/strip-gettext-post-content.php:7
+msgid "Filter Gettext wrapping from post content and title"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/strip-gettext-post-content.php:8
+msgid "Filters gettext wrapping such as #!trpst#trp-gettext from all updated post content and post title. Does not affect previous post content. <br/><strong>Database backup is recommended before switching on.</strong>"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/strip-gettext-post-meta.php:8
+msgid "Filter Gettext wrapping from post meta"
+msgstr ""
+
+#: ../translatepress/includes/advanced-settings/strip-gettext-post-meta.php:9
+msgid "Filters gettext wrapping such as #!trpst#trp-gettext from all updated post meta. Does not affect previous post meta. <br/><strong>Database backup is recommended before switching on.</strong>"
 msgstr ""
 
 #: ../translatepress/includes/class-advanced-tab.php:19
 msgid "Advanced"
 msgstr ""
 
-#: ../translatepress/includes/class-advanced-tab.php:211, ../translatepress/partials/machine-translation-settings-page.php:13, ../translatepress/partials/machine-translation-settings-page.php:75, ../translatepress/partials/machine-translation-settings-page.php:108, ../translatepress/partials/main-settings-page.php:41, ../translatepress/partials/main-settings-page.php:54, ../translatepress/partials/main-settings-page.php:67
+#: ../translatepress/includes/class-advanced-tab.php:211, ../translatepress/partials/machine-translation-settings-page.php:13, ../translatepress/partials/machine-translation-settings-page.php:77, ../translatepress/partials/machine-translation-settings-page.php:110, ../translatepress/partials/main-settings-page.php:41, ../translatepress/partials/main-settings-page.php:54, ../translatepress/partials/main-settings-page.php:67
 msgid "Yes"
 msgstr ""
 
@@ -169,11 +269,11 @@ msgstr ""
 msgid "Others"
 msgstr ""
 
-#: ../translatepress/includes/class-machine-translation-tab.php:28
+#: ../translatepress/includes/class-machine-translation-tab.php:29
 msgid "Automatic Translation"
 msgstr ""
 
-#: ../translatepress/includes/class-machine-translation-tab.php:125
+#: ../translatepress/includes/class-machine-translation-tab.php:127
 msgid "DeepL"
 msgstr ""
 
@@ -253,7 +353,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:449, ../translatepress/includes/class-translation-manager.php:242
+#: ../translatepress/includes/class-settings.php:449, ../translatepress/includes/class-translation-manager.php:244
 msgid "Translate Site"
 msgstr ""
 
@@ -265,7 +365,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: ../translatepress/includes/class-settings.php:490, ../translatepress/includes/class-translation-manager.php:274
+#: ../translatepress/includes/class-settings.php:490, ../translatepress/includes/class-translation-manager.php:276
 msgid "Settings"
 msgstr ""
 
@@ -273,255 +373,255 @@ msgstr ""
 msgid "Pro Features"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:84
+#: ../translatepress/includes/class-translation-manager.php:86
 msgid "Image source"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:85
+#: ../translatepress/includes/class-translation-manager.php:87
 msgid "Alt attribute"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:86
+#: ../translatepress/includes/class-translation-manager.php:88
 msgid "Title attribute"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:87
+#: ../translatepress/includes/class-translation-manager.php:89
 msgid "Anchor link"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:88
+#: ../translatepress/includes/class-translation-manager.php:90
 msgid "Placeholder attribute"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:89
+#: ../translatepress/includes/class-translation-manager.php:91
 msgid "Submit attribute"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:90
+#: ../translatepress/includes/class-translation-manager.php:92
 msgid "Text"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:92
+#: ../translatepress/includes/class-translation-manager.php:94
 msgid "Saved"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:93
+#: ../translatepress/includes/class-translation-manager.php:95
 msgid "Save translation"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:94
+#: ../translatepress/includes/class-translation-manager.php:96
 msgid "Saving translation..."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:95
+#: ../translatepress/includes/class-translation-manager.php:97
 msgid "You have unsaved changes!"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:96
+#: ../translatepress/includes/class-translation-manager.php:98
 msgid "Discard changes"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:97
+#: ../translatepress/includes/class-translation-manager.php:99
 msgid "Discard All"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:98
+#: ../translatepress/includes/class-translation-manager.php:100
 msgid "Loading Strings..."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:99
+#: ../translatepress/includes/class-translation-manager.php:101
 msgid "Select string to translate..."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:100
+#: ../translatepress/includes/class-translation-manager.php:102
 msgid "Close Editor"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:101
+#: ../translatepress/includes/class-translation-manager.php:103
 msgid "From"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:102
+#: ../translatepress/includes/class-translation-manager.php:104
 msgid "To"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:103
+#: ../translatepress/includes/class-translation-manager.php:105
 msgid "Next"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:104
+#: ../translatepress/includes/class-translation-manager.php:106
 msgid "Previous"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:105
+#: ../translatepress/includes/class-translation-manager.php:107
 msgid "Add Media"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:106
+#: ../translatepress/includes/class-translation-manager.php:108
 msgid "Other languages"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:107
+#: ../translatepress/includes/class-translation-manager.php:109
 msgid "View As"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:108
+#: ../translatepress/includes/class-translation-manager.php:110
 msgid "Available in our Pro Versions"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:111
+#: ../translatepress/includes/class-translation-manager.php:113
 msgid "Select or Upload Media"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:112
+#: ../translatepress/includes/class-translation-manager.php:114
 msgid "Use this media"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:115
+#: ../translatepress/includes/class-translation-manager.php:117
 msgid "Translate"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:116
+#: ../translatepress/includes/class-translation-manager.php:118
 msgid "Translate entire block element"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:117
+#: ../translatepress/includes/class-translation-manager.php:119
 msgid "Split block to translate strings individually"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:118
+#: ../translatepress/includes/class-translation-manager.php:120
 msgid "Save changes to translation. Shortcut: CTRL(⌘) + S"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:119
+#: ../translatepress/includes/class-translation-manager.php:121
 msgid "Navigate to next string in dropdown list. Shortcut: CTRL(⌘) + ALT + Right Arrow"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:120
+#: ../translatepress/includes/class-translation-manager.php:122
 msgid "Navigate to previous string in dropdown list. Shortcut: CTRL(⌘) + ALT + Left Arrow"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:121
+#: ../translatepress/includes/class-translation-manager.php:123
 msgid "Discard all changes. Shortcut: CTRL(⌘) + ALT + Z"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:122
+#: ../translatepress/includes/class-translation-manager.php:124
 msgid "Discard changes to this text box. To discard changes to all text boxes use shortcut: CTRL(⌘) + ALT + Z"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:124
+#: ../translatepress/includes/class-translation-manager.php:126
 msgid "Are you sure you want to split this phrase into smaller parts?"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:125
+#: ../translatepress/includes/class-translation-manager.php:127
 msgid "This string is not ready for translation yet. <br>Try again in a moment..."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:127
+#: ../translatepress/includes/class-translation-manager.php:129
 msgid "For this option to work, please update the Browse as other role add-on to the latest version."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:128
+#: ../translatepress/includes/class-translation-manager.php:130
 msgid "To translate slugs, please update the SEO Pack add-on to the latest version."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:131
+#: ../translatepress/includes/class-translation-manager.php:133
 msgid "You can add a new language from <a href=\"%s\">Settings->TranslatePress</a>"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:132
+#: ../translatepress/includes/class-translation-manager.php:134
 msgid "However, you can still use TranslatePress to <strong style=\"background: #f5fb9d;\">modify gettext strings</strong> available in your page."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:133
+#: ../translatepress/includes/class-translation-manager.php:135
 msgid "Strings that are user-created cannot be modified, only those from themes and plugins."
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:135
+#: ../translatepress/includes/class-translation-manager.php:137
 msgid "Extra Translation Features"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:136
+#: ../translatepress/includes/class-translation-manager.php:138
 msgid "Support for 221 Extra Languages"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:137
+#: ../translatepress/includes/class-translation-manager.php:139
 msgid "Yoast SEO support"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:138
+#: ../translatepress/includes/class-translation-manager.php:140
 msgid "Translate SEO Title, Description, Slug"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:139
+#: ../translatepress/includes/class-translation-manager.php:141
 msgid "Publish only when translation is complete"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:140
+#: ../translatepress/includes/class-translation-manager.php:142
 msgid "Translate by Browsing as User Role"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:141
+#: ../translatepress/includes/class-translation-manager.php:143
 msgid "Different Menu Items for each Language"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:142
+#: ../translatepress/includes/class-translation-manager.php:144
 msgid "Automatic User Language Detection"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:143
+#: ../translatepress/includes/class-translation-manager.php:145
 msgid "Supported By Real People"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:144
+#: ../translatepress/includes/class-translation-manager.php:146
 msgid "Find Out More"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:146
+#: ../translatepress/includes/class-translation-manager.php:148
 msgid "No available suggestions"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:147
+#: ../translatepress/includes/class-translation-manager.php:149
 msgid "Suggestions from translation memory"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:148
+#: ../translatepress/includes/class-translation-manager.php:150
 msgid "Click to Copy"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:154
+#: ../translatepress/includes/class-translation-manager.php:156
 msgid "Slugs"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:155
+#: ../translatepress/includes/class-translation-manager.php:157
 msgid "Meta Information"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:156
+#: ../translatepress/includes/class-translation-manager.php:158
 msgid "String List"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:157
+#: ../translatepress/includes/class-translation-manager.php:159
 msgid "Gettext Strings"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:158
+#: ../translatepress/includes/class-translation-manager.php:160
 msgid "Images"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:159
+#: ../translatepress/includes/class-translation-manager.php:161
 msgid "Dynamically Added Strings"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:255
+#: ../translatepress/includes/class-translation-manager.php:257
 msgid "Translate Page"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:952
+#: ../translatepress/includes/class-translation-manager.php:981
 msgid "Security check"
 msgstr ""
 
-#: ../translatepress/includes/class-translation-manager.php:1026
+#: ../translatepress/includes/class-translation-manager.php:1055
 msgid "<strong>Warning:</strong> Some strings have possibly incorrectly encoded characters. This may result in breaking the queries, rendering the page untranslated in live mode. Consider revising the following strings or their method of outputting."
 msgstr ""
 
@@ -633,6 +733,26 @@ msgstr ""
 msgid "<strong>TranslatePress</strong> requires <strong><a href=\"http://php.net/manual/en/book.mbstring.php\">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server."
 msgstr ""
 
+#: ../translatepress/includes/google-translate/functions.php:5
+msgid "Google Translate v2"
+msgstr ""
+
+#: ../translatepress/includes/google-translate/functions.php:17
+msgid "Google Translate API Key"
+msgstr ""
+
+#: ../translatepress/includes/google-translate/functions.php:21
+msgid "Visit <a href=\"https://cloud.google.com/docs/authentication/api-keys\" target=\"_blank\">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions."
+msgstr ""
+
+#: ../translatepress/includes/google-translate/functions.php:22
+msgid "Your HTTP referrer is: %s"
+msgstr ""
+
+#: ../translatepress/index.php:62
+msgid "<strong>TranslatePress</strong> requires at least PHP version 5.6.20+ to run. It is the <a href=\"%s\">minimum requirement of the latest WordPress version</a>. Please contact your server administrator to update your PHP version."
+msgstr ""
+
 #: ../translatepress/partials/addons-settings-page.php:8
 msgid "Advanced Addons"
 msgstr ""
@@ -741,39 +861,39 @@ msgstr ""
 msgid "By upgrading you'll get access to all paid add-ons, premium support and help fund the future development of TranslatePress."
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:61
+#: ../translatepress/partials/machine-translation-settings-page.php:62
 msgid "Test API credentials"
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:63
+#: ../translatepress/partials/machine-translation-settings-page.php:64
 msgid "Click here to check if the selected translation engine is configured correctly."
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:71
+#: ../translatepress/partials/machine-translation-settings-page.php:73
 msgid "Block Crawlers"
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:78
+#: ../translatepress/partials/machine-translation-settings-page.php:80
 msgid "Block crawlers from triggering automatic translations on your website."
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:84
+#: ../translatepress/partials/machine-translation-settings-page.php:86
 msgid "Limit machine translation / characters per day"
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:90
+#: ../translatepress/partials/machine-translation-settings-page.php:92
 msgid "Add a limit to the number of automatically translated characters so you can better budget your project."
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:96
+#: ../translatepress/partials/machine-translation-settings-page.php:98
 msgid "Today's character count:"
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:104
+#: ../translatepress/partials/machine-translation-settings-page.php:106
 msgid "Log machine translation queries."
 msgstr ""
 
-#: ../translatepress/partials/machine-translation-settings-page.php:111
+#: ../translatepress/partials/machine-translation-settings-page.php:113
 msgid "Only enable for testing purposes. Can impact performance.<br>All records are stored in the wp_trp_machine_translation_log database table. Use a plugin like <a href=\"https://wordpress.org/plugins/wp-data-access/\">WP Data Access</a> to browse the logs or directly from your database manager (PHPMyAdmin, etc.)"
 msgstr ""
 
@@ -943,124 +1063,4 @@ msgstr ""
 
 #: ../trp-add-on-translator-accounts-add-on/includes/class-translator-accounts.php:128
 msgid "Allow this user to translate the website."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/disable-dynamic-translation.php:8
-msgid "Disable dynamic translation"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/disable-dynamic-translation.php:9
-msgid "It disables detection of strings displayed dynamically using JavaScript. <br/>Strings loaded via a server side AJAX call will still be translated."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/enable-auto-translate-slug.php:8
-msgid "Automatically translate slugs"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/enable-auto-translate-slug.php:9
-msgid "Generate automatic translations of slugs for posts, pages and Custom Post Types.<br/>Requires <a href=\"https://translatepress.com/docs/addons/seo-pack/\" title=\"TranslatePress Add-on SEO Pack documentation\" target=\"_blank\"> SEO Pack Add-on</a> to be installed and activated."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:9, ../translatepress/includes/advanced-settings/exclude-selectors.php:9
-msgid "Selector"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:11
-msgid "Exclude from dynamic translation"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-dynamic-selectors.php:12
-msgid "Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:9
-msgid "Gettext String"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:10
-msgid "Domain"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:12
-msgid "Exclude Gettext Strings"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-gettext-strings.php:13
-msgid "Exclude these strings from being translated as Gettext strings by TranslatePress. Leave the domain empty to take into account any Gettext string.<br/>Can still be translated through po/mo files."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-selectors.php:11
-msgid "Exclude selectors from translation"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-selectors.php:12
-msgid "Do not translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-words-from-auto-translate.php:9
-msgid "String"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-words-from-auto-translate.php:11
-msgid "Exclude strings from automatic translation"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/exclude-words-from-auto-translate.php:12
-msgid "Do not automatically translate these strings (ex. names, technical words...)<br>Paragraphs containing these strings will still be translated except for the specified part."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/fix-broken-html.php:8
-msgid "Fix broken HTML"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/fix-broken-html.php:9
-msgid "General attempt to fix broken or missing HTML on translated pages.<br/><strong>Only try this if the \"Fix spaces between html attribute\" did not solve the issue.</strong>"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/fix-invalid-space-between-html-attr.php:8
-msgid "Fix spaces between HTML attributes"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/fix-invalid-space-between-html-attr.php:9
-msgid "Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/show-dynamic-content-before-translation.php:8
-msgid "Fix missing dynamic content"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/show-dynamic-content-before-translation.php:9
-msgid "May help fix missing content inserted using JavaScript. <br> It shows dynamically inserted content in original language for a moment before the translation request is finished."
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/strip-gettext-post-content.php:7
-msgid "Filter Gettext wrapping from post content and title"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/strip-gettext-post-content.php:8
-msgid "Filters gettext wrapping such as #!trpst#trp-gettext from all updated post content and post title. Does not affect previous post content. <br/><strong>Database backup is recommended before switching on.</strong>"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/strip-gettext-post-meta.php:8
-msgid "Filter Gettext wrapping from post meta"
-msgstr ""
-
-#: ../translatepress/includes/advanced-settings/strip-gettext-post-meta.php:9
-msgid "Filters gettext wrapping such as #!trpst#trp-gettext from all updated post meta. Does not affect previous post meta. <br/><strong>Database backup is recommended before switching on.</strong>"
-msgstr ""
-
-#: ../translatepress/includes/google-translate/functions.php:5
-msgid "Google Translate v2"
-msgstr ""
-
-#: ../translatepress/includes/google-translate/functions.php:17
-msgid "Google Translate API Key"
-msgstr ""
-
-#: ../translatepress/includes/google-translate/functions.php:21
-msgid "Visit <a href=\"https://cloud.google.com/docs/authentication/api-keys\" target=\"_blank\">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions."
-msgstr ""
-
-#: ../translatepress/includes/google-translate/functions.php:22
-msgid "Your HTTP referrer is: %s"
 msgstr ""

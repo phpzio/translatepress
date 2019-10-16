@@ -3,9 +3,9 @@ Contributors: cozmoslabs, razvan.mo, madalin.ungureanu, cristophor
 Donate link: https://www.translatepress.com/
 Tags: translate, translation, multilingual, automatic translation, bilingual, front-end translation, google translate, language
 Requires at least: 3.1.0
-Tested up to: 5.2.3
+Tested up to: 5.2.4
 Requires PHP: 5.6.20
-Stable tag: 1.5.9
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -143,6 +143,16 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
+= 1.6.0 =
+* Gettext is no longer processed in REST API requests made from admin referer.
+* Don't update gettext machine translation with empty translation.
+* Fixed machine translation codes not being set on first save settings
+* Solved backwards compatibility with Deepl Add-on version 1.0.0
+* We now don't translate gettext into english.
+* Fix: make sure we are not sending gettext non-unique array strings to Automatic Translation
+* Fix: Add default translation engine if not available.
+* Fix: hide Test API key button when machine translation is disabled or when there's not API key saved.
+
 = 1.5.9 =
 * Add an option to block crawlers from triggering automatic translations
 * Added support for excluding words from automatic translation
