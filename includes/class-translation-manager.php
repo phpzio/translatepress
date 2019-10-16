@@ -15,6 +15,7 @@ class TRP_Translation_Manager{
     protected $slug_manager;
     protected $url_converter;
     protected $trp_languages;
+    protected $is_admin_request = null;
 
     /**
      * TRP_Translation_Manager constructor.
@@ -385,8 +386,17 @@ class TRP_Translation_Manager{
 
     public function call_gettext_filters( $prefix = '' ){
         global $pagenow;
-        // Do not process gettext strings on wp-login pages. Do not process strings in admin area except for when when is_ajax_on_frontend.
-        if( ( $pagenow != 'wp-login.php' ) && ( !is_admin() || $this::is_ajax_on_frontend() ) ) {
+
+        if( ! $this->url_converter ) {
+            $trp = TRP_Translate_Press::get_trp_instance();
+            $this->url_converter = $trp->get_component( 'url_converter' );
+        }
+        if ( $this->is_admin_request === null ) {
+            $this->is_admin_request = $this->url_converter->is_admin_request();
+        }
+
+        // Do not process gettext strings on wp-login pages. Do not process strings in admin area except for when when is_ajax_on_frontend. Do not process gettext strings when is rest api from admin url referer.
+        if( ( $pagenow != 'wp-login.php' ) && ( !is_admin() || $this::is_ajax_on_frontend() ) && !$this->is_admin_request ) {
             add_filter('gettext', array($this, $prefix.'process_gettext_strings'), 100, 3);
             add_filter('gettext_with_context', array($this, $prefix.'process_gettext_strings_with_context'), 100, 4);
             add_filter('ngettext', array($this, $prefix.'process_ngettext_strings'), 100, 5);
@@ -509,6 +519,12 @@ class TRP_Translation_Manager{
         if( isset( $_REQUEST['action'] ) && strpos($_REQUEST['action'], 'trp_') === 0 )
             return $translation;
 
+        /* get_locale() returns WP Settings Language (WPLANG). It might not be a language in TP so it may not have a TP table. */
+        $current_locale = get_locale();
+        if ( !in_array( $current_locale, $this->settings['translation-languages'] ) ){
+            return $translation;
+        }
+
         if( apply_filters( 'trp_skip_gettext_processing', false, $translation, $text, $domain ) )
             return $translation;
 
@@ -554,7 +570,7 @@ class TRP_Translation_Manager{
 							        'domain'     => $domain,
                                     'status' => $this->trp_query->get_constant_human_reviewed()
 						        )
-					        ), get_locale() );
+					        ), $current_locale );
 				        }
 			        }
 		        }
@@ -577,7 +593,7 @@ class TRP_Translation_Manager{
 						        'translated' => $translation,
 						        'domain'     => $domain
 					        )
-				        ), get_locale() );
+				        ), $current_locale );
 				        /* insert it in the global of translated because now it is in the database */
 				        $trp_translated_gettext_texts[ $domain . '::' . $text ] = array(
 					        'id'         => $db_id,
