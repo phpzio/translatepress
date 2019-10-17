@@ -55,7 +55,7 @@ class TRP_Advanced_Tab {
 	 * Sanitize settings
 	 */
 	public function sanitize_settings( $submitted_settings ){
-		$registered_settings = $this->get_settings();
+		$registered_settings = $this->get_registered_advanced_settings();
 		$prev_settings = get_option('trp_advanced_settings', array());
 
         $settings = array();
@@ -159,7 +159,7 @@ class TRP_Advanced_Tab {
 	/*
 	 * Get array of registered options from custom code to display in Advanced Settings page
 	 */
-	public function get_settings(){
+	public function get_registered_advanced_settings(){
 		return apply_filters( 'trp_register_advanced_settings', array() );
 	}
 
@@ -167,7 +167,7 @@ class TRP_Advanced_Tab {
 	 * Hooked to trp_settings_navigation_tabs
 	 */
 	public function output_advanced_options(){
-		$advanced_settings_array = $this->get_settings();
+		$advanced_settings_array = $this->get_registered_advanced_settings();
 		foreach( $advanced_settings_array as $setting ){
 			switch( $setting['type'] ){
 				case 'checkbox':
@@ -200,8 +200,8 @@ class TRP_Advanced_Tab {
 	 * @return 'string'
 	 */
 	public function checkbox_setting( $setting ){
-		$option = get_option( 'trp_advanced_settings', true );
-		$checked = ( isset( $option[ $setting['name'] ] ) && $option[ $setting['name'] ] === 'yes' ) ? 'checked' : '';
+        $adv_option = $this->settings['trp_advanced_settings'];
+		$checked = ( isset( $adv_option[ $setting['name'] ] ) && $adv_option[ $setting['name'] ] === 'yes' ) ? 'checked' : '';
 		$html = "
              <tr>
                 <th scope='row'>" . $setting['label'] . "</th>
@@ -226,7 +226,7 @@ class TRP_Advanced_Tab {
      * @return 'string'
      */
     public function radio_setting( $setting ){
-        $adv_options = get_option( 'trp_advanced_settings', true );
+        $adv_option = $this->settings['trp_advanced_settings'];
 
         $html = "
              <tr>
@@ -234,7 +234,7 @@ class TRP_Advanced_Tab {
                 <td class='trp-adst-radio'>";
 
         foreach($setting[ 'options' ] as $key => $option ){
-            $checked = ( isset( $adv_options[ $setting['name'] ] ) && $adv_options[ $setting['name'] ] === $option ) ? 'checked' : '';
+            $checked = ( isset( $adv_option[ $setting['name'] ] ) && $adv_option[ $setting['name'] ] === $option ) ? 'checked' : '';
             $setting_name  = $setting['name'];
             $label  = $setting[ 'labels' ][$key];
             $html .= "<label>
@@ -260,9 +260,9 @@ class TRP_Advanced_Tab {
      * @return 'string'
      */
     public function input_setting( $setting, $type = 'text'){
-        $option = get_option( 'trp_advanced_settings', true );
+        $adv_option = $this->settings['trp_advanced_settings'];
         $default = ( isset( $setting['default'] )) ? $setting['default'] : '';
-        $value = ( isset( $option[ $setting['name'] ] ) ) ? $option[ $setting['name'] ] : $default;
+        $value = ( isset( $adv_option[ $setting['name'] ] ) ) ? $adv_option[ $setting['name'] ] : $default;
         $html = "
              <tr>
                 <th scope='row'>" . $setting['label'] . "</th>
@@ -302,7 +302,7 @@ class TRP_Advanced_Tab {
 	 * @return 'string'
 	 */
 	public function add_to_list_setting( $setting ){
-		$option = get_option( 'trp_advanced_settings', true );
+		$adv_option = $this->settings['trp_advanced_settings'];
 		$html = "
              <tr>
                 <th scope='row'>" . $setting['label'] . "</th>
@@ -324,11 +324,11 @@ class TRP_Advanced_Tab {
 			$first_column = $column;
 			break;
 		}
-		if ( isset( $option[ $setting['name'] ] ) && is_array( $option[ $setting['name'] ] ) ) {
-			foreach ( $option[ $setting['name'] ][ $first_column ] as $index => $value ) {
+		if ( isset( $adv_option[ $setting['name'] ] ) && is_array( $adv_option[ $setting['name'] ] ) ) {
+			foreach ( $adv_option[ $setting['name'] ][ $first_column ] as $index => $value ) {
 				$html .= "<tr class='trp-list-entry'>";
 				foreach ( $setting['columns'] as $column => $column_name ) {
-					$html .= "<td><textarea name='trp_advanced_settings[" . $setting['name'] . "][" . $column . "][]'>" . $option[ $setting['name'] ][ $column ][ $index ] . "</textarea></td>";
+					$html .= "<td><textarea name='trp_advanced_settings[" . $setting['name'] . "][" . $column . "][]'>" . $adv_option[ $setting['name'] ][ $column ][ $index ] . "</textarea></td>";
 				}
 				$html .= "<td><span class='trp-adst-remove-element' data-confirm-message='" . __('Are you sure you want to remove this item?', 'translatepress-multilingual') . "'>" . __( 'Remove', 'translatepress-multilingual' ) . "</span></td>";
 				$html .= "</tr>";

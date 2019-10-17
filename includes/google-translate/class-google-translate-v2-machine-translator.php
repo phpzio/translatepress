@@ -15,7 +15,7 @@ class TRP_Google_Translate_V2_Machine_Translator extends TRP_Machine_Translator 
      */
     public function send_request( $source_language, $language_code, $strings_array ){
         /* build our translation request */
-        $translation_request = 'key='.$this->settings['google-translate-key'];
+        $translation_request = 'key='.$this->settings['trp_machine_translation_settings']['google-translate-key'];
         $translation_request .= '&source='.$source_language;
         $translation_request .= '&target='.$language_code;
         foreach( $strings_array as $new_string ){
@@ -106,6 +106,6 @@ class TRP_Google_Translate_V2_Machine_Translator extends TRP_Machine_Translator 
     }
 
     public function get_api_key(){
-        return isset( $this->settings['google-translate-key'] ) ? $this->settings['google-translate-key'] : false;
+        return isset( $this->settings['trp_machine_translation_settings']['google-translate-key'] ) ? $this->settings['trp_machine_translation_settings']['google-translate-key'] : false;
     }
 }
