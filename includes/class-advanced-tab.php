@@ -185,7 +185,7 @@ class TRP_Advanced_Tab {
                     echo $this->input_setting( $setting, 'number' );
                     break;
                 case 'select':
-                    echo $this->select_setting( $setting, 'number' );
+                    echo $this->select_setting( $setting );
                     break;
                 case 'separator':
                     echo $this->separator_setting( $setting );
