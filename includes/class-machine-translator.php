@@ -36,7 +36,7 @@ class TRP_Machine_Translator {
      * @return bool
      */
     public function is_available(){
-        if( !empty( $this->settings['machine-translation'] ) && $this->settings['machine-translation'] == 'yes' )
+        if( !empty( $this->settings['trp_machine_translation_settings']['machine-translation'] ) && $this->settings['trp_machine_translation_settings']['machine-translation'] == 'yes' )
             return true;
         else
             return false;
@@ -80,7 +80,7 @@ class TRP_Machine_Translator {
             return false;
 
         // Check if crawlers are blocked
-        if( !empty( $this->settings['block-crawlers'] ) && $this->settings['block-crawlers'] == 'yes' && $this->is_crawler() )
+        if( !empty( $this->settings['trp_machine_translation_settings']['block-crawlers'] ) && $this->settings['trp_machine_translation_settings']['block-crawlers'] == 'yes' && $this->is_crawler() )
             return false;
 
         // Check if daily quota is met
@@ -112,7 +112,7 @@ class TRP_Machine_Translator {
             return false;
 
         // Check if crawlers are blocked
-        if( !empty( $this->settings['block-crawlers'] ) && $this->settings['block-crawlers'] == 'yes' && $this->is_crawler() )
+        if( !empty( $this->settings['trp_machine_translation_settings']['block-crawlers'] ) && $this->settings['trp_machine_translation_settings']['block-crawlers'] == 'yes' && $this->is_crawler() )
             return false;
 
         // Check if daily quota is met
@@ -163,8 +163,7 @@ class TRP_Machine_Translator {
                 $strings[$key] = str_replace($trp_exclude_words_from_automatic_translation, $placeholders, $string);
             }
 
-            $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
-            if ( $machine_translation_settings !== false && $machine_translation_settings['translation-engine'] === 'deepl' && defined( 'TRP_DL_PLUGIN_VERSION' ) && TRP_DL_PLUGIN_VERSION === '1.0.0' ) {
+            if ( $this->settings['trp_machine_translation_settings']['translation-engine'] === 'deepl' && defined( 'TRP_DL_PLUGIN_VERSION' ) && TRP_DL_PLUGIN_VERSION === '1.0.0' ) {
                 // backwards compatibility with deepl version 1.0.0 which doesn't have the third function parameter $source_language_code
                 $machine_strings = $this->translate_array($strings, $target_language_code);
             }else {

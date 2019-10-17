@@ -100,7 +100,6 @@ class TRP_Machine_Translator_Logger {
     }
 
     public function maybe_reset_counter_date(){
-        $some = 'else';
 
         // if the day has not passed
         if ( $this->counter_date === date ( "Y-m-d" ) )
@@ -147,15 +146,15 @@ class TRP_Machine_Translator_Logger {
         update_option( 'trp_machine_translation_settings', $machine_translation_settings );
     }
 
-    public function sanitize_settings( $settings ){
-        $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
+    public function sanitize_settings($mt_settings ){
+        $machine_translation_settings = $this->settings['trp_machine_translation_settings'];
 
         if( isset( $machine_translation_settings['machine_translation_counter'] ) )
-            $settings['machine_translation_counter'] = $machine_translation_settings['machine_translation_counter'];
+            $mt_settings['machine_translation_counter'] = $machine_translation_settings['machine_translation_counter'];
 
         if( isset( $machine_translation_settings['machine_translation_counter_date'] ) )
-            $settings['machine_translation_counter_date'] = $machine_translation_settings['machine_translation_counter_date'];
+            $mt_settings['machine_translation_counter_date'] = $machine_translation_settings['machine_translation_counter_date'];
 
-        return $settings;
+        return $mt_settings;
     }
 }

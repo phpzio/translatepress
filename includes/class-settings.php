@@ -96,9 +96,7 @@ class TRP_Settings{
      * @return mixed Setting Value
      */
     public function get_setting($name, $default = null){
-        $settings = $this->settings;
-        if( array_key_exists($name, $this->settings ) )
-        {
+        if( array_key_exists($name, $this->settings ) ){
             return maybe_unserialize($this->settings[$name]);
         } else {
             return $default;
@@ -345,7 +343,6 @@ class TRP_Settings{
         ) );
 
         /* @deprecated Setting only used for compatibility with Deepl Add-on 1.0.0 */
-        /* @TODO test if deepl plugin version is defined */
         if ( $settings_option['trp_machine_translation_settings']['translation-engine'] === 'deepl' && defined( 'TRP_DL_PLUGIN_VERSION' ) && TRP_DL_PLUGIN_VERSION === '1.0.0' ) {
             $trp_languages = new TRP_Languages();
             $settings_option['machine-translate-codes'] = $trp_languages->get_iso_codes($settings_option['translation-languages']);

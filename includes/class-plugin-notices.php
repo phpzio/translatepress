@@ -409,9 +409,7 @@ class TRP_Trigger_Plugin_Notifications{
         if ( ! $this->machine_translator_logger )
             $this->machine_translator_logger = $trp->get_component( 'machine_translator_logger' );
 
-        $machine_translation_enabled = $this->settings_obj->get_setting('machine-translation', 'no');
-
-        if( 'yes' === $machine_translation_enabled && $this->machine_translator_logger->quota_exceeded() ) {
+        if( 'yes' === $this->settings['trp_machine_translation_settings']['machine-translation'] && $this->machine_translator_logger->quota_exceeded() ) {
             /* this must be unique */
             $notification_id = 'trp_machine_translation_quota_exceeded_'. date('Ymd');
 
