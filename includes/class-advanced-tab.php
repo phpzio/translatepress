@@ -72,6 +72,7 @@ class TRP_Advanced_Tab {
 						$settings[ $registered_setting['name'] ] = ( $submitted_settings[ $registered_setting['name'] ] === 'yes' ) ? 'yes' : 'no';
 						break;
 					}
+                    case 'select':
                     case 'input': {
                         $settings[ $registered_setting['name'] ] = sanitize_text_field($submitted_settings[ $registered_setting['name'] ]);
                         break;
@@ -80,7 +81,7 @@ class TRP_Advanced_Tab {
                         $settings[ $registered_setting['name'] ] = sanitize_text_field(intval($submitted_settings[ $registered_setting['name'] ] ) );
                         break;
                     }
-					case 'list': {
+                    case 'list': {
 						$settings[ $registered_setting['name'] ] = array();
 						foreach ( $registered_setting['columns'] as $column => $column_name ) {
 							$one_column = $column;
@@ -151,6 +152,7 @@ class TRP_Advanced_Tab {
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/fix-broken-html.php');
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/fix-invalid-space-between-html-attr.php');
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/show-dynamic-content-before-translation.php');
+        include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/enable-hreflang-xdefault.php');
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/strip-gettext-post-content.php');
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/strip-gettext-post-meta.php');
         include_once(TRP_PLUGIN_DIR . 'includes/advanced-settings/exclude-words-from-auto-translate.php');
@@ -181,6 +183,9 @@ class TRP_Advanced_Tab {
                     break;
                 case 'number':
                     echo $this->input_setting( $setting, 'number' );
+                    break;
+                case 'select':
+                    echo $this->select_setting( $setting );
                     break;
                 case 'separator':
                     echo $this->separator_setting( $setting );
@@ -276,6 +281,42 @@ class TRP_Advanced_Tab {
                 </td>
             </tr>";
         return apply_filters('trp_advanced_setting_input', $html );
+    }
+
+    /**
+     * Return HTML of a input type setting
+     *
+     * @param array $setting
+     * @param string $type
+     *
+     * @return 'string'
+     */
+    public function select_setting( $setting ){
+        $option = get_option( 'trp_advanced_settings', true );
+        $default = ( isset( $setting['default'] )) ? $setting['default'] : '';
+        $value = ( isset( $option[ $setting['name'] ] ) ) ? $option[ $setting['name'] ] : $default;
+
+        $options = '';
+        foreach ($setting['options'] as $lang => $label) {
+            ($value == $lang) ? $selected = 'selected' : $selected = '' ;
+            $options .= "<option value='{$lang}' $selected>{$label}</option>";
+        }
+
+        $html = "
+             <tr>
+                <th scope='row'>" . $setting['label'] . "</th>
+                <td>
+	                <label>
+	                    <select id='{$setting['name']}' name='trp_advanced_settings[{$setting['name']}]' style='width: 200px;'>
+	                        {$options}
+	                    </select>
+			        </label>
+                    <p class='description'>
+                        {$setting['description']}
+                    </p>
+                </td>
+            </tr>";
+        return apply_filters('trp_advanced_setting_select', $html );
     }
 
     /**
