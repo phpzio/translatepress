@@ -313,8 +313,8 @@ class TRP_Settings{
 
         // set date if missing because of migration of machine translation settings from trp_settings option to trp_machine_translation_settings option
         if ( !empty($machine_translation_settings) && empty( $machine_translation_settings['machine_translation_counter_date'] ) ){
-            $machine_translation_settings['machine-machine_translation_counter_date'] = date ("Y-m-d" );
-            $machine_translation_settings['machine-machine_translation_counter'] = 0;
+            $machine_translation_settings['machine_translation_counter_date'] = date ("Y-m-d" );
+            $machine_translation_settings['machine_translation_counter'] = 0;
             update_option( 'trp_machine_translation_settings', $machine_translation_settings );
         }
         /* END Upgrade settings */

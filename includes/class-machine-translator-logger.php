@@ -136,10 +136,11 @@ class TRP_Machine_Translator_Logger {
     }
 
     private function update_options( $options ){
+
         $machine_translation_settings = $this->settings['trp_machine_translation_settings'];
 
         foreach( $options as $option ){
-            $this->settings[$option['name']]               = $option['value'];
+            $this->settings['trp_machine_translation_settings'][$option['name']] = $option['value'];
             $machine_translation_settings[$option['name']] = $option['value'];
         }
 
