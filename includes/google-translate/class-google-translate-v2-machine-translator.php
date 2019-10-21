@@ -91,7 +91,9 @@ class TRP_Google_Translate_V2_Machine_Translator extends TRP_Machine_Translator 
                     }
                 }
             }
-
+            if( $this->machine_translator_logger->quota_exceeded() ){
+                break;
+            }
         }
 
         // will have the same indexes as $new_string or it will be an empty array if something went wrong
