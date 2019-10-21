@@ -97,6 +97,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-advanced-tab.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-memory.php';
         require_once TRP_PLUGIN_DIR . 'includes/external-functions.php';
+        require_once TRP_PLUGIN_DIR . 'includes/compatibility-functions.php';
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
         require_once TRP_PLUGIN_DIR . 'assets/lib/simplehtmldom/simple_html_dom.php';
         require_once TRP_PLUGIN_DIR . 'includes/shortcodes.php';
