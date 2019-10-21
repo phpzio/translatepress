@@ -4,15 +4,9 @@ class TRP_Machine_Translation_Tab {
 
     private $settings;
 
-    public function __construct() {
+    public function __construct( $settings ) {
 
-        $settings = get_option( 'trp_machine_translation_settings', false );
-
-        if( !empty( $settings ) )
-            $this->settings = $settings;
-        else
-            $this->settings = [ 'machine-translation' => 'no', 'translation-engine' => 'google_translate_v2' ];
-
+        $this->settings = $settings;
 
         if( !class_exists( 'TRP_DeepL' ) )
             add_filter( 'trp_machine_translation_engines', [ $this, 'translation_engines_upsell' ], 20 );
@@ -66,20 +60,13 @@ class TRP_Machine_Translation_Tab {
     /*
     * Sanitize settings
     */
-    public function sanitize_settings( $settings ){
-        if( !empty( $settings['machine-translation'] ) )
-            $settings['machine-translation'] = sanitize_text_field( $settings['machine-translation']  );
+    public function sanitize_settings($mt_settings ){
+        if( !empty( $mt_settings['machine-translation'] ) )
+            $mt_settings['machine-translation'] = sanitize_text_field( $mt_settings['machine-translation']  );
         else
-            $settings['machine-translation'] = 'no';
+            $mt_settings['machine-translation'] = 'no';
 
-        $trp           = TRP_Translate_Press::get_trp_instance();
-        $trp_languages = $trp->get_component( 'languages' );
-        $trp_settings  = $trp->get_component( 'settings' );
-
-        /* @deprecated Setting only used for compatibility with Deepl Add-on 1.0.0 */
-        $settings['machine-translate-codes'] = $trp_languages->get_iso_codes( $trp_settings->get_setting( 'translation-languages' ) );
-
-        return apply_filters( 'trp_machine_translation_sanitize_settings', $settings );
+        return apply_filters( 'trp_machine_translation_sanitize_settings', $mt_settings );
     }
 
     /*
@@ -108,19 +95,20 @@ class TRP_Machine_Translation_Tab {
         include_once TRP_PLUGIN_DIR . 'includes/google-translate/class-google-translate-v2-machine-translator.php';
     }
 
-    public function get_active_engine( $settings ){
+    public function get_active_engine( ){
+        // This $default is just a fail safe. Should never be used. The real default is set in TRP_Settings->set_options function
         $default = 'TRP_Google_Translate_V2_Machine_Translator';
 
-        if( empty( $settings['translation-engine'] ) )
+        if( empty( $this->settings['trp_machine_translation_settings']['translation-engine'] ) )
             $value = $default;
         else {
-            $value = 'TRP_' . ucwords( $settings['translation-engine'] ) . '_Machine_Translator'; // class name needs to follow this pattern
+            $value = 'TRP_' . ucwords( $this->settings['trp_machine_translation_settings']['translation-engine'] ) . '_Machine_Translator'; // class name needs to follow this pattern
 
             if( !class_exists( $value ) )
                 $value = $default;
         }
 
-        return new $value( $settings );
+        return new $value( $this->settings );
     }
 
     public function translation_engines_upsell( $engines ){

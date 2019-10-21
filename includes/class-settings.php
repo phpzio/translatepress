@@ -96,9 +96,7 @@ class TRP_Settings{
      * @return mixed Setting Value
      */
     public function get_setting($name, $default = null){
-        $settings = $this->settings;
-        if( array_key_exists($name, $this->settings ) )
-        {
+        if( array_key_exists($name, $this->settings ) ){
             return maybe_unserialize($this->settings[$name]);
         } else {
             return $default;
@@ -256,14 +254,6 @@ class TRP_Settings{
         // regenerate permalinks in case something changed
         flush_rewrite_rules();
 
-        // regenerate machine translation codes
-        $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
-
-        /* @deprecated Setting only used for compatibility with Deepl 1.0.0 */
-        $machine_translation_settings['machine-translate-codes'] = $this->trp_languages->get_iso_codes( $settings['translation-languages'] );
-
-        update_option( 'trp_machine_translation_settings', $machine_translation_settings );
-
         return apply_filters( 'trp_extra_sanitize_settings', $settings );
     }
 
@@ -300,11 +290,11 @@ class TRP_Settings{
             'floater-options'                      => 'flags-full-names',
             'floater-position'                     => 'bottom-right',
             'url-slugs'                            => array( 'en_US' => 'en', '' ),
-            'advanced_settings'                    => get_option('trp_advanced_settings', array() ),
-            'machine-translation'                  => 'no',
-            'block-crawlers'                       => 'yes',
         );
 
+
+
+        /* BEGIN Upgrade settings from TP version 1.5.8 or earlier to 1.6.1+*/
         $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
 
         // move the old API key option
@@ -321,17 +311,43 @@ class TRP_Settings{
             update_option( 'trp_machine_translation_settings', $machine_translation_settings );
         }
 
-        if( !empty( $machine_translation_settings ) )
-            $default_settings = array_merge( $default_settings, $machine_translation_settings );
+        // set date if missing because of migration of machine translation settings from trp_settings option to trp_machine_translation_settings option
+        if ( !empty($machine_translation_settings) && empty( $machine_translation_settings['machine_translation_counter_date'] ) ){
+            $machine_translation_settings['machine_translation_counter_date'] = date ("Y-m-d" );
+            $machine_translation_settings['machine_translation_counter'] = 0;
+            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
+        }
+        /* END Upgrade settings */
+
+
 
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
             $settings_option = $default_settings;
         }else{
+            // Add any missing default option for trp_setting
             foreach ( $default_settings as $key_default_setting => $value_default_setting ){
                 if ( !isset ( $settings_option[$key_default_setting] ) ) {
                     $settings_option[$key_default_setting] = $value_default_setting;
                 }
+            }
+        }
+
+        // These options are not part of the actual trp_settings DB option. But they are included in $settings variable across TP
+        $settings_option['trp_advanced_settings'] = get_option('trp_advanced_settings', array() );
+        $settings_option['trp_machine_translation_settings'] = get_option('trp_machine_translation_settings', array(
+            // default settings for trp_machine_translation_settings
+            'machine-translation'   => 'no',
+            'translation-engine'    => 'google_translate_v2',
+            'block-crawlers'        => 'yes'
+        ) );
+
+        /* @deprecated Setting only used for compatibility with Deepl Add-on 1.0.0 */
+        if ( $settings_option['trp_machine_translation_settings']['translation-engine'] === 'deepl' && defined( 'TRP_DL_PLUGIN_VERSION' ) && TRP_DL_PLUGIN_VERSION === '1.0.0' ) {
+            $trp_languages = new TRP_Languages();
+            $settings_option['machine-translate-codes'] = $trp_languages->get_iso_codes($settings_option['translation-languages']);
+            if ( isset( $settings_option['trp_machine_translation_settings']['deepl-api-key'] ) ) {
+                $settings_option['deepl-api-key'] = $settings_option['trp_machine_translation_settings']['deepl-api-key'];
             }
         }
 

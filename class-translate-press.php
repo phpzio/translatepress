@@ -114,7 +114,7 @@ class TRP_Translate_Press{
         $this->advanced_tab               = new TRP_Advanced_Tab($this->settings->get_settings());
         $this->advanced_tab->include_custom_codes();
 
-        $this->machine_translation_tab    = new TRP_Machine_Translation_Tab();
+        $this->machine_translation_tab    = new TRP_Machine_Translation_Tab( $this->settings->get_settings() );
         $this->machine_translation_tab->load_engines();
 
         $this->translation_render         = new TRP_Translation_Render( $this->settings->get_settings() );
@@ -351,6 +351,6 @@ class TRP_Translate_Press{
     }
 
     public function init_machine_translation(){
-        $this->machine_translator = $this->machine_translation_tab->get_active_engine( $this->settings->get_settings() );
+        $this->machine_translator = $this->machine_translation_tab->get_active_engine();
     }
 }

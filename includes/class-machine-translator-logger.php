@@ -15,9 +15,9 @@ class TRP_Machine_Translator_Logger {
      */
     public function __construct( $settings ){
         $this->settings     = $settings;
-        $this->counter      = intval( $this->get_option('machine_translation_counter', 0) );
-        $this->counter_date = $this->get_option('machine_translation_counter_date', date ("Y-m-d" ));
-        $this->limit        = intval( $this->get_option('machine_translation_limit', 1000000) );
+        $this->counter      = intval( $this->get_mt_option('machine_translation_counter', 0) );
+        $this->counter_date = $this->get_mt_option('machine_translation_counter_date', date ("Y-m-d" ));
+        $this->limit        = intval( $this->get_mt_option('machine_translation_limit', 1000000) );
         // if a new day has passed, update the counter and date
         $this->maybe_reset_counter_date();
     }
@@ -35,7 +35,7 @@ class TRP_Machine_Translator_Logger {
         if( empty($args) )
             return false;
 
-        if( $this->get_option('machine_translation_log', false) !== 'yes' )
+        if( $this->get_mt_option('machine_translation_log', false) !== 'yes' )
             return false;
 
         if( !$this->query->check_machine_translation_log_table() )
@@ -100,7 +100,6 @@ class TRP_Machine_Translator_Logger {
     }
 
     public function maybe_reset_counter_date(){
-        $some = 'else';
 
         // if the day has not passed
         if ( $this->counter_date === date ( "Y-m-d" ) )
@@ -130,32 +129,33 @@ class TRP_Machine_Translator_Logger {
 
     }
 
-    private function get_option($option_name, $default){
+    private function get_mt_option($option_name, $default){
 
-        return isset( $this->settings[$option_name] ) ? $this->settings[$option_name] : $default;
+        return isset( $this->settings['trp_machine_translation_settings'][$option_name] ) ? $this->settings['trp_machine_translation_settings'][$option_name] : $default;
 
     }
 
     private function update_options( $options ){
-        $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
+
+        $machine_translation_settings = $this->settings['trp_machine_translation_settings'];
 
         foreach( $options as $option ){
-            $this->settings[$option['name']]               = $option['value'];
+            $this->settings['trp_machine_translation_settings'][$option['name']] = $option['value'];
             $machine_translation_settings[$option['name']] = $option['value'];
         }
 
         update_option( 'trp_machine_translation_settings', $machine_translation_settings );
     }
 
-    public function sanitize_settings( $settings ){
-        $machine_translation_settings = get_option( 'trp_machine_translation_settings', array() );
+    public function sanitize_settings($mt_settings ){
+        $machine_translation_settings = $this->settings['trp_machine_translation_settings'];
 
         if( isset( $machine_translation_settings['machine_translation_counter'] ) )
-            $settings['machine_translation_counter'] = $machine_translation_settings['machine_translation_counter'];
+            $mt_settings['machine_translation_counter'] = $machine_translation_settings['machine_translation_counter'];
 
         if( isset( $machine_translation_settings['machine_translation_counter_date'] ) )
-            $settings['machine_translation_counter_date'] = $machine_translation_settings['machine_translation_counter_date'];
+            $mt_settings['machine_translation_counter_date'] = $machine_translation_settings['machine_translation_counter_date'];
 
-        return $settings;
+        return $mt_settings;
     }
 }
