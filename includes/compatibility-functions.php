@@ -390,7 +390,17 @@ function trp_nextgen_compatibility(){
  *
  */
 add_filter( 'the_title', 'trp_woo_translate_product_title_added_to_cart', 10, 2 );
-function trp_woo_translate_product_title_added_to_cart( $title, $id ){
+function trp_woo_translate_product_title_added_to_cart( ...$args ){
+    // fix themes that don't implement the_title filter correctly. Works on PHP 5.6 >.
+    // Implemented this because users we getting this error frequently.
+    if(is_array($args)) {
+        $title = $args[0];
+        $id = $args[1];
+    } else {
+        $title = $args;
+        $id = 0;
+    }
+
     if( class_exists( 'WooCommerce' ) ){
         if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
             $callstack_functions = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 15);//set a limit if it is supported to improve performance
@@ -413,7 +423,6 @@ function trp_woo_translate_product_title_added_to_cart( $title, $id ){
     }
     return $title;
 }
-
 /**
  * Compatibility with WooTour plugin
  *
