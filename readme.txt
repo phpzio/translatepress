@@ -5,7 +5,7 @@ Tags: translate, translation, multilingual, automatic translation, bilingual, fr
 Requires at least: 3.1.0
 Tested up to: 5.2.4
 Requires PHP: 5.6.20
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -143,6 +143,13 @@ For more information please check out [TranslatePress - Multilingual plugin docu
 
 
 == Changelog ==
+= 1.6.1 =
+* Added support for hreflang x-default in Advanced Settings
+* Improved checking if quota exceeded on google machine translation for each batch
+* Fix a fatal error due to incorrect call to the_title filter made by some themes
+* Fixed automatic translation character count not resetting daily
+* Fixed possible incompatibility between trp_language shortcode and automatic translation
+
 = 1.6.0 =
 * Gettext is no longer processed in REST API requests made from admin referer.
 * Don't update gettext machine translation with empty translation.

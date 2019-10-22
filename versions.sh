@@ -100,6 +100,6 @@ if [ $freeversion == 'y' ]; then
 
     #remove deleted files if any add new files that changed and commit changes
     svn st | grep ^! | awk '{print " --force "$2}' | xargs svn rm
-    svn add * --force
-    svn ci -m "tagging version $version"
+    #svn add * --force
+    #svn ci -m "tagging version $version"
 fi

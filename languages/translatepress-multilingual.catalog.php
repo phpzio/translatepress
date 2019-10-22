@@ -1,4 +1,9 @@
 <?php __("", "translatepress-multilingual"); ?>
+<?php __("Error! Duplicate URL slug values.", "translatepress-multilingual"); ?>
+<?php __("Limit this menu item to the following languages", "translatepress-multilingual"); ?>
+<?php __("All Languages", "translatepress-multilingual"); ?>
+<?php __("The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when submitting the sitemap to Google.", "translatepress-multilingual"); ?>
+<?php __("<strong>TranslatePress</strong> requires at least PHP version 5.6.20+ to run. It is the <a href=\"%s\">minimum requirement of the latest WordPress version</a>. Please contact your server administrator to update your PHP version.", "translatepress-multilingual"); ?>
 <?php __("First by browser language, then IP address (recommended)", "translatepress-multilingual"); ?>
 <?php __("First by IP address, then by browser language", "translatepress-multilingual"); ?>
 <?php __("Only by browser language", "translatepress-multilingual"); ?>
@@ -11,8 +16,6 @@
 <?php __("Deactivate License", "translatepress-multilingual"); ?>
 <?php __("Method of language detection", "translatepress-multilingual"); ?>
 <?php __("Select how the language should be detected for first time visitors.<br>The visitor's last displayed language will be remembered through cookies.", "translatepress-multilingual"); ?>
-<?php __("Error! Duplicate URL slug values.", "translatepress-multilingual"); ?>
-<?php __("All Languages", "translatepress-multilingual"); ?>
 <?php __("Language", "translatepress-multilingual"); ?>
 <?php __("Code", "translatepress-multilingual"); ?>
 <?php __("Slug", "translatepress-multilingual"); ?>
@@ -22,35 +25,7 @@
 <?php __("Choose...", "translatepress-multilingual"); ?>
 <?php __("Add", "translatepress-multilingual"); ?>
 <?php __("Select the languages you wish to make your website available in.", "translatepress-multilingual"); ?>
-<?php __("Limit this menu item to the following languages", "translatepress-multilingual"); ?>
-<?php __("The Yoast SEO Sitemaps will now contain the default language slug: example.com/en/sitemap_index.xml <br/> This works perfectly, just take it into account when submitting the sitemap to Google.", "translatepress-multilingual"); ?>
 <?php __("Post Slug", "translatepress-multilingual"); ?>
-<?php __("Disable dynamic translation", "translatepress-multilingual"); ?>
-<?php __("It disables detection of strings displayed dynamically using JavaScript. <br/>Strings loaded via a server side AJAX call will still be translated.", "translatepress-multilingual"); ?>
-<?php __("Automatically translate slugs", "translatepress-multilingual"); ?>
-<?php __("Generate automatic translations of slugs for posts, pages and Custom Post Types.<br/>Requires <a href=\"https://translatepress.com/docs/addons/seo-pack/\" title=\"TranslatePress Add-on SEO Pack documentation\" target=\"_blank\"> SEO Pack Add-on</a> to be installed and activated.", "translatepress-multilingual"); ?>
-<?php __("Selector", "translatepress-multilingual"); ?>
-<?php __("Exclude from dynamic translation", "translatepress-multilingual"); ?>
-<?php __("Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible.", "translatepress-multilingual"); ?>
-<?php __("Gettext String", "translatepress-multilingual"); ?>
-<?php __("Domain", "translatepress-multilingual"); ?>
-<?php __("Exclude Gettext Strings", "translatepress-multilingual"); ?>
-<?php __("Exclude these strings from being translated as Gettext strings by TranslatePress. Leave the domain empty to take into account any Gettext string.<br/>Can still be translated through po/mo files.", "translatepress-multilingual"); ?>
-<?php __("Exclude selectors from translation", "translatepress-multilingual"); ?>
-<?php __("Do not translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated.", "translatepress-multilingual"); ?>
-<?php __("String", "translatepress-multilingual"); ?>
-<?php __("Exclude strings from automatic translation", "translatepress-multilingual"); ?>
-<?php __("Do not automatically translate these strings (ex. names, technical words...)<br>Paragraphs containing these strings will still be translated except for the specified part.", "translatepress-multilingual"); ?>
-<?php __("Fix broken HTML", "translatepress-multilingual"); ?>
-<?php __("General attempt to fix broken or missing HTML on translated pages.<br/><strong>Only try this if the \"Fix spaces between html attribute\" did not solve the issue.</strong>", "translatepress-multilingual"); ?>
-<?php __("Fix spaces between HTML attributes", "translatepress-multilingual"); ?>
-<?php __("Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages.", "translatepress-multilingual"); ?>
-<?php __("Fix missing dynamic content", "translatepress-multilingual"); ?>
-<?php __("May help fix missing content inserted using JavaScript. <br> It shows dynamically inserted content in original language for a moment before the translation request is finished.", "translatepress-multilingual"); ?>
-<?php __("Filter Gettext wrapping from post content and title", "translatepress-multilingual"); ?>
-<?php __("Filters gettext wrapping such as #!trpst#trp-gettext from all updated post content and post title. Does not affect previous post content. <br/><strong>Database backup is recommended before switching on.</strong>", "translatepress-multilingual"); ?>
-<?php __("Filter Gettext wrapping from post meta", "translatepress-multilingual"); ?>
-<?php __("Filters gettext wrapping such as #!trpst#trp-gettext from all updated post meta. Does not affect previous post meta. <br/><strong>Database backup is recommended before switching on.</strong>", "translatepress-multilingual"); ?>
 <?php __("Advanced", "translatepress-multilingual"); ?>
 <?php __("Yes", "translatepress-multilingual"); ?>
 <?php __("Are you sure you want to remove this item?", "translatepress-multilingual"); ?>
@@ -72,7 +47,7 @@
 <?php __("Something went wrong, please try again.", "translatepress-multilingual"); ?>
 <?php __("Your <strong>TranslatePress</strong> license will expire on %1$s. Please %2$sRenew Your Licence%3$s to continue receiving access to product downloads, automatic updates and support.", "translatepress-multilingual"); ?>
 <?php __("NEW: Display different images based on language. Find out <a href=\"https://translatepress.com/docs/image-translation/\" >how to translate images, sliders and more</a> from the TranslatePress editor.", "translatepress-multilingual"); ?>
-<?php __("The daily quota for machine translation characters exceeded. Please check the <strong>TranslatePress -> Settings -> <a href=\"%s\">Machine Translation</a></strong> page for more information.", "translatepress-multilingual"); ?>
+<?php __("The daily quota for machine translation characters exceeded. Please check the <strong>TranslatePress -> <a href=\"%s\">Automatic Translation</a></strong> page for more information.", "translatepress-multilingual"); ?>
 <?php __("Full Language Names", "translatepress-multilingual"); ?>
 <?php __("Short Language Names", "translatepress-multilingual"); ?>
 <?php __("Flags with Full Language Names", "translatepress-multilingual"); ?>
@@ -179,11 +154,6 @@
 <?php __("If the page does not redirect automatically", "translatepress-multilingual"); ?>
 <?php __("click here", "translatepress-multilingual"); ?>
 <?php __("<strong>TranslatePress</strong> requires <strong><a href=\"http://php.net/manual/en/book.mbstring.php\">Multibyte String PHP library</a></strong>. Please contact your server administrator to install it on your server.", "translatepress-multilingual"); ?>
-<?php __("Google Translate v2", "translatepress-multilingual"); ?>
-<?php __("Google Translate API Key", "translatepress-multilingual"); ?>
-<?php __("Visit <a href=\"https://cloud.google.com/docs/authentication/api-keys\" target=\"_blank\">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions.", "translatepress-multilingual"); ?>
-<?php __("Your HTTP referrer is: %s", "translatepress-multilingual"); ?>
-<?php __("<strong>TranslatePress</strong> requires at least PHP version 5.6.20+ to run. It is the <a href=\"%s\">minimum requirement of the latest WordPress version</a>. Please contact your server administrator to update your PHP version.", "translatepress-multilingual"); ?>
 <?php __("Advanced Addons", "translatepress-multilingual"); ?>
 <?php __("These addons extend your translation plugin and are available in the Developer, Business and Personal plans.", "translatepress-multilingual"); ?>
 <?php __("SEO support for page slug, page title, description and facebook and twitter social graph information. </br> The HTML lang attribute is properly set.", "translatepress-multilingual"); ?>
@@ -262,3 +232,35 @@
 <?php __(" TranslatePress Settings", "translatepress-multilingual"); ?>
 <?php __("Translator", "translatepress-multilingual"); ?>
 <?php __("Allow this user to translate the website.", "translatepress-multilingual"); ?>
+<?php __("Disable dynamic translation", "translatepress-multilingual"); ?>
+<?php __("It disables detection of strings displayed dynamically using JavaScript. <br/>Strings loaded via a server side AJAX call will still be translated.", "translatepress-multilingual"); ?>
+<?php __("Automatically translate slugs", "translatepress-multilingual"); ?>
+<?php __("Generate automatic translations of slugs for posts, pages and Custom Post Types.<br/>Requires <a href=\"https://translatepress.com/docs/addons/seo-pack/\" title=\"TranslatePress Add-on SEO Pack documentation\" target=\"_blank\"> SEO Pack Add-on</a> to be installed and activated.", "translatepress-multilingual"); ?>
+<?php __("Enable the hreflang x-default tag for language:", "translatepress-multilingual"); ?>
+<?php __("Enables the hreflang=\"x-default\" for an entire language. See documentation for more details.", "translatepress-multilingual"); ?>
+<?php __("Selector", "translatepress-multilingual"); ?>
+<?php __("Exclude from dynamic translation", "translatepress-multilingual"); ?>
+<?php __("Do not dynamically translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated using JavaScript.<br/>These strings will still be translated on the server side if possible.", "translatepress-multilingual"); ?>
+<?php __("Gettext String", "translatepress-multilingual"); ?>
+<?php __("Domain", "translatepress-multilingual"); ?>
+<?php __("Exclude Gettext Strings", "translatepress-multilingual"); ?>
+<?php __("Exclude these strings from being translated as Gettext strings by TranslatePress. Leave the domain empty to take into account any Gettext string.<br/>Can still be translated through po/mo files.", "translatepress-multilingual"); ?>
+<?php __("Exclude selectors from translation", "translatepress-multilingual"); ?>
+<?php __("Do not translate strings that are found in html nodes matching these selectors.<br>Excludes all the children of HTML nodes matching these selectors from being translated.", "translatepress-multilingual"); ?>
+<?php __("String", "translatepress-multilingual"); ?>
+<?php __("Exclude strings from automatic translation", "translatepress-multilingual"); ?>
+<?php __("Do not automatically translate these strings (ex. names, technical words...)<br>Paragraphs containing these strings will still be translated except for the specified part.", "translatepress-multilingual"); ?>
+<?php __("Fix broken HTML", "translatepress-multilingual"); ?>
+<?php __("General attempt to fix broken or missing HTML on translated pages.<br/><strong>Only try this if the \"Fix spaces between html attribute\" did not solve the issue.</strong>", "translatepress-multilingual"); ?>
+<?php __("Fix spaces between HTML attributes", "translatepress-multilingual"); ?>
+<?php __("Fixes attributes without spaces between them because they are not valid HTML.<br> May help fix missing or broken content from the HTML on translated pages.", "translatepress-multilingual"); ?>
+<?php __("Fix missing dynamic content", "translatepress-multilingual"); ?>
+<?php __("May help fix missing content inserted using JavaScript. <br> It shows dynamically inserted content in original language for a moment before the translation request is finished.", "translatepress-multilingual"); ?>
+<?php __("Filter Gettext wrapping from post content and title", "translatepress-multilingual"); ?>
+<?php __("Filters gettext wrapping such as #!trpst#trp-gettext from all updated post content and post title. Does not affect previous post content. <br/><strong>Database backup is recommended before switching on.</strong>", "translatepress-multilingual"); ?>
+<?php __("Filter Gettext wrapping from post meta", "translatepress-multilingual"); ?>
+<?php __("Filters gettext wrapping such as #!trpst#trp-gettext from all updated post meta. Does not affect previous post meta. <br/><strong>Database backup is recommended before switching on.</strong>", "translatepress-multilingual"); ?>
+<?php __("Google Translate v2", "translatepress-multilingual"); ?>
+<?php __("Google Translate API Key", "translatepress-multilingual"); ?>
+<?php __("Visit <a href=\"https://cloud.google.com/docs/authentication/api-keys\" target=\"_blank\">this link</a> to see how you can set up an API key, <strong>control API costs</strong> and set HTTP referrer restrictions.", "translatepress-multilingual"); ?>
+<?php __("Your HTTP referrer is: %s", "translatepress-multilingual"); ?>
