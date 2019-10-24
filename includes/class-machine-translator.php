@@ -153,7 +153,7 @@ class TRP_Machine_Translator {
      * @return array
      */
     public function translate($strings, $target_language_code, $source_language_code = null ){
-        if ( !empty($strings) && is_array($strings) && method_exists( $this, 'translate_array' ) ) {
+        if ( !empty($strings) && is_array($strings) && method_exists( $this, 'translate_array' ) && apply_filters( 'trp_disable_automatic_translations_due_to_error', false ) === false ) {
 
             /* google has a problem translating this characters ( '%', '$', '#' )...for some reasons it puts spaces after them so we need to 'encode' them and decode them back. hopefully it won't break anything important */
             $trp_exclude_words_from_automatic_translation = apply_filters('trp_exclude_words_from_automatic_translation', array('%', '$', '#'));

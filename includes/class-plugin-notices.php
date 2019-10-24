@@ -233,6 +233,7 @@ Class TRP_Plugin_Notifications {
     public function dismiss_notification( $notification_id = '' ) {
         global $current_user;
         add_user_meta( $current_user->ID, $notification_id . '_dismiss_notification', 'true', true );
+        do_action('trp_dismiss_notification', $notification_id, $current_user);
     }
 
 

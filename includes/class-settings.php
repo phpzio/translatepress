@@ -295,7 +295,7 @@ class TRP_Settings{
 
 
         /* BEGIN Upgrade settings from TP version 1.5.8 or earlier to 1.6.1+*/
-        $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
+        $machine_translation_settings = get_option( 'trp_machine_translation_settings', $this->get_default_trp_machine_translation_settings() );
 
         // move the old API key option
         if( !empty( $settings_option['g-translate-key'] ) && empty( $machine_translation_settings['google-translate-key'] ) ){
@@ -335,12 +335,7 @@ class TRP_Settings{
 
         // These options are not part of the actual trp_settings DB option. But they are included in $settings variable across TP
         $settings_option['trp_advanced_settings'] = get_option('trp_advanced_settings', array() );
-        $settings_option['trp_machine_translation_settings'] = get_option('trp_machine_translation_settings', array(
-            // default settings for trp_machine_translation_settings
-            'machine-translation'   => 'no',
-            'translation-engine'    => 'google_translate_v2',
-            'block-crawlers'        => 'yes'
-        ) );
+        $settings_option['trp_machine_translation_settings'] = get_option('trp_machine_translation_settings', $this->get_default_trp_machine_translation_settings() );
 
         /* @deprecated Setting only used for compatibility with Deepl Add-on 1.0.0 */
         if ( $settings_option['trp_machine_translation_settings']['translation-engine'] === 'deepl' && defined( 'TRP_DL_PLUGIN_VERSION' ) && TRP_DL_PLUGIN_VERSION === '1.0.0' ) {
@@ -352,6 +347,15 @@ class TRP_Settings{
         }
 
         $this->settings = $settings_option;
+    }
+
+    public function get_default_trp_machine_translation_settings(){
+        return apply_filters( 'trp_get_default_trp_machine_translation_settings', array(
+            // default settings for trp_machine_translation_settings
+            'machine-translation'   => 'no',
+            'translation-engine'    => 'google_translate_v2',
+            'block-crawlers'        => 'yes'
+        ));
     }
 
     /**

@@ -12,6 +12,7 @@ class TRP_Query{
     public $db;
     protected $settings;
     protected $translation_render;
+    protected $error_manager;
 
     const NOT_TRANSLATED = 0;
     const MACHINE_TRANSLATED = 1;
@@ -76,6 +77,7 @@ class TRP_Query{
 	    $prepared_query = $this->db->prepare( $query, $values );
         $dictionary = $this->db->get_results( $prepared_query, OBJECT_K  );
 
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_existing_translations()' ) );
         if ($this->db->last_error !== '')
             $dictionary = false;
 
@@ -163,12 +165,19 @@ class TRP_Query{
             $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
             $this->db->query( $sql_index );
 
-            // full text index for original
-            $sql_index = "CREATE FULLTEXT INDEX original_fulltext ON `" . $table_name . "`(original);";
-            $this->db->query( $sql_index );
+            $this->maybe_record_automatic_translation_error(array( 'details' => 'Error creating regular tables' ) );
 
-	        //syncronize all translation blocks.
-            $this->copy_all_translation_blocks_into_table( $default_language, $language_code );
+            if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
+                // table still doesn't exist after creation
+                $this->maybe_record_automatic_translation_error(array( 'details' => 'Error creating regular strings tables' ), true );
+            }else {
+                // full text index for original
+                $sql_index = "CREATE FULLTEXT INDEX original_fulltext ON `" . $table_name . "`(original);";
+                $this->db->query( $sql_index );
+
+                //syncronize all translation blocks.
+                $this->copy_all_translation_blocks_into_table($default_language, $language_code);
+            }
         }else{
 	        $this->check_for_block_type_column( $language_code, $default_language );
         }
@@ -202,8 +211,11 @@ class TRP_Query{
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 
+            $this->maybe_record_automatic_translation_error(array( 'details' => 'Error creating machine translation log tables' ) );
+
             if ( $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name )
             {
+                $this->maybe_record_automatic_translation_error(array( 'details' => 'Error creating machine translation log tables' ), true );
                 // something failed. Table still doesn't exist.
                 return false;
             }
@@ -256,6 +268,8 @@ class TRP_Query{
                                      $charset_collate;";
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
+
+            $this->maybe_record_automatic_translation_error(array( 'details' => 'Error creating gettext strings tables' ) );
 
             $sql_index = "CREATE INDEX index_name ON `" . $table_name . "` (original(100));";
             $this->db->query( $sql_index );
@@ -372,6 +386,8 @@ class TRP_Query{
 
 		$prepared_query = $this->db->prepare($query . ' ', $values);
 		$this->db->query( $prepared_query );
+
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running update_strings()' ) );
 	}
 
 	/**
@@ -403,6 +419,8 @@ class TRP_Query{
         // you cannot insert multiple rows at once using insert() method.
         // but by using prepare you cannot insert NULL values.
         $this->db->query( $this->db->prepare($query . ' ', $values) );
+
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running insert_strings()' ) );
     }
 
     public function insert_gettext_strings( $new_strings, $language_code ){
@@ -436,6 +454,8 @@ class TRP_Query{
 
         $query .= implode(', ', $place_holders);
         $this->db->query( $this->db->prepare($query . ' ', $values) );
+
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running insert_gettext_strings()' ) );
         
         if( count( $new_strings ) == 1 )
             return $this->db->insert_id;
@@ -497,6 +517,8 @@ class TRP_Query{
         $query .= $on_duplicate;
 
         $this->db->query( $this->db->prepare($query . ' ', $values) );
+
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running update_gettext_strings()' ) );
     }
 
     /**
@@ -521,6 +543,8 @@ class TRP_Query{
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
         $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), $output  );
+
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_string_ids()' ) );
         return $dictionary;
     }
 
@@ -548,6 +572,7 @@ class TRP_Query{
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
         $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), OBJECT_K );
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_untranslated_strings()' ) );
         return $dictionary;
     }
 
@@ -575,13 +600,13 @@ class TRP_Query{
 
     public function get_all_gettext_strings(  $language_code ){
         $dictionary = $this->db->get_results( "SELECT id, original, translated, domain FROM `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "`", ARRAY_A );
-
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_all_gettext_strings()' ) );
         return $dictionary;
     }
 
     public function get_all_gettext_translated_strings(  $language_code ){
         $dictionary = $this->db->get_results("SELECT id, original, translated, domain FROM `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "` WHERE translated <>'' AND status != " . self::NOT_TRANSLATED, ARRAY_A );
-
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_all_gettext_translated_strings()' ) );
         return $dictionary;
     }
 
@@ -645,6 +670,7 @@ class TRP_Query{
 
 
         $dictionary = $this->db->get_results( $query, $output );
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_string_rows()' ) );
         return $dictionary;
     }
 
@@ -663,6 +689,7 @@ class TRP_Query{
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
         $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), ARRAY_A );
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_gettext_string_rows_by_ids()' ) );
         return $dictionary;
     }
 
@@ -681,6 +708,7 @@ class TRP_Query{
 
         $query .= "( " . implode ( ", ", $placeholders ) . " )";
         $dictionary = $this->db->get_results( $this->db->prepare( $query, $values ), ARRAY_A );
+        $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_gettext_string_rows_by_original()' ) );
         return $dictionary;
     }
 
@@ -828,5 +856,20 @@ class TRP_Query{
 		$sql = "DELETE FROM `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ). "` WHERE (original IS NULL OR original = '') LIMIT " . $limit;
 		return $this->db->query( $sql );
 	}
+
+	public function maybe_record_automatic_translation_error($error_details = array(), $ignore_last_error = false ){
+        if ( !empty( $this->db->last_error) || $ignore_last_error ){
+            if( !$this->error_manager ){
+                $trp = TRP_Translate_Press::get_trp_instance();
+                $this->error_manager = $trp->get_component( 'error_manager' );
+            }
+            $default_error_details = array(
+                'last_error'  => $this->db->last_error,
+                'disable_automatic_translations' => true
+            );
+            $error_details = array_merge( $default_error_details, $error_details );
+            $this->error_manager->record_error( $error_details );
+        }
+    }
 
 }
