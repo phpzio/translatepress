@@ -45,5 +45,5 @@ if( !empty( $trp->active_pro_addons ) ){//if we have any Advanced or Pro addons 
 <?php } else{ ?>
     <h1> <?php _e( 'TranslatePress Settings', 'translatepress-multilingual' );?></h1>
     <?php do_action ( 'trp_settings_navigation_tabs' ); ?>
-    <h4><?php printf( __( 'If you do not have any of the <a href="%s">Advanced or Pro Addons</a> activated you do not need a license key', 'translatepress-multilingual' ), admin_url('/admin.php?page=trp_addons_page') ); ?></h4>
+    <h4><?php printf( __( 'If you purchased a premium version, first install and activate any of the <a href="%s">Advanced or Pro Addons</a>. After this you will be prompted with an input to enter your license key.', 'translatepress-multilingual' ), admin_url('/admin.php?page=trp_addons_page') ); ?></h4>
 <?php } ?>

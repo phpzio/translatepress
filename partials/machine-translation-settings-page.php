@@ -14,7 +14,7 @@
                     </select>
 
                     <p class="description">
-                        <?php _e( 'Enable or disable the automatic translation of the site. Only untranslated strings will receive a translation.', 'translatepress-multilingual' ) ?>
+                        <?php _e( 'Enable or disable the automatic translation of the site. To minimize translation costs, each untranslated string is automatically translated only once, then stored in the database.', 'translatepress-multilingual' ) ?>
                     </p>
                 </td>
             </tr>
