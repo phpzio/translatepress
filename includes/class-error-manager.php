@@ -117,7 +117,7 @@ class TRP_Error_Manager{
                 //make sure to use the trp_dismiss_admin_notification arg
                 $message .= '<a href="' . add_query_arg(array('trp_dismiss_admin_notification' => $notification_id)) . '" type="button" class="notice-dismiss"><span class="screen-reader-text">' . __('Dismiss this notice.', 'translatepress-multilingual') . '</span></a>';
 
-                $notifications->add_notification($notification_id, $message, 'trp-notice trp-narrow notice notice-info', true, array('translate-press'));
+                $notifications->add_notification($notification_id, $message, 'trp-notice trp-narrow notice notice-info error is-dismissible', true, array('translate-press'), true);
             }
         }
     }

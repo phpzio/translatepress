@@ -13,6 +13,7 @@ class TRP_Query{
     protected $settings;
     protected $translation_render;
     protected $error_manager;
+    protected $tables_exist = array();
 
     const NOT_TRANSLATED = 0;
     const MACHINE_TRANSLATED = 1;
@@ -78,6 +79,10 @@ class TRP_Query{
         $dictionary = $this->db->get_results( $prepared_query, OBJECT_K  );
 
         $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_existing_translations()' ) );
+        if ( is_array( $dictionary ) && count( $dictionary ) === 0 && !$this->table_exists($this->get_table_name( $language_code )) ){
+            // if table is missing then last_error is empty for the select query
+            $this->maybe_record_automatic_translation_error(array( 'details' => 'Missing table ' . $this->get_table_name( $language_code ) ), true );
+        }
         if ($this->db->last_error !== '')
             $dictionary = false;
 
@@ -600,6 +605,10 @@ class TRP_Query{
 
     public function get_all_gettext_strings(  $language_code ){
         $dictionary = $this->db->get_results( "SELECT id, original, translated, domain FROM `" . sanitize_text_field( $this->get_gettext_table_name( $language_code ) ) . "`", ARRAY_A );
+        if ( is_array( $dictionary ) && count( $dictionary ) === 0 && !$this->table_exists($this->get_gettext_table_name( $language_code )) ){
+            // if table is missing then last_error is empty
+            $this->maybe_record_automatic_translation_error(array( 'details' => 'Missing table ' . $this->get_gettext_table_name( $language_code ) ), true );
+        }
         $this->maybe_record_automatic_translation_error(array( 'details' => 'Error running get_all_gettext_strings()' ) );
         return $dictionary;
     }
@@ -870,6 +879,26 @@ class TRP_Query{
             $error_details = array_merge( $default_error_details, $error_details );
             $this->error_manager->record_error( $error_details );
         }
+    }
+
+    /**
+     * Return true if table exists in db, return false otherwise
+     *
+     * @param $table_name
+     * @param $ignore_cache
+     * @return bool
+     */
+    public function table_exists($table_name, $ignore_cache = false ){
+        if( !$ignore_cache && in_array( $table_name, $this->tables_exist ) ){
+            return true;
+        }
+
+	    $table_name = sanitize_text_field($table_name);
+        $table_found = $this->db->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
+        if ( $table_found ) {
+            $this->tables_exist[] = $table_name;
+        }
+        return $table_found;
     }
 
 }
