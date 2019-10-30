@@ -26,6 +26,7 @@ class TRP_Translate_Press{
     protected $advanced_tab;
     protected $translation_memory;
     protected $machine_translation_tab;
+    protected $error_manager;
 
     public $active_pro_addons = array();
     public static $translate_press = null;
@@ -96,6 +97,7 @@ class TRP_Translate_Press{
         require_once TRP_PLUGIN_DIR . 'includes/class-plugin-notices.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-advanced-tab.php';
         require_once TRP_PLUGIN_DIR . 'includes/class-translation-memory.php';
+        require_once TRP_PLUGIN_DIR . 'includes/class-error-manager.php';
         require_once TRP_PLUGIN_DIR . 'includes/external-functions.php';
         require_once TRP_PLUGIN_DIR . 'includes/compatibility-functions.php';
         require_once TRP_PLUGIN_DIR . 'includes/functions.php';
@@ -131,6 +133,7 @@ class TRP_Translate_Press{
         $this->plugin_updater             = new TRP_Plugin_Updater();
         $this->license_page               = new TRP_LICENSE_PAGE();
         $this->translation_memory         = new TRP_Translation_Memory( $this->settings->get_settings() );
+        $this->error_manager              = new TRP_Error_Manager( $this->settings->get_settings() );
     }
 
     /**
@@ -188,6 +191,13 @@ class TRP_Translate_Press{
 
         //Machine Translation Logger defaults
         $this->loader->add_action( 'trp_machine_translation_sanitize_settings', $this->machine_translator_logger, 'sanitize_settings', 10, 1 );
+
+        //Error manager hooks
+        $this->loader->add_action( 'admin_init', $this->error_manager, 'show_notification_about_errors', 10 );
+        $this->loader->add_action( 'admin_menu', $this->error_manager, 'register_submenu_errors_page', 10 );
+        $this->loader->add_action( 'trp_dismiss_notification', $this->error_manager, 'clear_notification_from_db', 10, 2 );
+        $this->loader->add_filter( 'trp_machine_translation_sanitize_settings', $this->error_manager, 'clear_disable_machine_translation_notification_from_db', 10, 1 );
+        $this->loader->add_filter( 'trp_error_manager_page_output', $this->error_manager, 'output_db_errors', 10, 1 );
 
         $this->loader->add_action( 'wp_ajax_nopriv_trp_get_translations_regular', $this->editor_api_regular_strings, 'get_translations' );
 

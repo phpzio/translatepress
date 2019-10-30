@@ -42,11 +42,18 @@ class TRP_Add_General_Notices{
         if ( current_user_can( 'manage_options' ) ){
             // Check that the user hasn't already clicked to ignore the message
             if ( ! get_user_meta($user_id, $this->notificationId.'_dismiss_notification' ) || $this->force_show  ) {//ignore the dismissal if we have force_show
-                echo $finalMessage = wp_kses( apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage), [ 'div' => [ 'class' => [] ], 'p' => ['style' => [], 'class' => []], 'a' => ['href' => [], 'type'=> [], 'class'=> []], 'span' => ['class'=> []], 'strong' => [] ] );
+                add_filter('safe_style_css', array( $this, 'allow_z_index_in_wp_kses'));
+                echo $finalMessage = wp_kses( apply_filters($this->notificationId.'_notification_message','<div class="'. $this->notificationClass .'" >'.$this->notificationMessage.'</div>', $this->notificationMessage), [ 'div' => [ 'class' => [] ], 'p' => ['style' => [], 'class' => []], 'a' => ['href' => [], 'type'=> [], 'class'=> [], 'style'=>[]], 'span' => ['class'=> []], 'strong' => [] ] );
+                remove_filter('safe_style_css', array( $this, 'allow_z_index_in_wp_kses'));
             }
             do_action( $this->notificationId.'_notification_displayed', $current_user, $pagenow );
         }
         do_action( $this->notificationId.'_after_notification_displayed', $current_user, $pagenow );
+    }
+
+    function allow_z_index_in_wp_kses( $styles ) {
+        $styles[] = 'z-index';
+        return $styles;
     }
 
     function dismiss_notification() {
@@ -233,6 +240,7 @@ Class TRP_Plugin_Notifications {
     public function dismiss_notification( $notification_id = '' ) {
         global $current_user;
         add_user_meta( $current_user->ID, $notification_id . '_dismiss_notification', 'true', true );
+        do_action('trp_dismiss_notification', $notification_id, $current_user);
     }
 
 
