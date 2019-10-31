@@ -292,35 +292,6 @@ class TRP_Settings{
             'url-slugs'                            => array( 'en_US' => 'en', '' ),
         );
 
-
-
-        /* BEGIN Upgrade settings from TP version 1.5.8 or earlier to 1.6.1+*/
-        $machine_translation_settings = get_option( 'trp_machine_translation_settings', $this->get_default_trp_machine_translation_settings() );
-
-        // move the old API key option
-        if( !empty( $settings_option['g-translate-key'] ) && empty( $machine_translation_settings['google-translate-key'] ) ){
-            $machine_translation_settings['google-translate-key'] = $settings_option['g-translate-key'];
-
-            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
-        }
-
-        // enable machine translation if it was activated before
-        if( !empty( $settings_option['g-translate'] ) && $settings_option['g-translate'] == 'yes' && ( isset( $machine_translation_settings['machine-translation'] ) && $machine_translation_settings['machine-translation'] != 'yes' ) ){
-            $machine_translation_settings['machine-translation'] = 'yes';
-
-            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
-        }
-
-        // set date if missing because of migration of machine translation settings from trp_settings option to trp_machine_translation_settings option
-        if ( !empty($machine_translation_settings) && empty( $machine_translation_settings['machine_translation_counter_date'] ) ){
-            $machine_translation_settings['machine_translation_counter_date'] = date ("Y-m-d" );
-            $machine_translation_settings['machine_translation_counter'] = 0;
-            update_option( 'trp_machine_translation_settings', $machine_translation_settings );
-        }
-        /* END Upgrade settings */
-
-
-
         if ( 'not_set' == $settings_option ){
             update_option ( 'trp_settings', $default_settings );
             $settings_option = $default_settings;
@@ -333,9 +304,17 @@ class TRP_Settings{
             }
         }
 
-        // These options are not part of the actual trp_settings DB option. But they are included in $settings variable across TP
+
+        /**
+         * These options (trp_advanced_settings,trp_machine_translation_settings) are not part of the actual trp_settings DB option.
+         * But they are included in $settings variable across TP
+         */
         $settings_option['trp_advanced_settings'] = get_option('trp_advanced_settings', array() );
-        $settings_option['trp_machine_translation_settings'] = get_option('trp_machine_translation_settings', $this->get_default_trp_machine_translation_settings() );
+
+        // Add any missing default option for trp_machine_translation_settings
+        $default_trp_machine_translation_settings = $this->get_default_trp_machine_translation_settings();
+        $settings_option['trp_machine_translation_settings'] = array_merge( $default_trp_machine_translation_settings, get_option( 'trp_machine_translation_settings', $default_trp_machine_translation_settings ) );
+
 
         /* @deprecated Setting only used for compatibility with Deepl Add-on 1.0.0 */
         if ( $settings_option['trp_machine_translation_settings']['translation-engine'] === 'deepl' && defined( 'TRP_DL_PLUGIN_VERSION' ) && TRP_DL_PLUGIN_VERSION === '1.0.0' ) {
@@ -352,9 +331,12 @@ class TRP_Settings{
     public function get_default_trp_machine_translation_settings(){
         return apply_filters( 'trp_get_default_trp_machine_translation_settings', array(
             // default settings for trp_machine_translation_settings
-            'machine-translation'   => 'no',
-            'translation-engine'    => 'google_translate_v2',
-            'block-crawlers'        => 'yes'
+            'machine-translation'               => 'no',
+            'translation-engine'                => 'google_translate_v2',
+            'block-crawlers'                    => 'yes',
+            'machine_translation_counter_date'  => date ("Y-m-d" ),
+            'machine_translation_counter'       => 0,
+            'machine_translation_limit'         => 1000000
         ));
     }
 

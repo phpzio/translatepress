@@ -41,21 +41,29 @@ class TRP_Upgrade {
 			$this->trp_query = $trp->get_component( 'query' );
 		}
 		$stored_database_version = get_option('trp_plugin_version');
-		if( empty($stored_database_version) || version_compare( TRP_PLUGIN_VERSION, $stored_database_version, '>' ) ){
+		if( empty($stored_database_version) ){
 			$this->check_if_gettext_tables_exist();
-			$this->trp_query->check_for_block_type_column();
-		}
-		if( !empty( $stored_database_version ) ) {
-			$updates = $this->get_updates_details();
-			foreach( $updates as $update ){
-				if ( version_compare( $update['version'], $stored_database_version, '>' ) ){
-					update_option( $update['option_name'], 'no' );
-				}
-			}
-		}
+        }else{
 
-        if( !empty( $stored_database_version ) && version_compare( $stored_database_version, '1.5.3', '<=' )  ) {
-            $this->add_full_text_index_to_tables();
+            // Updates that require admins to trigger manual update of db because of long duration. Set an option in DB if this is the case.
+            $updates = $this->get_updates_details();
+            foreach ($updates as $update) {
+                if (version_compare($update['version'], $stored_database_version, '>')) {
+                    update_option($update['option_name'], 'no');
+                }
+            }
+
+            // Updates that can be done right way. They should take very little time.
+            if ( version_compare( $stored_database_version, '1.3.0', '<=' ) ) {
+                $this->trp_query->check_for_block_type_column();
+                $this->check_if_gettext_tables_exist();
+            }
+            if ( version_compare($stored_database_version, '1.5.3', '<=')) {
+                $this->add_full_text_index_to_tables();
+            }
+            if ( version_compare($stored_database_version, '1.6.1', '<=')) {
+                $this->upgrade_machine_translation_settings();
+            }
         }
 
         // don't update the db version unless they are different. Otherwise the query is run on every page load.
@@ -460,6 +468,38 @@ class TRP_Upgrade {
 
             $sql_index = "CREATE FULLTEXT INDEX original_fulltext ON `" . $table_name . "`(original);";
             $this->db->query( $sql_index );
+        }
+    }
+
+    /**
+     * Moving some settings from trp_settings option to trp_machine_translation_settings
+     *
+     * Upgrade settings from TP version 1.5.8 or earlier to 1.6.2
+     */
+    private function upgrade_machine_translation_settings(){
+        $trp = TRP_Translate_Press::get_trp_instance();
+        $trp_settings = $trp->get_component('settings' );
+        $machine_translation_settings = get_option( 'trp_machine_translation_settings', false );
+
+        $default_machine_translation_settings = $trp_settings->get_default_trp_machine_translation_settings();
+
+        if ( $machine_translation_settings == false ) {
+            // 1.5.8 did not have any machine_settings so port g-translate-key and g-translate settings if exists
+            $machine_translation_settings = $default_machine_translation_settings;
+            // move the old API key option
+            if (!empty($this->settings['g-translate-key'] ) ) {
+                $machine_translation_settings['google-translate-key'] = $this->settings['g-translate-key'];
+            }
+
+            // enable machine translation if it was activated before
+            if (!empty($this->settings['g-translate']) && $this->settings['g-translate'] == 'yes'){
+                $machine_translation_settings['machine-translation'] = 'yes';
+            }
+            update_option('trp_machine_translation_settings', $machine_translation_settings);
+        }else{
+            // targeting 1.5.9 to 1.6.1 where incomplete machine-translation settings may have resulted
+            $machine_translation_settings = array_merge( $default_machine_translation_settings, $machine_translation_settings );
+            update_option('trp_machine_translation_settings', $machine_translation_settings);
         }
     }
 }
