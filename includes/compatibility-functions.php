@@ -363,21 +363,15 @@ function trp_strip_request_metadata_keys( $metadata ){
  * They start an output buffer at init -1 (before ours at init 0). They print footer scripts after we run translate_page,
  * resulting in outputting scripts that won't be stripped of trpst trp-gettext wrappings.
  * This includes WooCommerce Checkout scripts, resulting in trpst wrappings around form fields like Street Address.
+ * Another issue is that translation editor is a blank page.
  *
- * Solution is to move their hook to priority 1
- *
- * This is the chosen hook (after_setup_theme) because
- * it needs to be after plugins_loaded (because TP is loading this file later)
- * and before init (because the we need to unregister the NextGen Gallery plugin's function hooked on init with priority -1 )
+ * We cannot move their hook to priority 1 because we do not have access to the object that gets hooked is not retrievable so we can't call remove_filter()
+ *  * So the only solution that works is to move our hook to -2.
  */
-add_action( 'after_setup_theme', 'trp_nextgen_compatibility' );
+add_action( 'trp_start_output_buffer_priority', 'trp_nextgen_compatibility' );
 function trp_nextgen_compatibility(){
     if ( class_exists( 'C_Photocrati_Resource_Manager' ) ) {
-        $object_C_Photocrati_Resource_Manager = C_Photocrati_Resource_Manager::$instance;
-
-        // move from priority -1 to 1 because it needs to be after our hook on priority 0
-        remove_action( 'init', array( &$object_C_Photocrati_Resource_Manager, 'start_buffer' ) );
-        add_action( 'init', array( &$object_C_Photocrati_Resource_Manager, 'start_buffer', ), 1 );
+        return '-2';
     }
 }
 
