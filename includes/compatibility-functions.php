@@ -366,13 +366,31 @@ function trp_strip_request_metadata_keys( $metadata ){
  * Another issue is that translation editor is a blank page.
  *
  * We cannot move their hook to priority 1 because we do not have access to the object that gets hooked is not retrievable so we can't call remove_filter()
- *  * So the only solution that works is to move our hook to -2.
+ * Also we cannot simply disable ngg using run_ngg_resource_manager hook because we would be disabling features of their plugin.
+ *
+ * So the only solution that works is to move our hook to -2.
  */
-add_action( 'trp_start_output_buffer_priority', 'trp_nextgen_compatibility' );
-function trp_nextgen_compatibility(){
+add_filter( 'trp_start_output_buffer_priority', 'trp_nextgen_compatibility' );
+function trp_nextgen_compatibility( $priority ){
     if ( class_exists( 'C_Photocrati_Resource_Manager' ) ) {
         return '-2';
     }
+    return $priority;
+}
+
+/**
+ * Compatibility with NextGEN Gallery
+ *
+ * This plugin is adding wp_footer forcefully in a shutdown hook and appends it to "</body>" which bring up admin bar in translation editor.
+ *
+ * This filter prevents ngg from hooking the filters to alter the html.
+ */
+add_filter( 'run_ngg_resource_manager', 'trp_nextgen_disable_nextgen_in_translation_editor');
+function trp_nextgen_disable_nextgen_in_translation_editor( $bool ){
+    if ( isset( $_REQUEST['trp-edit-translation'] ) && esc_attr( $_REQUEST['trp-edit-translation'] ) === 'true' ) {
+        return false;
+    }
+    return $bool;
 }
 
 /**
