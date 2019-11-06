@@ -854,6 +854,11 @@ class TRP_Translation_Render{
     function remove_trp_html_tags( $string ){
         $string = preg_replace( '/(<|&lt;)trp-gettext (.*?)(>|&gt;)/', '', $string );
         $string = preg_replace( '/(<|&lt;)(\\\\)*\/trp-gettext(>|&gt;)/', '', $string );
+
+        // In case we have a gettext string which was run through rawurlencode(). See more details on iss6563
+        $string = preg_replace( '/%23%21trpst%23trp-gettext(.*?)%23%21trpen%23/', '', $string );
+        $string = preg_replace( '/%23%21trpst%23%2Ftrp-gettext%23%21trpen%23/', '', $string );
+
         if (!isset($_REQUEST['trp-edit-translation']) || $_REQUEST['trp-edit-translation'] != 'preview') {
             $string = preg_replace('/(<|&lt;)trp-wrap (.*?)(>|&gt;)/', '', $string);
             $string = preg_replace('/(<|&lt;)(\\\\)*\/trp-wrap(>|&gt;)/', '', $string);
