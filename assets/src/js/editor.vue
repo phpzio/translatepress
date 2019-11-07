@@ -88,6 +88,10 @@
                     </div>
                 </div>
             </div>
+            <editors-navigation>
+
+            </editors-navigation>
+
 
             <div id="trp_select2_overlay"></div>
 
@@ -127,6 +131,7 @@
     import saveTranslations from './components/save-translations.vue'
     import hoverActions     from './components/hover-actions.vue'
     import extraContent     from './components/extra-content.vue'
+    import editorsNavigation     from './components/editors-navigation.vue'
     import he               from 'he'
 
     export default {
@@ -152,7 +157,8 @@
             languageBoxes,
             saveTranslations,
             hoverActions,
-            extraContent
+            extraContent,
+            editorsNavigation
         },
         data(){
             return {
