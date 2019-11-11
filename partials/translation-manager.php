@@ -53,6 +53,8 @@
 	    $default_path = TRP_PLUGIN_URL . 'assets/images/flags/';
 	    $flags_path[$language_code] = apply_filters( 'trp_flags_path', $default_path, $language_code );
     }
+
+    $navigation_tabs = $translation_manager->get_navigation_tabs();
     ?>
 
     <title>TranslatePress</title>
@@ -77,6 +79,7 @@
             merge_rules='<?php echo esc_attr( json_encode( $translation_manager->get_merge_rules() ) ); ?>'
             paid_version="<?php echo esc_attr( trp_is_paid_version() ? 'true' : 'false' ); ?>"
             flags_path="<?php echo esc_attr( json_encode( $flags_path ) ); ?>"
+            navigation_tabs="<?php echo esc_attr( json_encode( $navigation_tabs ) ); ?>"
         >
         </trp-editor>
     </div>

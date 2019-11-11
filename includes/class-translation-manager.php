@@ -181,6 +181,33 @@ class TRP_Translation_Manager{
 	}
 
     /**
+     * Navigation tabs for Website editing, Url Slugs, String Translation
+     *
+     * @return array
+     */
+	public function get_navigation_tabs(){
+        return apply_filters( 'trp_editor_navigation_tabs', array(
+            array(
+                'handle' => 'website',
+                'label'  => __('Website', 'translatepress-multilingual'),
+                'path'   => add_query_arg( 'trp-edit-translation', 'true', home_url() )
+            ),
+            array(
+                'handle' => 'urlslugs',
+                'label'  => __('URL Slugs', 'translatepress-multilingual'),
+                //todo add correct path
+                'path'   => add_query_arg( 'trp-string-translation', 'true', home_url() )
+            ),
+            array(
+                'handle' => 'strings',
+                'label' => __('Strings', 'translatepress-multilingual'),
+                //todo add correct path
+                'path'  => add_query_arg( 'trp-string-translation', 'true', home_url() )
+            )
+        ));
+    }
+
+    /**
      * Enqueue scripts and styles for translation Editor parent window.
      *
      * hooked to trp_translation_manager_footer

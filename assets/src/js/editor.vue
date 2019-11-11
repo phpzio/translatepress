@@ -2,34 +2,35 @@
     <div id="trp-editor">
 
         <div id="trp-controls">
-            <div class="trp-controls-container">
 
-                <div id="trp-close-save">
-                    <a id="trp-controls-close" :href="closeURL" :title="editorStrings.close"></a>
-                    <div id="trp-save-and-loader-spinner">
+            <div id="trp-close-save">
+                <a id="trp-controls-close" :href="closeURL" :title="editorStrings.close"></a>
+                <div id="trp-save-and-loader-spinner">
                         <span class="trp-ajax-loader" v-show="loading_strings > 0" id="trp-string-saved-ajax-loader">
                             <div class="trp-spinner"></div>
                         </span>
-                        <save-translations
-                                :selectedIndexesArray="selectedIndexesArray"
-                                :dictionary="dictionary"
-                                :settings="settings"
-                                :nonces="nonces"
-                                :ajax_url="ajax_url"
-                                :currentLanguage="currentLanguage"
-                                :onScreenLanguage="onScreenLanguage"
-                                :iframe="iframe"
-                                :currentURL="currentURL"
-                                :mergingString="mergingString"
-                                :mergeData="mergeData"
-                                @translations-saved="showChangesUnsavedMessage = false"
-                                :editorStrings="editorStrings"
-                        >
-                        </save-translations>
-                    </div>
+                    <save-translations
+                            :selectedIndexesArray="selectedIndexesArray"
+                            :dictionary="dictionary"
+                            :settings="settings"
+                            :nonces="nonces"
+                            :ajax_url="ajax_url"
+                            :currentLanguage="currentLanguage"
+                            :onScreenLanguage="onScreenLanguage"
+                            :iframe="iframe"
+                            :currentURL="currentURL"
+                            :mergingString="mergingString"
+                            :mergeData="mergeData"
+                            @translations-saved="showChangesUnsavedMessage = false"
+                            :editorStrings="editorStrings"
+                    >
+                    </save-translations>
                 </div>
+            </div>
 
-                <div class="trp-controls-section">
+            <div class="trp-controls-container">
+
+                <div class="trp-controls-section" id="trp-controls-section-first">
 
                     <div class="trp-controls-section-content">
                         <div id="trp-language-switch">
@@ -88,10 +89,8 @@
                     </div>
                 </div>
             </div>
-            <editors-navigation>
 
-            </editors-navigation>
-
+            <editors-navigation :navigationTabs="navigationTabs" :selectedTab="'website'"></editors-navigation>
 
             <div id="trp_select2_overlay"></div>
 
@@ -151,7 +150,8 @@
             'merge_rules',
             'localized_text',
             'paid_version',
-            'flags_path'
+            'flags_path',
+            'navigation_tabs'
         ],
         components:{
             languageBoxes,
@@ -172,6 +172,7 @@
                 selectors                 : JSON.parse( this.string_selectors ),
                 dataAttributes            : JSON.parse( this.data_attributes ),
                 mergeRules                : JSON.parse( this.merge_rules ),
+                navigationTabs            : JSON.parse( this.navigation_tabs ),
                 editorStrings             : trp_localized_strings,
                 flagsPath                 : JSON.parse( this.flags_path ),
                 //data

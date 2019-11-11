@@ -123,13 +123,23 @@ body{
 }
 
 .trp-controls-container{
-    height: 100%;
     overflow-x: auto;
+    position: fixed;
+    top: 46px;
+    bottom: 48px;
+    width: inherit;
 }
 
+#trp-close-save{
+    border-bottom: 1px solid #ddd;
+}
 
 #trp-save-container, #trp-save-and-loader-spinner{
     float: right;
+}
+
+#trp-controls-section-first{
+    border-top: none;
 }
 
 .trp-controls-section{
@@ -252,6 +262,48 @@ iframe#trp-preview-iframe {
     font-size: 12px;
 }
 
+/*
+    Navigation Tabs between editors
+ */
+
+#trp-editors-navigation-tabs{
+    width: inherit;
+    height: 48px;
+    position: fixed;
+    bottom:0;
+    background: #23282D;
+}
+
+#trp-editors-tab-table{
+    width: 100%;
+    height: inherit;
+    vertical-align: middle;
+    text-align: center;
+    table-layout: fixed;
+    padding: 7px;
+}
+
+.trp-editors-tab.trp-selected-tab{
+    background-color:white;
+    border-width: 1px;
+    border-color: #c6c6c6;
+    border-style: solid;
+}
+
+.trp-editors-tab{
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+.trp-editors-tab a{
+    color: #F7F7F7;
+    text-decoration: underline;
+}
+
+.trp-editors-tab.trp-selected-tab a{
+    color: #23282D;
+    text-decoration: none;
+}
 
 /*
     View as Dropdown
