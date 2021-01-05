@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "autosize": "^4.0.2",
-        "axios": "^0.18.1",
+        "axios": "^0.21.1",
         "he": "^1.2.0",
         "select2": "^4.0.7-rc.0",
         "simplediff": "^0.1.1",
